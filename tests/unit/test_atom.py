@@ -1,4 +1,5 @@
-from vrel.entity import Atom, Variable
+from vrel.entity.Atom import Atom, Variable
+from vrel.entity.Variable import Variable
 
 
 def test_atom():

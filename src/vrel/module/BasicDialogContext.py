@@ -1,0 +1,51 @@
+from vrel.entity.Relation import Relation
+from vrel.module.SqliteMemoryModule import SqliteMemoryModule
+from vrel.entity.ExecutionContext import ExecutionContext
+
+
+class BasicDialogContext(SqliteMemoryModule):
+
+    def __init__(self) -> None:
+        super().__init__()
+
+        self.clear()
+
+        self.add_relation(Relation("context", formal_parameters=["name"]))
+
+        self.add_relation(Relation("with_context", formal_parameters=["name", "body"], query_function=self.with_context))
+        self.add_relation(Relation("start_context", formal_parameters=["name"], query_function=self.start_context))
+        self.add_relation(Relation("end_context", formal_parameters=["name"], query_function=self.end_context))
+
+
+    def with_context(self, arguments: list, context: ExecutionContext) -> list[list]:
+        name = arguments[0]
+        body = arguments[1]
+        self.data_source.insert('context', ['name'], [name])
+        context.solver.solve(body)
+        self.data_source.delete('context', ['name'], [name])
+        return [
+            [None, None]
+        ]
+
+    def start_context(self, arguments: list, context: ExecutionContext) -> list[list]:
+        name = arguments[0]
+        self.data_source.insert('context', ['name'], [name])
+        return [
+            [None]
+        ]
+
+
+    def end_context(self, arguments: list, context: ExecutionContext) -> list[list]:
+        name = arguments[0]
+        self.data_source.delete('context', ['name'], [name])
+        return [
+            [None]
+        ]
+
+
+    def clear(self):
+        super().clear()
+
+        cursor = self.data_source.connection.cursor()
+
+        cursor.execute("CREATE TABLE context (name TEXT)")

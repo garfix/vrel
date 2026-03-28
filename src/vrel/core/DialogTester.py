@@ -1,0 +1,80 @@
+from math import ceil
+import unittest
+import cProfile
+import time
+
+from vrel.entity.SentenceRequest import SentenceRequest
+from vrel.interface.SomeLogger import SomeLogger, ALL, LAST
+from vrel.interface.SomeSystem import SomeSystem
+
+class DialogTester:
+
+    tests: list
+    system: SomeSystem
+
+    # what to print? none, all, last
+    logger: SomeLogger
+
+    # profile all tests and print the results
+    profile: bool
+
+
+    def __init__(self,
+        tests: list,
+        system: SomeSystem,
+        logger: SomeLogger,
+        profile: bool = False
+    ) -> None:
+        self.tests = tests
+        self.system = system
+        self.logger = logger
+        self.profile = profile
+
+
+    def run(self, ):
+        if self.profile:
+            cProfile.runctx('self.do_run()', globals(), locals(), None, 'cumulative')
+        else:
+            self.do_run()
+
+
+    def do_run(self):
+        last = self.tests[-1] if len(self.tests) > 0 else None
+        for i, test in enumerate(self.tests):
+
+            if len(test) != 2:
+                raise Exception("A test item must have two elements: a sentence and an expected response")
+
+            question, expected = test
+
+            log_this = self.logger.which_tests == ALL or (self.logger.which_tests == LAST and test == last)
+            self.logger.is_last_test = log_this
+
+            request = SentenceRequest(question)
+            try:
+                if log_this:
+                    self.logger.add_test_separator(i+1)
+                    self.logger.add_key_value('Human', question)
+
+                start_time = time.perf_counter()
+
+                # send the request through the pipeline
+                self.system.enter(request)
+
+                end_time = time.perf_counter()
+
+                output = ''
+                if self.system.output_generator:
+                    output = self.system.read_output()
+
+                error = output != expected
+
+                if log_this or error:
+                    self.logger.add_key_value('Computer', output)
+                    self.logger.add_comment(str(ceil((end_time - start_time) * 1000)) + " msecs")
+
+                assert output == expected
+
+            except Exception as e:
+                print(self.logger)
+                raise e

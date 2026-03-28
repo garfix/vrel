@@ -1,0 +1,138 @@
+from vrel.entity.ReifiedVariable import ReifiedVariable
+from vrel.entity.ParseTreeNode import ParseTreeNode
+from vrel.entity.ProcessResult import ProcessResult
+from vrel.entity.SentenceRequest import SentenceRequest
+from vrel.entity.Variable import Variable
+from vrel.interface.SomeProcessor import SomeProcessor
+from vrel.processor.parser.BasicParserProduct import BasicParserProduct
+from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
+from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
+from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
+from vrel.entity.SemanticFunction import SemanticFunction
+
+
+class SemanticComposer(SomeProcessor):
+    """
+    Performs semantic composition on the product of the parser
+    Opimizes the composition for speed of execution
+    """
+
+    parser: SomeProcessor
+    variable_generator: VariableGenerator
+
+
+    def __init__(self, parser: SomeProcessor) -> None:
+        super().__init__()
+        self.parser = parser
+        self.variable_generator = VariableGenerator("$")
+
+
+    def get_name(self) -> str:
+        return "Composer"
+
+
+    def process(self, incoming: BasicParserProduct) -> ProcessResult:
+
+        parse_trees = incoming.parse_trees
+        sentences = []
+
+        for parse_tree in parse_trees:
+
+            self.check_for_sem(parse_tree)
+
+            root_variables = [self.variable_generator.next() for _ in parse_tree.rule.antecedent.arguments]
+            semantics, inferences = self.compose(parse_tree, root_variables)
+
+            sentences.append(SemanticSentence(semantics, inferences, root_variables))
+
+        product = SemanticComposerProduct(sentences)
+
+        return ProcessResult([product], "")
+
+
+    def check_for_sem(self, node: ParseTreeNode):
+        if node.form == "" and node.rule.sem is None:
+            raise Exception("Rule '" + str(node.rule) + "' is missing key 'sem'")
+
+        for child in node.children:
+            self.check_for_sem(child)
+
+
+    def compose(self, node: ParseTreeNode, incoming_variables: list[str]) -> list[tuple]:
+
+        # map formal variables to unified, sentence-wide variables
+        map = self.create_map(node, incoming_variables)
+
+        # collect the semantics of the child nodes
+        child_semantics = []
+        inferences = []
+
+
+        for child, consequent in zip(node.children, node.rule.consequents):
+            if not child.is_leaf_node():
+                incoming_child_variables = [map[arg] for arg in consequent.arguments]
+                semantics, child_inference = self.compose(child, incoming_child_variables)
+                inferences.extend(child_inference)
+                child_semantics.append(semantics)
+            elif child.rule.sem:
+                child_semantics.append(child.rule.sem())
+
+        # create the semantics of this node by executing its function, passing the values of its children as arguments
+        semantics = node.rule.sem(*child_semantics)
+
+        if callable(node.rule.dialog):
+            inferences.extend(node.rule.dialog(*child_semantics))
+        else:
+            inferences.extend(node.rule.dialog)
+
+        # extend the map with variables found in the result of the semantics function
+        self.extend_map_with_semantics(map, semantics)
+
+        # replace the formal parameters in the semantics with the unified variables
+        unified_semantics = self.unify_variables(semantics, map)
+
+        # replace the formal parameters in the inferences with the unified variables
+        unified_inferences = self.unify_variables(inferences, map)
+
+        return unified_semantics, unified_inferences
+
+
+    def create_map(self, node: ParseTreeNode, incoming_variables: list[str]):
+        # start variable map by mapping antecedent variables to incoming variables
+        map = {}
+        for i, arg in enumerate(node.rule.antecedent.arguments):
+            map[arg] = incoming_variables[i]
+
+        # complete map with other variables from the consequents
+        for cons in node.rule.consequents:
+            for i, arg in enumerate(cons.arguments):
+                    if arg not in map:
+                        map[arg] = self.variable_generator.next()
+
+        return map
+
+
+    def extend_map_with_semantics(self, map: dict, semantics: list[tuple]):
+        # only lists of atoms for now
+        if isinstance(semantics, list):
+            for atom in semantics:
+                for arg in atom:
+                    # since we're late in the game, don't replace variables that have already been replaced
+                    if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
+                        map[arg.name] = self.variable_generator.next()
+
+
+    def unify_variables(self, semantics: any, map: dict[str, str]) -> any:
+        if isinstance(semantics, list):
+            return [self.unify_variables(atom, map) for atom in semantics]
+        elif isinstance(semantics, tuple):
+            return tuple([self.unify_variables(term, map) for term in semantics])
+        elif isinstance(semantics, SemanticFunction):
+            return SemanticFunction(semantics.args, self.unify_variables(semantics.body, map))
+        elif isinstance(semantics, Variable) and semantics.name in map:
+            return Variable(map[semantics.name])
+        elif isinstance(semantics, ReifiedVariable) and semantics.name in map:
+            return map[semantics.name]
+        else:
+            return semantics
+

@@ -1,0 +1,35 @@
+import sqlite3
+from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
+from vrel.entity.Relation import Relation
+from vrel.interface.SomeModule import SomeModule
+from vrel.entity.ExecutionContext import ExecutionContext
+
+
+class SqliteMemoryModule(SomeModule):
+
+    data_source: Sqlite3DataSource
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.clear()
+
+
+    def clear(self):
+        connection = sqlite3.connect(':memory:')
+        self.data_source = Sqlite3DataSource(connection)
+
+
+    def add_relation(self, relation: Relation):
+        self.relations[relation.predicate] = relation
+        if not relation.query_function:
+            relation.query_function = self.query
+        if not relation.write_function:
+            relation.write_function = self.write
+
+
+    def query(self, values: list, context: ExecutionContext) -> list[list]:
+        return self.data_source.select(context.relation.predicate, context.relation.formal_parameters, values)
+
+
+    def write(self, values: list, context: ExecutionContext):
+        self.data_source.insert(context.relation.predicate, context.relation.formal_parameters, values)
