@@ -1,0 +1,11 @@
+{
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "files.trimTrailingWhitespace": true,
+    "[markdown]": {
+         "files.trimTrailingWhitespace": false
+    },
+    "files.exclude": {
+        "**/__pycache__": true
+    }
+}
