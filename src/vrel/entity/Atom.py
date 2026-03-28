@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from . import Variable
+from vrel.entity import Variable
 
 
 @dataclass(frozen=True)

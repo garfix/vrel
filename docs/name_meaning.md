@@ -29,4 +29,4 @@ In psychology/NLP, valence means positive/negative affect. Less relevant to what
 Jacobus Vrel was a mysterious 17th century Dutch Golden Age painter, which adds a whole layer.
 
 * He painted **quiet domestic interiors** — intimate, everyday scenes. There's a nice parallel with NLU: finding structure and meaning in ordinary language, the mundane made legible.
-He's **largely unknown and enigmatic** — his identity was debated for a long time, works misattributed to Vermeer. A fitting patron for a library that wrestles with ambiguity.
+* He's **largely unknown and enigmatic** — his identity was debated for a long time, works misattributed to Vermeer. A fitting patron for a library that wrestles with ambiguity.
