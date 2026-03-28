@@ -1,4 +1,3 @@
-# import unittest
 import pathlib
 
 from vrel.core.BasicGenerator import BasicGenerator

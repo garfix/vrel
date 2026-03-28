@@ -1,0 +1,118 @@
+## todo
+
+- answer the question
+    - wat vinden we in de literatuur over het beantwoorden van vragen in de CD context?
+
+- what is a good hierarchical semantic structure?
+    - specs
+        - should allow accessing relational database just as easy as current
+        - should allow storing facts and rules in the database (some of whom relational)
+        - should make encode quantification manually easier than the current system
+        - should allow quantification in questions, statements and commands
+        - should represent nested structures
+        - should allow flattening of nested structures for database query purposes
+        - should allow passing an atom as a unit (why abc(A, B, C))
+    - options
+        - AMR - https://github.com/amrisi/amr-guidelines/blob/master/amr.md
+        - create a class instance for an atom for easier atom modification, like adding an argument; also much better for portability
+    - consequences
+        - add an in-between step between parsing and semantic analysis: quantification
+        - add an extra action that flattens the data structure for database query purposes
+
+- make $2 = $4. How? that depends on how it's going to be used.
+    - mark relation columns as `mention` (discourse variable, skolem constant)
+    - for every bound mention, use it in subsequent atoms by querying the alternative mentions as well
+        - foreach (E1 = alternate mention) query, or
+        - query with E1 in (alternate mentions)
+
+- I added `sentence` as an extra data source for `match`. This works for now, but I'm not confident it's the final solution
+
+- the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
+
+## PAM
+
+- de deducties van PAM moeten een mate van onzekerheid hebben; het zijn geen zekerheden; hoe streep je hypothesen af?
+
+## context
+
+Work out context in inference rules:
+* syntax: `name{ rule. rule. }`
+* application: the rules must only be applied when context name is active
+
+## Syntax
+
+I want to simplify the structure of quantifiers. Maybe I made them needlessly complicated to make sure they served as a scoping mechanism. But scoping can be done in a different way; a way that's simpler to comprehend. Look at different representation forms to see if they can simplify things.
+
+## Second order sentences
+
+Nested sentences should not just be stored relationally, because the hierarchy matters. In relational form, the dependent form is stored as a fact, and this is wrong.
+
+## scoped
+
+`scoped` used to result in no new variables. This has changed. Now it does. And the tests still pass. And this has advantages, but maybe also disadvantages. Create a new predicate that explicitly exposes variables? Change the name of `scoped` to `execute`?
+
+## multiple sentences
+
+* the parser should always return multiple sentences, and there should be a better standard way on how to find different sentences
+
+## inference to deduction
+
+Everything called inference should be called deduction, to contrast it with induction.
+
+## ResultIterator
+
+The `ResultIterator` was an about that contained `n` results as an iterator, to avoid returning a super large amount of results. Do I need a replacement for it?
+
+## output
+
+* create a separate predicate for producing output (like `output(type)`)
+* or there may be different predicates `output_print()` that prints directly
+* this predicate should then **wait** until the message is received by the user / client, before continuing
+* this predicate can be implemented by the application in any way it sees fit
+
+## database
+
+- use a db like Neo4j to store second order, modal, and time-based sentences
+
+## module
+
+* (?) add `common_query` and `common_write` to SomeModule to reduce code duplication
+* $unification of 2 variables (both should be assigned a new anonymous variable. https://www.dai.ed.ac.uk/groups/ssp/bookpages/quickprolog/node12.html)
+
+## isolation of independent parts
+
+optimize isolate independent parts:
+
+* is it possible to place the independent parts directly after the head atom? faster?
+* isolate the list arguments of an atom (this is not done yet)
+* but: don't use isolate independent parts for predicates like "store"
+
+## done
+
+- remove bindings from ExecutionContext?
+* $unification
+* replace SimpleResponder by BasicGenerator
+* learn_grammar_rule
+* directly execute code
+* characters as tokens; exit tokenizer
+* add ResultIterator
+* can parsing be done faster?
+* document parse tree sort heuristics
+* chat-80 import csv
+* optimize in-memory db
+* import from csv
+* can np's be implemented as atoms without find?
+* optimize: reorder atoms
+* inference engine
+* create numbers based on a token
+* create a context and pass it to each module function, in stead of the arguments which are mostly unused
+* table select columns to display => intents as atoms?
+* add units to scalar answers and floor floating point numbers in tables to integers
+* can aggregates by simplified?
+* importers based on hand-written grammar in stead of regex
+* store type information with the variable in stead of an Instance?
+* start using dialog variables in stead of sentence variables; it's hard to change them later
+* pass variables to functions or None values?
+* more access to in-between results of blocks
+* added data sources for Postgres, MySQL, Sqlite3, Sparql
+* simplify the responder
