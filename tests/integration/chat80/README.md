@@ -1,4 +1,21 @@
-## To try the original Chat-80 application:
+## Chat-80
+
+Replicates a Chat-80 dialog (found here: https://github.com/JanWielemaker/chat80/blob/master/prolog/chat80/demo)
+CHAT-80 is mainly described in
+- Efficient Processing of Interactive Relational Database Queries Expressed in Logic - Warren (1981)
+- An efficient easily adaptable system for interpreting natural language queries - Pereira, Warren (1982)
+
+Topics:
+- long distance dependencies (extraposition)
+- proper nouns
+- superlatives ('largest')
+- relative clauses
+- aggregations
+- inference: in(A, B) -> contains(C, A), in(C, B).
+- different result formats: yes/no, scalar, list, table
+- query optimization: reordering and isolating sub-queries
+
+## To run the original Chat-80 application:
 
 Install SWI Prolog
 

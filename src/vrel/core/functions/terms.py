@@ -2,6 +2,9 @@ from vrel.entity.Variable import Variable
 
 
 def format_term(value: any, indent: str = "\n") -> str:
+
+    from vrel.entity.Atom import Atom
+
     """
     Formats nested lists, tuples and strings
     """
@@ -12,6 +15,13 @@ def format_term(value: any, indent: str = "\n") -> str:
             text += sep + format_term(element, indent + "    ")
             sep = ", "
         text += ")"
+    elif isinstance(value, Atom):
+        s = ""
+        for k, v in value.arguments.items():
+            sub = format_term(v, indent + "          ")
+            s += indent + "    " + f":{k} {sub}"
+        text = f"({value.variable} / {value.name} {s})"
+
     elif isinstance(value, list):
         text = indent + "["
         for element in value:
@@ -82,4 +92,3 @@ def reify_variables(construct: any) -> any:
     else:
         # just the value
         return construct
-

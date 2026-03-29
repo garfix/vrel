@@ -1,6 +1,7 @@
 from vrel.core.functions.terms import bind_variables, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
 from vrel.core.constants import DISJUNCTION
+from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSolver import SomeSolver
@@ -13,17 +14,19 @@ class Solver(SomeSolver):
     model: SomeModel
     sentence: SemanticSentence
 
-    def __init__(self, model: SomeModel, sentence: SemanticSentence=None) -> None:
+    def __init__(self, model: SomeModel, sentence: SemanticSentence = None) -> None:
         self.model = model
         self.sentence = sentence
 
-
     def solve(self, atoms: list[tuple]) -> list[dict]:
+
+        if isinstance(atoms, Atom):
+            return self.solve_single(atoms, {})
+
         if not isinstance(atoms, list):
             raise Exception("Solver can only solve lists of atoms, this is not a list: " + str(atoms))
 
         return self.solve_rest(atoms, {})
-
 
     def solve_rest(self, atoms: list[tuple], binding: dict = {}) -> list[dict]:
         if len(atoms) == 0:
@@ -35,8 +38,11 @@ class Solver(SomeSolver):
                 result.extend(self.solve_rest(atoms[1:], b))
             return result
 
-
     def solve_single(self, atom: tuple, binding: dict):
+
+        if not isinstance(atom, Atom):
+            raise Exception("Solver can only solve atoms, this is not an atom: " + str(atom))
+
         predicate = atom[0]
         unbound_arguments = atom[1:]
 
@@ -48,14 +54,12 @@ class Solver(SomeSolver):
 
         return out_bindings
 
-
     def solve_disjunction(self, disjuncts: list[list[tuple]], binding: dict):
         for disjunct in disjuncts:
             results = self.solve(disjunct)
             if len(results) > 0:
                 return results
         return []
-
 
     def find_relation_values(self, predicate: str, arguments: list, binding: dict) -> list[list]:
 
@@ -84,7 +88,14 @@ class Solver(SomeSolver):
                     if not isinstance(out_values[0], list) and not isinstance(out_values[0], tuple):
                         raise Exception("The results of '" + predicate + "' should be lists or tuples")
                     if len(out_values[0]) != len(arguments):
-                        raise Exception("The number of arguments in the results of '" + predicate + "' is " + str(len(out_values[0])) + " and should be " + str(len(unbound_arguments)))
+                        raise Exception(
+                            "The number of arguments in the results of '"
+                            + predicate
+                            + "' is "
+                            + str(len(out_values[0]))
+                            + " and should be "
+                            + str(len(unbound_arguments))
+                        )
 
                 out_bindings = tuple_results_to_bindings(predicate, arguments, out_values, binding)
 
@@ -96,7 +107,6 @@ class Solver(SomeSolver):
                 raise Exception("The result of '" + predicate + "' should be a list")
 
         return deduplicated_bindings.values()
-
 
     def write_atom(self, atom: tuple):
         predicate = atom[0]
@@ -115,7 +125,6 @@ class Solver(SomeSolver):
             if relation.write_function is not None:
                 context = ExecutionContext(relation, self, self.sentence, self.model)
                 relation.write_function(arguments, context)
-
 
     def write_atoms(self, atoms: list[tuple]):
         for atom in atoms:

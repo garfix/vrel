@@ -1,3 +1,4 @@
+from vrel.entity.Atom import Atom
 from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.ParseTreeNode import ParseTreeNode
 from vrel.entity.ProcessResult import ProcessResult
@@ -20,16 +21,13 @@ class SemanticComposer(SomeProcessor):
     parser: SomeProcessor
     variable_generator: VariableGenerator
 
-
     def __init__(self, parser: SomeProcessor) -> None:
         super().__init__()
         self.parser = parser
         self.variable_generator = VariableGenerator("$")
 
-
     def get_name(self) -> str:
         return "Composer"
-
 
     def process(self, incoming: BasicParserProduct) -> ProcessResult:
 
@@ -49,14 +47,12 @@ class SemanticComposer(SomeProcessor):
 
         return ProcessResult([product], "")
 
-
     def check_for_sem(self, node: ParseTreeNode):
         if node.form == "" and node.rule.sem is None:
             raise Exception("Rule '" + str(node.rule) + "' is missing key 'sem'")
 
         for child in node.children:
             self.check_for_sem(child)
-
 
     def compose(self, node: ParseTreeNode, incoming_variables: list[str]) -> list[tuple]:
 
@@ -66,7 +62,6 @@ class SemanticComposer(SomeProcessor):
         # collect the semantics of the child nodes
         child_semantics = []
         inferences = []
-
 
         for child, consequent in zip(node.children, node.rule.consequents):
             if not child.is_leaf_node():
@@ -96,7 +91,6 @@ class SemanticComposer(SomeProcessor):
 
         return unified_semantics, unified_inferences
 
-
     def create_map(self, node: ParseTreeNode, incoming_variables: list[str]):
         # start variable map by mapping antecedent variables to incoming variables
         map = {}
@@ -106,25 +100,41 @@ class SemanticComposer(SomeProcessor):
         # complete map with other variables from the consequents
         for cons in node.rule.consequents:
             for i, arg in enumerate(cons.arguments):
-                    if arg not in map:
-                        map[arg] = self.variable_generator.next()
+                if arg not in map:
+                    map[arg] = self.variable_generator.next()
 
         return map
 
-
-    def extend_map_with_semantics(self, map: dict, semantics: list[tuple]):
+    def extend_map_with_semantics(self, map: dict, term: list[tuple]):
         # only lists of atoms for now
-        if isinstance(semantics, list):
-            for atom in semantics:
+        if isinstance(term, list):
+            for atom in term:
                 for arg in atom:
                     # since we're late in the game, don't replace variables that have already been replaced
-                    if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
+                    if (
+                        isinstance(arg, Variable)
+                        and arg.name not in map
+                        and not self.variable_generator.isinstance(arg)
+                    ):
                         map[arg.name] = self.variable_generator.next()
-
+        elif isinstance(term, Atom):
+            variable = term.variable
+            if variable.name not in map and not self.variable_generator.isinstance(variable):
+                map[variable.name] = self.variable_generator.next()
+            for key, arg in term.arguments.items():
+                # since we're late in the game, don't replace variables that have already been replaced
+                if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
+                    map[arg.name] = self.variable_generator.next()
 
     def unify_variables(self, semantics: any, map: dict[str, str]) -> any:
         if isinstance(semantics, list):
             return [self.unify_variables(atom, map) for atom in semantics]
+        elif isinstance(semantics, Atom):
+            return Atom(
+                self.unify_variables(semantics.variable, map),
+                semantics.name,
+                {k: self.unify_variables(v, map) for k, v in semantics.arguments.items()},
+            )
         elif isinstance(semantics, tuple):
             return tuple([self.unify_variables(term, map) for term in semantics])
         elif isinstance(semantics, SemanticFunction):
@@ -135,4 +145,3 @@ class SemanticComposer(SomeProcessor):
             return map[semantics.name]
         else:
             return semantics
-
