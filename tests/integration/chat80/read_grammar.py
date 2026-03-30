@@ -7,7 +7,7 @@ def get_read_grammar():
         # sentence
         {
             "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
-            "sem": lambda np1, verb, np2: Atom(E1, "intent_yn", Atom(E1, verb, np1, np2)),
+            "sem": lambda np1, verb, np2: Atom(E1, "intent_yn", [Atom(E1, verb, np1, np2)]),
         },
         # {
         #     "syn": "s(E1) -> 'is' 'there' np(E1) + '?'",
@@ -19,7 +19,7 @@ def get_read_grammar():
         # },
         {
             "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' + '?'",
-            "sem": lambda nbar: Atom(E1, "intent_list", nbar),
+            "sem": lambda nbar: [Atom(E1, "intent_list", nbar)],
         },
         # {
         #     "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' pp(E1) + '?'",
@@ -118,7 +118,7 @@ def get_read_grammar():
         # { "syn": "dtv(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: [('flows_from_to', E1, E2, E3)] },
         # nbar
         # { "syn": "nbar(E1) -> adj(E1) nbar(E1)", "sem": lambda adj, nbar: adj + nbar },
-        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
+        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: [Atom(E1, noun)]},
         # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
         # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
         # { "syn": "nbar(E1) -> nbar(E1) relative_clause(E1)", "sem": lambda nbar, relative_clause: nbar + relative_clause },
@@ -205,5 +205,9 @@ def get_read_grammar():
         {"syn": "noun(E1) -> proper_noun(E1)", "sem": lambda proper_noun: proper_noun},
         # proper noun
         # negative boost: make it less important than the noun
-        {"syn": "proper_noun(E1) -> /\\w+/", "sem": lambda token: Atom(E1, "<unknown>", {"name": token}), "boost": -1},
+        {
+            "syn": "proper_noun(E1) -> /\\w+/",
+            "sem": lambda token: [Atom(E1, "<unknown>", {"name": token})],
+            "boost": -1,
+        },
     ]

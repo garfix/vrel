@@ -1,6 +1,6 @@
 from vrel.core.functions.terms import bind_variables, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
-from vrel.core.constants import DISJUNCTION
+from vrel.core.constants import DISJUNCTION, DUMMY
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.interface.SomeModel import SomeModel
@@ -18,17 +18,14 @@ class Solver(SomeSolver):
         self.model = model
         self.sentence = sentence
 
-    def solve(self, atoms: list[tuple]) -> list[dict]:
-
-        if isinstance(atoms, Atom):
-            return self.solve_single(atoms, {})
+    def solve(self, atoms: list[Atom]) -> list[dict]:
 
         if not isinstance(atoms, list):
             raise Exception("Solver can only solve lists of atoms, this is not a list: " + str(atoms))
 
         return self.solve_rest(atoms, {})
 
-    def solve_rest(self, atoms: list[tuple], binding: dict = {}) -> list[dict]:
+    def solve_rest(self, atoms: list[Atom], binding: dict = {}) -> list[dict]:
         if len(atoms) == 0:
             return [binding]
         else:
@@ -38,13 +35,16 @@ class Solver(SomeSolver):
                 result.extend(self.solve_rest(atoms[1:], b))
             return result
 
-    def solve_single(self, atom: tuple, binding: dict):
+    def solve_single(self, atom: Atom, binding: dict):
 
         if not isinstance(atom, Atom):
             raise Exception("Solver can only solve atoms, this is not an atom: " + str(atom))
 
-        predicate = atom[0]
-        unbound_arguments = atom[1:]
+        predicate = atom.predicate
+        unbound_arguments = atom.positional_arguments
+
+        if atom.variable != DUMMY:
+            unbound_arguments = [atom.variable] + atom.positional_arguments
 
         if predicate == DISJUNCTION:
             return self.solve_disjunction(atom[1], binding)
@@ -94,7 +94,7 @@ class Solver(SomeSolver):
                             + "' is "
                             + str(len(out_values[0]))
                             + " and should be "
-                            + str(len(unbound_arguments))
+                            + str(len(arguments))
                         )
 
                 out_bindings = tuple_results_to_bindings(predicate, arguments, out_values, binding)
@@ -108,9 +108,9 @@ class Solver(SomeSolver):
 
         return deduplicated_bindings.values()
 
-    def write_atom(self, atom: tuple):
-        predicate = atom[0]
-        arguments = atom[1:]
+    def write_atom(self, atom: Atom):
+        predicate = atom.predicate
+        arguments = atom.positional_arguments
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:

@@ -1,6 +1,7 @@
 import re
 
 from vrel.core.constants import DISJUNCTION, UNIFICATION
+from vrel.entity.Atom import Atom
 from vrel.entity.InductionRule import InductionRule
 from vrel.entity.Variable import Variable
 from vrel.entity.InferenceRule import InferenceRule
@@ -12,30 +13,34 @@ class SimpleInferenceRuleParser:
     re_identifier: re.Pattern
     re_variable: re.Pattern
 
-
     def __init__(self) -> None:
-        self.re_tokens = re.compile("(" + "|".join([
-            '=>',
-            '=',
-            '\.',
-            ',',
-            ';',
-            ':-',
-            '\(',
-            '\)',
-            '\d+\.\d+',
-            '\d+',
-            "'(?:\\\\'|[^'])+'",
-            '"(?:\\\\"|[^"])+"',
-            '[A-Z]\w*',
-            '\w+',
-            '#.*\n',
-        ]) + ")")
-        self.re_identifier = re.compile("^\w+$")
-        self.re_variable = re.compile("^[A-Z]\w*$")
-        self.re_float = re.compile("^\d+\.\d+$")
-        self.re_int = re.compile("^\d+$")
-
+        self.re_tokens = re.compile(
+            "("
+            + "|".join(
+                [
+                    "=>",
+                    "=",
+                    "\\.",
+                    ",",
+                    ";",
+                    ":-",
+                    "\\(",
+                    "\\)",
+                    "\\d+\\.\\d+",
+                    "\\d+",
+                    "'(?:\\\\'|[^'])+'",
+                    '"(?:\\\\"|[^"])+"',
+                    "[A-Z]\\w*",
+                    "\\w+",
+                    "#.*\\n",
+                ]
+            )
+            + ")"
+        )
+        self.re_identifier = re.compile("^\\w+$")
+        self.re_variable = re.compile("^[A-Z]\\w*$")
+        self.re_float = re.compile("^\\d+\\.\\d+$")
+        self.re_int = re.compile("^\\d+$")
 
     def parse_rules(self, text: str):
 
@@ -58,7 +63,6 @@ class SimpleInferenceRuleParser:
 
         return rules, None
 
-
     def parse_induction_rules(self, text: str):
 
         rules = []
@@ -80,7 +84,6 @@ class SimpleInferenceRuleParser:
 
         return rules, None
 
-
     # father(X, Y) :- parent(X, Y), male(X).
     def parse_rule(self, tokens: list[str], pos: int):
 
@@ -91,7 +94,7 @@ class SimpleInferenceRuleParser:
 
         consequents = []
         implies, new_pos = self.parse_token(tokens, pos)
-        if implies == ':-':
+        if implies == ":-":
             pos = new_pos
             consequents, new_pos = self.parse_atoms(tokens, pos)
             if not consequents:
@@ -106,7 +109,6 @@ class SimpleInferenceRuleParser:
 
         return InferenceRule(antecedent, consequents), pos
 
-
     # female(X), cow(X), young(X) :- heifer(X).
     def parse_induction_rule(self, tokens: list[str], pos: int):
 
@@ -117,7 +119,7 @@ class SimpleInferenceRuleParser:
 
         consequents = []
         implies, new_pos = self.parse_token(tokens, pos)
-        if implies == '=>':
+        if implies == "=>":
             pos = new_pos
             consequents, new_pos = self.parse_atoms(tokens, pos)
             if not consequents:
@@ -134,7 +136,6 @@ class SimpleInferenceRuleParser:
 
         return InductionRule(antecedents, consequents), pos
 
-
     # ( parent(X, Y), parent(Y, Z) )
     # parent(X, Y), parent(Y, Z)
     # ( sibling(X, Y) ; ( brother(X, Y) ; sister(X, Y) )
@@ -150,7 +151,6 @@ class SimpleInferenceRuleParser:
             return atoms, pos
 
         return None, pos
-
 
     # parent(X, Y), parent(Y, Z)
     def parse_ungrouped_atoms(self, tokens: list[str], pos: int):
@@ -171,7 +171,6 @@ class SimpleInferenceRuleParser:
 
         return atoms, pos
 
-
     # ( parent(X, Y), parent(Y, Z) )
     def parse_grouped_atoms(self, tokens: list[str], pos: int):
         open, new_pos = self.parse_token(tokens, pos)
@@ -190,7 +189,6 @@ class SimpleInferenceRuleParser:
         pos = new_pos
 
         return atoms, pos
-
 
     # ( brother(X, Y) ; sister(X, Y)
     def parse_disjuncted_atom(self, tokens: list[str], pos: int):
@@ -223,7 +221,6 @@ class SimpleInferenceRuleParser:
 
         return disjunction, pos
 
-
     # parent(X, Y)
     # ( brother(X, Y) ; sister(X, Y) )
     # X = friend(A, B)
@@ -247,7 +244,7 @@ class SimpleInferenceRuleParser:
         return None, pos
 
     def parse_simple_atom_or_term(self, tokens: list[str], pos: int):
-        """ Note: returns the atom as a list of one"""
+        """Note: returns the atom as a list of one"""
 
         atom, new_pos = self.parse_simple_atom(tokens, pos)
         if atom:
@@ -260,7 +257,6 @@ class SimpleInferenceRuleParser:
             return term, pos
 
         return None, pos
-
 
     # X = friend(A, B)
     # friend(A, B) = X
@@ -314,8 +310,7 @@ class SimpleInferenceRuleParser:
             return None, new_pos
         pos = new_pos
 
-        return tuple([predicate] + terms), pos
-
+        return Atom(predicate, *terms), pos
 
     # five_horses
     def parse_identifier(self, tokens: list[str], pos: int):
@@ -329,8 +324,7 @@ class SimpleInferenceRuleParser:
 
         return None, new_pos
 
-
-    def parse_term(self, tokens: list[str], pos: int, no_atoms = False):
+    def parse_term(self, tokens: list[str], pos: int, no_atoms=False):
         token, new_pos = self.parse_token(tokens, pos)
         if not token:
             return None, pos
@@ -363,18 +357,16 @@ class SimpleInferenceRuleParser:
 
         return None, pos
 
-
     def parse_token(self, tokens: list[str], pos: int):
         if pos >= len(tokens):
             return None, pos
 
         # skip comment
         token = tokens[pos]
-        if token[0] == '#':
-            return self.parse_token(tokens, pos+1)
+        if token[0] == "#":
+            return self.parse_token(tokens, pos + 1)
 
         return tokens[pos], pos + 1
-
 
     def eat_trailing_comments(self, tokens: list[str], pos: int):
         token, new_pos = self.parse_token(tokens, pos)

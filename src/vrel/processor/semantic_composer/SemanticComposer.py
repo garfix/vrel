@@ -109,7 +109,7 @@ class SemanticComposer(SomeProcessor):
         # only lists of atoms for now
         if isinstance(term, list):
             for atom in term:
-                for arg in atom:
+                for arg in atom.positional_arguments:
                     # since we're late in the game, don't replace variables that have already been replaced
                     if (
                         isinstance(arg, Variable)
@@ -132,7 +132,7 @@ class SemanticComposer(SomeProcessor):
         elif isinstance(semantics, Atom):
             return Atom(
                 self.unify_variables(semantics.variable, map),
-                semantics.name,
+                semantics.predicate,
                 {k: self.unify_variables(v, map) for k, v in semantics.arguments.items()},
             )
         elif isinstance(semantics, tuple):

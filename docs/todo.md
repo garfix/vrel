@@ -1,29 +1,44 @@
 ## todo
 
+- reified variables?
+  - this seems to be their only valid application
+
+    { "syn": "main_noun(E1) -> 'oxide'", "sem": lambda: 'oxide', "dialog": [("oxide", e1, 'true')] },
+    { "syn": "main_noun(E1) -> 'chloride'", "sem": lambda: 'chloride', "dialog": [("chloride", e1, 'true')] },
+    { "syn": "main_noun(E1) -> 'sulfide'", "sem": lambda: 'sulfide', "dialog": [("sulfide", e1, 'true')] },
+
+- rewrite for Atoms
+  - rewrite the internal parsers to produce Atoms in stead of tuples?
+    - With dummy main variables?
+    - Allow the main variable, as in `include(E1 | E2, E3)`
+  - Atoms also have a limitation, in that they can't have lists of atoms for an argument
+  - create a function that transforms an Atom into a recursively quantified tuple list?
+    - Use just in question intents
+
 - answer the question
-    - wat vinden we in de literatuur over het beantwoorden van vragen in de CD context?
+  - wat vinden we in de literatuur over het beantwoorden van vragen in de CD context?
 
 - what is a good hierarchical semantic structure?
-    - specs
-        - should allow accessing relational database just as easy as current
-        - should allow storing facts and rules in the database (some of whom relational)
-        - should make encode quantification manually easier than the current system
-        - should allow quantification in questions, statements and commands
-        - should represent nested structures
-        - should allow flattening of nested structures for database query purposes
-        - should allow passing an atom as a unit (why abc(A, B, C))
-    - options
-        - AMR - https://github.com/amrisi/amr-guidelines/blob/master/amr.md
-        - create a class instance for an atom for easier atom modification, like adding an argument; also much better for portability
-    - consequences
-        - add an in-between step between parsing and semantic analysis: quantification
-        - add an extra action that flattens the data structure for database query purposes
+  - specs
+    - should allow accessing relational database just as easy as current
+    - should allow storing facts and rules in the database (some of whom relational)
+    - should make encode quantification manually easier than the current system
+    - should allow quantification in questions, statements and commands
+    - should represent nested structures
+    - should allow flattening of nested structures for database query purposes
+    - should allow passing an atom as a unit (why abc(A, B, C))
+  - options
+    - AMR - https://github.com/amrisi/amr-guidelines/blob/master/amr.md
+    - create a class instance for an atom for easier atom modification, like adding an argument; also much better for portability
+  - consequences
+    - add an in-between step between parsing and semantic analysis: quantification
+    - add an extra action that flattens the data structure for database query purposes
 
 - make $2 = $4. How? that depends on how it's going to be used.
-    - mark relation columns as `mention` (discourse variable, skolem constant)
-    - for every bound mention, use it in subsequent atoms by querying the alternative mentions as well
-        - foreach (E1 = alternate mention) query, or
-        - query with E1 in (alternate mentions)
+  - mark relation columns as `mention` (discourse variable, skolem constant)
+  - for every bound mention, use it in subsequent atoms by querying the alternative mentions as well
+    - foreach (E1 = alternate mention) query, or
+    - query with E1 in (alternate mentions)
 
 - I added `sentence` as an extra data source for `match`. This works for now, but I'm not confident it's the final solution
 
@@ -36,8 +51,9 @@
 ## context
 
 Work out context in inference rules:
-* syntax: `name{ rule. rule. }`
-* application: the rules must only be applied when context name is active
+
+- syntax: `name{ rule. rule. }`
+- application: the rules must only be applied when context name is active
 
 ## Syntax
 
@@ -53,7 +69,7 @@ Nested sentences should not just be stored relationally, because the hierarchy m
 
 ## multiple sentences
 
-* the parser should always return multiple sentences, and there should be a better standard way on how to find different sentences
+- the parser should always return multiple sentences, and there should be a better standard way on how to find different sentences
 
 ## inference to deduction
 
@@ -65,10 +81,10 @@ The `ResultIterator` was an about that contained `n` results as an iterator, to 
 
 ## output
 
-* create a separate predicate for producing output (like `output(type)`)
-* or there may be different predicates `output_print()` that prints directly
-* this predicate should then **wait** until the message is received by the user / client, before continuing
-* this predicate can be implemented by the application in any way it sees fit
+- create a separate predicate for producing output (like `output(type)`)
+- or there may be different predicates `output_print()` that prints directly
+- this predicate should then **wait** until the message is received by the user / client, before continuing
+- this predicate can be implemented by the application in any way it sees fit
 
 ## database
 
@@ -76,20 +92,21 @@ The `ResultIterator` was an about that contained `n` results as an iterator, to 
 
 ## module
 
-* (?) add `common_query` and `common_write` to SomeModule to reduce code duplication
-* $unification of 2 variables (both should be assigned a new anonymous variable. https://www.dai.ed.ac.uk/groups/ssp/bookpages/quickprolog/node12.html)
+- (?) add `common_query` and `common_write` to SomeModule to reduce code duplication
+- $unification of 2 variables (both should be assigned a new anonymous variable. https://www.dai.ed.ac.uk/groups/ssp/bookpages/quickprolog/node12.html)
 
 ## isolation of independent parts
 
 optimize isolate independent parts:
 
-* is it possible to place the independent parts directly after the head atom? faster?
-* isolate the list arguments of an atom (this is not done yet)
-* but: don't use isolate independent parts for predicates like "store"
+- is it possible to place the independent parts directly after the head atom? faster?
+- isolate the list arguments of an atom (this is not done yet)
+- but: don't use isolate independent parts for predicates like "store"
 
 ## done
 
 - remove bindings from ExecutionContext?
+
 * $unification
 * replace SimpleResponder by BasicGenerator
 * learn_grammar_rule

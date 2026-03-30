@@ -13,7 +13,7 @@ from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
 from vrel.processor.parser.BasicParser import BasicParser
-from vrel.module.InferenceModule import InferenceModule
+from vrel.module.DeductionModule import DeductionModule
 from Chat80DB import Chat80DB
 from write_grammar import get_write_grammar
 from Chat80Module import Chat80Module
@@ -31,7 +31,7 @@ def test_chat80():
 
     # define the intents and other inferences
 
-    inferences = InferenceModule()
+    inferences = DeductionModule()
     inferences.import_rules(path + "inferences.pl")
     inferences.import_rules(path + "intents.pl")
 
@@ -45,13 +45,7 @@ def test_chat80():
 
     # define the model
 
-    model = Model([
-        facts,
-        inferences,
-        optimizer,
-        output_buffer,
-        dialog_context
-    ])
+    model = Model([facts, inferences, optimizer, output_buffer, dialog_context])
 
     # define the pipeline
 
@@ -69,16 +63,14 @@ def test_chat80():
     # define the system
 
     system = BasicSystem(
-        model=model,
-        parser=parser,
-        composer=composer,
-        executor=executor,
-        output_generator=generator,
-        logger=logger
+        model=model, parser=parser, composer=composer, executor=executor, output_generator=generator, logger=logger
     )
 
     tests = [
-        ["What rivers are there?", "amazon, amu_darya, amur, brahmaputra, colorado, congo_river, cubango, danube, don, elbe, euphrates, ganges, hwang_ho, indus, irrawaddy, lena, limpopo, mackenzie, mekong, mississippi, murray, niger_river, nile, ob, oder, orange, orinoco, parana, rhine, rhone, rio_grande, salween, senegal_river, tagus, vistula, volga, volta, yangtze, yenisei, yukon, zambesi"],
+        [
+            "What rivers are there?",
+            "amazon, amu_darya, amur, brahmaputra, colorado, congo_river, cubango, danube, don, elbe, euphrates, ganges, hwang_ho, indus, irrawaddy, lena, limpopo, mackenzie, mekong, mississippi, murray, niger_river, nile, ob, oder, orange, orinoco, parana, rhine, rhone, rio_grande, salween, senegal_river, tagus, vistula, volga, volta, yangtze, yenisei, yukon, zambesi",
+        ],
         ["Does Afghanistan border China?", "yes"],
         # ["What is the capital of Upper_Volta?", "ouagadougou"],
         # ["Where is the largest country?", "northern_asia"],
@@ -133,4 +125,3 @@ def test_chat80():
     tester.run()
 
     print(logger)
-

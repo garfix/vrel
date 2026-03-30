@@ -4,15 +4,19 @@ from vrel.core.functions.terms import bind_variables
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.InferenceRule import InferenceRule
 from vrel.module.PlainReadWriteModule import PlainReadWriteModule
-from vrel.module.InferenceModule import InferenceModule
+from vrel.module.DeductionModule import DeductionModule
 
 
-def match(pattern, current_subject, binding: dict, deduction_rules: list[InferenceRule], context: ExecutionContext, sentence):
-    model = Model([
-        # PlainReadWriteModule(sentence),
-        PlainReadWriteModule(current_subject),
-        InferenceModule(deduction_rules)
-    ])
+def match(
+    pattern, current_subject, binding: dict, deduction_rules: list[InferenceRule], context: ExecutionContext, sentence
+):
+    model = Model(
+        [
+            # PlainReadWriteModule(sentence),
+            PlainReadWriteModule(current_subject),
+            DeductionModule(deduction_rules),
+        ]
+    )
     # print()
     # print('sentence', sentence)
     # print('current_subject', current_subject)

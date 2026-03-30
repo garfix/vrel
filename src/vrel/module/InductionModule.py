@@ -5,7 +5,7 @@ from vrel.entity.InductionRule import InductionRule
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
-from vrel.module.helper.SimpleInferenceRuleParser import SimpleInferenceRuleParser
+from vrel.core.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
 from vrel.module.induction.PlanAnalyzer import PlanAnalyzer
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
@@ -22,7 +22,6 @@ class InductionModule(SomeModule):
     deduction_rules: list[InductionRule]
     variable_generator: VariableGenerator
 
-
     def __init__(self) -> None:
         super().__init__()
         self.add_relation(Relation("induce_facts", query_function=self.induce_facts))
@@ -36,7 +35,6 @@ class InductionModule(SomeModule):
         self.plan_analyzer_rules = []
         self.deduction_rules = []
 
-
     def import_fact_induction_rules(self, path: str):
         parser = SimpleInferenceRuleParser()
         with open(path) as rule_file:
@@ -46,7 +44,6 @@ class InductionModule(SomeModule):
                 raise Exception("Unable to parse {} induction on token " + str(pos) + " in file " + path)
             for rule in rules:
                 self.fact_induction_rules.append(rule)
-
 
     def import_plan_analyzer_rules(self, path: str):
         parser = SimpleInferenceRuleParser()
@@ -58,7 +55,6 @@ class InductionModule(SomeModule):
             for rule in rules:
                 self.plan_analyzer_rules.append(rule)
 
-
     def import_deduction_rules(self, path: str):
         parser = SimpleInferenceRuleParser()
         with open(path) as rule_file:
@@ -68,7 +64,6 @@ class InductionModule(SomeModule):
                 raise Exception("Unable to parse induction on token " + str(pos) + " in file " + path)
             for rule in rules:
                 self.deduction_rules.append(rule)
-
 
     # ('induce_facts', [body-atoms])
     def induce_facts(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -85,10 +80,7 @@ class InductionModule(SomeModule):
             if binding is not None:
                 bound_consequent = bind_variables(consequent, binding)
                 context.solver.write_atoms(bound_consequent)
-        return [
-            [None]
-        ]
-
+        return [[None]]
 
     # ('analyze_plans', [body-atoms])
     def analyze_plans(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -99,16 +91,11 @@ class InductionModule(SomeModule):
 
         self.plan_analyzer.justify(atoms, self.plan_analyzer_rules, self.deduction_rules, context)
 
-        return [
-            [None]
-        ]
-
+        return [[None]]
 
     def explain(self, arguments: list, context: ExecutionContext) -> list[list]:
         atoms = arguments[0]
 
         self.plan_analyzer.justify(atoms, self.plan_analyzer_rules, self.deduction_rules, context)
 
-        return [
-            [None]
-        ]
+        return [[None]]

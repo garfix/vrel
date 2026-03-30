@@ -20,7 +20,7 @@ def format_term(value: any, indent: str = "\n") -> str:
         for k, v in value.arguments.items():
             sub = format_term(v, indent + "          ")
             s += indent + "    " + f":{k} {sub}"
-        text = f"({value.variable} / {value.name} {s})"
+        text = f"({value.variable} / {value.predicate} {s})"
 
     elif isinstance(value, list):
         text = indent + "["
