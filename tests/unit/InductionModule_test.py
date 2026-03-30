@@ -3,7 +3,7 @@ import unittest
 from vrel.core.constants import E1, E2
 from vrel.entity.Variable import Variable
 from vrel.entity.InductionRule import InductionRule
-from vrel.core.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
+from vrel.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
 
 
 class TestInductionModule(unittest.TestCase):

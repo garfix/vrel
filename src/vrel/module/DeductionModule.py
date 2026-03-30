@@ -5,7 +5,7 @@ from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
 from vrel.interface import SomeSolver
 from vrel.interface.SomeModule import SomeModule
-from vrel.core.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
+from vrel.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.InferenceRule import InferenceRule
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator

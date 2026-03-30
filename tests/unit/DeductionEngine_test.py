@@ -7,7 +7,7 @@ from vrel.core.Solver import Solver
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.module.DeductionModule import DeductionModule
-from vrel.core.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
+from vrel.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
 from vrel.entity.InferenceRule import InferenceRule
 
 

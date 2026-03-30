@@ -5,7 +5,7 @@ from vrel.entity.InductionRule import InductionRule
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
-from vrel.core.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
+from vrel.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
 from vrel.module.induction.PlanAnalyzer import PlanAnalyzer
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 

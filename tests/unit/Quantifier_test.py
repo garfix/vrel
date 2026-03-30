@@ -3,7 +3,7 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.constants import E1, E2, Body, Range
+from vrel.core.constants import E1, E2, E3, Body, Range
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Relation
@@ -63,8 +63,8 @@ class TestQuantification(unittest.TestCase):
         model = Model([SimpleModule(data_source)])
 
         simple_grammar = [
-            {"syn": "s(V1) -> np(E1) verb(V1) np(E2)", "sem": lambda np1, verb, np2: Atom(verb, np1, np2)},
-            {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: [("have", E1, E2)]},
+            {"syn": "s(E3) -> np(E1) verb(E1, E2) np(E2)", "sem": lambda np1, verb, np2: [Atom(E3, verb, np1, np2)]},
+            {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: "have"},
             {
                 "syn": "np(E1) -> det(E1) nbar(E1)",
                 "sem": lambda det, nbar: nbar.addArguments(det),
@@ -77,8 +77,8 @@ class TestQuantification(unittest.TestCase):
             },
             {"syn": "number(D1) -> 'two'", "sem": lambda: 2},
             {"syn": "number(D1) -> 'three'", "sem": lambda: 3},
-            {"syn": "noun(E1) -> 'parent'", "sem": lambda: [("parent", E1)]},
-            {"syn": "noun(E1) -> 'children'", "sem": lambda: [("child", E1)]},
+            {"syn": "noun(E1) -> 'parent'", "sem": lambda: "parent"},
+            {"syn": "noun(E1) -> 'children'", "sem": lambda: "child"},
         ]
 
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)

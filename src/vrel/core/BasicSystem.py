@@ -1,4 +1,5 @@
 from vrel.core.Solver import Solver
+from vrel.entity.Atom import Atom
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.interface.SomeComposer import SomeComposer
@@ -21,13 +22,14 @@ class BasicSystem(SomeSystem):
     model: SomeModel
     logger: SomeLogger
 
-    def __init__(self,
-            model: SomeModel=None,
-            parser: SomeParser=None,
-            composer: SomeComposer=None,
-            executor: SomeExecutor=None,
-            output_generator: SomeGenerator=None,
-            logger: SomeLogger=None
+    def __init__(
+        self,
+        model: SomeModel = None,
+        parser: SomeParser = None,
+        composer: SomeComposer = None,
+        executor: SomeExecutor = None,
+        output_generator: SomeGenerator = None,
+        logger: SomeLogger = None,
     ):
 
         self.model = model if model else Model([])
@@ -37,13 +39,11 @@ class BasicSystem(SomeSystem):
         self.output_generator = output_generator
         self.logger = logger
 
-
-    def enter(self, request: SentenceRequest) -> ProcessResult|None:
+    def enter(self, request: SentenceRequest) -> ProcessResult | None:
         if not self.parser:
             return None
 
         return self.parse(request)
-
 
     def parse(self, request: SentenceRequest):
 
@@ -64,7 +64,6 @@ class BasicSystem(SomeSystem):
 
         return None
 
-
     def compose(self, parse_product: BasicParserProduct):
 
         composer_result = self.composer.process(parse_product)
@@ -84,7 +83,6 @@ class BasicSystem(SomeSystem):
 
         return None
 
-
     def execute(self, composer_product: SemanticComposerProduct):
 
         executor_result = self.executor.process(composer_product)
@@ -93,13 +91,11 @@ class BasicSystem(SomeSystem):
 
         return executor_result
 
-
     def log_error(self, result: ProcessResult):
         solver = Solver(self.model)
-        solver.write_atom(('output_type', result.error_type))
-        solver.write_atom(('output_' + result.error_type, *result.error_args))
+        solver.write_atom(Atom("output_type", result.error_type))
+        solver.write_atom(Atom("output_" + result.error_type, *result.error_args))
         return result
-
 
     def read_output(self):
         return self.output_generator.generate_output()

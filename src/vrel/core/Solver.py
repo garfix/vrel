@@ -1,4 +1,4 @@
-from vrel.core.functions.terms import bind_variables, get_variables
+from vrel.core.functions.terms import bind_variables, flatten, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
 from vrel.core.constants import DISJUNCTION, DUMMY
 from vrel.entity.Atom import Atom
@@ -43,9 +43,6 @@ class Solver(SomeSolver):
         predicate = atom.predicate
         unbound_arguments = atom.positional_arguments
 
-        if atom.variable != DUMMY:
-            unbound_arguments = [atom.variable] + atom.positional_arguments
-
         if predicate == DISJUNCTION:
             return self.solve_disjunction(atom[1], binding)
 
@@ -89,12 +86,7 @@ class Solver(SomeSolver):
                         raise Exception("The results of '" + predicate + "' should be lists or tuples")
                     if len(out_values[0]) != len(arguments):
                         raise Exception(
-                            "The number of arguments in the results of '"
-                            + predicate
-                            + "' is "
-                            + str(len(out_values[0]))
-                            + " and should be "
-                            + str(len(arguments))
+                            f"The number of arguments in the results of '{predicate}' is {str(len(out_values[0]))} and should be {len(arguments)}"
                         )
 
                 out_bindings = tuple_results_to_bindings(predicate, arguments, out_values, binding)
@@ -110,21 +102,24 @@ class Solver(SomeSolver):
 
     def write_atom(self, atom: Atom):
         predicate = atom.predicate
-        arguments = atom.positional_arguments
+        flat = flatten(atom)
+
+        if not isinstance(atom, Atom):
+            raise Exception(f"Solver only writes atoms, and this is not an atom: {atom}")
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:
             raise Exception("No relation called '" + predicate + "' available in the model")
 
-        if len(get_variables(arguments)) > 0:
-            raise Exception(f"'{predicate}' attempts to persist a variable: {arguments}")
+        if len(get_variables(flat)) > 0:
+            raise Exception(f"'{predicate}' attempts to persist a variable: {flat}")
 
         # print("WRITE", atom)
 
         for relation in relations:
             if relation.write_function is not None:
                 context = ExecutionContext(relation, self, self.sentence, self.model)
-                relation.write_function(arguments, context)
+                relation.write_function(flat, context)
 
     def write_atoms(self, atoms: list[tuple]):
         for atom in atoms:

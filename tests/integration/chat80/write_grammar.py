@@ -7,37 +7,37 @@ def get_write_grammar():
         # sentences
         {
             "syn": "s() -> 'OK'",
-            "if": [Atom(DUMMY, "output_type", "ok")],
+            "if": [Atom("output_type", "ok")],
         },
         {
             "syn": "s() -> 'yes'",
-            "if": [Atom(DUMMY, "output_type", "yes")],
+            "if": [Atom("output_type", "yes")],
         },
         {
             "syn": "s() -> 'no'",
-            "if": [Atom(DUMMY, "output_type", "no")],
+            "if": [Atom("output_type", "no")],
         },
         {
             "syn": "s() -> value(E1)",
-            "if": [Atom(DUMMY, "output_type", "value"), Atom(DUMMY, "output_value", E1)],
+            "if": [Atom("output_type", "value"), Atom("output_value", E1)],
         },
         {
             "syn": "s() -> text(E1) text(E2)",
-            "if": [Atom(DUMMY, "output_type", "value_with_unit"), Atom(DUMMY, "output_value_with_unit", E1, E2)],
+            "if": [Atom("output_type", "value_with_unit"), Atom("output_value_with_unit", E1, E2)],
         },
         {
             "syn": "s() -> format(E1)",
-            "if": [Atom(DUMMY, "output_type", "list"), Atom(DUMMY, "output_list", E1)],
+            "if": [Atom("output_type", "list"), Atom("output_list", E1)],
             "format": lambda elements: format_list(elements),
         },
         {
             "syn": "s() -> format(E1, E2)",
-            "if": [Atom(DUMMY, "output_type", "table"), Atom(DUMMY, "output_table", E1, E2)],
+            "if": [Atom("output_type", "table"), Atom("output_table", E1, E2)],
             "format": lambda results, units: format_table(results, units),
         },
         {
             "syn": "s() -> 'Cheerio.'",
-            "if": [Atom(DUMMY, "output_type", "close_conversation")],
+            "if": [Atom("output_type", "close_conversation")],
         },
     ]
 

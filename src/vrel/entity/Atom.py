@@ -1,6 +1,5 @@
 from vrel.core.constants import DUMMY
 
-from vrel.core.functions.terms import format_term
 from vrel.entity.Variable import Variable
 
 
@@ -43,6 +42,8 @@ class Atom:
                 self.arguments |= arg
                 for k, v in arg.items():
                     self.named_arguments[k] = v
+                    if k.startswith("ARG"):
+                        raise Exception("Named arguments must not have numbered names: {args}")
             elif (
                 isinstance(arg, Atom)
                 or isinstance(arg, float)
@@ -58,10 +59,17 @@ class Atom:
             else:
                 raise Exception(f"Unknown argument type: {arg}")
 
+        # print()
+        # print(self.predicate)
+        # print(self.named_arguments)
+        # print(args)
+
     def addArguments(self, arguments: dict):
         return Atom(self.variable, self.predicate, *self.numbered_arguments, self.named_arguments | arguments)
 
     def __str__(self) -> str:
+        from vrel.core.functions.terms import format_term
+
         return format_term(self, "")
 
     def __repr__(self):

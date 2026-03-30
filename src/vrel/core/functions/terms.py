@@ -1,3 +1,4 @@
+from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
 
@@ -92,3 +93,15 @@ def reify_variables(construct: any) -> any:
     else:
         # just the value
         return construct
+
+
+def flatten(term: any):
+    if isinstance(term, Atom):
+        flattened = [flatten(e) for e in term.numbered_arguments]
+        return tuple([*flattened])
+    elif isinstance(term, list):
+        return [flatten(e) for e in term]
+    elif isinstance(term, tuple):
+        return tuple([flatten(e) for e in term])
+    else:
+        return term

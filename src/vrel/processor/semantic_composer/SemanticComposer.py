@@ -133,7 +133,8 @@ class SemanticComposer(SomeProcessor):
             return Atom(
                 self.unify_variables(semantics.variable, map),
                 semantics.predicate,
-                {k: self.unify_variables(v, map) for k, v in semantics.arguments.items()},
+                *[self.unify_variables(v, map) for v in semantics.numbered_arguments],
+                {k: self.unify_variables(v, map) for k, v in semantics.named_arguments.items()},
             )
         elif isinstance(semantics, tuple):
             return tuple([self.unify_variables(term, map) for term in semantics])

@@ -16,17 +16,17 @@ class TestSimpleFrameDataSource(unittest.TestCase):
         model = Model([SimpleModule(SimpleFrameDataSource())])
 
         solver = Solver(model)
-        solver.write_atom(("goal", 1))
+        solver.write_atom(Atom("goal", 1))
 
-        self.assertEqual(solver.solve_single(Atom(DUMMY, "goal", Variable("E1")), {"B": 5}), [{"B": 5, "E1": 1}])
-        self.assertEqual(solver.solve_single(Atom(DUMMY, "goal", 1), {"B": 5}), [{"B": 5}])
-        self.assertEqual(solver.solve_single(Atom(DUMMY, "goal", 2), {}), [])
+        self.assertEqual(solver.solve_single(Atom("goal", Variable("E1")), {"B": 5}), [{"B": 5, "E1": 1}])
+        self.assertEqual(solver.solve_single(Atom("goal", 1), {"B": 5}), [{"B": 5}])
+        self.assertEqual(solver.solve_single(Atom("goal", 2), {}), [])
 
-        solver.write_atom(("goal", [("win", "john", "cup")]))
-        solver.write_atom(("goal", [("win", "mary", "championship")]))
+        solver.write_atom(Atom("goal", [Atom("win", "john", "cup")]))
+        solver.write_atom(Atom("goal", [Atom("win", "mary", "championship")]))
 
         self.assertEqual(
-            solver.solve_single(Atom(DUMMY, "goal", [("win", Variable("E1"), Variable("E2"))]), {"X": 27}),
+            solver.solve_single(Atom("goal", [Atom("win", Variable("E1"), Variable("E2"))]), {"X": 27}),
             [{"X": 27, "E1": "john", "E2": "cup"}, {"X": 27, "E1": "mary", "E2": "championship"}],
         )
-        self.assertEqual(solver.solve_single(Atom(DUMMY, "goal", [("win", Variable("E1"), Variable("E1"))]), {}), [])
+        self.assertEqual(solver.solve_single(Atom("goal", [Atom("win", Variable("E1"), Variable("E1"))]), {}), [])
