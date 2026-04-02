@@ -7,14 +7,19 @@ def quantify(atom: Atom):
 
     extracted_atoms = []
 
-    determiner_arguments, cleared_atom = extract_determiner_arguments(atom)
+    new_atom = atom
+    for arg_name, arg in atom.arguments.items():
+        if isinstance(arg, Atom):
+            # arg = (p / parent)
+            if not ARG_DETERMINER in arg.named_arguments:
+                new_atom, extracted_atom = extract_argument(new_atom, arg_name, arg)
+                extracted_atoms.append(extracted_atom)
+
+    determiner_arguments, cleared_atom = extract_determiner_arguments(new_atom)
 
     new_atom = cleared_atom
     for determiner_argument in determiner_arguments:
         new_atom = create_quantification(new_atom, determiner_argument)
-
-    #         new_atom, extracted_atom = extract_argument(new_atom, arg_name, arg)
-    #         extracted_atoms.append(extracted_atom)
 
     return extracted_atoms + [new_atom]
 
