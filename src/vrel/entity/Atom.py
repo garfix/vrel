@@ -67,11 +67,12 @@ class Atom:
         # print(args)
 
     def add_arguments(self, arguments: dict):
-        return Atom(
+        from vrel.core.functions.atoms import create_atom
+
+        return create_atom(
             self.variable,
             self.predicate,
-            *self.numbered_arguments,
-            self.named_arguments | arguments,
+            self.arguments | arguments,
         )
 
     def remove_argument(self, argument_name: str):
