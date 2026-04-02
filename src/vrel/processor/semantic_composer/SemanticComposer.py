@@ -1,3 +1,4 @@
+from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.ParseTreeNode import ParseTreeNode
@@ -130,11 +131,10 @@ class SemanticComposer(SomeProcessor):
         if isinstance(semantics, list):
             return [self.unify_variables(atom, map) for atom in semantics]
         elif isinstance(semantics, Atom):
-            return Atom(
+            return create_atom(
                 self.unify_variables(semantics.variable, map),
                 semantics.predicate,
-                *[self.unify_variables(v, map) for v in semantics.numbered_arguments],
-                {k: self.unify_variables(v, map) for k, v in semantics.named_arguments.items()},
+                {k: self.unify_variables(v, map) for k, v in semantics.arguments.items()},
             )
         elif isinstance(semantics, tuple):
             return tuple([self.unify_variables(term, map) for term in semantics])

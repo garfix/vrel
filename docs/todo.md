@@ -48,6 +48,13 @@
 
 - de deducties van PAM moeten een mate van onzekerheid hebben; het zijn geen zekerheden; hoe streep je hypothesen af?
 
+## AMR and other structures
+
+- to query an amr, quantify it; the atoms then become "quantified"
+- to state a rule, turn it into a structure that can be queried, and store it
+- to state a goal, leave the amr as is
+- to command an amr, leave the command as is, but quantify the argument(s) and perform the command
+
 ## context
 
 Work out context in inference rules:

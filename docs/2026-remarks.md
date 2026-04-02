@@ -1,3 +1,56 @@
+## 2026-04-01
+
+The function `quantify` should also do other things to prepare the query. So, "querify"? Also, it may be interesting to just say `solve` and have `solve` do the transformations itself.
+
+## 2026-03-31
+
+"Every parent has 2 children" is now
+
+    (have, ($1, parent, determiner='all'), ($2, child, determiner=2))
+
+I can write a function that transforms this AMR into the previous version that has a quantification tree. I won't have any need for the leaf atoms any more at that point.
+
+    (all, $1, parent, (
+        number, $2, child, 2, {
+            have($1, $2)
+        }
+    ))
+
+This function is called **quantifier scoping** in CLE, and brings the added benefit that the scoping can now be dynamic, which it wasn't before.
+
+Should it also be possible to solve an unquantified structure? No not necessarily, or we would have to add the constraint that the structure not contain any quantifiers.
+
+The amr (semantic tree) is used for
+
+- statements: can store the amr directly
+- questions: turn the amr into a query
+- commands: can execute the amr directly, while the arguments of the command are turned into queries
+
+It's good to go into commands for a moment
+
+- Pick up a big red block
+  - pick_up(A) -> quantify(A, B), pick_up_real(B)
+- Will you please stack up both of the red blocks and either a green cube or a pyramid?
+  - stack_up(A) -> quantify(A, B), stack_up_real(B)
+
+And statements
+
+- The blue pyramid is mine; Do I own the blue pyramid?
+- I own blocks which are not red, but I don't own anything which supports a pyramid
+- Do I own anything in the box?
+
+If I can only solve quantified atoms, it's good so distinguish between Atom's and QAtoms, or mark the root atom as "quantified".
+
+Maybe it's necessary to turn the statements into other structures as well, before storing them in the database, in a way that is suitable for querying.
+
+The determiner must be an atom
+
+    (d / greater-than
+        :ARG0 2
+    )
+
+(d / all)
+
 ## 2026-02-30
 
 I had some trouble understanding the difference between the atom variable and the arguments. But now I get it.

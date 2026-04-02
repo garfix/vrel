@@ -56,3 +56,6 @@ IGNORED = "ignored"
 # internal predicates
 DISJUNCTION = "$disjunction"
 UNIFICATION = "$unification"
+
+# arguments
+ARG_DETERMINER = "determiner"

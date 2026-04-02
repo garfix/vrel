@@ -9,7 +9,9 @@ from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
+    SimpleGrammarRulesParser,
+)
 from vrel.processor.parser.helper.grammar_functions import apply
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.processor.parser.BasicParser import BasicParser
@@ -63,7 +65,10 @@ class TestQuantification(unittest.TestCase):
         model = Model([SimpleModule(data_source)])
 
         simple_grammar = [
-            {"syn": "s(E3) -> np(E1) verb(E1, E2) np(E2)", "sem": lambda np1, verb, np2: [Atom(E3, verb, np1, np2)]},
+            {
+                "syn": "s() -> np(E1) verb(E1, E2) np(E2)",
+                "sem": lambda np1, verb, np2: [Atom(verb, np1, np2)],
+            },
             {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: "have"},
             {
                 "syn": "np(E1) -> det(E1) nbar(E1)",
