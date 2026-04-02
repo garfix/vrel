@@ -67,18 +67,21 @@ class TestQuantification(unittest.TestCase):
         simple_grammar = [
             {
                 "syn": "s() -> np(E1) verb(E1, E2) np(E2)",
-                "sem": lambda np1, verb, np2: [Atom(verb, np1, np2)],
+                "sem": lambda np1, verb, np2: [
+                    Atom("quantify", [Atom(verb, np1, np2)], E1),
+                    Atom("scoped", E1),
+                ],
             },
             {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: "have"},
             {
                 "syn": "np(E1) -> det(E1) nbar(E1)",
-                "sem": lambda det, nbar: nbar.addArguments(det),
+                "sem": lambda det, nbar: nbar.add_arguments(det),
             },
             {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(E1, noun)},
-            {"syn": "det(E1) -> 'every'", "sem": lambda: {"determiner": "all"}},
+            {"syn": "det(E1) -> 'every'", "sem": lambda: {"determiner": Atom("all")}},
             {
                 "syn": "det(E1) -> number(E1)",
-                "sem": lambda number: {"determiner": number},
+                "sem": lambda number: {"determiner": Atom("equals", number)},
             },
             {"syn": "number(D1) -> 'two'", "sem": lambda: 2},
             {"syn": "number(D1) -> 'three'", "sem": lambda: 3},

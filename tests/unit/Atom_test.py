@@ -46,7 +46,7 @@ def test_atom():
     assert e.numbered_arguments == ["john", "mary"]
     assert e.named_arguments == {"time": "now"}
 
-    f = e.addArguments({"location": "here"})
+    f = e.add_arguments({"location": "here"})
 
     assert f.variable == DUMMY
     assert f.arguments["time"] == "now"

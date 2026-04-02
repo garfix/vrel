@@ -42,6 +42,7 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("$unification", query_function=self.unification)),
         self.add_relation(Relation("find_all", query_function=self.find_all)),
         self.add_relation(Relation("find_one", query_function=self.find_one)),
+        self.add_relation(Relation("quantify", query_function=self.quantify)),
 
     # ('equals', E1, E2)
     def equals(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -429,6 +430,8 @@ class CoreModule(SomeModule):
     def quantify(self, arguments: list, context: ExecutionContext) -> list[list]:
         body = arguments[0]
 
-        result = quantify(body)
+        result = quantify(body[0])
+
+        print("RESULT", result)
 
         return [[None, result]]

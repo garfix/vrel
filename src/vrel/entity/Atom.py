@@ -43,7 +43,9 @@ class Atom:
                 for k, v in arg.items():
                     self.named_arguments[k] = v
                     if k.startswith("ARG"):
-                        raise Exception("Named arguments must not have numbered names: {args}")
+                        raise Exception(
+                            "Named arguments must not have numbered names: {args}"
+                        )
             elif (
                 isinstance(arg, Atom)
                 or isinstance(arg, float)
@@ -64,8 +66,30 @@ class Atom:
         # print(self.named_arguments)
         # print(args)
 
-    def addArguments(self, arguments: dict):
-        return Atom(self.variable, self.predicate, *self.numbered_arguments, self.named_arguments | arguments)
+    def add_arguments(self, arguments: dict):
+        return Atom(
+            self.variable,
+            self.predicate,
+            *self.numbered_arguments,
+            self.named_arguments | arguments,
+        )
+
+    def remove_argument(self, argument_name: str):
+        new_args = {k: v for k, v in self.arguments.items() if k != argument_name}
+        return Atom(
+            self.variable,
+            self.predicate,
+            *self.numbered_arguments,
+            new_args,
+        )
+
+    def copy(self):
+        return Atom(
+            self.variable,
+            self.predicate,
+            *self.numbered_arguments,
+            self.named_arguments,
+        )
 
     def __str__(self) -> str:
         from vrel.core.functions.terms import format_term

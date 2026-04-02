@@ -15,7 +15,7 @@ def quantify(atom: Atom):
             if not isinstance(det, Atom):
                 raise Exception(f"A determiner must be an atom: {det}")
 
-            new_atom = create_quantification(new_atom, arg_name, arg, det)
+            new_atom = create_quantification(new_atom, arg_name, arg, det, atom)
         else:
             new_atom, extracted_atom = extract_argument(new_atom, arg_name, arg)
             extracted_atoms.append(extracted_atom)
@@ -31,26 +31,44 @@ def extract_argument(atom: Atom, arg_name: str, arg: Atom):
     return new_atom, extracted_atom
 
 
-def create_quantification(atom: Atom, arg_name: str, arg: Atom, det: Atom):
+def create_quantification(
+    atom: Atom, arg_name: str, arg: Atom, det: Atom, orig_atom: Atom
+):
+
+    print("BEFORE", atom)
+    print("BEFORE", arg_name)
+    print("BEFORE", arg)
+    print("BEFORE", det)
 
     if det.predicate == "all":
-        q_arg = quantify(arg)
-        new_args = atom.arguments | {arg_name: arg.variable}
-        q_atom = create_atom(
-            "det_all",
+        c_arg = arg.remove_argument("determiner")
+        q_arg = quantify(c_arg)
+        new_args = orig_atom.arguments | {arg_name: arg.variable}
+
+        # ('all', E1, [range-atoms], [body-atoms])
+        q_atom = Atom(
+            "all",
             arg.variable,
+            # Range
             q_arg,
+            # Body
             [create_atom(atom.variable, atom.predicate, new_args)],
         )
     elif det.predicate == "equals":
-        q_arg = quantify(arg)
-        new_args = atom.arguments | {arg_name: arg.variable}
-        q_atom = create_atom(
+        c_arg = arg.remove_argument("determiner")
+        q_arg = quantify(c_arg)
+        new_args = orig_atom.arguments | {arg_name: arg.variable}
+
+        # ('det_equals', [body-atoms], Number)
+        q_atom = Atom(
             "det_equals",
-            q_arg,
-            det["ARG0"],
-            [create_atom(atom.variable, atom.predicate, new_args)],
+            # Range + Body
+            [q_arg] + [create_atom(atom.variable, atom.predicate, new_args)],
+            det.numbered_arguments[0],
         )
+
+    print("AFTER", q_atom)
+    print()
 
     return q_atom
 
