@@ -1,3 +1,4 @@
+from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
@@ -18,7 +19,14 @@ def generate_variables(
         )
     # atom
     elif isinstance(term, Atom):
-        raise Exception("Todo")
+        return create_atom(
+            generate_variables(term.variable, variable_generator, variable_map),
+            term.predicate,
+            {
+                k: generate_variables(v, variable_generator, variable_map)
+                for k, v in term.arguments.items()
+            },
+        )
     # variable
     elif isinstance(term, Variable):
         if term.name in variable_map:
@@ -41,7 +49,7 @@ def variablize(term):
         return tuple([variablize(arg) for arg in term])
     # atom
     elif isinstance(term, Atom):
-        raise Exception("Todo")
+        raise Exception("Todo4")
     # variable
     elif isinstance(term, str) and term[0:1] == "$":
         return Variable(term)

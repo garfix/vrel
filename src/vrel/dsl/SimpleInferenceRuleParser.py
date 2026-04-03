@@ -277,7 +277,7 @@ class SimpleInferenceRuleParser:
             return None, new_pos
         pos = new_pos
 
-        return tuple([UNIFICATION, atom_or_term1, atom_or_term2]), pos
+        return Atom(UNIFICATION, atom_or_term1, atom_or_term2), pos
 
     # parent(X, Y)
     def parse_simple_atom(self, tokens: list[str], pos: int):

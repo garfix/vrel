@@ -43,10 +43,10 @@ class TestCoreModule(unittest.TestCase):
         model = Model([])
         solver = Solver(model)
 
-        bindings = solver.solve([Atom("scoped", [("let", E1, 3)])])
+        bindings = solver.solve([Atom("scoped", [Atom("let", E1, 3)])])
         self.assertEqual(bindings, [{"E1": 3}])
 
-        bindings = solver.solve([Atom("scoped", [("equals", 2, 3)])])
+        bindings = solver.solve([Atom("scoped", [Atom("equals", 2, 3)])])
         self.assertEqual(bindings, [])
 
     def test_unification(self):
@@ -67,38 +67,58 @@ class TestCoreModule(unittest.TestCase):
         bindings = solver.solve([Atom("$unification", source, [Atom("location", E1)])])
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve([Atom("$unification", source, [Atom("likes", E1, "jane")])])
+        bindings = solver.solve(
+            [Atom("$unification", source, [Atom("likes", E1, "jane")])]
+        )
         self.assertEqual(bindings, [{"E1": "john"}])
 
         bindings = solver.solve([Atom("$unification", source, [Atom("likes", E1, E1)])])
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve([Atom("$unification", source, [Atom("lost", E1), Atom("likes", E1, E2)])])
+        bindings = solver.solve(
+            [Atom("$unification", source, [Atom("lost", E1), Atom("likes", E1, E2)])]
+        )
         self.assertEqual(bindings, [{"E1": "john", "E2": "jane"}])
 
-        bindings = solver.solve([Atom("$unification", [Atom("lost", E1), Atom("likes", E1, E2)], source)])
+        bindings = solver.solve(
+            [Atom("$unification", [Atom("lost", E1), Atom("likes", E1, E2)], source)]
+        )
         self.assertEqual(bindings, [{"E1": "john", "E2": "jane"}])
 
-        bindings = solver.solve([Atom("$unification", source, [Atom("lost", E1), Atom("hates", E1, E2)])])
+        bindings = solver.solve(
+            [Atom("$unification", source, [Atom("lost", E1), Atom("hates", E1, E2)])]
+        )
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve([Atom("$unification", [Atom("lost", E1), Atom("hates", E1, E2)], source)])
+        bindings = solver.solve(
+            [Atom("$unification", [Atom("lost", E1), Atom("hates", E1, E2)], source)]
+        )
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve([Atom("$unification", source, [Atom("goal", E1, Atom("win", E2))])])
+        bindings = solver.solve(
+            [Atom("$unification", source, [Atom("goal", E1, Atom("win", E2))])]
+        )
         self.assertEqual(bindings, [{"E1": "john", "E2": "jane"}])
 
-        bindings = solver.solve([Atom("$unification", source, [Atom("goal", E1, Atom("win", E1))])])
+        bindings = solver.solve(
+            [Atom("$unification", source, [Atom("goal", E1, Atom("win", E1))])]
+        )
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve([Atom("let", E2, "mary"), Atom("$unification", source, [Atom("lost", E1)])])
+        bindings = solver.solve(
+            [Atom("let", E2, "mary"), Atom("$unification", source, [Atom("lost", E1)])]
+        )
         self.assertEqual(bindings, [{"E1": "john", "E2": "mary"}])
 
-        bindings = solver.solve([Atom("let", E1, "mary"), Atom("$unification", source, [Atom("lost", E1)])])
+        bindings = solver.solve(
+            [Atom("let", E1, "mary"), Atom("$unification", source, [Atom("lost", E1)])]
+        )
         self.assertEqual(bindings, [])
 
         # # target, source
-        bindings = solver.solve([Atom("$unification", [Atom("likes", E1, "jane")], source)])
+        bindings = solver.solve(
+            [Atom("$unification", [Atom("likes", E1, "jane")], source)]
+        )
         self.assertEqual(bindings, [{"E1": "john"}])
 
         bindings = solver.solve([Atom("$unification", [Atom("lost", E1)], source)])
@@ -143,11 +163,21 @@ class TestCoreModule(unittest.TestCase):
             [
                 Atom("$unification", E1, E2),
                 Atom("$unification", E3, E4),
-                Atom("$unification", ("red", E5), E4),
+                Atom("$unification", Atom("red", E5), E4),
                 Atom("$unification", E1, E4),
             ]
         )
-        self.assertEqual(bindings, [{"E1": E2, "E2": ("red", E5), "E3": E4, "E4": ("red", E5)}])
+        self.assertEqual(
+            bindings,
+            [
+                {
+                    "E1": E2,
+                    "E3": E4,
+                    "E4": Atom("red", E5),
+                    "E2": Atom("red", E5),
+                }
+            ],
+        )
 
         bindings = solver.solve(
             [
@@ -156,5 +186,13 @@ class TestCoreModule(unittest.TestCase):
         )
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve([Atom("$unification", [Atom("full_isa", E1, E1)], [Atom("full_isa", E2, "finger")])])
+        bindings = solver.solve(
+            [
+                Atom(
+                    "$unification",
+                    [Atom("full_isa", E1, E1)],
+                    [Atom("full_isa", E2, "finger")],
+                )
+            ]
+        )
         self.assertEqual(bindings, [{"E1": E2, "E2": "finger"}])

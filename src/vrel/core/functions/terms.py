@@ -103,7 +103,7 @@ def reify_variables(term: any) -> any:
         return tuple([reify_variables(arg) for arg in term])
     # atom
     elif isinstance(term, Atom):
-        raise Exception("Todo")
+        raise Exception("Todo1")
         return create_atom(
             reify_variables(term.variable),
             term.predicate,
@@ -127,6 +127,6 @@ def flatten(term: any):
     elif isinstance(term, tuple):
         return tuple([flatten(e) for e in term])
     elif isinstance(term, Atom):
-        raise Exception("Todo")
+        raise Exception("Todo2")
     else:
         return term

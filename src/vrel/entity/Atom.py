@@ -92,6 +92,15 @@ class Atom:
             self.named_arguments,
         )
 
+    def __eq__(self, value):
+        return (
+            isinstance(value, Atom)
+            and self.variable == value.variable
+            and self.predicate == value.predicate
+            and self.numbered_arguments == value.numbered_arguments
+            and self.named_arguments == self.named_arguments
+        )
+
     def __str__(self) -> str:
         from vrel.core.functions.terms import format_term
 

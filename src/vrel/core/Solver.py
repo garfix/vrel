@@ -1,6 +1,6 @@
 from vrel.core.functions.terms import bind_variables, flatten, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
-from vrel.core.constants import DISJUNCTION, DUMMY
+from vrel.core.constants import DISJUNCTION
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.interface.SomeModel import SomeModel

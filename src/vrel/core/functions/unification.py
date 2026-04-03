@@ -57,7 +57,9 @@ def unify_tuples(term1: tuple, term2: tuple, binding: dict):
 
 
 def unify_atoms(term1: Atom, term2: Atom, binding: dict):
-    if len(term1.arguments.items()) != len(term2.arguments.items()):
+    if term1.predicate != term2.predicate:
+        binding = None
+    elif len(term1.arguments.items()) != len(term2.arguments.items()):
         binding = None
     else:
         binding = unify_bindings(
@@ -66,8 +68,6 @@ def unify_atoms(term1: Atom, term2: Atom, binding: dict):
 
         for arg1, arg2 in zip(term1.arguments.values(), term2.arguments.values()):
             binding = unify_bindings(binding, unification(arg1, arg2, binding))
-
-    raise Exception("Check me")
 
     return binding
 

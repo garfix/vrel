@@ -18,8 +18,8 @@ def test_atom():
     assert a.positional_arguments == [Variable("E1"), "john", "mary"]
     assert a.numbered_arguments == ["john", "mary"]
     assert a.named_arguments == {}
-    assert str(a) == "(E1 / likes     :ARG0 'john'    :ARG1 'mary')"
-    assert repr(a) == "(E1, likes, 'john', 'mary')"
+    assert str(a) == "A(E1 / likes\n    :ARG0 'john'\n    :ARG1 'mary')"
+    assert repr(a) == "A(E1, likes, 'john', 'mary')"
 
     c = Atom(Variable("E1"), "likes", "john", "mary", {"mod": "much"})
 
@@ -28,8 +28,10 @@ def test_atom():
     assert c.arguments["mod"] == "much"
     assert c.positional_arguments == [Variable("E1"), "john", "mary"]
     assert c.named_arguments == {"mod": "much"}
-    assert str(c) == "(E1 / likes     :ARG0 'john'    :ARG1 'mary'    :mod 'much')"
-    assert repr(c) == "(E1, likes, 'john', 'mary', mod='much')"
+    assert (
+        str(c) == "A(E1 / likes\n    :ARG0 'john'\n    :ARG1 'mary'\n    :mod 'much')"
+    )
+    assert repr(c) == "A(E1, likes, 'john', 'mary', mod='much')"
 
     d = Atom(Variable("E1"), "likes", {"time": "now"})
 

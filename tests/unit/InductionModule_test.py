@@ -1,6 +1,7 @@
 import unittest
 
 from vrel.core.constants import E1, E2
+from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.entity.InductionRule import InductionRule
 from vrel.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
@@ -14,14 +15,26 @@ class TestInductionModule(unittest.TestCase):
         tests = [
             [
                 "orang_utan(E1) => ape(E1).",
-                [InductionRule([("orang_utan", Variable("E1"))], [("ape", Variable("E1"))])],
+                [
+                    InductionRule(
+                        [Atom("orang_utan", Variable("E1"))],
+                        [Atom("ape", Variable("E1"))],
+                    )
+                ],
             ],
             [
                 "female(E1), cow(E1), young(E1) => heifer(E1), bovine(E1).",
                 [
                     InductionRule(
-                        [("female", Variable("E1")), ("cow", Variable("E1")), ("young", Variable("E1"))],
-                        [("heifer", Variable("E1")), ("bovine", Variable("E1"))],
+                        [
+                            Atom("female", Variable("E1")),
+                            Atom("cow", Variable("E1")),
+                            Atom("young", Variable("E1")),
+                        ],
+                        [
+                            Atom("heifer", Variable("E1")),
+                            Atom("bovine", Variable("E1")),
+                        ],
                     )
                 ],
             ],
