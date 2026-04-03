@@ -1,3 +1,4 @@
+from vrel.core.constants import DUMMY
 from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
@@ -29,6 +30,8 @@ def generate_variables(
         )
     # variable
     elif isinstance(term, Variable):
+        if term == DUMMY:
+            return term
         if term.name in variable_map:
             return variable_map[term.name]
         else:

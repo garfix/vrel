@@ -31,6 +31,21 @@ def unification(term1: any, term2: any, binding: dict) -> dict | None:
 
 
 def unify_lists(term1: list, term2: list, binding: dict):
+    if all(isinstance(x, Atom) for x in term1) and all(
+        isinstance(x, Atom) for x in term2
+    ):
+        return unify_atom_lists(term1, term2, binding)
+    else:
+        if len(term1) != len(term2):
+            binding = None
+        else:
+            for arg1, arg2 in zip(term1, term2):
+                binding = unify_bindings(binding, unification(arg1, arg2, binding))
+
+    return binding
+
+
+def unify_atom_lists(term1: list, term2: list, binding: dict):
     matches1 = {}
     matches2 = {}
     for i2, a2 in enumerate(term2):
