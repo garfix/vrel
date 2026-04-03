@@ -1,7 +1,8 @@
+from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
 
-def unification(term1: any, term2: any, binding: dict) -> dict|None:
+def unification(term1: any, term2: any, binding: dict) -> dict | None:
     if binding is None:
         return None
 
@@ -11,6 +12,9 @@ def unification(term1: any, term2: any, binding: dict) -> dict|None:
     # tuple
     elif isinstance(term1, tuple) and isinstance(term2, tuple):
         binding = unify_tuples(term1, term2, binding)
+    # atom
+    elif isinstance(term1, Atom) and isinstance(term2, Atom):
+        binding = unify_atoms(term1, term2, binding)
     # variables
     elif isinstance(term1, Variable) and isinstance(term2, Variable):
         binding = unify_variables(term1, term2, binding)
@@ -48,6 +52,22 @@ def unify_tuples(term1: tuple, term2: tuple, binding: dict):
     else:
         for arg1, arg2 in zip(term1, term2):
             binding = unify_bindings(binding, unification(arg1, arg2, binding))
+
+    return binding
+
+
+def unify_atoms(term1: Atom, term2: Atom, binding: dict):
+    if len(term1.arguments.items()) != len(term2.arguments.items()):
+        binding = None
+    else:
+        binding = unify_bindings(
+            binding, unification(term1.variable, term2.variable, binding)
+        )
+
+        for arg1, arg2 in zip(term1.arguments.values(), term2.arguments.values()):
+            binding = unify_bindings(binding, unification(arg1, arg2, binding))
+
+    raise Exception("Check me")
 
     return binding
 
@@ -90,7 +110,7 @@ def dereference(term: any, binding: dict):
     return value
 
 
-def unify_bindings(old_binding: dict, new_binding: dict) -> dict|None:
+def unify_bindings(old_binding: dict, new_binding: dict) -> dict | None:
     if old_binding is None:
         return None
     if new_binding is None:

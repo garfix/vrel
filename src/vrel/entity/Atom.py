@@ -105,4 +105,4 @@ class Atom:
         for k, v in self.named_arguments.items():
             nmd_args += f", {k}={repr(v)}"
 
-        return f"({self.variable}, {self.predicate}{pos_args}{nmd_args})"
+        return f"A({self.variable.name}, {self.predicate}{pos_args}{nmd_args})"

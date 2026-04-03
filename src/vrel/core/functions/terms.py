@@ -1,3 +1,5 @@
+from vrel.core.constants import DUMMY
+from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
@@ -20,8 +22,8 @@ def format_term(value: any, indent: str = "\n") -> str:
         s = ""
         for k, v in value.arguments.items():
             sub = format_term(v, indent + "          ")
-            s += indent + "    " + f":{k} {sub}"
-        text = f"({value.variable} / {value.predicate} {s})"
+            s += "\n" + indent + "    " + f":{k} {sub}"
+        text = f"A({value.variable.name} / {value.predicate}{s})"
 
     elif isinstance(value, list):
         text = indent + "["
@@ -47,6 +49,13 @@ def get_variables(term: any) -> list[str]:
         for arg in term:
             for v in get_variables(arg):
                 variables.add(v)
+    elif isinstance(term, Atom):
+        if term.variable != DUMMY:
+            variables.add(term.variable)
+        for _, value in term.arguments.items():
+            for v in get_variables(value):
+                variables.add(v)
+        raise Exception("Check")
 
     return list(variables)
 
@@ -62,6 +71,12 @@ def bind_variables(term: any, binding: dict) -> any:
     # tuple
     elif isinstance(term, tuple):
         return tuple([bind_variables(arg, binding) for arg in term])
+    elif isinstance(term, Atom):
+        return create_atom(
+            bind_variables(term.variable, binding),
+            term.predicate,
+            {k: bind_variables(v, binding) for k, v in term.arguments.items()},
+        )
     # variable
     elif isinstance(term, Variable):
         # bound?
@@ -76,23 +91,31 @@ def bind_variables(term: any, binding: dict) -> any:
         return term
 
 
-def reify_variables(construct: any) -> any:
+def reify_variables(term: any) -> any:
     """
     Returns a copy of construct with all variables it contains replaced by their names
     """
     # list
-    if isinstance(construct, list):
-        return [reify_variables(arg) for arg in construct]
+    if isinstance(term, list):
+        return [reify_variables(arg) for arg in term]
     # tuple
-    elif isinstance(construct, tuple):
-        return tuple([reify_variables(arg) for arg in construct])
+    elif isinstance(term, tuple):
+        return tuple([reify_variables(arg) for arg in term])
+    # atom
+    elif isinstance(term, Atom):
+        raise Exception("Todo")
+        return create_atom(
+            reify_variables(term.variable),
+            term.predicate,
+            {k: reify_variables(v) for k, v in term.arguments.items()},
+        )
     # variable
-    elif isinstance(construct, Variable):
+    elif isinstance(term, Variable):
         # return the name of the variable as an id
-        return construct.name
+        return term.name
     else:
         # just the value
-        return construct
+        return term
 
 
 def flatten(term: any):
@@ -103,5 +126,7 @@ def flatten(term: any):
         return [flatten(e) for e in term]
     elif isinstance(term, tuple):
         return tuple([flatten(e) for e in term])
+    elif isinstance(term, Atom):
+        raise Exception("Todo")
     else:
         return term

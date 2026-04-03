@@ -77,9 +77,11 @@ def create_quantification(atom: Atom, determiner_argument: Atom):
         q_atom = Atom(
             "det_equals",
             # Range + Body
-            [q_arg] + [atom],
+            q_arg + [atom],
             det.numbered_arguments[0],
         )
+    else:
+        raise Exception(f"Unknown determiner: {det.predicate}")
 
     return q_atom
 

@@ -1,14 +1,24 @@
+from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
 
-def generate_variables(term: any, variable_generator: VariableGenerator, variable_map: dict):
+def generate_variables(
+    term: any, variable_generator: VariableGenerator, variable_map: dict
+):
     # list
     if isinstance(term, list):
-        return [generate_variables(arg, variable_generator, variable_map) for arg in term]
+        return [
+            generate_variables(arg, variable_generator, variable_map) for arg in term
+        ]
     # tuple
     elif isinstance(term, tuple):
-        return tuple([generate_variables(arg, variable_generator, variable_map) for arg in term])
+        return tuple(
+            [generate_variables(arg, variable_generator, variable_map) for arg in term]
+        )
+    # atom
+    elif isinstance(term, Atom):
+        raise Exception("Todo")
     # variable
     elif isinstance(term, Variable):
         if term.name in variable_map:
@@ -21,6 +31,7 @@ def generate_variables(term: any, variable_generator: VariableGenerator, variabl
         # just the value
         return term
 
+
 def variablize(term):
     # list
     if isinstance(term, list):
@@ -28,6 +39,9 @@ def variablize(term):
     # tuple
     elif isinstance(term, tuple):
         return tuple([variablize(arg) for arg in term])
+    # atom
+    elif isinstance(term, Atom):
+        raise Exception("Todo")
     # variable
     elif isinstance(term, str) and term[0:1] == "$":
         return Variable(term)

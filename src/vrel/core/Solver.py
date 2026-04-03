@@ -21,7 +21,10 @@ class Solver(SomeSolver):
     def solve(self, atoms: list[Atom]) -> list[dict]:
 
         if not isinstance(atoms, list):
-            raise Exception("Solver can only solve lists of atoms, this is not a list: " + str(atoms))
+            raise Exception(
+                "Solver can only solve lists of atoms, this is not a list: "
+                + str(atoms)
+            )
 
         return self.solve_rest(atoms, {})
 
@@ -38,7 +41,9 @@ class Solver(SomeSolver):
     def solve_single(self, atom: Atom, binding: dict):
 
         if not isinstance(atom, Atom):
-            raise Exception("Solver can only solve atoms, this is not an atom: " + str(atom))
+            raise Exception(
+                "Solver can only solve atoms, this is not an atom: " + str(atom)
+            )
 
         predicate = atom.predicate
         unbound_arguments = atom.positional_arguments
@@ -58,11 +63,15 @@ class Solver(SomeSolver):
                 return results
         return []
 
-    def find_relation_values(self, predicate: str, arguments: list, binding: dict) -> list[list]:
+    def find_relation_values(
+        self, predicate: str, arguments: list, binding: dict
+    ) -> list[list]:
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:
-            raise Exception("No relation called '" + predicate + "' available in the model")
+            raise Exception(
+                "No relation called '" + predicate + "' available in the model"
+            )
 
         deduplicated_bindings = {}
 
@@ -82,14 +91,22 @@ class Solver(SomeSolver):
             elif isinstance(out_values, list):
 
                 if len(out_values) > 0:
-                    if not isinstance(out_values[0], list) and not isinstance(out_values[0], tuple):
-                        raise Exception("The results of '" + predicate + "' should be lists or tuples")
+                    if not isinstance(out_values[0], list) and not isinstance(
+                        out_values[0], tuple
+                    ):
+                        raise Exception(
+                            "The results of '"
+                            + predicate
+                            + "' should be lists or tuples"
+                        )
                     if len(out_values[0]) != len(arguments):
                         raise Exception(
                             f"The number of arguments in the results of '{predicate}' is {str(len(out_values[0]))} and should be {len(arguments)}"
                         )
 
-                out_bindings = tuple_results_to_bindings(predicate, arguments, out_values, binding)
+                out_bindings = tuple_results_to_bindings(
+                    predicate, arguments, out_values, binding
+                )
 
                 # deduplicate results
                 for out_binding in out_bindings:
@@ -105,11 +122,15 @@ class Solver(SomeSolver):
         flat = flatten(atom)
 
         if not isinstance(atom, Atom):
-            raise Exception(f"Solver only writes atoms, and this is not an atom: {atom}")
+            raise Exception(
+                f"Solver only writes atoms, and this is not an atom: {atom}"
+            )
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:
-            raise Exception("No relation called '" + predicate + "' available in the model")
+            raise Exception(
+                "No relation called '" + predicate + "' available in the model"
+            )
 
         if len(get_variables(flat)) > 0:
             raise Exception(f"'{predicate}' attempts to persist a variable: {flat}")
