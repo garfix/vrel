@@ -1,18 +1,15 @@
-import re
 import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.constants import E1, E2, Body, Range, DUMMY
+from vrel.core.constants import E1, E2, DUMMY
 from vrel.entity.Atom import Atom
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
     SimpleGrammarRulesParser,
 )
-from vrel.processor.parser.helper.grammar_functions import apply
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
-from vrel.entity.SemanticFunction import SemanticFunction
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 
 

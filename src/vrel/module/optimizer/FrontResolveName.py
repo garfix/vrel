@@ -1,16 +1,16 @@
 from vrel.core.Model import Model
 from vrel.core.constants import RESOLVE_NAME
+from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
 
 class FrontResolveName:
 
-    def sort(self, composition: list[tuple]):
+    def sort(self, composition: list[Atom]):
         name_resolvers, others = self.extract_list(composition)
         return name_resolvers + others
 
-
-    def extract_list(self, composition: list[tuple]):
+    def extract_list(self, composition: list[Atom]):
         name_resolvers = []
         rest_composition = []
 
@@ -19,11 +19,11 @@ class FrontResolveName:
                 child_name_resolvers, child = self.extract_list(atom)
                 name_resolvers.extend(child_name_resolvers)
                 rest_composition.append(child)
-            elif isinstance(atom, tuple):
-                if atom[0] == RESOLVE_NAME:
+            elif isinstance(atom, Atom):
+                if atom.predicate == RESOLVE_NAME:
                     name_resolvers.append(atom)
                 else:
-                    child_name_resolvers, child = self.extract_tuple(atom)
+                    child_name_resolvers, child = self.extract_atom(atom)
                     name_resolvers.extend(child_name_resolvers)
                     rest_composition.append(child)
             else:
@@ -31,18 +31,16 @@ class FrontResolveName:
 
         return name_resolvers, rest_composition
 
-
-    def extract_tuple(self, terms: tuple):
+    def extract_atom(self, atom: Atom):
         name_resolvers = []
         rest_composition = []
 
-        for term in terms:
-            if isinstance(term, list):
-                child_name_resolvers, child = self.extract_list(term)
+        for _, arg in atom.numbered_arguments:
+            if isinstance(arg, list):
+                child_name_resolvers, child = self.extract_list(arg)
                 name_resolvers.extend(child_name_resolvers)
                 rest_composition.append(child)
             else:
-                rest_composition.append(term)
+                rest_composition.append(arg)
 
-        return name_resolvers, tuple(rest_composition)
-
+        return name_resolvers, Atom(atom.variable, atom.predicate, *rest_composition)

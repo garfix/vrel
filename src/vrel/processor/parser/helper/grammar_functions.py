@@ -1,28 +1,31 @@
-
+from vrel.entity.Atom import Atom
 from vrel.entity.SemanticFunction import SemanticFunction
 
 
-def apply(template: SemanticFunction, *values):
-    if not isinstance(template, SemanticFunction):
-        raise Exception(f"Not a SemanticTemplate: {template}")
-    replaced = template.body
-    for i, value in enumerate(values):
-        token = template.args[i][0]
-        replaced = replace(replaced, token, value, True)
+# def apply(template: SemanticFunction, *values):
+#     if not isinstance(template, SemanticFunction):
+#         raise Exception(f"Not a SemanticTemplate: {template}")
+#     replaced = template.body
+#     for i, value in enumerate(values):
+#         token = template.args[i][0]
+#         replaced = replace(replaced, token, value, True)
 
-    return replaced
+#     return replaced
 
 
-def replace(atoms, token, replacement, is_list):
-    replaced = []
-    for atom in atoms:
-        if atom == token:
-            replaced.extend(replacement)
-        elif isinstance(atom, tuple):
-            replaced.append(replace(atom, token, replacement, False))
-        elif isinstance(atom, list):
-            replaced.append(replace(atom, token, replacement, True))
-        else:
-            replaced.append(atom)
+# def replace(atoms, token, replacement, is_list):
+#     replaced = []
+#     for atom in atoms:
+#         if atom == token:
+#             replaced.extend(replacement)
+#         elif isinstance(atom, tuple):
+#             raise Exception("tuple found 8")
+#             replaced.append(replace(atom, token, replacement, False))
+#         elif isinstance(atom, Atom):
+#             raise Exception("todo")
+#         elif isinstance(atom, list):
+#             replaced.append(replace(atom, token, replacement, True))
+#         else:
+#             replaced.append(atom)
 
-    return replaced if is_list else tuple(replaced)
+#     return replaced if is_list else tuple(replaced)

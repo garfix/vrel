@@ -1,6 +1,10 @@
 # intent predicates
 
-optimize(SemIn, SemOut) :- optimize_frontize(SemIn, Sem2), optimize_cost_sort(Sem2, Sem3), optimize_isolate(Sem3, SemOut).
+optimize(SemIn, SemOut) :-
+    quantify(SemIn, Q),
+    optimize_frontize(Q, F),
+    optimize_cost_sort(F, S),
+    optimize_isolate(S, SemOut).
 
 intent_list(E1, Sem) :-
     optimize(Sem, SemOpt),

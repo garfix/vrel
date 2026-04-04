@@ -8,7 +8,9 @@ from vrel.entity.Variable import Variable
 from vrel.interface.SomeProcessor import SomeProcessor
 from vrel.processor.parser.BasicParserProduct import BasicParserProduct
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
-from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
+from vrel.processor.semantic_composer.SemanticComposerProduct import (
+    SemanticComposerProduct,
+)
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 from vrel.entity.SemanticFunction import SemanticFunction
 
@@ -39,7 +41,10 @@ class SemanticComposer(SomeProcessor):
 
             self.check_for_sem(parse_tree)
 
-            root_variables = [self.variable_generator.next() for _ in parse_tree.rule.antecedent.arguments]
+            root_variables = [
+                self.variable_generator.next()
+                for _ in parse_tree.rule.antecedent.arguments
+            ]
             semantics, inferences = self.compose(parse_tree, root_variables)
 
             sentences.append(SemanticSentence(semantics, inferences, root_variables))
@@ -55,7 +60,7 @@ class SemanticComposer(SomeProcessor):
         for child in node.children:
             self.check_for_sem(child)
 
-    def compose(self, node: ParseTreeNode, incoming_variables: list[str]) -> list[tuple]:
+    def compose(self, node: ParseTreeNode, incoming_variables: list[str]) -> list[Atom]:
 
         # map formal variables to unified, sentence-wide variables
         map = self.create_map(node, incoming_variables)
@@ -67,7 +72,9 @@ class SemanticComposer(SomeProcessor):
         for child, consequent in zip(node.children, node.rule.consequents):
             if not child.is_leaf_node():
                 incoming_child_variables = [map[arg] for arg in consequent.arguments]
-                semantics, child_inference = self.compose(child, incoming_child_variables)
+                semantics, child_inference = self.compose(
+                    child, incoming_child_variables
+                )
                 inferences.extend(child_inference)
                 child_semantics.append(semantics)
             elif child.rule.sem:
@@ -120,11 +127,17 @@ class SemanticComposer(SomeProcessor):
                         map[arg.name] = self.variable_generator.next()
         elif isinstance(term, Atom):
             variable = term.variable
-            if variable.name not in map and not self.variable_generator.isinstance(variable):
+            if variable.name not in map and not self.variable_generator.isinstance(
+                variable
+            ):
                 map[variable.name] = self.variable_generator.next()
             for key, arg in term.arguments.items():
                 # since we're late in the game, don't replace variables that have already been replaced
-                if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
+                if (
+                    isinstance(arg, Variable)
+                    and arg.name not in map
+                    and not self.variable_generator.isinstance(arg)
+                ):
                     map[arg.name] = self.variable_generator.next()
 
     def unify_variables(self, semantics: any, map: dict[str, str]) -> any:
@@ -134,12 +147,18 @@ class SemanticComposer(SomeProcessor):
             return create_atom(
                 self.unify_variables(semantics.variable, map),
                 semantics.predicate,
-                {k: self.unify_variables(v, map) for k, v in semantics.arguments.items()},
+                {
+                    k: self.unify_variables(v, map)
+                    for k, v in semantics.arguments.items()
+                },
             )
         elif isinstance(semantics, tuple):
+            raise ("tuple found 9")
             return tuple([self.unify_variables(term, map) for term in semantics])
         elif isinstance(semantics, SemanticFunction):
-            return SemanticFunction(semantics.args, self.unify_variables(semantics.body, map))
+            return SemanticFunction(
+                semantics.args, self.unify_variables(semantics.body, map)
+            )
         elif isinstance(semantics, Variable) and semantics.name in map:
             return Variable(map[semantics.name])
         elif isinstance(semantics, ReifiedVariable) and semantics.name in map:

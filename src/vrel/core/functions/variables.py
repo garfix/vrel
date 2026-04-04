@@ -15,6 +15,7 @@ def generate_variables(
         ]
     # tuple
     elif isinstance(term, tuple):
+        raise Exception("tuple found 5")
         return tuple(
             [generate_variables(arg, variable_generator, variable_map) for arg in term]
         )
@@ -49,6 +50,7 @@ def variablize(term):
         return [variablize(arg) for arg in term]
     # tuple
     elif isinstance(term, tuple):
+        raise Exception("tuple found 6")
         return tuple([variablize(arg) for arg in term])
     # atom
     elif isinstance(term, Atom):

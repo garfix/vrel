@@ -1,6 +1,7 @@
 from vrel.core.functions.terms import bind_variables
 from vrel.core.functions.unification import unification
 from vrel.core.functions.variables import generate_variables
+from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
 from vrel.interface import SomeSolver
@@ -99,7 +100,7 @@ class DeductionModule(SomeModule):
     def learn_rule(self, arguments: list, context: ExecutionContext) -> list[list]:
         head, body = arguments
 
-        if not isinstance(head, tuple):
+        if not isinstance(head, Atom):
             raise Exception("The head of a rule must be a single atom: " + str(head))
 
         self.insert_rule(InferenceRule(head, body))

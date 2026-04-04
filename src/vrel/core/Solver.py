@@ -56,7 +56,7 @@ class Solver(SomeSolver):
 
         return out_bindings
 
-    def solve_disjunction(self, disjuncts: list[list[tuple]], binding: dict):
+    def solve_disjunction(self, disjuncts: list[list[Atom]], binding: dict):
         for disjunct in disjuncts:
             results = self.solve(disjunct)
             if len(results) > 0:
@@ -142,6 +142,6 @@ class Solver(SomeSolver):
                 context = ExecutionContext(relation, self, self.sentence, self.model)
                 relation.write_function(flat, context)
 
-    def write_atoms(self, atoms: list[tuple]):
+    def write_atoms(self, atoms: list[Atom]):
         for atom in atoms:
             self.write_atom(atom)

@@ -181,7 +181,11 @@ class TestCoreModule(unittest.TestCase):
 
         bindings = solver.solve(
             [
-                Atom("$unification", [("likes", E1, "jane")], [("likes", "john", E1)]),
+                Atom(
+                    "$unification",
+                    [Atom("likes", E1, "jane")],
+                    [Atom("likes", "john", E1)],
+                ),
             ]
         )
         self.assertEqual(bindings, [])

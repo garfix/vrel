@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from vrel.core.Logger import Logger
 from vrel.core.functions.terms import format_term
+from vrel.entity.Atom import Atom
 
 
 @dataclass(frozen=True)
 class SemanticSentence:
-    semantics: list[tuple]
-    inferences: list[tuple]
+    semantics: list[Atom]
+    inferences: list[Atom]
     root_variables: list[str]
-
 
     def log(self, logger: Logger):
         logger.add_subheader("Semantics")

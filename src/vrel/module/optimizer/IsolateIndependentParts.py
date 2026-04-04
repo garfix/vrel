@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from vrel.core.functions.terms import get_variables
+from vrel.entity.Atom import Atom
 
 
 @dataclass(frozen=True)
 class AtomBatch:
-    atoms: list[tuple]
+    atoms: list[Atom]
     variables: set[str]
 
 
@@ -18,7 +19,7 @@ class IsolateIndependentParts:
     The `root_variables` are the variables that play a role in the answer, and can therefore not be isolated.
     """
 
-    def isolate(self, atoms: list[tuple], root_variables: list[str]) -> list[tuple]:
+    def isolate(self, atoms: list[Atom], root_variables: list[str]) -> list[Atom]:
         if len(atoms) == 0:
             return []
 
@@ -37,10 +38,9 @@ class IsolateIndependentParts:
                 # do the same for the atoms in this batch
                 recursed = self.isolate(batch.atoms, [])
                 # isolate the batch
-                new_atoms.append(('scoped', recursed))
+                new_atoms.append(("scoped", recursed))
 
         return new_atoms
-
 
     def collect_batches(self, atoms, excluded_variables: list[str]):
 
@@ -64,7 +64,10 @@ class IsolateIndependentParts:
                     new_batches.append(batch)
                 else:
                     found_batch = new_batches[found]
-                    new_batches[found] = AtomBatch(found_batch.atoms + batch.atoms, found_batch.variables | batch.variables)
+                    new_batches[found] = AtomBatch(
+                        found_batch.atoms + batch.atoms,
+                        found_batch.variables | batch.variables,
+                    )
 
             if len(new_batches) == len(collection):
                 break
@@ -75,8 +78,7 @@ class IsolateIndependentParts:
 
         return restored
 
-
-    def restore_atom_order(self, atoms: list[tuple], batch: AtomBatch) -> AtomBatch:
+    def restore_atom_order(self, atoms: list[Atom], batch: AtomBatch) -> AtomBatch:
         """
         creates a new batch, based on `batch`, with the atoms in the order of `atoms`
         """

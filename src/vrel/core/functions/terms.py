@@ -12,6 +12,7 @@ def format_term(value: any, indent: str = "\n") -> str:
     Formats nested lists, tuples and strings
     """
     if isinstance(value, tuple):
+        raise Exception("tuple found")
         text = indent + "("
         sep = ""
         for element in value:
@@ -45,7 +46,11 @@ def get_variables(term: any) -> list[str]:
     variables = set()
     if isinstance(term, Variable):
         variables.add(term.name)
-    elif isinstance(term, tuple) or isinstance(term, list):
+    elif isinstance(term, list):
+        for arg in term:
+            for v in get_variables(arg):
+                variables.add(v)
+    elif isinstance(term, tuple):
         for arg in term:
             for v in get_variables(arg):
                 variables.add(v)
@@ -70,6 +75,7 @@ def bind_variables(term: any, binding: dict) -> any:
         return [bind_variables(arg, binding) for arg in term]
     # tuple
     elif isinstance(term, tuple):
+        raise Exception("tuple found 2")
         return tuple([bind_variables(arg, binding) for arg in term])
     elif isinstance(term, Atom):
         return create_atom(
@@ -100,6 +106,7 @@ def reify_variables(term: any) -> any:
         return [reify_variables(arg) for arg in term]
     # tuple
     elif isinstance(term, tuple):
+        raise Exception("tuple found")
         return tuple([reify_variables(arg) for arg in term])
     # atom
     elif isinstance(term, Atom):
@@ -126,7 +133,5 @@ def flatten(term: any):
         return [flatten(e) for e in term]
     elif isinstance(term, tuple):
         return tuple([flatten(e) for e in term])
-    elif isinstance(term, Atom):
-        raise Exception("Todo2")
     else:
         return term

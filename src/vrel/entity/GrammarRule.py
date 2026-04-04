@@ -1,5 +1,6 @@
 from typing import Callable
 from vrel.core.constants import POS_TYPE_RELATION, POS_TYPE_WORD_FORM
+from vrel.entity.Atom import Atom
 from vrel.entity.RuleConstituent import RuleConstituent
 
 
@@ -14,15 +15,16 @@ class GrammarRule:
     boost: int
     hash: int
 
-    def __init__(self,
-                 antecedent: RuleConstituent,
-                 consequents: list[RuleConstituent],
-                 sem: Callable = None,
-                 format: Callable = None,
-                 post: Callable = None,
-                 dialog: list[tuple] | Callable = [],
-                 boost: int = 0,
-        ) -> None:
+    def __init__(
+        self,
+        antecedent: RuleConstituent,
+        consequents: list[RuleConstituent],
+        sem: Callable = None,
+        format: Callable = None,
+        post: Callable = None,
+        dialog: list[Atom] | Callable = [],
+        boost: int = 0,
+    ) -> None:
         self.antecedent = antecedent
         self.consequents = consequents
         self.sem = sem
@@ -33,7 +35,6 @@ class GrammarRule:
 
         h = [c.hash for c in self.consequents] + [self.antecedent.hash]
         self.hash = hash(tuple(h))
-
 
     def equals(self, other_rule) -> bool:
 
@@ -48,7 +49,6 @@ class GrammarRule:
                 return False
 
         return True
-
 
     def __str__(self):
 
@@ -66,7 +66,7 @@ class GrammarRule:
             if self.consequents[i].position_type == POS_TYPE_RELATION:
                 s += sep + self.consequents[i].predicate + "("
                 sep2 = ""
-                for variable in self.consequents[i].arguments :
+                for variable in self.consequents[i].arguments:
                     s += sep2 + variable
                     sep2 = ", "
                 s += ")"
@@ -77,5 +77,3 @@ class GrammarRule:
             sep = " "
 
         return s
-
-

@@ -3,7 +3,7 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.constants import E1, E2, E3, Body, Range
+from vrel.core.constants import E1, E3
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Relation
@@ -12,13 +12,11 @@ from vrel.interface.SomeModule import SomeModule
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
     SimpleGrammarRulesParser,
 )
-from vrel.processor.parser.helper.grammar_functions import apply
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.entity.ExecutionContext import ExecutionContext
-from vrel.entity.SemanticFunction import SemanticFunction
 
 
 class SimpleModule(SomeModule):

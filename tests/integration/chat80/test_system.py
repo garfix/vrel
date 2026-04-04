@@ -8,7 +8,9 @@ from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.OptimizerModule import OptimizerModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
+    SimpleGrammarRulesParser,
+)
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
@@ -55,7 +57,9 @@ def test_chat80():
     composer = SemanticComposer(parser)
     executor = AtomExecutor(composer, model)
 
-    write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
+    write_grammar = SimpleGrammarRulesParser().parse_write_grammar(
+        get_en_us_write_grammar() + get_write_grammar()
+    )
     generator = BasicGenerator(write_grammar, model, output_buffer)
 
     logger = Logger()
@@ -63,7 +67,12 @@ def test_chat80():
     # define the system
 
     system = BasicSystem(
-        model=model, parser=parser, composer=composer, executor=executor, output_generator=generator, logger=logger
+        model=model,
+        parser=parser,
+        composer=composer,
+        executor=executor,
+        output_generator=generator,
+        logger=logger,
     )
 
     tests = [

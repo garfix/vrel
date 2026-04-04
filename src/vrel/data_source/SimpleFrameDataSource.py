@@ -11,11 +11,11 @@ class SimpleFrameDataSource(SomeDataSource):
     def __init__(self):
         self.clear()
 
-    def create_atom(self, table: str, columns: list[str], values: list):
+    def create_tuple(self, table: str, columns: list[str], values: list):
         return tuple([table] + list(values))
 
     def select(self, table: str, columns: list[str], values: list) -> list[list]:
-        atom = self.create_atom(table, columns, values)
+        atom = self.create_tuple(table, columns, values)
         flat = flatten(atom)
 
         if not table in self.index:
@@ -30,7 +30,7 @@ class SimpleFrameDataSource(SomeDataSource):
         return BindingResult(result)
 
     def insert(self, table: str, columns: list[str], values: list):
-        atom = self.create_atom(table, columns, values)
+        atom = self.create_tuple(table, columns, values)
 
         if not table in self.index:
             self.index[table] = []
