@@ -34,15 +34,15 @@ E4 = Variable("E4")
 E5 = Variable("E5")
 
 # their reified counterparts
-e1 = ReifiedVariable("E1")
-e2 = ReifiedVariable("E2")
-e3 = ReifiedVariable("E3")
-e4 = ReifiedVariable("E4")
-e5 = ReifiedVariable("E5")
+# e1 = ReifiedVariable("E1")
+# e2 = ReifiedVariable("E2")
+# e3 = ReifiedVariable("E3")
+# e4 = ReifiedVariable("E4")
+# e5 = ReifiedVariable("E5")
 
 # special semantic variables
-Range = ["__$Range$__"]
-Body = ["__$Body$__"]
+# Range = ["__$Range$__"]
+# Body = ["__$Body$__"]
 
 ONE = 1
 SMALL = 10

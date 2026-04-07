@@ -60,7 +60,6 @@ def get_variables(term: any) -> list[str]:
         for _, value in term.arguments.items():
             for v in get_variables(value):
                 variables.add(v)
-        raise Exception("Check")
 
     return list(variables)
 

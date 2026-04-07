@@ -55,6 +55,17 @@
 - to state a goal, leave the amr as is
 - to command an amr, leave the command as is, but quantify the argument(s) and perform the command
 
+## input-only variables
+
+From `results.py`:
+
+    # todo: maybe declare properly
+    #
+    if isinstance(result_arg, Variable):
+        raise Exception(
+            f"Result of '{predicate}' contains a variable: {result}"
+        )
+
 ## context
 
 Work out context in inference rules:

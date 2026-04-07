@@ -1,4 +1,4 @@
-from vrel.core.constants import E1, E2, E3, E4, e1, e2, e3, Body, Range
+from vrel.core.constants import E1, E2, E3, E4
 from vrel.entity.Atom import Atom
 
 
@@ -7,7 +7,9 @@ def get_read_grammar():
         # sentence
         {
             "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
-            "sem": lambda np1, verb, np2: Atom(E1, "intent_yn", [Atom(E1, verb, np1, np2)]),
+            "sem": lambda np1, verb, np2: Atom(
+                E1, "intent_yn", [Atom(E1, verb, np1, np2)]
+            ),
         },
         # {
         #     "syn": "s(E1) -> 'is' 'there' np(E1) + '?'",

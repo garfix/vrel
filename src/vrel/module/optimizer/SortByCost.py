@@ -84,7 +84,7 @@ class SortByCost:
         costs = []
         for relation in relations:
             unbound_argument_size_product = 1
-            arguments = atom[1:]
+            arguments = atom.positional_arguments
 
             if relation.relation_size == IGNORED:
                 cost = INFINITE

@@ -3,7 +3,9 @@ from vrel.core.functions.unification import unification
 from vrel.entity.Variable import Variable
 
 
-def tuple_results_to_bindings(predicate: str, arguments: list, results: list, binding: dict) -> list[dict]:
+def tuple_results_to_bindings(
+    predicate: str, arguments: list, results: list, binding: dict
+) -> list[dict]:
     """
     Converts results into a list of bindings
     If a result has some variable in different positions, make sure the values at the positions do not conflict
@@ -25,15 +27,19 @@ def tuple_results_to_bindings(predicate: str, arguments: list, results: list, bi
             if result_arg is None:
                 continue
 
-            if isinstance(result_arg, Variable):
-                raise Exception(f"Result of '{predicate}' contains a variable: {result}")
+            # todo: maybe declare properly
+            #
+            # if isinstance(result_arg, Variable):
+            #     raise Exception(
+            #         f"Result of '{predicate}' contains a variable: {result}"
+            #     )
 
             u = unification(arg, result_arg, checked_result)
             if u is None:
                 conflict = True
             else:
                 # not sure why this is a problem, but it causes tests to fail when left out
-                for k,v in u.items():
+                for k, v in u.items():
                     if not isinstance(v, Variable):
                         checked_result[k] = v
 
@@ -43,7 +49,9 @@ def tuple_results_to_bindings(predicate: str, arguments: list, results: list, bi
     return checked_results
 
 
-def bindings_to_tuple_results(formal_parameters: list, arguments: list, bindings: dict) -> list[list]:
+def bindings_to_tuple_results(
+    formal_parameters: list, arguments: list, bindings: dict
+) -> list[list]:
     results = []
 
     for solution in bindings:
