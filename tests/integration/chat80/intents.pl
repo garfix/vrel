@@ -9,6 +9,7 @@ optimize(SemIn, SemOut) :-
 intent_list(E1, Sem) :-
     optimize(Sem, SemOpt),
     find_all(E1, SemOpt, Elements),
+    print(Elements),
     store(output_type('list'), output_list(Elements)).
 
 intent_table(Variables, Units, Sem) :-

@@ -1,0 +1,81 @@
+from vrel.core.constants import INFINITE
+from vrel.data_source.SparqlDataSource import CONSTANT, ID, TEXT
+from vrel.entity.Relation import Relation
+from vrel.entity.Variable import Variable
+from vrel.interface.SomeDataSource import SomeDataSource
+from vrel.interface.SomeModule import SomeModule
+from vrel.entity.ExecutionContext import ExecutionContext
+
+
+class WikidataModule(SomeModule):
+    """
+    This module wraps several Wikidata predicates
+    """
+
+    ds: SomeDataSource
+
+    def __init__(self, data_source: SomeDataSource) -> None:
+        super().__init__()
+        self.ds = data_source
+        self.add_relation(
+            Relation(
+                "wikidata_label",
+                query_function=self.wikidata_label,
+                relation_size=INFINITE,
+                argument_sizes=[INFINITE, INFINITE],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "wikidata_place_of_birth",
+                query_function=self.wikidata_place_of_birth,
+                relation_size=INFINITE,
+                argument_sizes=[INFINITE, INFINITE],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "wikidata_person",
+                query_function=self.wikidata_person,
+                relation_size=INFINITE,
+                argument_sizes=[INFINITE, INFINITE],
+            )
+        )
+
+    def wikidata_person(self, arguments: list, context: ExecutionContext) -> list[list]:
+        person = arguments[0]
+
+        # person isa human
+        out_values = self.ds.select("wdt:P31", [ID, CONSTANT], [person, "wd:Q5"])
+        return [[None] for value in out_values]
+
+    def wikidata_label(self, arguments: list, context: ExecutionContext) -> list[list]:
+        person = arguments[0]
+        name = arguments[1]
+
+        # try with given case
+        out_values = self.ds.select("rdfs:label", [ID, TEXT], [person, name])
+        if len(out_values) == 0 and name != name.title():
+            # try with first letters capitalized
+            out_values = self.ds.select(
+                "rdfs:label", [ID, TEXT], [person, name.title()]
+            )
+
+        if len(out_values) > 0:
+            return out_values
+
+        raise Exception("Name not found: " + name)
+
+    def wikidata_place_of_birth(
+        self, arguments: list, context: ExecutionContext
+    ) -> list[list]:
+        person = arguments[0]
+        place = arguments[1]
+
+        if isinstance(person, Variable):
+            raise Exception("Person ID is required: " + str(arguments))
+        if not isinstance(place, Variable):
+            raise Exception("Place should be None: " + str(arguments))
+
+        out_values = self.ds.select("wdt:P19", [ID, ID], [person, place])
+        return out_values

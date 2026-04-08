@@ -1,0 +1,213 @@
+from vrel.entity.Relation import Relation
+from vrel.entity.Variable import Variable
+from vrel.interface.SomeDataSource import SomeDataSource
+from vrel.interface.SomeModule import SomeModule
+from vrel.entity.ExecutionContext import ExecutionContext
+
+
+class CooperModule(SomeModule):
+
+    ds: SomeDataSource
+
+    def __init__(self, data_source: SomeDataSource) -> None:
+        super().__init__()
+        self.ds = data_source
+        self.add_relation(Relation("resolve_name", query_function=self.resolve_name))
+        self.add_relation(Relation("not_3v", query_function=self.not_3v))
+        self.add_relation(Relation("and_3v", query_function=self.and_3v))
+        self.add_relation(
+            Relation(
+                "metal",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "element",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "compound",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "nonmetal",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "white",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "dark_gray",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "brittle",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "oxide",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "sulfide",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "chloride",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "fuel",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "burns",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "burns_rapidly",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "combustable",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "gasoline",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["entity", "truth"],
+            )
+        )
+
+    def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
+        name = arguments[0].lower()
+        id = arguments[1]
+
+        out_values = self.ds.select("entity", ["name", "id"], [name, id])
+        if len(out_values) > 0:
+            return out_values
+        else:
+            # if id is given, a new name is linked to that id
+            if isinstance(id, Variable):
+                # otherwise a new id is created for the name
+                id = arguments[1].name
+            self.ds.insert(
+                "entity",
+                [
+                    "name",
+                    "id",
+                ],
+                [name, id],
+            )
+            return [[None, id]]
+
+    # ('not_3v', in, out)
+    def not_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
+
+        value = arguments[0]
+
+        if value == "true":
+            return [[None, "false"]]
+        elif value == "false":
+            return [[None, "true"]]
+        else:
+            return [[None, "unknown"]]
+
+    # ('and_3v', in1, in2, out)
+    def and_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
+
+        in1, in2, _ = arguments
+
+        if in1 == "true" and in2 == "false":
+            return [[None, None, "false"]]
+        elif in1 == "true" and in2 == "unknown":
+            return [[None, None, "unknown"]]
+        elif in1 == "true" and in2 == "true":
+            return [[None, None, "true"]]
+
+        elif in1 == "false" and in2 == "false":
+            return [[None, None, "false"]]
+        elif in1 == "false" and in2 == "unknown":
+            return [[None, None, "unknown"]]
+        elif in1 == "false" and in2 == "true":
+            return [[None, None, "false"]]
+
+        elif in1 == "unknown" and in2 == "false":
+            return [[None, None, "unknown"]]
+        elif in1 == "unknown" and in2 == "unknown":
+            return [[None, None, "unknown"]]
+        elif in1 == "unknown" and in2 == "true":
+            return [[None, None, "unknown"]]
+
+        raise Exception(f"'and_3v' doesn't accept arguments: {arguments}")
+
+    def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
+        results = self.ds.select(
+            context.relation.predicate, context.relation.formal_parameters, arguments
+        )
+        if len(results) > 0:
+            return results
+        else:
+            return []
+
+    def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
+        self.ds.insert(
+            context.relation.predicate, context.relation.formal_parameters, arguments
+        )

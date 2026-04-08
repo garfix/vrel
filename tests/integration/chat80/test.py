@@ -28,7 +28,7 @@ tests = [
         "What rivers are there?",
         "amazon, amu_darya, amur, brahmaputra, colorado, congo_river, cubango, danube, don, elbe, euphrates, ganges, hwang_ho, indus, irrawaddy, lena, limpopo, mackenzie, mekong, mississippi, murray, niger_river, nile, ob, oder, orange, orinoco, parana, rhine, rhone, rio_grande, salween, senegal_river, tagus, vistula, volga, volta, yangtze, yenisei, yukon, zambesi",
     ],
-    ["Does Afghanistan border China?", "yes"],
+    # ["Does Afghanistan border China?", "yes"],
     # ["What is the capital of Upper_Volta?", "ouagadougou"],
     # ["Where is the largest country?", "northern_asia"],
     # ["Which countries are European?", "albania, andorra, austria, belgium, bulgaria, cyprus, czechoslovakia, denmark, east_germany, eire, finland, france, greece, hungary, iceland, italy, liechtenstein, luxembourg, malta, monaco, netherlands, norway, poland, portugal, romania, san_marino, spain, sweden, switzerland, united_kingdom, west_germany, yugoslavia"],

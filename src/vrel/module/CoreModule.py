@@ -43,6 +43,7 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("find_all", query_function=self.find_all)),
         self.add_relation(Relation("find_one", query_function=self.find_one)),
         self.add_relation(Relation("quantify", query_function=self.quantify)),
+        self.add_relation(Relation("print", query_function=self.print)),
 
     # ('equals', E1, E2)
     def equals(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -404,8 +405,8 @@ class CoreModule(SomeModule):
                     result.append(item)
             else:
                 # skip duplicates
-                if variable in binding:
-                    item = binding[variable]
+                if variable.name in binding:
+                    item = binding[variable.name]
                     if not item in result:
                         result.append(item)
 
@@ -425,13 +426,20 @@ class CoreModule(SomeModule):
         else:
             return [[None, None, results[0][2][0]]]
 
-    # ('quantify, body-atoms, result-variable)
+    # ('quantify', body-atoms, result-variable)
     # Turns body atoms in a quantified form, ready for the Solver
     def quantify(self, arguments: list, context: ExecutionContext) -> list[list]:
         body = arguments[0]
 
         result = quantify(body[0])
 
-        print("RESULT", result)
-
         return [[None, result]]
+
+    # ('print', term)
+    # print `term` to stdout
+    def print(self, arguments: list, context: ExecutionContext) -> list[list]:
+        term = arguments[0]
+
+        print(term)
+
+        return [[None]]

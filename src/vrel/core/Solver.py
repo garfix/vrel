@@ -18,7 +18,10 @@ class Solver(SomeSolver):
         self.model = model
         self.sentence = sentence
 
-    def solve(self, atoms: list[Atom]) -> list[dict]:
+    def solve(self, atoms: Atom | list[Atom]) -> list[dict]:
+
+        if isinstance(atoms, Atom):
+            return self.solve_single(atoms, {})
 
         if not isinstance(atoms, list):
             raise Exception(
