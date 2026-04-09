@@ -3,7 +3,9 @@ from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeProcessor import SomeProcessor
 from vrel.core.Solver import Solver
-from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
+from vrel.processor.semantic_composer.SemanticComposerProduct import (
+    SemanticComposerProduct,
+)
 from vrel.processor.semantic_executor.AtomExecutorProduct import AtomExecutorProduct
 
 
@@ -15,16 +17,13 @@ class AtomExecutor(SomeProcessor):
     composer: SomeProcessor
     model: SomeModel
 
-
     def __init__(self, composer: SomeProcessor, model: SomeModel) -> None:
         super().__init__()
         self.composer = composer
         self.model = model
 
-
     def get_name(self) -> str:
         return "Executor"
-
 
     def process(self, incoming: SemanticComposerProduct) -> ProcessResult:
         sentences = incoming.sentences
@@ -46,4 +45,3 @@ class AtomExecutor(SomeProcessor):
             products = [product]
 
         return ProcessResult(products, "")
-

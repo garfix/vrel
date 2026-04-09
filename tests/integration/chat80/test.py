@@ -5,6 +5,7 @@ from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.Logger import Logger
+from vrel.grammar.en_us_read import get_en_us_read_grammar
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
@@ -106,7 +107,9 @@ class Chat80Test(unittest.TestCase):
 
         # define the pipeline
 
-        read_grammar = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
+        read_grammar = SimpleGrammarRulesParser().parse_read_grammar(
+            get_en_us_read_grammar() + get_read_grammar()
+        )
         parser = BasicParser(read_grammar)
 
         composer = SemanticComposer(parser)

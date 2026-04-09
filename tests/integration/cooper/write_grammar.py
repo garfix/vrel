@@ -1,4 +1,5 @@
 from vrel.core.constants import E1
+from vrel.entity.Atom import Atom
 
 
 def get_write_grammar():
@@ -6,18 +7,18 @@ def get_write_grammar():
         # sentences
         {
             "syn": "s() -> 'OK'",
-            "if": [("output_type", "ok")],
+            "if": [Atom("output_type", "ok")],
         },
         {
             "syn": "s() -> 'True'",
-            "if": [("output_type", "true")],
+            "if": [Atom("output_type", "true")],
         },
         {
             "syn": "s() -> 'False'",
-            "if": [("output_type", "false")],
+            "if": [Atom("output_type", "false")],
         },
         {
             "syn": "s() -> 'Unable to answer'",
-            "if": [("output_type", "unknown")],
+            "if": [Atom("output_type", "unknown")],
         },
     ]

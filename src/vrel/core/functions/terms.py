@@ -74,7 +74,7 @@ def bind_variables(term: any, binding: dict) -> any:
         return [bind_variables(arg, binding) for arg in term]
     # tuple
     elif isinstance(term, tuple):
-        raise Exception("tuple found 2")
+        raise Exception("tuple found 2" + str(tuple[0]))
         return tuple([bind_variables(arg, binding) for arg in term])
     elif isinstance(term, Atom):
         return create_atom(

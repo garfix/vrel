@@ -1,3 +1,4 @@
+from vrel.core.constants import DUMMY
 from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 from vrel.entity.ReifiedVariable import ReifiedVariable
@@ -140,28 +141,25 @@ class SemanticComposer(SomeProcessor):
                 ):
                     map[arg.name] = self.variable_generator.next()
 
-    def unify_variables(self, semantics: any, map: dict[str, str]) -> any:
-        if isinstance(semantics, list):
-            return [self.unify_variables(atom, map) for atom in semantics]
-        elif isinstance(semantics, Atom):
+    def unify_variables(self, term: any, map: dict[str, str]) -> any:
+        if isinstance(term, list):
+            return [self.unify_variables(atom, map) for atom in term]
+        elif isinstance(term, Atom):
             return create_atom(
-                self.unify_variables(semantics.variable, map),
-                semantics.predicate,
-                {
-                    k: self.unify_variables(v, map)
-                    for k, v in semantics.arguments.items()
-                },
+                self.unify_variables(term.variable, map),
+                term.predicate,
+                {k: self.unify_variables(v, map) for k, v in term.arguments.items()},
             )
-        elif isinstance(semantics, tuple):
+        elif isinstance(term, tuple):
             raise ("tuple found 9")
-            return tuple([self.unify_variables(term, map) for term in semantics])
-        elif isinstance(semantics, SemanticFunction):
-            return SemanticFunction(
-                semantics.args, self.unify_variables(semantics.body, map)
-            )
-        elif isinstance(semantics, Variable) and semantics.name in map:
-            return Variable(map[semantics.name])
-        elif isinstance(semantics, ReifiedVariable) and semantics.name in map:
-            return map[semantics.name]
+            return tuple([self.unify_variables(term, map) for term in term])
+        elif isinstance(term, SemanticFunction):
+            return SemanticFunction(term.args, self.unify_variables(term.body, map))
+        elif isinstance(term, Variable) and term.name in map:
+            if term == DUMMY:
+                return DUMMY
+            return Variable(map[term.name])
+        elif isinstance(term, ReifiedVariable) and term.name in map:
+            return map[term.name]
         else:
-            return semantics
+            return term

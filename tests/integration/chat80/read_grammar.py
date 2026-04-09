@@ -118,9 +118,6 @@ def get_read_grammar():
         # { "syn": "tv_continuous(E1, E2) -> 'exceeding'", "sem": lambda: [('greater_than', E1, E2)] },
         # ditransitive verbs
         # { "syn": "dtv(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: [('flows_from_to', E1, E2, E3)] },
-        # nbar
-        # { "syn": "nbar(E1) -> adj(E1) nbar(E1)", "sem": lambda adj, nbar: adj + nbar },
-        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
         # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
         # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
         # { "syn": "nbar(E1) -> nbar(E1) relative_clause(E1)", "sem": lambda nbar, relative_clause: nbar + relative_clause },
@@ -134,7 +131,6 @@ def get_read_grammar():
         # { "syn": "relative_clause(E1) -> 'whose' attr(E1, E2) vp_nosub_obj(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
         # { "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_nosub_obj_continuous(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
         # np
-        {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
         # { "syn": "np(E1) -> nbar(E1)", "sem": lambda nbar:
         #     SemanticFunction([Body], nbar + Body) },
         # { "syn": "np(E1) -> det(E1) nbar(E1)", "sem": lambda det, nbar:
@@ -200,25 +196,4 @@ def get_read_grammar():
         # { "syn": "noun(E1) -> 'sea'",           "sem": lambda: [('sea', E1)] },
         # { "syn": "noun(E1) -> 'city'",          "sem": lambda: [('city', E1)] },
         # { "syn": "noun(E1) -> 'continent'",     "sem": lambda: [('continent', E1)] },
-        # noun - plural
-        {
-            "syn": "noun(E1) -> /\\w+/+'s'",
-            "sem": lambda token: Atom(E1, token),
-            "boost": -1,
-        },
-        {
-            "syn": "noun(E1) -> /\\w+/+'ies'",
-            "sem": lambda token: lambda: Atom(E1, token + "y"),
-            "boost": -1,
-        },
-        # proper noun
-        {
-            "syn": "noun(E1) -> proper_noun(E1)",
-            "sem": lambda proper_noun: proper_noun,
-            "boost": -2,
-        },
-        {
-            "syn": "proper_noun(E1) -> /\\w+/",
-            "sem": lambda token: Atom(E1, "<unknown>", {"name": token}),
-        },
     ]

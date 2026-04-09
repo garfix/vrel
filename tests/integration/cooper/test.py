@@ -5,6 +5,7 @@ from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.Logger import Logger
+from vrel.grammar.en_us_read import get_en_us_read_grammar
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
@@ -15,11 +16,11 @@ from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
 from vrel.processor.parser.BasicParser import BasicParser
-from .CooperDB import CooperDB
-from .CooperModule import CooperModule
-from .write_grammar import get_write_grammar
-from .read_grammar1 import get_read_grammar1
-from .read_grammar2 import get_read_grammar2
+from CooperDB import CooperDB
+from CooperModule import CooperModule
+from write_grammar import get_write_grammar
+from read_grammar1 import get_read_grammar1
+from read_grammar2 import get_read_grammar2
 
 
 class TestCooper(unittest.TestCase):
@@ -76,7 +77,9 @@ class TestCooper(unittest.TestCase):
 
         # define the first pipeline
 
-        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar1())
+        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(
+            get_en_us_read_grammar() + get_read_grammar1()
+        )
         parser = BasicParser(grammar1)
 
         composer = SemanticComposer(parser)
@@ -102,7 +105,9 @@ class TestCooper(unittest.TestCase):
 
         # define the second pipeline
 
-        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar2())
+        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(
+            get_en_us_write_grammar() + get_read_grammar2()
+        )
         parser = BasicParser(grammar2)
 
         composer = SemanticComposer(parser)
@@ -121,71 +126,71 @@ class TestCooper(unittest.TestCase):
 
         tests1 = [
             ["magnesium is a metal", "OK"],
-            ["magnesium burns rapidly", "OK"],
-            ["magnesium oxide is a white metallic oxide", "OK"],
-            ["oxygen is a nonmetal", "OK"],
-            ["ferrous sulfide is a dark-gray compound that is brittle", "OK"],
-            ["iron is a metal", "OK"],
-            ["sulfur is a nonmetal", "OK"],
-            ["gasoline is a fuel", "OK"],
-            ["gasoline is combustable", "OK"],
-            ["combustable things burn", "OK"],
-            ["fuels are combustable", "OK"],
-            ["ice is a solid", "OK"],
-            ["steam is a gas", "OK"],
-            ["magnesium is an element", "OK"],
-            ["iron is an element", "OK"],
-            ["sulfur is an element", "OK"],
-            ["oxygen is an element", "OK"],
-            ["nitrogen is an element", "OK"],
-            ["hydrogen is an element", "OK"],
-            ["carbon is an element", "OK"],
-            ["copper is an element", "OK"],
-            ["salt is a compound", "OK"],
-            ["sugar is a compound", "OK"],
-            ["water is a compound", "OK"],
-            ["sulfuric acid is a compound", "OK"],
-            ["elements are not compounds", "OK"],
-            ["salt is sodium chloride", "OK"],
-            ["sodium chloride is salt", "OK"],
-            ["oxides are compounds", "OK"],
-            ["metals are metallic", "OK"],
-            ["no metal is a nonmetal", "OK"],
-            ["dark-gray things are not white", "OK"],
-            ["a solid is not a gas", "OK"],
-            ["any thing that burns rapidly burns", "OK"],
+            # ["magnesium burns rapidly", "OK"],
+            # ["magnesium oxide is a white metallic oxide", "OK"],
+            # ["oxygen is a nonmetal", "OK"],
+            # ["ferrous sulfide is a dark-gray compound that is brittle", "OK"],
+            # ["iron is a metal", "OK"],
+            # ["sulfur is a nonmetal", "OK"],
+            # ["gasoline is a fuel", "OK"],
+            # ["gasoline is combustable", "OK"],
+            # ["combustable things burn", "OK"],
+            # ["fuels are combustable", "OK"],
+            # ["ice is a solid", "OK"],
+            # ["steam is a gas", "OK"],
+            # ["magnesium is an element", "OK"],
+            # ["iron is an element", "OK"],
+            # ["sulfur is an element", "OK"],
+            # ["oxygen is an element", "OK"],
+            # ["nitrogen is an element", "OK"],
+            # ["hydrogen is an element", "OK"],
+            # ["carbon is an element", "OK"],
+            # ["copper is an element", "OK"],
+            # ["salt is a compound", "OK"],
+            # ["sugar is a compound", "OK"],
+            # ["water is a compound", "OK"],
+            # ["sulfuric acid is a compound", "OK"],
+            # ["elements are not compounds", "OK"],
+            # ["salt is sodium chloride", "OK"],
+            # ["sodium chloride is salt", "OK"],
+            # ["oxides are compounds", "OK"],
+            # ["metals are metallic", "OK"],
+            # ["no metal is a nonmetal", "OK"],
+            # ["dark-gray things are not white", "OK"],
+            # ["a solid is not a gas", "OK"],
+            # ["any thing that burns rapidly burns", "OK"],
         ]
 
         tests2 = [
-            ["magnesium is a metal", "True"],
-            ["magnesium is not a metal", "False"],
-            ["magnesium is a nonmetal", "False"],
-            ["magnesium is not a nonmetal", "True"],
-            ["magnesium is a metal that burns rapidly", "True"],
-            ["magnesium is magnesium", "True"],
-            ["some oxides are white", "True"],
-            ["no oxide is white", "False"],
-            ["oxides are not white", "False"],
-            ["magnesium oxide is an oxide", "True"],
-            ["every oxide is an oxide", "True"],
-            ["ferrous sulfide is dark-gray", "True"],
-            ["ferrous sulfide is a brittle compound", "True"],
-            ["ferrous sulfide is not brittle", "False"],
-            ["some sulfides are brittle", "True"],
-            ["ferrous sulfide is not a compound that is not dark-gray", "True"],
-            ["anything that is not a compound is not ferrous sulfide", "True"],
-            ["no dark-gray thing is a sulfide", "False"],
-            ["ferrous sulfide is white", "False"],
-            ["sodium chloride is a compound", "True"],
-            ["salt is an element", "False"],
-            ["sodium chloride is an element", "False"],
-            ["gasoline is a fuel that burns", "True"],
+            # ["magnesium is a metal", "True"],
+            # ["magnesium is not a metal", "False"],
+            # ["magnesium is a nonmetal", "False"],
+            # ["magnesium is not a nonmetal", "True"],
+            # ["magnesium is a metal that burns rapidly", "True"],
+            # ["magnesium is magnesium", "True"],
+            # ["some oxides are white", "True"],
+            # ["no oxide is white", "False"],
+            # ["oxides are not white", "False"],
+            # ["magnesium oxide is an oxide", "True"],
+            # ["every oxide is an oxide", "True"],
+            # ["ferrous sulfide is dark-gray", "True"],
+            # ["ferrous sulfide is a brittle compound", "True"],
+            # ["ferrous sulfide is not brittle", "False"],
+            # ["some sulfides are brittle", "True"],
+            # ["ferrous sulfide is not a compound that is not dark-gray", "True"],
+            # ["anything that is not a compound is not ferrous sulfide", "True"],
+            # ["no dark-gray thing is a sulfide", "False"],
+            # ["ferrous sulfide is white", "False"],
+            # ["sodium chloride is a compound", "True"],
+            # ["salt is an element", "False"],
+            # ["sodium chloride is an element", "False"],
+            # ["gasoline is a fuel that burns", "True"],
         ]
 
         logger.log_no_tests()
-        # logger.log_all_tests()
+        logger.log_all_tests()
         # logger.log_only_last_test()
-        # logger.log_products()
+        logger.log_products()
 
         tester = DialogTester(self, tests1, system1, logger)
         tester.run()

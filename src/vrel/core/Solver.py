@@ -21,7 +21,7 @@ class Solver(SomeSolver):
     def solve(self, atoms: Atom | list[Atom]) -> list[dict]:
 
         if isinstance(atoms, Atom):
-            return self.solve_single(atoms, {})
+            atoms = [atoms]
 
         if not isinstance(atoms, list):
             raise Exception(
@@ -138,7 +138,7 @@ class Solver(SomeSolver):
         if len(get_variables(flat)) > 0:
             raise Exception(f"'{predicate}' attempts to persist a variable: {flat}")
 
-        # print("WRITE", atom)
+        print("WRITE", atom)
 
         for relation in relations:
             if relation.write_function is not None:

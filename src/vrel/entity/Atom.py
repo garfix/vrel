@@ -61,7 +61,7 @@ class Atom:
             else:
                 raise Exception(f"Unknown argument type: {arg}")
 
-        # print()
+        # print("s")
         # print(self.predicate)
         # print(self.named_arguments)
         # print(args)
@@ -74,6 +74,28 @@ class Atom:
             self.predicate,
             self.arguments | arguments,
         )
+
+    def set_predicate(self, predicate: str):
+        from vrel.core.functions.atoms import create_atom
+
+        return create_atom(
+            self.variable,
+            predicate,
+            self.arguments,
+        )
+
+    def set_arg1(self, arg: any):
+        from vrel.core.functions.atoms import create_atom
+
+        args = self.numbered_arguments
+        args[0] = arg
+
+        return Atom(self.variable, self.predicate, *args, self.named_arguments)
+
+    def set_numbered_args(self, args: list[any]):
+        from vrel.core.functions.atoms import create_atom
+
+        return Atom(self.variable, self.predicate, *args, self.named_arguments)
 
     def remove_argument(self, argument_name: str):
         new_args = {k: v for k, v in self.arguments.items() if k != argument_name}
