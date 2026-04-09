@@ -3,7 +3,7 @@ from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 
 
-def quantify(atom: Atom):
+def create_query(atom: Atom):
 
     extracted_atoms = []
 
@@ -58,7 +58,7 @@ def create_quantification(atom: Atom, determiner_argument: Atom):
 
     if det.predicate == "all":
         c_arg = determiner_argument.remove_argument("determiner")
-        q_arg = quantify(c_arg)
+        q_arg = create_query(c_arg)
 
         # ('all', E1, [range-atoms], [body-atoms])
         q_atom = Atom(
@@ -71,7 +71,7 @@ def create_quantification(atom: Atom, determiner_argument: Atom):
         )
     elif det.predicate == "equals":
         c_arg = determiner_argument.remove_argument("determiner")
-        q_arg = quantify(c_arg)
+        q_arg = create_query(c_arg)
 
         # ('det_equals', [body-atoms], Number)
         q_atom = Atom(

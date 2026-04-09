@@ -6,7 +6,7 @@ from vrel.entity.Variable import Variable
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.OrderedSet import OrderedSet
-from vrel.module.quantify.Quantifier import quantify
+from vrel.module.querify.Quantifier import create_query
 
 
 class CoreModule(SomeModule):
@@ -25,15 +25,9 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("count", query_function=self.count)),
         self.add_relation(Relation("not", query_function=self.not_function)),
         self.add_relation(Relation("let", query_function=self.let)),
-        self.add_relation(
-            Relation("det_equals", query_function=self.determiner_equals)
-        ),
-        self.add_relation(
-            Relation("det_greater_than", query_function=self.determiner_greater_than)
-        ),
-        self.add_relation(
-            Relation("det_less_than", query_function=self.determiner_less_than)
-        ),
+        self.add_relation(Relation("det_equals", query_function=self.determiner_equals)),
+        self.add_relation(Relation("det_greater_than", query_function=self.determiner_greater_than)),
+        self.add_relation(Relation("det_less_than", query_function=self.determiner_less_than)),
         self.add_relation(Relation("all", query_function=self.determiner_all)),
         self.add_relation(Relation("none", query_function=self.determiner_none)),
         self.add_relation(Relation("scoped", query_function=self.scoped)),
@@ -42,7 +36,8 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("$unification", query_function=self.unification)),
         self.add_relation(Relation("find_all", query_function=self.find_all)),
         self.add_relation(Relation("find_one", query_function=self.find_one)),
-        self.add_relation(Relation("quantify", query_function=self.quantify)),
+        self.add_relation(Relation("create_query", query_function=self.create_query)),
+        self.add_relation(Relation("create_records", query_function=self.create_records)),
         self.add_relation(Relation("print", query_function=self.print)),
 
     # ('equals', E1, E2)
@@ -241,9 +236,7 @@ class CoreModule(SomeModule):
         return [[arguments[1], arguments[1]]]
 
     # ('det_equals', [body-atoms], E2)
-    def determiner_equals(
-        self, arguments: list, context: ExecutionContext
-    ) -> list[list]:
+    def determiner_equals(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         body, number = arguments
 
@@ -256,9 +249,7 @@ class CoreModule(SomeModule):
             return []
 
     # ('det_greater_than', [body-atoms], E2)
-    def determiner_greater_than(
-        self, arguments: list, context: ExecutionContext
-    ) -> list[list]:
+    def determiner_greater_than(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         body, number = arguments
 
@@ -271,9 +262,7 @@ class CoreModule(SomeModule):
             return []
 
     # ('det_less_than', [body-atoms], E2)
-    def determiner_less_than(
-        self, arguments: list, context: ExecutionContext
-    ) -> list[list]:
+    def determiner_less_than(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         body, number = arguments
 
@@ -292,16 +281,12 @@ class CoreModule(SomeModule):
         range = arguments[1]
         body = arguments[2]
 
-        entities = OrderedSet(
-            [binding[quant_var.name] for binding in context.solver.solve(range)]
-        )
+        entities = OrderedSet([binding[quant_var.name] for binding in context.solver.solve(range)])
 
         range_count = len(entities)
         results = OrderedSet()
         for entity in entities:
-            bindings = context.solver.solve(
-                bind_variables(body, {quant_var.name: entity})
-            )
+            bindings = context.solver.solve(bind_variables(body, {quant_var.name: entity}))
             if len(bindings) > 0:
                 results.add(entity)
 
@@ -329,9 +314,7 @@ class CoreModule(SomeModule):
 
     # ('scoped', [body-atoms])
     # a wrapper around a list of atoms, that allows the execution of the atoms in a variable
-    def scoped(
-        self, arguments: list, context: ExecutionContext
-    ) -> BindingResult | list[list]:
+    def scoped(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
         body = arguments[0]
 
         results = context.solver.solve(body)
@@ -426,12 +409,21 @@ class CoreModule(SomeModule):
         else:
             return [[None, None, results[0][2][0]]]
 
-    # ('quantify', body-atoms, result-variable)
-    # Turns body atoms in a quantified form, ready for the Solver
-    def quantify(self, arguments: list, context: ExecutionContext) -> list[list]:
+    # ('create_query', body-atoms, result-variable)
+    # Turns body atoms in a form, ready for the Solver
+    def create_query(self, arguments: list, context: ExecutionContext) -> list[list]:
         body = arguments[0]
 
-        result = quantify(body[0])
+        result = create_query(body[0])
+
+        return [[None, result]]
+
+    # ('create_records', body-atoms, result-variable)
+    # Turns body atoms in a form, ready to be stored
+    def create_records(self, arguments: list, context: ExecutionContext) -> list[list]:
+        body = arguments[0]
+
+        result = create_query(body[0])
 
         return [[None, result]]
 

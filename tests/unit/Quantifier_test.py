@@ -66,7 +66,7 @@ class TestQuantification(unittest.TestCase):
             {
                 "syn": "s() -> np(E1) verb(E1, E2) np(E2)",
                 "sem": lambda np1, verb, np2: [
-                    Atom("quantify", [Atom(verb, np1, np2)], E3),
+                    Atom("create_query", [Atom(verb, np1, np2)], E3),
                     Atom("scoped", E3),
                 ],
             },
