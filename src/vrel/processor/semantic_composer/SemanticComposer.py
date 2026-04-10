@@ -1,5 +1,4 @@
 from vrel.core.constants import DUMMY
-from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.ParseTreeNode import ParseTreeNode
@@ -42,10 +41,7 @@ class SemanticComposer(SomeProcessor):
 
             self.check_for_sem(parse_tree)
 
-            root_variables = [
-                self.variable_generator.next()
-                for _ in parse_tree.rule.antecedent.arguments
-            ]
+            root_variables = [self.variable_generator.next() for _ in parse_tree.rule.antecedent.arguments]
             semantics, inferences = self.compose(parse_tree, root_variables)
 
             sentences.append(SemanticSentence(semantics, inferences, root_variables))
@@ -73,9 +69,7 @@ class SemanticComposer(SomeProcessor):
         for child, consequent in zip(node.children, node.rule.consequents):
             if not child.is_leaf_node():
                 incoming_child_variables = [map[arg] for arg in consequent.arguments]
-                semantics, child_inference = self.compose(
-                    child, incoming_child_variables
-                )
+                semantics, child_inference = self.compose(child, incoming_child_variables)
                 inferences.extend(child_inference)
                 child_semantics.append(semantics)
             elif child.rule.sem:
@@ -128,24 +122,18 @@ class SemanticComposer(SomeProcessor):
                         map[arg.name] = self.variable_generator.next()
         elif isinstance(term, Atom):
             variable = term.variable
-            if variable.name not in map and not self.variable_generator.isinstance(
-                variable
-            ):
+            if variable.name not in map and not self.variable_generator.isinstance(variable):
                 map[variable.name] = self.variable_generator.next()
             for key, arg in term.arguments.items():
                 # since we're late in the game, don't replace variables that have already been replaced
-                if (
-                    isinstance(arg, Variable)
-                    and arg.name not in map
-                    and not self.variable_generator.isinstance(arg)
-                ):
+                if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
                     map[arg.name] = self.variable_generator.next()
 
     def unify_variables(self, term: any, map: dict[str, str]) -> any:
         if isinstance(term, list):
             return [self.unify_variables(atom, map) for atom in term]
         elif isinstance(term, Atom):
-            return create_atom(
+            return Atom(
                 self.unify_variables(term.variable, map),
                 term.predicate,
                 {k: self.unify_variables(v, map) for k, v in term.arguments.items()},

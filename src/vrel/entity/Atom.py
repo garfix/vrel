@@ -34,18 +34,14 @@ class Atom:
         else:
             raise Exception(f"Either arg 1 or arg 2 must hold the predicate: {args}")
 
-        if self.variable != DUMMY:
-            self.positional_arguments.append(self.variable)
-
         for index, arg in enumerate(args[rest_start:]):
             if isinstance(arg, dict):
-                self.arguments |= arg
                 for k, v in arg.items():
-                    self.named_arguments[k] = v
-                    if k.startswith("ARG"):
-                        raise Exception(
-                            "Named arguments must not have numbered names: {args}"
-                        )
+                    self.arguments[k] = v
+                    if isinstance(k, int):
+                        self.setNumberedArgument(k, v)
+                    else:
+                        self.named_arguments[k] = v
             elif (
                 isinstance(arg, Atom)
                 or isinstance(arg, float)
@@ -54,38 +50,37 @@ class Atom:
                 or isinstance(arg, Variable)
                 or isinstance(arg, list)
             ):
-                key = f"ARG{index}"
-                self.arguments[key] = arg
-                self.positional_arguments.append(arg)
-                self.numbered_arguments.append(arg)
+                self.arguments[index] = arg
+                self.setNumberedArgument(index, arg)
             else:
                 raise Exception(f"Unknown argument type: {arg}")
 
-        # print("s")
-        # print(self.predicate)
-        # print(self.named_arguments)
-        # print(args)
+        if self.variable != DUMMY:
+            self.positional_arguments.append(self.variable)
+        self.positional_arguments.extend(self.numbered_arguments)
+
+    def setNumberedArgument(self, index: int, value: any):
+        while len(self.numbered_arguments) < index + 1:
+            self.numbered_arguments.append(None)
+        self.numbered_arguments[index] = value
 
     def add_arguments(self, arguments: dict):
-        from vrel.core.functions.atoms import create_atom
 
-        return create_atom(
+        return Atom(
             self.variable,
             self.predicate,
             self.arguments | arguments,
         )
 
     def set_predicate(self, predicate: str):
-        from vrel.core.functions.atoms import create_atom
 
-        return create_atom(
+        return Atom(
             self.variable,
             predicate,
             self.arguments,
         )
 
     def set_arg1(self, arg: any):
-        from vrel.core.functions.atoms import create_atom
 
         args = self.numbered_arguments
         args[0] = arg
@@ -93,7 +88,6 @@ class Atom:
         return Atom(self.variable, self.predicate, *args, self.named_arguments)
 
     def set_numbered_args(self, args: list[any]):
-        from vrel.core.functions.atoms import create_atom
 
         return Atom(self.variable, self.predicate, *args, self.named_arguments)
 

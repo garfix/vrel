@@ -1,33 +1,23 @@
 from vrel.core.constants import DUMMY
-from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
 
-def generate_variables(
-    term: any, variable_generator: VariableGenerator, variable_map: dict
-):
+def generate_variables(term: any, variable_generator: VariableGenerator, variable_map: dict):
     # list
     if isinstance(term, list):
-        return [
-            generate_variables(arg, variable_generator, variable_map) for arg in term
-        ]
+        return [generate_variables(arg, variable_generator, variable_map) for arg in term]
     # tuple
     elif isinstance(term, tuple):
         raise Exception("tuple found 5")
-        return tuple(
-            [generate_variables(arg, variable_generator, variable_map) for arg in term]
-        )
+        return tuple([generate_variables(arg, variable_generator, variable_map) for arg in term])
     # atom
     elif isinstance(term, Atom):
-        return create_atom(
+        return Atom(
             generate_variables(term.variable, variable_generator, variable_map),
             term.predicate,
-            {
-                k: generate_variables(v, variable_generator, variable_map)
-                for k, v in term.arguments.items()
-            },
+            {k: generate_variables(v, variable_generator, variable_map) for k, v in term.arguments.items()},
         )
     # variable
     elif isinstance(term, Variable):

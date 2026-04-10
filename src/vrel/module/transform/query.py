@@ -1,5 +1,4 @@
 from vrel.core.constants import ARG_DETERMINER
-from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 
 
@@ -46,7 +45,7 @@ def extract_determiner_arguments(atom: Atom):
 
 def extract_argument(atom: Atom, arg_name: str, arg: Atom):
     new_args = atom.arguments | {arg_name: arg.variable}
-    new_atom = create_atom(atom.variable, atom.predicate, new_args)
+    new_atom = Atom(atom.variable, atom.predicate, new_args)
 
     extracted_atom = arg
     return new_atom, extracted_atom

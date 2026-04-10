@@ -1,5 +1,4 @@
 from vrel.core.constants import DUMMY
-from vrel.core.functions.atoms import create_atom
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
@@ -77,7 +76,7 @@ def bind_variables(term: any, binding: dict) -> any:
         raise Exception("tuple found 2" + str(tuple[0]))
         return tuple([bind_variables(arg, binding) for arg in term])
     elif isinstance(term, Atom):
-        return create_atom(
+        return Atom(
             bind_variables(term.variable, binding),
             term.predicate,
             {k: bind_variables(v, binding) for k, v in term.arguments.items()},
@@ -110,7 +109,7 @@ def reify_variables(term: any) -> any:
     # atom
     elif isinstance(term, Atom):
         raise Exception("Todo1")
-        return create_atom(
+        return Atom(
             reify_variables(term.variable),
             term.predicate,
             {k: reify_variables(v) for k, v in term.arguments.items()},
