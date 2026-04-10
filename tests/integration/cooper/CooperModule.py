@@ -199,15 +199,11 @@ class CooperModule(SomeModule):
         raise Exception(f"'and_3v' doesn't accept arguments: {arguments}")
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        results = self.ds.select(
-            context.relation.predicate, context.relation.formal_parameters, arguments
-        )
+        results = self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)
         if len(results) > 0:
             return results
         else:
             return []
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.ds.insert(
-            context.relation.predicate, context.relation.formal_parameters, arguments
-        )
+        self.ds.insert(context.relation.predicate, context.relation.formal_parameters, arguments)

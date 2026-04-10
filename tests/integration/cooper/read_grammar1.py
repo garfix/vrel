@@ -16,7 +16,7 @@ def get_read_grammar1():
         {
             "syn": "s() -> proper_noun(E1) 'is' a() np(E2, T1)",
             "sem": lambda proper_noun, a, np: Atom(
-                "intent_tell", np.set_numbered_args([proper_noun, "true"])
+                "intent_tell", np.set_numbered_args([proper_noun.arguments["name"], "true"])
             ),
             # (metal, proper_noun)
         },

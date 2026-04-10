@@ -3,10 +3,9 @@ import unittest
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.constants import E1, e1
+from vrel.core.constants import E1
 from vrel.entity.Atom import Atom
 from vrel.entity.SentenceRequest import SentenceRequest
-from vrel.entity.Variable import Variable
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser

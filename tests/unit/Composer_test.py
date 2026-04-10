@@ -2,7 +2,7 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.constants import E1, E2, DUMMY
+from vrel.core.constants import E1
 from vrel.entity.Atom import Atom
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.processor.parser.BasicParser import BasicParser
@@ -31,17 +31,13 @@ class TestComposer(unittest.TestCase):
         composer = SemanticComposer(parser)
         executor = AtomExecutor(composer, model)
 
-        system = BasicSystem(
-            model=model, parser=parser, composer=composer, executor=executor
-        )
+        system = BasicSystem(model=model, parser=parser, composer=composer, executor=executor)
 
         exception_occurred = False
         try:
             system.enter(SentenceRequest("Mary walks"))
         except Exception as e:
-            self.assertEqual(
-                str(e), "Rule 'proper_noun(E1) -> 'mary'' is missing key 'sem'"
-            )
+            self.assertEqual(str(e), "Rule 'proper_noun(E1) -> 'mary'' is missing key 'sem'")
             exception_occurred = True
 
         self.assertEqual(exception_occurred, True)
@@ -51,7 +47,7 @@ class TestComposer(unittest.TestCase):
         simple_grammar = [
             {
                 "syn": "s(E1) -> np(E2) verb(E2, E3) np(E3)",
-                "sem": lambda np1, verb, np2: Atom(DUMMY, verb, np1, np2),
+                "sem": lambda np1, verb, np2: Atom(verb, np1, np2),
             },
             {"syn": "verb(E1, E2) -> 'flows' 'to'", "sem": lambda: "flows"},
             {
@@ -59,7 +55,7 @@ class TestComposer(unittest.TestCase):
                 "sem": lambda det, nbar: nbar.add_arguments(det),
             },
             {"syn": "det(E1) -> 'the'", "sem": lambda: {"quantifier": "the"}},
-            {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(DUMMY, noun)},
+            {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(E1, noun)},
             {"syn": "noun(E1) -> 'river'", "sem": lambda: "river"},
             {"syn": "noun(E1) -> 'sea'", "sem": lambda: "sea"},
         ]
@@ -81,7 +77,7 @@ class TestComposer(unittest.TestCase):
         semantics = response.products[0].sentences[0].semantics
         self.assertEqual(
             repr(semantics),
-            "A($6, flows, A($4, river, quantifier='the'), A($5, sea, quantifier='the'))",
+            "A(_, flows, A($2, river, quantifier='the'), A($3, sea, quantifier='the'))",
         )
 
     def test_special_category(self):
@@ -109,9 +105,7 @@ class TestComposer(unittest.TestCase):
 
         request = SentenceRequest("John Walker sleeps")
         response = system.enter(request)
-        self.assertEqual(
-            str(response.products[0].sentences[0].semantics), "John Walker"
-        )
+        self.assertEqual(str(response.products[0].sentences[0].semantics), "John Walker")
 
     def test_multiple_root_variables(self):
 
