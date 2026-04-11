@@ -27,6 +27,7 @@ CATEGORY_PROPER_NOUN = "proper_noun"
 
 # some common semantic variables
 DUMMY = Variable("_")
+UNKNOWN_PREDICATE = "<unknown>"
 E1 = Variable("E1")
 E2 = Variable("E2")
 E3 = Variable("E3")

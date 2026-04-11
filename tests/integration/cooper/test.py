@@ -77,17 +77,13 @@ class TestCooper(unittest.TestCase):
 
         # define the first pipeline
 
-        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(
-            get_en_us_read_grammar() + get_read_grammar1()
-        )
+        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_en_us_read_grammar() + get_read_grammar1())
         parser = BasicParser(grammar1)
 
         composer = SemanticComposer(parser)
         executor = AtomExecutor(composer, model)
 
-        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(
-            get_en_us_write_grammar() + get_write_grammar()
-        )
+        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
         logger = Logger()
@@ -105,9 +101,7 @@ class TestCooper(unittest.TestCase):
 
         # define the second pipeline
 
-        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(
-            get_en_us_write_grammar() + get_read_grammar2()
-        )
+        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(get_en_us_write_grammar() + get_read_grammar2())
         parser = BasicParser(grammar2)
 
         composer = SemanticComposer(parser)
@@ -126,7 +120,7 @@ class TestCooper(unittest.TestCase):
 
         tests1 = [
             ["magnesium is a metal", "OK"],
-            # ["magnesium burns rapidly", "OK"],
+            ["magnesium burns rapidly", "OK"],
             # ["magnesium oxide is a white metallic oxide", "OK"],
             # ["oxygen is a nonmetal", "OK"],
             # ["ferrous sulfide is a dark-gray compound that is brittle", "OK"],

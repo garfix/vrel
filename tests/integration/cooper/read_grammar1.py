@@ -9,16 +9,21 @@ T3 = Variable("T3")
 
 
 def get_read_grammar1():
+
+    def isa(proper_noun: Atom, a, np: Atom):
+        return Atom(
+            "intent_tell",
+            Atom(Variable("AUTO"), np.predicate, proper_noun.arguments["name"], "true", np.named_arguments),
+        )
+
     return [
         # sentence
         # introduce new names
         # X is a Y
+        # "intent_tell", np.set_numbered_args([None, proper_noun.arguments["name"], "true"])
         {
             "syn": "s() -> proper_noun(E1) 'is' a() np(E2, T1)",
-            "sem": lambda proper_noun, a, np: Atom(
-                "intent_tell", np.set_numbered_args([proper_noun.arguments["name"], "true"])
-            ),
-            # (metal, proper_noun)
+            "sem": isa,
         },
         # # X is Y (X is another name for Y)
         # {
@@ -50,15 +55,16 @@ def get_read_grammar1():
         #     "syn": "s() -> noun(E1, T1) verb(E1)",
         #     "sem": lambda noun, verb: noun + [("store", verb)],
         # },
-        # # combustable things burn
-        # {
-        #     "syn": "s() -> np(E1, T1) verb(E1)",
-        #     "sem": lambda np, verb: [
-        #         ("let", T1, "true"),
-        #         ("let", T2, "true"),
-        #         ("intent_learn", verb[0], np),
-        #     ],
-        # },
+        # combustable things burn
+        {
+            "syn": "s() -> np(E1, T1) verb(E1)",
+            # "sem": lambda np, verb: [
+            #     ("let", T1, "true"),
+            #     ("let", T2, "true"),
+            #     ("intent_learn", verb[0], np),
+            # ],
+            "sem": lambda np, verb: Atom("intent_learn", Atom(verb, np, "true")),
+        },
         # # dark-gray things are not white
         # {
         #     "syn": "s() -> np(E1, T1) are() 'not' adj(E1, T2)",
@@ -130,10 +136,10 @@ def get_read_grammar1():
         # # verb
         # {"syn": "verb(E1) -> 'burn'", "sem": lambda: [("burns", E1, "true")]},
         # {"syn": "verb(E1) -> 'burns'", "sem": lambda: [("burns", E1, "true")]},
-        # {
-        #     "syn": "verb(E1) -> 'burns' 'rapidly'",
-        #     "sem": lambda: [("burns_rapidly", E1, "true")],
-        # },
+        {
+            "syn": "verb(E1) -> 'burns' 'rapidly'",
+            "sem": lambda: "burns_rapidly",
+        },
         # {
         #     "syn": "verb(E1) -> 'rapidly' 'burns'",
         #     "sem": lambda: [("burns_rapidly", E1, "true")],
@@ -157,10 +163,10 @@ def get_read_grammar1():
             "syn": "noun(E1, T1) -> common_noun(E1, T1)",
             "sem": lambda common_noun: common_noun,
         },
-        # {
-        #     "syn": "noun(E1, T1) -> proper_noun(E1)",
-        #     "sem": lambda proper_noun: proper_noun,
-        # },
+        {
+            "syn": "noun(E1, T1) -> proper_noun(E1)",
+            "sem": lambda proper_noun: proper_noun,
+        },
         # # common noun
         # {
         #     "syn": "common_noun(E1, T1) -> 'nonmetal'",

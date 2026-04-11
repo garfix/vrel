@@ -1,4 +1,4 @@
-from vrel.core.constants import E1
+from vrel.core.constants import E1, UNKNOWN_PREDICATE
 from vrel.entity.Atom import Atom
 
 
@@ -25,14 +25,14 @@ def get_en_us_read_grammar():
             "sem": lambda token: lambda: Atom(E1, token + "y"),
             "boost": -1,
         },
-        # proper noun
         {
             "syn": "noun(E1) -> proper_noun(E1)",
             "sem": lambda proper_noun: proper_noun,
             "boost": -2,
         },
+        # proper noun
         {
             "syn": "proper_noun(E1) -> /\\w+/",
-            "sem": lambda token: Atom(E1, "<unknown>", {"name": token}),
+            "sem": lambda token: Atom(E1, UNKNOWN_PREDICATE, {"name": token}),
         },
     ]

@@ -49,6 +49,7 @@ class Atom:
                 or isinstance(arg, str)
                 or isinstance(arg, Variable)
                 or isinstance(arg, list)
+                or arg == None
             ):
                 self.arguments[index] = arg
                 self.setNumberedArgument(index, arg)

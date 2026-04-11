@@ -20,7 +20,7 @@ class CooperModule(SomeModule):
                 "metal",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "name", "truth"],
             )
         )
         self.add_relation(

@@ -1,3 +1,17 @@
+## 2026-04-11
+
+In AMR, the id-argument is separated from the other arguments, and that's fine and recognisable, but when combining it with atoms / records without the special id argument, it is problematic in more and more ways.
+
+for example I now want to add a special constant to indicate that the id of a record must be auto generated:
+
+    A(AUTO / metal
+        :0 'magnesium'
+        :1 'true')
+
+Is AUTO a variable? No, it's a constant. But the first argument should be a variable, or the predicate. And it's neither.
+
+A good reason for separating the id variable from the rest is for recognizability. But here we have no need for it.
+
 ## 2026-04-01
 
 The function `quantify` should also do other things to prepare the query. So, "querify"? Also, it may be interesting to just say `solve` and have `solve` do the transformations itself.
