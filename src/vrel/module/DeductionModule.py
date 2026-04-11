@@ -64,7 +64,7 @@ class DeductionModule(SomeModule):
         # replace variables in rule with new variables
         variable_map = {}
         head = generate_variables(
-            rule.head.positional_arguments, self.variable_generator, variable_map
+            rule.head.numbered_arguments, self.variable_generator, variable_map
         )
         body = [
             generate_variables(atom, self.variable_generator, variable_map)

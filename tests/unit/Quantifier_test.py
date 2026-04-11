@@ -75,7 +75,7 @@ class TestQuantification(unittest.TestCase):
                 "syn": "np(E1) -> det(E1) nbar(E1)",
                 "sem": lambda det, nbar: nbar.add_arguments(det),
             },
-            {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(E1, noun)},
+            {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(noun, E1)},
             {"syn": "det(E1) -> 'every'", "sem": lambda: {"determiner": Atom("all")}},
             {
                 "syn": "det(E1) -> number(E1)",

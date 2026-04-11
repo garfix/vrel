@@ -45,14 +45,10 @@ class SortByCost:
         results.sort(key=lambda result: result["cost"])
         sorted = [result["atom"] for result in results]
 
-        sorted_first_atom = self.sort_arguments(
-            sorted[0], solver, model, bound_variables
-        )
+        sorted_first_atom = self.sort_arguments(sorted[0], solver, model, bound_variables)
         bound_variables = bound_variables | set(get_variables(sorted_first_atom))
 
-        return self.sort_rest(
-            done + [sorted_first_atom], sorted[1:], solver, model, bound_variables
-        )
+        return self.sort_rest(done + [sorted_first_atom], sorted[1:], solver, model, bound_variables)
 
     def sort_arguments(
         self,
@@ -69,13 +65,11 @@ class SortByCost:
                     new_args[key] = self.sort(value, solver, model, bound_variables)
                     replaced = True
         if replaced:
-            return Atom(atom.variable, atom.predicate, new_args)
+            return Atom(atom.predicate, new_args)
         else:
             return atom
 
-    def calculate_cost(
-        self, model: SomeModel, atom: Atom, bound_variables: set, solver: SomeSolver
-    ):
+    def calculate_cost(self, model: SomeModel, atom: Atom, bound_variables: set, solver: SomeSolver):
         predicate = atom.predicate
         relations = model.find_relations(predicate)
         if len(relations) == 0:
@@ -84,17 +78,14 @@ class SortByCost:
         costs = []
         for relation in relations:
             unbound_argument_size_product = 1
-            arguments = atom.positional_arguments
+            arguments = atom.numbered_arguments
 
             if relation.relation_size == IGNORED:
                 cost = INFINITE
             else:
 
                 if len(arguments) != len(relation.argument_sizes):
-                    raise Exception(
-                        "Number of argument sizes doesn't match that of relation: "
-                        + predicate
-                    )
+                    raise Exception("Number of argument sizes doesn't match that of relation: " + predicate)
 
                 for argument, argument_size in zip(arguments, relation.argument_sizes):
 

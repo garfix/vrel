@@ -43,4 +43,4 @@ class FrontResolveName:
             else:
                 rest_composition.append(arg)
 
-        return name_resolvers, Atom(atom.variable, atom.predicate, *rest_composition)
+        return name_resolvers, Atom(atom.predicate, *rest_composition)

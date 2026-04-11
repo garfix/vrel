@@ -26,7 +26,7 @@ CATEGORY_FORMAT = "format"
 CATEGORY_PROPER_NOUN = "proper_noun"
 
 # some common semantic variables
-DUMMY = Variable("_")
+AUTO = "<auto-generate>"
 UNKNOWN_PREDICATE = "<unknown>"
 E1 = Variable("E1")
 E2 = Variable("E2")

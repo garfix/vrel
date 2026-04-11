@@ -1,55 +1,36 @@
-from vrel.core.constants import DUMMY
 from vrel.entity.Atom import Atom, Variable
 from vrel.entity.Variable import Variable
 
 
 def test_atom():
 
-    a = Atom(Variable("E1"), "likes")
+    a = Atom("likes")
 
     assert a.predicate == "likes"
 
-    a = Atom(Variable("E1"), "likes", "john", "mary")
+    a = Atom("likes", Variable("E1"), "john", "mary")
 
-    assert a.variable.name == "E1"
     assert a.predicate == "likes"
-    assert a.arguments[0] == "john"
-    assert a.arguments[1] == "mary"
-    assert a.positional_arguments == [Variable("E1"), "john", "mary"]
-    assert a.numbered_arguments == ["john", "mary"]
+    assert a.arguments[0] == Variable("E1")
+    assert a.arguments[1] == "john"
+    assert a.arguments[2] == "mary"
+    assert a.numbered_arguments == [Variable("E1"), "john", "mary"]
     assert a.named_arguments == {}
-    assert str(a) == "A(E1 / likes\n    :0 'john'\n    :1 'mary')"
-    assert repr(a) == "A(E1, likes, 'john', 'mary')"
+    assert str(a) == "A(likes\n    :0 E1\n    :1 'john'\n    :2 'mary')"
+    assert repr(a) == "A(likes, E1, 'john', 'mary')"
 
-    c = Atom(Variable("E1"), "likes", "john", "mary", {"mod": "much"})
+    c = Atom("likes", Variable("E1"), "john", "mary", {"mod": "much"})
 
-    assert c.arguments[0] == "john"
-    assert c.arguments[1] == "mary"
-    assert c.arguments["mod"] == "much"
-    assert c.positional_arguments == [Variable("E1"), "john", "mary"]
+    assert c.arguments[0] == Variable("E1")
+    assert c.arguments[1] == "john"
+    assert c.arguments[2] == "mary"
+    assert c.numbered_arguments == [Variable("E1"), "john", "mary"]
     assert c.named_arguments == {"mod": "much"}
-    assert str(c) == "A(E1 / likes\n    :0 'john'\n    :1 'mary'\n    :mod 'much')"
-    assert repr(c) == "A(E1, likes, 'john', 'mary', mod='much')"
+    assert str(c) == "A(likes\n    :0 E1\n    :1 'john'\n    :2 'mary'\n    :mod 'much')"
+    assert repr(c) == "A(likes, E1, 'john', 'mary', mod='much')"
 
-    d = Atom(Variable("E1"), "likes", {"time": "now"})
+    f = c.add_arguments({"location": "here"})
 
-    assert d.arguments["time"] == "now"
-    assert d.positional_arguments == [Variable("E1")]
-    assert d.numbered_arguments == []
-    assert d.named_arguments == {"time": "now"}
-
-    e = Atom("likes", "john", "mary", {"time": "now"})
-
-    assert e.variable == DUMMY
-    assert e.arguments["time"] == "now"
-    assert e.positional_arguments == ["john", "mary"]
-    assert e.numbered_arguments == ["john", "mary"]
-    assert e.named_arguments == {"time": "now"}
-
-    f = e.add_arguments({"location": "here"})
-
-    assert f.variable == DUMMY
-    assert f.arguments["time"] == "now"
+    assert f.arguments["mod"] == "much"
     assert f.arguments["location"] == "here"
-    assert f.positional_arguments == ["john", "mary"]
-    assert f.named_arguments == {"time": "now", "location": "here"}
+    assert f.named_arguments == {"mod": "much", "location": "here"}

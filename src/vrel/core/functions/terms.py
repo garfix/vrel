@@ -1,4 +1,3 @@
-from vrel.core.constants import DUMMY
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
@@ -23,7 +22,7 @@ def format_term(value: any, indent: str = "\n") -> str:
         for k, v in value.arguments.items():
             sub = format_term(v, indent + "          ")
             s += "\n" + indent + "    " + f":{k} {sub}"
-        text = f"A({value.variable.name} / {value.predicate}{s})"
+        text = f"A({value.predicate}{s})"
 
     elif isinstance(value, list):
         text = indent + "["
@@ -54,8 +53,6 @@ def get_variables(term: any) -> list[str]:
             for v in get_variables(arg):
                 variables.add(v)
     elif isinstance(term, Atom):
-        if term.variable != DUMMY:
-            variables.add(term.variable)
         for _, value in term.arguments.items():
             for v in get_variables(value):
                 variables.add(v)
@@ -77,7 +74,6 @@ def bind_variables(term: any, binding: dict) -> any:
         return tuple([bind_variables(arg, binding) for arg in term])
     elif isinstance(term, Atom):
         return Atom(
-            bind_variables(term.variable, binding),
             term.predicate,
             {k: bind_variables(v, binding) for k, v in term.arguments.items()},
         )
@@ -110,7 +106,6 @@ def reify_variables(term: any) -> any:
     elif isinstance(term, Atom):
         raise Exception("Todo1")
         return Atom(
-            reify_variables(term.variable),
             term.predicate,
             {k: reify_variables(v) for k, v in term.arguments.items()},
         )

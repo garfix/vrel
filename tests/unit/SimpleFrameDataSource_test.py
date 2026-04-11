@@ -5,7 +5,6 @@ from vrel.core.Solver import Solver
 from vrel.data_source.SimpleFrameDataSource import SimpleFrameDataSource
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
-from vrel.core.constants import DUMMY
 from simple_frame_data_source.SimpleModule import SimpleModule
 
 

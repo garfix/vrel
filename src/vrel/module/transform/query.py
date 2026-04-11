@@ -28,24 +28,31 @@ def extract_determiner_arguments(atom: Atom):
     new_atom = atom
     determiner_arguments = []
 
-    for arg_name, arg in reversed(atom.arguments.items()):
-        if isinstance(arg, Atom):
-            # arg = (p / parent)
-            if ARG_DETERMINER in arg.named_arguments:
-                det = arg.named_arguments[ARG_DETERMINER]
+    for key, value in reversed(atom.arguments.items()):
+        if isinstance(value, Atom):
+            # arg = (parent p)
+            if ARG_DETERMINER in value.named_arguments:
+                det = value.named_arguments[ARG_DETERMINER]
                 if not isinstance(det, Atom):
                     raise Exception(f"A determiner must be an atom: {det}")
 
-                # arg = (p / parent :determiner (d / all))
-                new_atom = new_atom.add_arguments({arg_name: arg.variable})
-                determiner_arguments.append(arg)
+                # (have
+                #   0: (parent p :determiner (d / all))
+                #   1: (child c : determiner (d / 2))
+                # )
+                new_atom = new_atom.add_arguments({key: value.arguments[0]})
+                determiner_arguments.append(value)
+                # (have
+                #   0: p
+                #   1: c
+                # )
 
     return determiner_arguments, new_atom
 
 
 def extract_argument(atom: Atom, arg_name: str, arg: Atom):
     new_args = atom.arguments | {arg_name: arg.variable}
-    new_atom = Atom(atom.variable, atom.predicate, new_args)
+    new_atom = Atom(atom.predicate, new_args)
 
     extracted_atom = arg
     return new_atom, extracted_atom
@@ -62,7 +69,7 @@ def create_quantification(atom: Atom, determiner_argument: Atom):
         # ('all', E1, [range-atoms], [body-atoms])
         q_atom = Atom(
             "all",
-            determiner_argument.variable,
+            determiner_argument.arguments[0],
             # Range
             q_arg,
             # Body

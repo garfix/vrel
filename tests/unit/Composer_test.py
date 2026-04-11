@@ -55,7 +55,7 @@ class TestComposer(unittest.TestCase):
                 "sem": lambda det, nbar: nbar.add_arguments(det),
             },
             {"syn": "det(E1) -> 'the'", "sem": lambda: {"quantifier": "the"}},
-            {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(E1, noun)},
+            {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(noun, E1)},
             {"syn": "noun(E1) -> 'river'", "sem": lambda: "river"},
             {"syn": "noun(E1) -> 'sea'", "sem": lambda: "sea"},
         ]
@@ -77,7 +77,7 @@ class TestComposer(unittest.TestCase):
         semantics = response.products[0].sentences[0].semantics
         self.assertEqual(
             repr(semantics),
-            "A(_, flows, A($2, river, quantifier='the'), A($3, sea, quantifier='the'))",
+            "A(flows, A(river, $2, quantifier='the'), A(sea, $3, quantifier='the'))",
         )
 
     def test_special_category(self):

@@ -1,3 +1,4 @@
+from vrel.core.constants import AUTO
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 
@@ -27,6 +28,7 @@ class Sqlite3DataSource(SomeDataSource):
         cursor = self.connection.cursor()
         column_string = ",".join(columns)
         place_holders = ", ".join(["?" for v in values])
+        values = [None if v == AUTO else v for v in values]
         cursor.execute(f"INSERT OR IGNORE INTO {table} ({column_string}) VALUES ({place_holders})", values)
 
     def delete(self, table: str, columns: list[str], values: list):

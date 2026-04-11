@@ -1,4 +1,3 @@
-from vrel.core.constants import DUMMY
 from vrel.entity.Atom import Atom
 from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.ParseTreeNode import ParseTreeNode
@@ -112,7 +111,7 @@ class SemanticComposer(SomeProcessor):
         # only lists of atoms for now
         if isinstance(term, list):
             for atom in term:
-                for arg in atom.positional_arguments:
+                for arg in atom.numbered_arguments:
                     # since we're late in the game, don't replace variables that have already been replaced
                     if (
                         isinstance(arg, Variable)
@@ -121,9 +120,6 @@ class SemanticComposer(SomeProcessor):
                     ):
                         map[arg.name] = self.variable_generator.next()
         elif isinstance(term, Atom):
-            variable = term.variable
-            if variable.name not in map and not self.variable_generator.isinstance(variable):
-                map[variable.name] = self.variable_generator.next()
             for key, arg in term.arguments.items():
                 # since we're late in the game, don't replace variables that have already been replaced
                 if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
@@ -134,7 +130,6 @@ class SemanticComposer(SomeProcessor):
             return [self.unify_variables(atom, map) for atom in term]
         elif isinstance(term, Atom):
             return Atom(
-                self.unify_variables(term.variable, map),
                 term.predicate,
                 {k: self.unify_variables(v, map) for k, v in term.arguments.items()},
             )
@@ -144,8 +139,6 @@ class SemanticComposer(SomeProcessor):
         elif isinstance(term, SemanticFunction):
             return SemanticFunction(term.args, self.unify_variables(term.body, map))
         elif isinstance(term, Variable) and term.name in map:
-            if term == DUMMY:
-                return DUMMY
             return Variable(map[term.name])
         elif isinstance(term, ReifiedVariable) and term.name in map:
             return map[term.name]

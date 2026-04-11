@@ -2,7 +2,7 @@ import sqlite3
 import unittest
 
 from vrel.core.Model import Model
-from vrel.core.constants import E1, E2, DUMMY
+from vrel.core.constants import E1, E2
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
@@ -64,20 +64,20 @@ class TestSolver(unittest.TestCase):
         solver = Solver(model)
 
         tests = [
-            [[Atom(DUMMY, "river", E1)], [{"E1": "amazon"}, {"E1": "brahmaputra"}]],
-            [[Atom(DUMMY, "river", E1), Atom(DUMMY, "contains", "india", E1)], [{"E1": "brahmaputra"}]],
+            [[Atom("river", E1)], [{"E1": "amazon"}, {"E1": "brahmaputra"}]],
+            [[Atom("river", E1), Atom("contains", "india", E1)], [{"E1": "brahmaputra"}]],
             [
-                [Atom(DUMMY, "contains", E1, E2), Atom(DUMMY, "country", E1)],
+                [Atom("contains", E1, E2), Atom("country", E1)],
                 [{"E1": "brasil", "E2": "amazon"}, {"E1": "india", "E2": "brahmaputra"}],
             ],
-            [[Atom(DUMMY, "contains", E1, E1)], []],
+            [[Atom("contains", E1, E1)], []],
             # number_of returns 2; this doesn't match 3
-            [[Atom(DUMMY, "number_of", "river", 3)], []],
+            [[Atom("number_of", "river", 3)], []],
             # number_of returns 2; and it matches
-            [[Atom(DUMMY, "number_of", "river", 2)], [{}]],
+            [[Atom("number_of", "river", 2)], [{}]],
             # unification
             [
-                [Atom(DUMMY, "$unification", E2, E1), Atom(DUMMY, "river", E1), Atom(DUMMY, "contains", "india", E2)],
+                [Atom("$unification", E2, E1), Atom("river", E1), Atom("contains", "india", E2)],
                 [{"E1": "brahmaputra", "E2": Variable("E1")}],
             ],
         ]

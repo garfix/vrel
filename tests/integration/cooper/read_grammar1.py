@@ -1,4 +1,4 @@
-from vrel.core.constants import E1, E2, E3, E4, E5
+from vrel.core.constants import AUTO, E1, E2, E3, E4, E5
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
@@ -13,7 +13,7 @@ def get_read_grammar1():
     def isa(proper_noun: Atom, a, np: Atom):
         return Atom(
             "intent_tell",
-            Atom(Variable("AUTO"), np.predicate, proper_noun.arguments["name"], "true", np.named_arguments),
+            Atom(np.predicate, AUTO, proper_noun.arguments["name"], "true", np.named_arguments),
         )
 
     return [
@@ -173,7 +173,7 @@ def get_read_grammar1():
         #     "sem": lambda: [("nonmetal", E1, T1)],
         # },
         # {"syn": "common_noun(E1, T1) -> 'fuel'", "sem": lambda: [("fuel", E1, T1)]},
-        {"syn": "common_noun(E1, T1) -> 'metal'", "sem": lambda: Atom(E1, "metal", T1)},
+        {"syn": "common_noun(E1, T1) -> 'metal'", "sem": lambda: Atom("metal", E1, T1)},
         # {"syn": "common_noun(E1, T1) -> 'oxide'", "sem": lambda: [("oxide", E1, T1)]},
         # {
         #     "syn": "common_noun(E1, T1) -> 'sulfide'",

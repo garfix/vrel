@@ -1,4 +1,3 @@
-from vrel.core.constants import DUMMY
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
@@ -15,14 +14,11 @@ def generate_variables(term: any, variable_generator: VariableGenerator, variabl
     # atom
     elif isinstance(term, Atom):
         return Atom(
-            generate_variables(term.variable, variable_generator, variable_map),
             term.predicate,
             {k: generate_variables(v, variable_generator, variable_map) for k, v in term.arguments.items()},
         )
     # variable
     elif isinstance(term, Variable):
-        if term == DUMMY:
-            return term
         if term.name in variable_map:
             return variable_map[term.name]
         else:

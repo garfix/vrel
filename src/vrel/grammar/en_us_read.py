@@ -33,6 +33,6 @@ def get_en_us_read_grammar():
         # proper noun
         {
             "syn": "proper_noun(E1) -> /\\w+/",
-            "sem": lambda token: Atom(E1, UNKNOWN_PREDICATE, {"name": token}),
+            "sem": lambda token: Atom(UNKNOWN_PREDICATE, E1, {"name": token}),
         },
     ]

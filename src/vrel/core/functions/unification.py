@@ -77,10 +77,6 @@ def unify_atoms(term1: Atom, term2: Atom, binding: dict):
     elif len(term1.arguments.items()) != len(term2.arguments.items()):
         binding = None
     else:
-        binding = unify_bindings(
-            binding, unification(term1.variable, term2.variable, binding)
-        )
-
         for arg1, arg2 in zip(term1.arguments.values(), term2.arguments.values()):
             binding = unify_bindings(binding, unification(arg1, arg2, binding))
 

@@ -44,7 +44,7 @@ class Solver(SomeSolver):
             raise Exception("Solver can only solve atoms, this is not an atom: " + str(atom))
 
         predicate = atom.predicate
-        unbound_arguments = atom.positional_arguments
+        unbound_arguments = atom.numbered_arguments
 
         if predicate == DISJUNCTION:
             return self.solve_disjunction(atom[1], binding)
