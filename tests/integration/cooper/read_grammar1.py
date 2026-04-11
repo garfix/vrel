@@ -10,10 +10,10 @@ T3 = Variable("T3")
 
 def get_read_grammar1():
 
-    def isa(proper_noun: Atom, a, np: Atom):
+    def isa(proper_noun: str, a, np: Atom):
         return Atom(
             "intent_tell",
-            Atom(np.predicate, AUTO, proper_noun.arguments["name"], "true", np.named_arguments),
+            Atom(np.predicate, AUTO, proper_noun, "true", np.named_arguments),
         )
 
     return [

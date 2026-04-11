@@ -1,5 +1,8 @@
 ## todo
 
+- neem in de Relation op welke parameter de unieke id bevat
+  - check op deze parameter in extract_determiner_arguments (`arguments[0]`)
+
 - reified variables?
   - this seems to be their only valid application
 

@@ -1,3 +1,4 @@
+from vrel.entity.Sentinel import Sentinel
 from vrel.entity.Variable import Variable
 
 
@@ -35,7 +36,7 @@ class Atom:
                 or isinstance(arg, str)
                 or isinstance(arg, Variable)
                 or isinstance(arg, list)
-                or arg == None
+                or isinstance(arg, Sentinel)
             ):
                 self.arguments[index] = arg
                 self.setNumberedArgument(index, arg)

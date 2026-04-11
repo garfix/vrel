@@ -27,12 +27,12 @@ def get_en_us_read_grammar():
         },
         {
             "syn": "noun(E1) -> proper_noun(E1)",
-            "sem": lambda proper_noun: proper_noun,
+            "sem": lambda proper_noun: Atom(UNKNOWN_PREDICATE, E1, {"name": proper_noun}),
             "boost": -2,
         },
         # proper noun
         {
             "syn": "proper_noun(E1) -> /\\w+/",
-            "sem": lambda token: Atom(UNKNOWN_PREDICATE, E1, {"name": token}),
+            "sem": lambda token: token,
         },
     ]

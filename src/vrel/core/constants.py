@@ -1,3 +1,4 @@
+from vrel.entity.Sentinel import Sentinel
 from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.Variable import Variable
 
@@ -26,7 +27,7 @@ CATEGORY_FORMAT = "format"
 CATEGORY_PROPER_NOUN = "proper_noun"
 
 # some common semantic variables
-AUTO = "<auto-generate>"
+AUTO = Sentinel("auto-generate")
 UNKNOWN_PREDICATE = "<unknown>"
 E1 = Variable("E1")
 E2 = Variable("E2")
