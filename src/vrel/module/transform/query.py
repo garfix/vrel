@@ -1,123 +1,109 @@
 from vrel.core.constants import ARG_DETERMINER
+from vrel.core.functions.terms import format_term
 from vrel.entity.Atom import Atom
 
 
-def create_query(atom: Atom):
+def create_query(atom: Atom) -> list[Atom]:
+    """
+    Transforms an atom based on its determiners.
+    Each argument holding a determiner modifier is replaced by its entity variable,
+    and for each determiner a specific transformation is available that creates a scoped version of the atom.
 
-    extracted_atoms = []
+    input (example):
 
-    new_atom = atom
-    for arg_name, arg in atom.arguments.items():
+    (have
+        A1. (parent
+            A1. $1
+            M1. (determiner
+                A1. (all)))
+            M2. <modifier_clause_p>
+        A2. (child
+            A1. $2
+            M1. (determiner
+                A1. (equals
+                    A1. 2))))
+            M2. <modifier_clause_c>
+        M1. <modifier_clause_h>
+
+    output:
+
+    [
+        (all
+            A1. $1
+            A2. [
+                (parent
+                    A1. $1
+                    M2. <modifier_clause_p>))
+            ]
+            A3. [
+                (det_equals
+                    A1. [
+                        (child
+                            A1. $2
+                            M2. <modifier_clause_c>)
+                        (have
+                            A1. $1
+                            A2. $2)
+                    ]
+                    A2. 2)
+            ])
+        <modifier_clause_h>
+    ]
+
+    """
+
+    extracted_atoms = atom.modifiers
+
+    # - extract scoping arguments (the ones with determiners)
+    # - replace scoping arguments with their variables
+    new_args = []
+    scoping_arguments = []
+    for arg in atom.arguments:
         if isinstance(arg, Atom):
-            # arg = (p / parent)
-            if not ARG_DETERMINER in arg.named_arguments:
-                new_atom, extracted_atom = extract_argument(new_atom, arg_name, arg)
-                extracted_atoms.append(extracted_atom)
+            det = arg.get_modifier(ARG_DETERMINER)
+            if det is not None:
+                scoping_arguments.append(arg)
+                new_args.append(arg.arguments[0])
+            else:
+                new_args.append(arg)
+        else:
+            new_args.append(arg)
 
-    determiner_arguments, cleared_atom = extract_determiner_arguments(new_atom)
+    new_atom = Atom(atom.predicate, *new_args)
 
-    new_atom = cleared_atom
-    for determiner_argument in determiner_arguments:
-        new_atom = create_quantification(new_atom, determiner_argument)
+    for scoping_argument in reversed(scoping_arguments):
+        new_atom = create_quantification(new_atom, scoping_argument)
 
-    return extracted_atoms + [new_atom]
-
-
-def extract_determiner_arguments(atom: Atom):
-
-    new_atom = atom
-    determiner_arguments = []
-
-    for key, value in reversed(atom.arguments.items()):
-        if isinstance(value, Atom):
-            # arg = (parent p)
-            if ARG_DETERMINER in value.named_arguments:
-                det = value.named_arguments[ARG_DETERMINER]
-                if not isinstance(det, Atom):
-                    raise Exception(f"A determiner must be an atom: {det}")
-
-                # (have
-                #   0: (parent p :determiner (d / all))
-                #   1: (child c : determiner (d / 2))
-                # )
-                new_atom = new_atom.add_arguments({key: value.arguments[0]})
-                determiner_arguments.append(value)
-                # (have
-                #   0: p
-                #   1: c
-                # )
-
-    return determiner_arguments, new_atom
+    return [new_atom] + extracted_atoms
 
 
-def extract_argument(atom: Atom, arg_name: str, arg: Atom):
-    new_args = atom.arguments | {arg_name: arg.variable}
-    new_atom = Atom(atom.predicate, new_args)
+def create_quantification(atom: Atom, scoping_argument: Atom):
 
-    extracted_atom = arg
-    return new_atom, extracted_atom
+    determiner = scoping_argument.get_modifier(ARG_DETERMINER)
+    det: Atom = determiner.arguments[0]
 
-
-def create_quantification(atom: Atom, determiner_argument: Atom):
-
-    det = determiner_argument.arguments["determiner"]
+    c_arg = scoping_argument.remove_modifiers(ARG_DETERMINER)
+    q_arg = create_query(c_arg)
 
     if det.predicate == "all":
-        c_arg = determiner_argument.remove_argument("determiner")
-        q_arg = create_query(c_arg)
-
         # ('all', E1, [range-atoms], [body-atoms])
         q_atom = Atom(
             "all",
-            determiner_argument.arguments[0],
+            scoping_argument.arguments[0],
             # Range
             q_arg,
             # Body
             [atom],
         )
     elif det.predicate == "equals":
-        c_arg = determiner_argument.remove_argument("determiner")
-        q_arg = create_query(c_arg)
-
         # ('det_equals', [body-atoms], Number)
         q_atom = Atom(
             "det_equals",
             # Range + Body
             q_arg + [atom],
-            det.numbered_arguments[0],
+            det.arguments[0],
         )
     else:
         raise Exception(f"Unknown determiner: {det.predicate}")
 
     return q_atom
-
-
-# All parents with 3 degrees have 2 children
-
-# ('all', E1, [range-atoms], [body-atoms])
-
-# (s / have [A]
-#     :ARG0 (p / parent [B]
-#            :determiner (d / all)) [C]
-#            :ARG1-of (h / have-degree-91 [D]
-#                        (f / degree
-#                           :determiner: (e / equals
-#                                           : ARG0 3
-#                                       ))
-#                         )
-#     :ARG1 (c / child
-#            : determiner (d / equals
-#                 :ARG0 2
-#              ))
-#            :modifier (m / mod)
-# )
-
-# (all [C], p, parent [B], (
-#     number e, degree, 3 {       [D]
-#         have_degree(p, e)
-#     }
-#     number, c, child, 2, {
-
-#         have(p, c) [A]
-#     }
-# ))
