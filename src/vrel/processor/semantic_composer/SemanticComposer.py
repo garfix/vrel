@@ -1,3 +1,4 @@
+from vrel.core.functions.terms import format_term
 from vrel.entity.Atom import Atom
 from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.ParseTreeNode import ParseTreeNode
@@ -107,23 +108,33 @@ class SemanticComposer(SomeProcessor):
 
         return map
 
-    def extend_map_with_semantics(self, map: dict, term: list[tuple]):
+    def extend_map_with_semantics(self, map: dict, term: list[Atom]):
+        if isinstance(term, Variable):
+            if term.name not in map and not self.variable_generator.isinstance(term):
+                map[term.name] = self.variable_generator.next()
+
         # only lists of atoms for now
-        if isinstance(term, list):
-            for atom in term:
-                for arg in atom.numbered_arguments:
-                    # since we're late in the game, don't replace variables that have already been replaced
-                    if (
-                        isinstance(arg, Variable)
-                        and arg.name not in map
-                        and not self.variable_generator.isinstance(arg)
-                    ):
-                        map[arg.name] = self.variable_generator.next()
-        elif isinstance(term, Atom):
-            for key, arg in term.arguments.items():
+        elif isinstance(term, list):
+            for element in term:
+                # for atom in term:
+                # for arg in atom.arguments:
                 # since we're late in the game, don't replace variables that have already been replaced
-                if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
-                    map[arg.name] = self.variable_generator.next()
+                self.extend_map_with_semantics(map, element)
+                # if (
+                #     isinstance(arg, Variable)
+                #     and arg.name not in map
+                #     and not self.variable_generator.isinstance(arg)
+                # ):
+                #     map[arg.name] = self.variable_generator.next()
+        elif isinstance(term, Atom):
+            for arg in term.arguments:
+                # since we're late in the game, don't replace variables that have already been replaced
+                self.extend_map_with_semantics(map, arg)
+                # if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
+                #     map[arg.name] = self.variable_generator.next()
+
+            for mod in term.modifiers:
+                self.extend_map_with_semantics(map, mod)
 
     def unify_variables(self, term: any, map: dict[str, str]) -> any:
         if isinstance(term, list):
@@ -131,8 +142,8 @@ class SemanticComposer(SomeProcessor):
         elif isinstance(term, Atom):
             return Atom(
                 term.predicate,
-                {k: self.unify_variables(v, map) for k, v in term.arguments.items()},
-            )
+                *[self.unify_variables(arg, map) for arg in term.arguments],
+            ).mod([self.unify_variables(mod, map) for mod in term.modifiers])
         elif isinstance(term, tuple):
             raise ("tuple found 9")
             return tuple([self.unify_variables(term, map) for term in term])

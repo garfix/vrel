@@ -1,5 +1,10 @@
 ## todo
 
+- resolve name
+- learn_rule
+
+- api: bv tk.keras.layers.Dense
+
 - neem in de Relation op welke parameter de unieke id bevat
   - check op deze parameter in extract_determiner_arguments (`arguments[0]`)
 

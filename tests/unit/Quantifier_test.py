@@ -3,7 +3,7 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.constants import E1, E3
+from vrel.core.constants import ARG_DETERMINER, E1, E3
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Relation
@@ -62,6 +62,9 @@ class TestQuantification(unittest.TestCase):
 
         model = Model([SimpleModule(data_source)])
 
+        def have(det: Atom, nbar: Atom):
+            return nbar.mod(Atom(ARG_DETERMINER, [det]))
+
         simple_grammar = [
             {
                 "syn": "s() -> np(E1) verb(E1, E2) np(E2)",
@@ -73,18 +76,18 @@ class TestQuantification(unittest.TestCase):
             {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: "have"},
             {
                 "syn": "np(E1) -> det(E1) nbar(E1)",
-                "sem": lambda det, nbar: nbar.add_arguments(det),
+                "sem": lambda det, nbar: nbar.mod(Atom(ARG_DETERMINER, det)),
             },
-            {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(noun, E1)},
-            {"syn": "det(E1) -> 'every'", "sem": lambda: {"determiner": Atom("all")}},
+            {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
+            {"syn": "det(E1) -> 'every'", "sem": lambda: Atom("all")},
             {
                 "syn": "det(E1) -> number(E1)",
-                "sem": lambda number: {"determiner": Atom("equals", number)},
+                "sem": lambda number: Atom("equals", number),
             },
             {"syn": "number(D1) -> 'two'", "sem": lambda: 2},
             {"syn": "number(D1) -> 'three'", "sem": lambda: 3},
-            {"syn": "noun(E1) -> 'parent'", "sem": lambda: "parent"},
-            {"syn": "noun(E1) -> 'children'", "sem": lambda: "child"},
+            {"syn": "noun(E1) -> 'parent'", "sem": lambda: Atom("parent", E1)},
+            {"syn": "noun(E1) -> 'children'", "sem": lambda: Atom("child", E1)},
         ]
 
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)

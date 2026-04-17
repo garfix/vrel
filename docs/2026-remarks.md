@@ -1,3 +1,31 @@
+## 2026-04-14
+
+If I want to keep the hierarchical representation of sentences in, I could keep the spirit of AMR, but change the implementation to match my needs.
+
+    Atom('bring', S1, A, B).mod([Atom('quick', M1, S1)])
+
+By adding modifiers. I can add modifiers for noun modifying sentences, adjectives, adverbs, and non-standard verb-arguments.
+
+## 2026-04-13
+
+I simplified the atom to a point that it isn't pure AMR any more, and I think I'm still not satisfied.
+
+    def isa_declaration(proper_noun: str, a, np: Atom):
+        return Atom(
+            "intent_tell",
+            Atom(np.predicate, AUTO, proper_noun, "true", np.named_arguments),
+        )
+
+It's the `np.named_arguments` part here, that just won't fit. It creates a big new problem that I didn't have before.
+
+There's also something else about the named arguments: why are they treated as special? They could just be other atoms. In order to be useful, they will need to be turned into atoms ...
+
+It gave me a good idea of creating name atoms (like `('<unknown-predicate>', E1, 'name')). In a special function, these atoms can be traced, resolved, and all occurrences of E1 in the sentence replaced with the id.
+
+What about the hierarchical structure? You can also have a hierarchical structure in the old representation. Just use more hierarchy. So instead of `(S1, want, A, S2) (S2, bring, B, C)` use `(S1, want, A, (S2, bring, B, C))`. The structure can be flattened if necessary.
+
+AMR is out.
+
 ## 2026-04-11
 
 In AMR, the id-argument is separated from the other arguments, and that's fine and recognisable, but when combining it with atoms / records without the special id argument, it is problematic in more and more ways.

@@ -20,8 +20,8 @@ class Solver(SomeSolver):
 
     def solve(self, atoms: Atom | list[Atom]) -> list[dict]:
 
-        if isinstance(atoms, Atom):
-            atoms = [atoms]
+        # if isinstance(atoms, Atom):
+        #     atoms = [atoms]
 
         if not isinstance(atoms, list):
             raise Exception("Solver can only solve lists of atoms, this is not a list: " + str(atoms))
@@ -44,12 +44,13 @@ class Solver(SomeSolver):
             raise Exception("Solver can only solve atoms, this is not an atom: " + str(atom))
 
         predicate = atom.predicate
-        unbound_arguments = atom.numbered_arguments
+        unbound_arguments = atom.arguments
 
         if predicate == DISJUNCTION:
             return self.solve_disjunction(atom[1], binding)
 
         arguments = bind_variables(unbound_arguments, binding)
+
         out_bindings = self.find_relation_values(predicate, arguments, binding)
 
         return out_bindings
@@ -118,7 +119,7 @@ class Solver(SomeSolver):
         if len(get_variables(flat)) > 0:
             raise Exception(f"'{predicate}' attempts to persist a variable: {flat}")
 
-        print("WRITE", atom)
+        # print("WRITE", atom)
 
         for relation in relations:
             if relation.write_function is not None:

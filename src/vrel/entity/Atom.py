@@ -1,35 +1,27 @@
+from __future__ import annotations
 from vrel.entity.Sentinel import Sentinel
 from vrel.entity.Variable import Variable
 
 
 class Atom:
     predicate: str
-    arguments: dict
-    named_arguments: dict
-    numbered_arguments: list
+    arguments: list
+    modifiers: list[Atom]
 
     def __init__(self, *args):
-        self.arguments = {}
-        self.named_arguments = {}
-        self.numbered_arguments = []
+        self.arguments = []
+        self.modifiers = []
 
         if len(args) < 1:
-            raise Exception("Atom must have at least 1 argument")
+            raise Exception("Atom must have at least a predicate")
 
         if isinstance(args[0], str):
             self.predicate = args[0]
         else:
             raise Exception(f"Arg 1 must hold the predicate: {args}")
 
-        for index, arg in enumerate(args[1:]):
-            if isinstance(arg, dict):
-                for k, v in arg.items():
-                    self.arguments[k] = v
-                    if isinstance(k, int):
-                        self.setNumberedArgument(k, v)
-                    else:
-                        self.named_arguments[k] = v
-            elif (
+        for arg in args[1:]:
+            if (
                 isinstance(arg, Atom)
                 or isinstance(arg, float)
                 or isinstance(arg, int)
@@ -38,66 +30,64 @@ class Atom:
                 or isinstance(arg, list)
                 or isinstance(arg, Sentinel)
             ):
-                self.arguments[index] = arg
-                self.setNumberedArgument(index, arg)
+                self.arguments.append(arg)
             else:
                 raise Exception(f"Unknown argument type: {arg}")
 
-    def setNumberedArgument(self, index: int, value: any):
-        while len(self.numbered_arguments) < index + 1:
-            self.numbered_arguments.append(None)
-        self.numbered_arguments[index] = value
-
-    def add_arguments(self, arguments: dict):
-
-        return Atom(
-            self.predicate,
-            self.arguments | arguments,
-        )
-
-    def set_predicate(self, predicate: str):
-
-        return Atom(
-            predicate,
-            self.arguments,
-        )
-
-    def set_numbered_args(self, args: list[any]):
-
-        return Atom(self.predicate, *args, self.named_arguments)
-
-    def remove_argument(self, argument_name: str):
-        new_args = {k: v for k, v in self.arguments.items() if k != argument_name}
-        return Atom(
-            self.predicate,
-            new_args,
-        )
-
     def copy(self):
+        a = Atom(
+            self.predicate,
+            *self.arguments,
+        )
+        a.modifiers.extend(self.modifiers)
+        return a
+
+    def mod(self, modifier: list[Atom]):
+        if isinstance(modifier, Atom):
+            a = self.copy()
+            a.modifiers.append(modifier)
+            return a
+        elif isinstance(modifier, list):
+            a = self.copy()
+            a.modifiers.extend(modifier)
+            return a
+        else:
+            raise Exception("A modifier must be an atom or a list of atoms")
+
+    def clear_modifiers(self):
         return Atom(
             self.predicate,
-            self.arguments,
+            *self.arguments,
         )
+
+    def get_modifier(self, predicate: str) -> Atom | None:
+        for mod in self.modifiers:
+            if mod.predicate == predicate:
+                return mod
+        return None
+
+    def remove_modifiers(self, predicate: str) -> Atom:
+        new_modifiers = []
+        for mod in self.modifiers:
+            if mod.predicate != predicate:
+                new_modifiers.append(mod)
+
+        return Atom(
+            self.predicate,
+            *self.arguments,
+        ).mod(new_modifiers)
+
+    def get_modifiers(self, predicate: str) -> Atom | None:
+        mods = []
+        for mod in self.modifiers:
+            if mod.predicate == predicate:
+                mods.append(mod)
+        return mods
 
     def __eq__(self, value):
-        return (
-            isinstance(value, Atom)
-            and self.predicate == value.predicate
-            and self.numbered_arguments == value.numbered_arguments
-            and self.named_arguments == self.named_arguments
-        )
-
-    def __str__(self) -> str:
-        from vrel.core.functions.terms import format_term
-
-        return format_term(self, "")
+        return isinstance(value, Atom) and self.predicate == value.predicate and self.arguments == self.arguments
 
     def __repr__(self):
-        pos_args = ""
-        for arg in self.numbered_arguments:
-            pos_args += f", {repr(arg)}"
-        nmd_args = ""
-        for k, v in self.named_arguments.items():
-            nmd_args += f", {k}={repr(v)}"
+        from vrel.core.functions.terms import format_term
 
-        return f"A({self.predicate}{pos_args}{nmd_args})"
+        return format_term(self)

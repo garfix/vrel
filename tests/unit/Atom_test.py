@@ -1,3 +1,4 @@
+from vrel.core.constants import E1, E2, E3
 from vrel.entity.Atom import Atom, Variable
 from vrel.entity.Variable import Variable
 
@@ -8,29 +9,23 @@ def test_atom():
 
     assert a.predicate == "likes"
 
-    a = Atom("likes", Variable("E1"), "john", "mary")
+    a = Atom("likes", E1, "john", "mary")
 
     assert a.predicate == "likes"
-    assert a.arguments[0] == Variable("E1")
+    assert a.arguments[0] == E1
     assert a.arguments[1] == "john"
     assert a.arguments[2] == "mary"
-    assert a.numbered_arguments == [Variable("E1"), "john", "mary"]
-    assert a.named_arguments == {}
-    assert str(a) == "A(likes\n    :0 E1\n    :1 'john'\n    :2 'mary')"
-    assert repr(a) == "A(likes, E1, 'john', 'mary')"
+    assert a.arguments == [E1, "john", "mary"]
 
-    c = Atom("likes", Variable("E1"), "john", "mary", {"mod": "much"})
+    # assert str(a) == "A(likes\n    E1\n    'john'\n    'mary')"
 
-    assert c.arguments[0] == Variable("E1")
-    assert c.arguments[1] == "john"
-    assert c.arguments[2] == "mary"
-    assert c.numbered_arguments == [Variable("E1"), "john", "mary"]
-    assert c.named_arguments == {"mod": "much"}
-    assert str(c) == "A(likes\n    :0 E1\n    :1 'john'\n    :2 'mary'\n    :mod 'much')"
-    assert repr(c) == "A(likes, E1, 'john', 'mary', mod='much')"
+    c = a.mod(Atom("much", E2, E1))
+    c = c.mod([Atom("location", E3, "here", E1)])
 
-    f = c.add_arguments({"location": "here"})
+    assert a.modifiers == []
+    assert c.modifiers == [Atom("much", E2, E1), Atom("location", E3, "here", E1)]
 
-    assert f.arguments["mod"] == "much"
-    assert f.arguments["location"] == "here"
-    assert f.named_arguments == {"mod": "much", "location": "here"}
+    # assert (
+    #     str(c)
+    #     == "A(likes\n    E1\n    'john'\n    'mary'\n    ---\n    A(much\n        E2\n        E1)\n    A(location\n        E3\n        'here'\n        E1))"
+    # )

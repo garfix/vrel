@@ -140,23 +140,30 @@ class CooperModule(SomeModule):
         name = arguments[0].lower()
         id = arguments[1]
 
-        out_values = self.ds.select("entity", ["name", "id"], [name, id])
-        if len(out_values) > 0:
-            return out_values
-        else:
-            # if id is given, a new name is linked to that id
-            if isinstance(id, Variable):
-                # otherwise a new id is created for the name
-                id = arguments[1].name
-            self.ds.insert(
-                "entity",
-                [
-                    "name",
-                    "id",
-                ],
-                [name, id],
-            )
-            return [[None, id]]
+        tables = ["metal"]
+
+        for table in tables:
+
+            out_values = self.ds.select(table, ["name", "id"], [name, id])
+            print("resolve", out_values)
+            if len(out_values) > 0:
+                return out_values
+            else:
+                # # if id is given, a new name is linked to that id
+                # if isinstance(id, Variable):
+                #     # otherwise a new id is created for the name
+                #     id = arguments[1].name
+                # self.ds.insert(
+                #     "entity",
+                #     [
+                #         "name",
+                #         "id",
+                #     ],
+                #     [name, id],
+                # )
+                return [[None, id]]
+
+        return []
 
     # ('not_3v', in, out)
     def not_3v(self, arguments: list, context: ExecutionContext) -> list[list]:

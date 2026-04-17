@@ -63,6 +63,7 @@ def create_query(atom: Atom) -> list[Atom]:
             det = arg.get_modifier(ARG_DETERMINER)
             if det is not None:
                 scoping_arguments.append(arg)
+                # replace the scoping argument with its entity variable
                 new_args.append(arg.arguments[0])
             else:
                 new_args.append(arg)
@@ -71,6 +72,7 @@ def create_query(atom: Atom) -> list[Atom]:
 
     new_atom = Atom(atom.predicate, *new_args)
 
+    # add a scoping layer around the simplified atom for each determiner
     for scoping_argument in reversed(scoping_arguments):
         new_atom = create_quantification(new_atom, scoping_argument)
 
@@ -78,12 +80,15 @@ def create_query(atom: Atom) -> list[Atom]:
 
 
 def create_quantification(atom: Atom, scoping_argument: Atom):
-
+    # get the determiner atom from the argument
     determiner = scoping_argument.get_modifier(ARG_DETERMINER)
+    # get the actual determiner from the determiner atom
     det: Atom = determiner.arguments[0]
 
-    c_arg = scoping_argument.remove_modifiers(ARG_DETERMINER)
-    q_arg = create_query(c_arg)
+    # the determiner atom should now be removed
+    cleared_arg = scoping_argument.remove_modifiers(ARG_DETERMINER)
+    # the scoping argument may itself contain scoping, so recurse into it
+    range = create_query(cleared_arg)
 
     if det.predicate == "all":
         # ('all', E1, [range-atoms], [body-atoms])
@@ -91,17 +96,18 @@ def create_quantification(atom: Atom, scoping_argument: Atom):
             "all",
             scoping_argument.arguments[0],
             # Range
-            q_arg,
+            range,
             # Body
             [atom],
         )
     elif det.predicate == "equals":
         # ('det_equals', [body-atoms], Number)
+        n = det.arguments[0]
         q_atom = Atom(
             "det_equals",
             # Range + Body
-            q_arg + [atom],
-            det.arguments[0],
+            range + [atom],
+            n,
         )
     else:
         raise Exception(f"Unknown determiner: {det.predicate}")

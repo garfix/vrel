@@ -13,6 +13,7 @@ def generate_variables(term: any, variable_generator: VariableGenerator, variabl
         return tuple([generate_variables(arg, variable_generator, variable_map) for arg in term])
     # atom
     elif isinstance(term, Atom):
+        raise Exception("todo")
         return Atom(
             term.predicate,
             {k: generate_variables(v, variable_generator, variable_map) for k, v in term.arguments.items()},

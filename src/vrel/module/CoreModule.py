@@ -7,6 +7,7 @@ from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.OrderedSet import OrderedSet
 from vrel.module.transform.query import create_query
+from vrel.module.transform.resolve_names import resolve_names
 from vrel.module.transform.storage import create_records
 
 
@@ -40,6 +41,7 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("create_query", query_function=self.create_query)),
         self.add_relation(Relation("create_records", query_function=self.create_records)),
         self.add_relation(Relation("print", query_function=self.print)),
+        self.add_relation(Relation("resolve_names", query_function=self.resolve_names)),
 
     # ('equals', E1, E2)
     def equals(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -436,3 +438,14 @@ class CoreModule(SomeModule):
         print(term)
 
         return [[None]]
+
+    # ('resolve_names', body-atoms, result-variable)
+    # Replaces named atoms with their id's
+    def resolve_names(self, arguments: list, context: ExecutionContext) -> list[list]:
+        body = arguments[0]
+
+        result = resolve_names(body, context.solver)
+
+        # print("result", result)
+
+        return [[None, result]]

@@ -1,4 +1,4 @@
-from vrel.core.constants import AUTO, E1, E2, E3, E4, E5
+from vrel.core.constants import AUTO, E1, E2, E3, E4, E5, UNKNOWN_PREDICATE
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
@@ -10,10 +10,18 @@ T3 = Variable("T3")
 
 def get_read_grammar1():
 
-    def isa(proper_noun: str, a, np: Atom):
+    def isa_declaration(proper_noun: str, a, np: Atom):
         return Atom(
             "intent_tell",
             Atom(np.predicate, AUTO, proper_noun, "true", np.named_arguments),
+            # Atom("isa", proper_noun, np, "true")
+            #
+            [
+                Atom("element", AUTO, proper_noun),
+                Atom("element", E2, proper_noun),
+                Atom(np.predicate, E2, "true"),
+            ]
+            + np.named_arguments,
         )
 
     return [
@@ -23,7 +31,7 @@ def get_read_grammar1():
         # "intent_tell", np.set_numbered_args([None, proper_noun.arguments["name"], "true"])
         {
             "syn": "s() -> proper_noun(E1) 'is' a() np(E2, T1)",
-            "sem": isa,
+            "sem": isa_declaration,
         },
         # # X is Y (X is another name for Y)
         # {
@@ -50,21 +58,21 @@ def get_read_grammar1():
         #         ("intent_learn", np[0], noun),
         #     ],
         # },
-        # # noun verb
-        # {
-        #     "syn": "s() -> noun(E1, T1) verb(E1)",
-        #     "sem": lambda noun, verb: noun + [("store", verb)],
-        # },
-        # combustable things burn
+        # noun verb
         {
-            "syn": "s() -> np(E1, T1) verb(E1)",
-            # "sem": lambda np, verb: [
-            #     ("let", T1, "true"),
-            #     ("let", T2, "true"),
-            #     ("intent_learn", verb[0], np),
-            # ],
-            "sem": lambda np, verb: Atom("intent_learn", Atom(verb, np, "true")),
+            "syn": "s() -> noun(E1, T1) verb(E1)",
+            "sem": lambda noun, verb: Atom("intent_tell", Atom(verb, noun)),
         },
+        # combustable things burn
+        # {
+        #     "syn": "s() -> np(E1, T1) verb(E1)",
+        #     # "sem": lambda np, verb: [
+        #     #     ("let", T1, "true"),
+        #     #     ("let", T2, "true"),
+        #     #     ("intent_learn", verb[0], np),
+        #     # ],
+        #     "sem": lambda np, verb: Atom("intent_learn", Atom(verb, np, "true")),
+        # },
         # # dark-gray things are not white
         # {
         #     "syn": "s() -> np(E1, T1) are() 'not' adj(E1, T2)",
@@ -165,7 +173,7 @@ def get_read_grammar1():
         },
         {
             "syn": "noun(E1, T1) -> proper_noun(E1)",
-            "sem": lambda proper_noun: proper_noun,
+            "sem": lambda proper_noun: Atom(UNKNOWN_PREDICATE, E1, {"name": proper_noun}),
         },
         # # common noun
         # {

@@ -1,38 +1,49 @@
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
+RED = "\033[31m"
+GREEN = "\033[32m"
+BOLD = "\033[1m"
+YELLOW = "\033[33m"
+BLUE = "\033[34m"
+MAGENTA = "\033[35m"
+CYAN = "\033[36m"
 
-def format_term(value: any, indent: str = "\n") -> str:
+RESET = "\033[0m"
 
-    from vrel.entity.Atom import Atom
 
+def format_term(value: any, indent: int = 0, index=0, pre="") -> str:
     """
     Formats nested lists, tuples and strings
     """
-    if isinstance(value, tuple):
-        raise Exception("tuple found")
-        text = indent + "("
-        sep = ""
-        for element in value:
-            text += sep + format_term(element, indent + "    ")
-            sep = ", "
+    space = "    " * indent
+
+    color = ""
+    if pre == "A":
+        color = BLUE
+    elif pre == "M":
+        color = MAGENTA
+    prefix = f"{color}{pre}{index}.{RESET} " if index > 0 else ""
+
+    if isinstance(value, Atom):
+        text = "\n" + space + f"{prefix}({YELLOW}{value.predicate}{RESET}"
+        for i, arg in enumerate(value.arguments):
+            text += format_term(arg, indent + 1, i + 1, "A")
+        # if len(value.modifiers) > 0:
+        #     text += "\n" + space + "  ---"
+        for i, mod in enumerate(value.modifiers):
+            text += format_term(mod, indent + 1, i + 1, "M")
         text += ")"
-    elif isinstance(value, Atom):
-        s = ""
-        for k, v in value.arguments.items():
-            sub = format_term(v, indent + "          ")
-            s += "\n" + indent + "    " + f":{k} {sub}"
-        text = f"A({value.predicate}{s})"
 
     elif isinstance(value, list):
-        text = indent + "["
-        for element in value:
-            text += format_term(element, indent + "    ")
-        text += indent + "]"
+        text = "\n" + space + f"{prefix}["
+        for i, element in enumerate(value):
+            text += format_term(element, indent + 1)
+        text += "\n" + space + "]"
     elif isinstance(value, str):
-        text = "'" + value + "'"
+        text = "\n" + space + f"{prefix}'{value}'"
     else:
-        text = str(value)
+        text = "\n" + space + f"{prefix}{value}"
     return text
 
 
@@ -75,8 +86,8 @@ def bind_variables(term: any, binding: dict) -> any:
     elif isinstance(term, Atom):
         return Atom(
             term.predicate,
-            {k: bind_variables(v, binding) for k, v in term.arguments.items()},
-        )
+            *[bind_variables(arg, binding) for arg in term.arguments],
+        ).mod([bind_variables(mod, binding) for mod in term.modifiers])
     # variable
     elif isinstance(term, Variable):
         # bound?
@@ -120,7 +131,7 @@ def reify_variables(term: any) -> any:
 
 def flatten(term: any):
     if isinstance(term, Atom):
-        flattened = [flatten(e) for e in term.numbered_arguments]
+        flattened = [flatten(e) for e in term.arguments]
         return tuple([*flattened])
     elif isinstance(term, list):
         return [flatten(e) for e in term]
