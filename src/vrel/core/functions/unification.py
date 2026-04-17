@@ -31,9 +31,7 @@ def unification(term1: any, term2: any, binding: dict) -> dict | None:
 
 
 def unify_lists(term1: list, term2: list, binding: dict):
-    if all(isinstance(x, Atom) for x in term1) and all(
-        isinstance(x, Atom) for x in term2
-    ):
+    if all(isinstance(x, Atom) for x in term1) and all(isinstance(x, Atom) for x in term2):
         return unify_atom_lists(term1, term2, binding)
     else:
         if len(term1) != len(term2):
@@ -74,10 +72,10 @@ def unify_tuples(term1: tuple, term2: tuple, binding: dict):
 def unify_atoms(term1: Atom, term2: Atom, binding: dict):
     if term1.predicate != term2.predicate:
         binding = None
-    elif len(term1.arguments.items()) != len(term2.arguments.items()):
+    elif len(term1.arguments) != len(term2.arguments):
         binding = None
     else:
-        for arg1, arg2 in zip(term1.arguments.values(), term2.arguments.values()):
+        for arg1, arg2 in zip(term1.arguments, term2.arguments):
             binding = unify_bindings(binding, unification(arg1, arg2, binding))
 
     return binding

@@ -41,12 +41,7 @@ class DeductionModule(SomeModule):
             content = rule_file.read()
             rules, pos = parser.parse_rules(content)
             if pos is not None:
-                raise Exception(
-                    "Unable to parse inference on token "
-                    + str(pos)
-                    + " in file "
-                    + path
-                )
+                raise Exception("Unable to parse inference on token " + str(pos) + " in file " + path)
             for rule in rules:
                 self.insert_rule(rule)
 
@@ -57,19 +52,12 @@ class DeductionModule(SomeModule):
 
         return results
 
-    def solve_rule(
-        self, rule: InferenceRule, arguments: list, solver: SomeSolver, binding: dict
-    ):
+    def solve_rule(self, rule: InferenceRule, arguments: list, solver: SomeSolver, binding: dict):
 
         # replace variables in rule with new variables
         variable_map = {}
-        head = generate_variables(
-            rule.head.numbered_arguments, self.variable_generator, variable_map
-        )
-        body = [
-            generate_variables(atom, self.variable_generator, variable_map)
-            for atom in rule.body
-        ]
+        head = generate_variables(rule.head.arguments, self.variable_generator, variable_map)
+        body = [generate_variables(atom, self.variable_generator, variable_map) for atom in rule.body]
 
         rule_binding = unification(head, arguments, binding)
         if rule_binding is None:
@@ -89,10 +77,7 @@ class DeductionModule(SomeModule):
         # print("result", bindings)
         # print()
 
-        results = [
-            bind_variables(bind_variables(head, rule_binding), binding)
-            for binding in bindings
-        ]
+        results = [bind_variables(bind_variables(head, rule_binding), binding) for binding in bindings]
 
         return results
 
