@@ -20,7 +20,7 @@ def get_read_grammar1():
         # "intent_tell", np.set_numbered_args([None, proper_noun.arguments["name"], "true"])
         {
             "syn": "s() -> proper_noun(E1) 'is' a() np(E1, T1)",
-            "sem": lambda proper_noun, a, np: [Atom("let", T1, "true"), Atom("intent_tell", [proper_noun, np])],
+            "sem": lambda proper_noun, a, np: [Atom("intent_tell", [proper_noun, np], T1)],
         },
         # # X is Y (X is another name for Y)
         # {

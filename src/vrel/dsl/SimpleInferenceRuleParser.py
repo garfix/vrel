@@ -217,7 +217,7 @@ class SimpleInferenceRuleParser:
             return None, new_pos
         pos = new_pos
 
-        disjunction = (DISJUNCTION, disjuncts)
+        disjunction = Atom(DISJUNCTION, disjuncts)
 
         return disjunction, pos
 

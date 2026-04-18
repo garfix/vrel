@@ -47,7 +47,7 @@ class Solver(SomeSolver):
         unbound_arguments = atom.arguments
 
         if predicate == DISJUNCTION:
-            return self.solve_disjunction(atom[1], binding)
+            return self.solve_disjunction(atom.arguments[0], binding)
 
         arguments = bind_variables(unbound_arguments, binding)
 
@@ -57,7 +57,7 @@ class Solver(SomeSolver):
 
     def solve_disjunction(self, disjuncts: list[list[Atom]], binding: dict):
         for disjunct in disjuncts:
-            results = self.solve(disjunct)
+            results = self.solve_rest(disjunct, binding)
             if len(results) > 0:
                 return results
         return []

@@ -101,7 +101,7 @@ class TestCooper(unittest.TestCase):
 
         # define the second pipeline
 
-        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar2())
+        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar1())
         parser = BasicParser(grammar2)
 
         composer = SemanticComposer(parser)
@@ -156,7 +156,7 @@ class TestCooper(unittest.TestCase):
         ]
 
         tests2 = [
-            # ["magnesium is a metal", "True"],
+            ["magnesium is a metal", "True"],
             # ["magnesium is not a metal", "False"],
             # ["magnesium is a nonmetal", "False"],
             # ["magnesium is not a nonmetal", "True"],
