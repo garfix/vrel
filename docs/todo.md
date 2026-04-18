@@ -1,6 +1,5 @@
 ## todo
 
-- resolve name
 - learn_rule
 
 - api: bv tk.keras.layers.Dense

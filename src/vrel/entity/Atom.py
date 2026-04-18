@@ -85,7 +85,12 @@ class Atom:
         return mods
 
     def __eq__(self, value):
-        return isinstance(value, Atom) and self.predicate == value.predicate and self.arguments == self.arguments
+        return (
+            isinstance(value, Atom)
+            and self.predicate == value.predicate
+            and self.arguments == value.arguments
+            and self.modifiers == value.modifiers
+        )
 
     def __repr__(self):
         from vrel.core.functions.terms import format_term

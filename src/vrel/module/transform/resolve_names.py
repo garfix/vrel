@@ -5,10 +5,10 @@ from vrel.entity.Variable import Variable
 from vrel.interface.SomeSolver import SomeSolver
 
 
-def resolve_names(atom: Atom, solver: SomeSolver):
+def resolve_names(atoms: list[Atom], solver: SomeSolver):
 
     # find all variables associated with names
-    named_variables = find_named_variables(atom)
+    named_variables = find_named_variables(atoms)
     # print(atom)
     # print(named_variables)
 
@@ -17,7 +17,7 @@ def resolve_names(atom: Atom, solver: SomeSolver):
     # print(variable_to_id)
 
     # create a new atom with bound named variables
-    new_atom = bind_variables(atom, variable_to_id)
+    new_atom = bind_variables(atoms, variable_to_id)
     # print(new_atom)
 
     # remove the names
@@ -44,7 +44,9 @@ def find_named_variables(term: any) -> dict:
 
 
 def resolve_name(name: str, solver: SomeSolver):
+    # print("x")
     result = solver.solve([Atom("resolve_name", Variable("Id"), name)])
+    # print("x", result)
     if len(result) == 1:
         return result[0]["Id"]
     elif len(result) == 0:

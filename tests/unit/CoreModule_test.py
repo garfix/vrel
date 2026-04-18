@@ -1,11 +1,14 @@
 import unittest
 
+from resolve_name.SimpleModule import SimpleModule
+from resolve_name.SimpleDB import SimpleDB
 from vrel.core.Model import Model
 from vrel.core.Solver import Solver
 from vrel.core.constants import E1, E2, E3, E4, E5
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.module.CoreModule import CoreModule
+from vrel.module.transform.resolve_names import resolve_names
 
 
 class TestCoreModule(unittest.TestCase):
@@ -67,58 +70,38 @@ class TestCoreModule(unittest.TestCase):
         bindings = solver.solve([Atom("$unification", source, [Atom("location", E1)])])
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve(
-            [Atom("$unification", source, [Atom("likes", E1, "jane")])]
-        )
+        bindings = solver.solve([Atom("$unification", source, [Atom("likes", E1, "jane")])])
         self.assertEqual(bindings, [{"E1": "john"}])
 
         bindings = solver.solve([Atom("$unification", source, [Atom("likes", E1, E1)])])
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve(
-            [Atom("$unification", source, [Atom("lost", E1), Atom("likes", E1, E2)])]
-        )
+        bindings = solver.solve([Atom("$unification", source, [Atom("lost", E1), Atom("likes", E1, E2)])])
         self.assertEqual(bindings, [{"E1": "john", "E2": "jane"}])
 
-        bindings = solver.solve(
-            [Atom("$unification", [Atom("lost", E1), Atom("likes", E1, E2)], source)]
-        )
+        bindings = solver.solve([Atom("$unification", [Atom("lost", E1), Atom("likes", E1, E2)], source)])
         self.assertEqual(bindings, [{"E1": "john", "E2": "jane"}])
 
-        bindings = solver.solve(
-            [Atom("$unification", source, [Atom("lost", E1), Atom("hates", E1, E2)])]
-        )
+        bindings = solver.solve([Atom("$unification", source, [Atom("lost", E1), Atom("hates", E1, E2)])])
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve(
-            [Atom("$unification", [Atom("lost", E1), Atom("hates", E1, E2)], source)]
-        )
+        bindings = solver.solve([Atom("$unification", [Atom("lost", E1), Atom("hates", E1, E2)], source)])
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve(
-            [Atom("$unification", source, [Atom("goal", E1, Atom("win", E2))])]
-        )
+        bindings = solver.solve([Atom("$unification", source, [Atom("goal", E1, Atom("win", E2))])])
         self.assertEqual(bindings, [{"E1": "john", "E2": "jane"}])
 
-        bindings = solver.solve(
-            [Atom("$unification", source, [Atom("goal", E1, Atom("win", E1))])]
-        )
+        bindings = solver.solve([Atom("$unification", source, [Atom("goal", E1, Atom("win", E1))])])
         self.assertEqual(bindings, [])
 
-        bindings = solver.solve(
-            [Atom("let", E2, "mary"), Atom("$unification", source, [Atom("lost", E1)])]
-        )
+        bindings = solver.solve([Atom("let", E2, "mary"), Atom("$unification", source, [Atom("lost", E1)])])
         self.assertEqual(bindings, [{"E1": "john", "E2": "mary"}])
 
-        bindings = solver.solve(
-            [Atom("let", E1, "mary"), Atom("$unification", source, [Atom("lost", E1)])]
-        )
+        bindings = solver.solve([Atom("let", E1, "mary"), Atom("$unification", source, [Atom("lost", E1)])])
         self.assertEqual(bindings, [])
 
         # # target, source
-        bindings = solver.solve(
-            [Atom("$unification", [Atom("likes", E1, "jane")], source)]
-        )
+        bindings = solver.solve([Atom("$unification", [Atom("likes", E1, "jane")], source)])
         self.assertEqual(bindings, [{"E1": "john"}])
 
         bindings = solver.solve([Atom("$unification", [Atom("lost", E1)], source)])
@@ -200,3 +183,32 @@ class TestCoreModule(unittest.TestCase):
             ]
         )
         self.assertEqual(bindings, [{"E1": E2, "E2": "finger"}])
+
+    def test_resolve_name(self):
+        data_source = SimpleDB()
+        facts = SimpleModule(data_source)
+
+        model = Model([facts])
+        solver = Solver(model)
+
+        # auto-generate id's for new names
+        atoms = [Atom("name", E1, "John"), Atom("name", E2, "Mary"), Atom("likes", E1, E2)]
+        result = resolve_names(atoms, solver)
+        self.assertEqual(result, [Atom("likes", 1, 2)])
+
+        # retrieve these id's for the same names
+        atoms = [Atom("name", E1, "John"), Atom("name", E2, "Mary"), Atom("likes", E1, E2)]
+        result = resolve_names(atoms, solver)
+        self.assertEqual(result, [Atom("likes", 1, 2)])
+
+        # in modifier
+        atoms = [Atom("likes", E1, E2).mod(Atom("name", E1, "John")).mod(Atom("name", E2, "Mary"))]
+        result = resolve_names(atoms, solver)
+        self.assertEqual(result, [Atom("likes", 1, 2)])
+
+        # in argument
+        atoms = [
+            Atom("likes", E1, [Atom("surprise", E1, E2)]).mod(Atom("name", E1, "John")).mod(Atom("name", E2, "Mary"))
+        ]
+        result = resolve_names(atoms, solver)
+        self.assertEqual(result, [Atom("likes", 1, [Atom("surprise", 1, 2)])])
