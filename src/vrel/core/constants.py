@@ -61,7 +61,7 @@ ARG_DETERMINER = "determiner"
 ARG_NAME = "name"
 
 # some common semantic variables
-AUTO = Sentinel("auto-generate")
+AUTO = Sentinel("<auto-generate>")
 
 # predicates
 UNKNOWN_PREDICATE = "<unknown>"

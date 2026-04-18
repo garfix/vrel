@@ -1,3 +1,17 @@
+## 2026-04-17
+
+It's relatively easy to generate a name resolver that creates an id for a name in a generic `entity` table (id, name). But common databases don't usually work like that. So for "Cooper" I'm hesitating between the simpler entity table and the one-name-per-table variant. An added difficulty is that the id's produced must be unique in the other tables they're used in. Something that's not usually a problem in a relational database.
+
+    Magnesium is a metal that burns rapidly
+
+    name(E1, 'magnesium')
+    metal(E1)
+        burns_rapidly(E1)
+
+    "sem": lambda proper_noun: Atom("name", E1, proper_noun),
+
+    `name` will be a special predicate that will be used by `resolve_names` to produce ids, before executing the rest
+
 ## 2026-04-14
 
 If I want to keep the hierarchical representation of sentences in, I could keep the spirit of AMR, but change the implementation to match my needs.

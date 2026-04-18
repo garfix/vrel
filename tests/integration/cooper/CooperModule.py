@@ -1,3 +1,4 @@
+from vrel.core.constants import AUTO
 from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
@@ -137,33 +138,29 @@ class CooperModule(SomeModule):
         )
 
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
-        name = arguments[0].lower()
-        id = arguments[1]
+        id = arguments[0]
+        name = arguments[1].lower()
 
-        tables = ["metal"]
+        out_values = self.ds.select("entity", ["id", "name"], [id, name])
+        if len(out_values) > 0:
+            return out_values
+        else:
+            # if id is given, a new name is linked to that id
+            if isinstance(id, Variable):
+                # otherwise a new id is created for the name
+                id = AUTO
+            self.ds.insert(
+                "entity",
+                [
+                    "id",
+                    "name",
+                ],
+                [id, name],
+            )
+            out_values = self.ds.select("entity", ["id", "name"], [Variable("Id"), name])
+            id = out_values[0][0]
 
-        for table in tables:
-
-            out_values = self.ds.select(table, ["name", "id"], [name, id])
-            print("resolve", out_values)
-            if len(out_values) > 0:
-                return out_values
-            else:
-                # # if id is given, a new name is linked to that id
-                # if isinstance(id, Variable):
-                #     # otherwise a new id is created for the name
-                #     id = arguments[1].name
-                # self.ds.insert(
-                #     "entity",
-                #     [
-                #         "name",
-                #         "id",
-                #     ],
-                #     [name, id],
-                # )
-                return [[None, id]]
-
-        return []
+            return [[id, None]]
 
     # ('not_3v', in, out)
     def not_3v(self, arguments: list, context: ExecutionContext) -> list[list]:

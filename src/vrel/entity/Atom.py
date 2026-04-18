@@ -77,7 +77,7 @@ class Atom:
             *self.arguments,
         ).mod(new_modifiers)
 
-    def get_modifiers(self, predicate: str) -> Atom | None:
+    def get_modifiers(self, predicate: str) -> list[Atom]:
         mods = []
         for mod in self.modifiers:
             if mod.predicate == predicate:

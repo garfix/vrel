@@ -77,7 +77,7 @@ class TestCooper(unittest.TestCase):
 
         # define the first pipeline
 
-        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_en_us_read_grammar() + get_read_grammar1())
+        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar1())
         parser = BasicParser(grammar1)
 
         composer = SemanticComposer(parser)
@@ -101,7 +101,7 @@ class TestCooper(unittest.TestCase):
 
         # define the second pipeline
 
-        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(get_en_us_write_grammar() + get_read_grammar2())
+        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar2())
         parser = BasicParser(grammar2)
 
         composer = SemanticComposer(parser)

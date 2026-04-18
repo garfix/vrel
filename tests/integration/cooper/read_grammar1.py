@@ -10,19 +10,8 @@ T3 = Variable("T3")
 
 def get_read_grammar1():
 
-    def isa_declaration(proper_noun: str, a, np: Atom):
-        return Atom(
-            "intent_tell",
-            Atom(np.predicate, AUTO, proper_noun, "true", np.named_arguments),
-            # Atom("isa", proper_noun, np, "true")
-            #
-            [
-                Atom("element", AUTO, proper_noun),
-                Atom("element", E2, proper_noun),
-                Atom(np.predicate, E2, "true"),
-            ]
-            + np.named_arguments,
-        )
+    def isa_declaration(proper_noun: Atom, a, np: Atom):
+        return [Atom("intent_tell", [proper_noun, np])]
 
     return [
         # sentence
@@ -30,7 +19,7 @@ def get_read_grammar1():
         # X is a Y
         # "intent_tell", np.set_numbered_args([None, proper_noun.arguments["name"], "true"])
         {
-            "syn": "s() -> proper_noun(E1) 'is' a() np(E2, T1)",
+            "syn": "s() -> proper_noun(E1) 'is' a() np(E1, T1)",
             "sem": isa_declaration,
         },
         # # X is Y (X is another name for Y)
@@ -173,7 +162,7 @@ def get_read_grammar1():
         },
         {
             "syn": "noun(E1, T1) -> proper_noun(E1)",
-            "sem": lambda proper_noun: Atom(UNKNOWN_PREDICATE, E1, {"name": proper_noun}),
+            "sem": lambda proper_noun: proper_noun,
         },
         # # common noun
         # {
@@ -213,11 +202,11 @@ def get_read_grammar1():
         # },
         # {"syn": "common_noun(E1, T1) -> 'things'", "sem": lambda: []},
         # # proper noun
-        # # "magnesium"
-        # {
-        #     "syn": "proper_noun(E1) -> /\\w+/",
-        #     "sem": lambda token: [("resolve_name", token, E1)],
-        # },
+        # "magnesium"
+        {
+            "syn": "proper_noun(E1) -> /\\w+/",
+            "sem": lambda token: Atom("name", E1, token),
+        },
         # # "ferrous sulfide"
         # {
         #     "syn": "proper_noun(E1) -> /\\w+/ /\\w+/",

@@ -10,7 +10,7 @@ class CooperDB(Sqlite3DataSource):
         cursor = connection.cursor()
 
         # note: same entity may have multiple names
-        # cursor.execute("CREATE TABLE entity (id TEXT, name TEXT)")
+        cursor.execute("CREATE TABLE entity (id INTEGER PRIMARY KEY, name TEXT)")
 
         cursor.execute("CREATE TABLE metal (id INTEGER PRIMARY KEY, name TEXT, truth TEXT)")
         cursor.execute("CREATE TABLE element (entity TEXT PRIMARY KEY, truth TEXT)")
