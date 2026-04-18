@@ -10,8 +10,8 @@ T3 = Variable("T3")
 
 def get_read_grammar1():
 
-    def isa_declaration(proper_noun: Atom, a, np: Atom):
-        return [Atom("intent_tell", [proper_noun, np])]
+    # def isa_declaration(proper_noun: Atom, a, np: Atom):
+    #     return [Atom("intent_tell", [Atom("let", T1, "true"), proper_noun, np])]
 
     return [
         # sentence
@@ -20,7 +20,7 @@ def get_read_grammar1():
         # "intent_tell", np.set_numbered_args([None, proper_noun.arguments["name"], "true"])
         {
             "syn": "s() -> proper_noun(E1) 'is' a() np(E1, T1)",
-            "sem": isa_declaration,
+            "sem": lambda proper_noun, a, np: [Atom("let", T1, "true"), Atom("intent_tell", [proper_noun, np])],
         },
         # # X is Y (X is another name for Y)
         # {

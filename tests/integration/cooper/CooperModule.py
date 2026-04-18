@@ -21,7 +21,7 @@ class CooperModule(SomeModule):
                 "metal",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["id", "name", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(

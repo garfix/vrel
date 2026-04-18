@@ -4,6 +4,7 @@
 intent_tell(Atom) :-
     resolve_names(Atom, Resolved),
     create_records(Resolved, Records),
+    print(Records),
     store(Records),
     store(output_type('ok')).
 
