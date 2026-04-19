@@ -212,3 +212,7 @@ class TestCoreModule(unittest.TestCase):
         ]
         result = resolve_names(atoms, solver)
         self.assertEqual(result, [Atom("likes", 1, [Atom("surprise", 1, 2)])])
+
+        atoms = [Atom("likes", E1, [Atom("surprise", E1, Atom("name", E2, "Mary"))]).mod(Atom("name", E1, "John"))]
+        result = resolve_names(atoms, solver)
+        self.assertEqual(result, [Atom("likes", 1, [Atom("surprise", 1, 2)])])

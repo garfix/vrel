@@ -10,9 +10,6 @@ T3 = Variable("T3")
 
 def get_read_grammar1():
 
-    # def isa_declaration(proper_noun: Atom, a, np: Atom):
-    #     return [Atom("intent_tell", [Atom("let", T1, "true"), proper_noun, np])]
-
     return [
         # sentence
         # introduce new names
@@ -50,7 +47,7 @@ def get_read_grammar1():
         # noun verb
         {
             "syn": "s() -> noun(E1, T1) verb(E1)",
-            "sem": lambda noun, verb: Atom("intent_tell", Atom(verb, noun)),
+            "sem": lambda noun, verb: [Atom("intent_tell", [Atom(verb, noun)], T1)],
         },
         # combustable things burn
         # {

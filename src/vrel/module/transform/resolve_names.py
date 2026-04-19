@@ -16,15 +16,15 @@ def resolve_names(atoms: list[Atom], solver: SomeSolver):
     variable_to_id = {variable: resolve_name(name, solver) for variable, name in named_variables.items()}
     # print(variable_to_id)
 
-    # create a new atom with bound named variables
-    new_atom = bind_variables(atoms, variable_to_id)
-    # print(new_atom)
-
     # remove the names
-    result = remove_names(new_atom)
+    removed = remove_names_from_atoms(atoms)
     # print(result)
 
-    return result
+    # create a new atom with bound named variables
+    new_atoms = bind_variables(removed, variable_to_id)
+    # print(new_atoms)
+
+    return new_atoms
 
 
 def find_named_variables(term: any) -> dict:
@@ -55,15 +55,33 @@ def resolve_name(name: str, solver: SomeSolver):
         raise Exception(f"More than 1 entity found for name: {name}")
 
 
-def remove_names(term: any) -> any:
-    new_term = term
-    if isinstance(term, list):
-        new_term = [cleared for e in term if (cleared := remove_names(e)) is not None]
+def remove_names_from_atoms(atoms: list[Atom]) -> list[Atom]:
+    new_atoms = []
+    for atom in atoms:
+        if atom.predicate != ARG_NAME:
+            new_atoms.append(remove_names_from_atom(atom))
 
-    elif isinstance(term, Atom):
-        if new_term.predicate == ARG_NAME:
-            new_term = None
+    return new_atoms
+
+
+def remove_names_from_arguments(args: list[any]) -> list[any]:
+    print(args)
+    new_atoms = []
+    for arg in args:
+        if isinstance(arg, list):
+            new_atoms.append(remove_names_from_atoms(arg))
+        elif isinstance(arg, Atom):
+            if arg.predicate == ARG_NAME:
+                new_atoms.append(arg.arguments[0])
+            else:
+                new_atoms.append(remove_names_from_atom(arg))
         else:
-            new_term = Atom(term.predicate, *remove_names(term.arguments)).mod(remove_names(term.modifiers))
+            new_atoms.append(arg)
 
-    return new_term
+    return new_atoms
+
+
+def remove_names_from_atom(atom: Atom) -> Atom:
+    return Atom(atom.predicate, *remove_names_from_arguments(atom.arguments)).mod(
+        remove_names_from_atoms(atom.modifiers)
+    )
