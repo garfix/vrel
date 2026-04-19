@@ -2,4 +2,8 @@
 
 To run the tests:
 
-    pytest
+```sh
+. venv/bin/activate
+
+pytest
+```
