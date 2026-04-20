@@ -5,7 +5,6 @@ from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.Logger import Logger
-from vrel.grammar.en_us_read import get_en_us_read_grammar
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
@@ -19,8 +18,7 @@ from vrel.processor.parser.BasicParser import BasicParser
 from CooperDB import CooperDB
 from CooperModule import CooperModule
 from write_grammar import get_write_grammar
-from read_grammar1 import get_read_grammar1
-from read_grammar2 import get_read_grammar2
+from read_grammar import get_read_grammar
 
 
 class TestCooper(unittest.TestCase):
@@ -77,7 +75,7 @@ class TestCooper(unittest.TestCase):
 
         # define the first pipeline
 
-        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar1())
+        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
         parser = BasicParser(grammar1)
 
         composer = SemanticComposer(parser)
@@ -88,28 +86,9 @@ class TestCooper(unittest.TestCase):
 
         logger = Logger()
 
-        # define the first system
+        # define the system
 
-        system1 = BasicSystem(
-            model=model,
-            parser=parser,
-            composer=composer,
-            executor=executor,
-            output_generator=generator,
-            logger=logger,
-        )
-
-        # define the second pipeline
-
-        grammar2 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar1())
-        parser = BasicParser(grammar2)
-
-        composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model)
-
-        # define the second system
-
-        system2 = BasicSystem(
+        system = BasicSystem(
             model=model,
             parser=parser,
             composer=composer,
@@ -120,7 +99,7 @@ class TestCooper(unittest.TestCase):
 
         tests1 = [
             ["magnesium is a metal", "OK"],
-            # ["magnesium burns rapidly", "OK"],
+            ["magnesium burns rapidly", "OK"],
             # ["magnesium oxide is a white metallic oxide", "OK"],
             # ["oxygen is a nonmetal", "OK"],
             # ["ferrous sulfide is a dark-gray compound that is brittle", "OK"],
@@ -160,7 +139,7 @@ class TestCooper(unittest.TestCase):
             # ["magnesium is not a metal", "False"],
             # ["magnesium is a nonmetal", "False"],
             # ["magnesium is not a nonmetal", "True"],
-            # ["magnesium is a metal that burns rapidly", "True"],
+            ["magnesium is a metal that burns rapidly", "True"],
             # ["magnesium is magnesium", "True"],
             # ["some oxides are white", "True"],
             # ["no oxide is white", "False"],
@@ -186,12 +165,12 @@ class TestCooper(unittest.TestCase):
         # logger.log_only_last_test()
         # logger.log_products()
 
-        tester = DialogTester(self, tests1, system1, logger)
+        tester = DialogTester(self, tests1, system, logger)
         tester.run()
 
         # print(logger)
 
-        tester = DialogTester(self, tests2, system2, logger)
+        tester = DialogTester(self, tests2, system, logger)
         tester.run()
 
         print(logger)
