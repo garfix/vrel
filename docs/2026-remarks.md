@@ -1,3 +1,7 @@
+## 2026-04-20
+
+I'm redoing Cooper. It had 2 grammars, one for reading and one for writing. I now want to come up with a single grammar. It means rethinking the structures. And the result should be easy to understand. Not an easy task.
+
 ## 2026-04-17
 
 It's relatively easy to generate a name resolver that creates an id for a name in a generic `entity` table (id, name). But common databases don't usually work like that. So for "Cooper" I'm hesitating between the simpler entity table and the one-name-per-table variant. An added difficulty is that the id's produced must be unique in the other tables they're used in. Something that's not usually a problem in a relational database.

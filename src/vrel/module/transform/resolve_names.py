@@ -65,7 +65,6 @@ def remove_names_from_atoms(atoms: list[Atom]) -> list[Atom]:
 
 
 def remove_names_from_arguments(args: list[any]) -> list[any]:
-    print(args)
     new_atoms = []
     for arg in args:
         if isinstance(arg, list):

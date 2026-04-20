@@ -29,7 +29,7 @@ class CooperModule(SomeModule):
                 "element",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -37,7 +37,7 @@ class CooperModule(SomeModule):
                 "compound",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -45,7 +45,7 @@ class CooperModule(SomeModule):
                 "nonmetal",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -53,7 +53,7 @@ class CooperModule(SomeModule):
                 "white",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -61,7 +61,7 @@ class CooperModule(SomeModule):
                 "dark_gray",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -69,7 +69,7 @@ class CooperModule(SomeModule):
                 "brittle",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -77,7 +77,7 @@ class CooperModule(SomeModule):
                 "oxide",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -85,7 +85,7 @@ class CooperModule(SomeModule):
                 "sulfide",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -93,7 +93,7 @@ class CooperModule(SomeModule):
                 "chloride",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -101,7 +101,7 @@ class CooperModule(SomeModule):
                 "fuel",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -109,7 +109,7 @@ class CooperModule(SomeModule):
                 "burns",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -117,7 +117,7 @@ class CooperModule(SomeModule):
                 "burns_rapidly",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -125,7 +125,7 @@ class CooperModule(SomeModule):
                 "combustable",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
         self.add_relation(
@@ -133,7 +133,7 @@ class CooperModule(SomeModule):
                 "gasoline",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "truth"],
+                formal_parameters=["id", "truth"],
             )
         )
 

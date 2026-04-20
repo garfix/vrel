@@ -51,6 +51,10 @@
 
 - the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
 
+## dialog or LTM
+
+When we `store` a structure, is that in dialog or LTM? Should that be decidable from the application?
+
 ## PAM
 
 - de deducties van PAM moeten een mate van onzekerheid hebben; het zijn geen zekerheden; hoe streep je hypothesen af?

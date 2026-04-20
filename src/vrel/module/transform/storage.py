@@ -2,4 +2,9 @@ from vrel.entity.Atom import Atom
 
 
 def create_records(atoms: list[Atom]):
-    return atoms
+    records = []
+    for atom in atoms:
+        a = Atom(atom.predicate, *atom.arguments)
+        records.append(a)
+        records.extend(create_records(atom.modifiers))
+    return records

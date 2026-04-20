@@ -19,12 +19,32 @@ def get_read_grammar():
         },
         # magnesium burns rapidly
         {
-            "syn": "s() -> noun(E1, T1) verb(E1)",
-            "sem": lambda noun, verb: [Atom("intent_tell", [Atom(verb, noun, T1)], T1)],
+            "syn": "s() -> noun(E1, T1) vp(E1, T1)",
+            "sem": lambda noun, vp: [Atom("intent_tell", [noun, vp], T1)],
         },
         # np
-        {"syn": "np(E1, T1) -> noun(E1, T1)", "sem": lambda noun: noun},
+        {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
+        # nbar
+        {"syn": "nbar(E1, T1) -> noun(E1, T1)", "sem": lambda noun: noun},
+        # {"syn": "nbar(E1, T1) -> nbar(E1, T1) 'that' vp(E1)", "sem": lambda nbar, vp: Atom("and_3v", nbar, vp, T1)},
+        # {
+        #     "syn": "nbar(E1, T1) -> nbar(E1, T1) 'that' vp(E1, T1)",
+        #     "sem": lambda nbar, vp: Atom("and_3v", T1).mod([nbar, vp]),
+        # },
+        {
+            "syn": "nbar(E1, T1) -> nbar(E1, T1) 'that' vp(E1, T1)",
+            "sem": lambda nbar, vp: nbar.mod(vp),
+        },
+        # vp
+        {
+            "syn": "vp(E1, T1) -> verb(E1)",
+            "sem": lambda verb: Atom(verb, E1, T1),
+        },
         # verb
+        {
+            "syn": "verb(E1) -> 'burns'",
+            "sem": lambda: "burns",
+        },
         {
             "syn": "verb(E1) -> 'burns' 'rapidly'",
             "sem": lambda: "burns_rapidly",
