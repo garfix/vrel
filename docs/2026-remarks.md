@@ -1,3 +1,25 @@
+## 2026-04-21
+
+New ideas. It occurred to me that OR is a very special operation, in that its modifiers should not be executed before or after it, but during it, because the second operand should only be executed if the first fails. While most orher operations can be serialized (the modifiers before or after the operation), this doesn't hold for OR. This is also a very important restriction for a query optimizer. This can and must be generalized. Make explicit how the modifiers of an atom are executed:
+
+- before the operation (i.e. AND)
+- after the operation (i.e. dependent subclauses)
+- during the operation (i.e. OR)
+- don't care / either before or after (best for query optimization)
+
+Another thing that OR brings in is that we can't just throw all modifiers on a heap, we need to know which modifier belongs to which argument. So `.mod()` is out. While each rule can decide which modifiers to pass to its atom, each rule must produce one and just one atom. Not a list, not modify an atom, produce an atom, or inherit it unmodified. That also means that nodes that just want to modify an atom, must create a new atom, like this:
+
+    nbar(E1) -> nbar(E1) 'that' vp(E1)
+    lambda nbar, vp: Atom('nop').any([nbar, vp])
+
+`nop` is no-operation
+
+Nodes that want to produce multiple atoms, must create a single atom, that calls the other atoms as a rule.
+
+If atoms are part of the main operation, they may be passed as a list, for example `Atom("intent_tell", [proper_noun, np], T1)`. It's unambiguous that the arguments are executed _during_ of the operation.
+
+The determiner is a special case. It's removed during query preparation, and can be marked as `skip`.
+
 ## 2026-04-20
 
 I'm redoing Cooper. It had 2 grammars, one for reading and one for writing. I now want to come up with a single grammar. It means rethinking the structures. And the result should be easy to understand. Not an easy task.
