@@ -1,3 +1,25 @@
+## 2026-04-22
+
+Some modifications. `during` allows for two possibilities. Either pass in the atoms as an argument or as a modifier. This causes confusion to the developer. It also requires the operation to read from the modifiers in the operation. And both would be done only in rare exceptions. This is undesirable.
+
+New idea:
+
+- a rule still produces a single atom. In some cases this is an annoying restriction, but overall this brings peace and quiet to the modelling phase
+- modifiers are still added as `pre`, `post`, or `any`
+- modifiers that are used **during** the atom's execution must be added as an argument
+
+For OR this means
+
+    Atom('or', [np1], [np2])
+    Atom('or_3v', [np1], [np2], T1, T2, T3)
+
+AND can stay the same
+
+    Atom('and').pre(np1, np2)
+    Atom('and_3v', T1, T2, T3).pre(np1, np2)
+
+Also I want to give the determiner a special place.
+
 ## 2026-04-21
 
 New ideas. It occurred to me that OR is a very special operation, in that its modifiers should not be executed before or after it, but during it, because the second operand should only be executed if the first fails. While most orher operations can be serialized (the modifiers before or after the operation), this doesn't hold for OR. This is also a very important restriction for a query optimizer. This can and must be generalized. Make explicit how the modifiers of an atom are executed:

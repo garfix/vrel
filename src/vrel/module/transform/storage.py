@@ -6,5 +6,6 @@ def create_records(atoms: list[Atom]):
     for atom in atoms:
         a = Atom(atom.predicate, *atom.arguments)
         records.append(a)
+        # todo: consider pre/post
         records.extend(create_records(atom.modifiers))
     return records

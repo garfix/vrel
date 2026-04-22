@@ -60,7 +60,7 @@ def create_query(atom: Atom) -> list[Atom]:
     scoping_arguments = []
     for arg in atom.arguments:
         if isinstance(arg, Atom):
-            det = arg.get_modifier(ARG_DETERMINER)
+            det = arg.determiner
             if det is not None:
                 scoping_arguments.append(arg)
                 # replace the scoping argument with its entity variable
@@ -81,12 +81,10 @@ def create_query(atom: Atom) -> list[Atom]:
 
 def create_quantification(atom: Atom, scoping_argument: Atom):
     # get the determiner atom from the argument
-    determiner = scoping_argument.get_modifier(ARG_DETERMINER)
-    # get the actual determiner from the determiner atom
-    det: Atom = determiner.arguments[0]
+    det = scoping_argument.determiner
 
     # the determiner atom should now be removed
-    cleared_arg = scoping_argument.remove_modifiers(ARG_DETERMINER)
+    cleared_arg = scoping_argument.with_determiner(None)
     # the scoping argument may itself contain scoping, so recurse into it
     range = create_query(cleared_arg)
 

@@ -32,8 +32,8 @@ def get_read_grammar():
         #     "sem": lambda nbar, vp: Atom("and_3v", T1).mod([nbar, vp]),
         # },
         {
-            "syn": "nbar(E1, T1) -> nbar(E1, T1) 'that' vp(E1, T1)",
-            "sem": lambda nbar, vp: nbar.mod(vp),
+            "syn": "nbar(E1, T1) -> nbar(E1, T2) 'that' vp(E1, T3)",
+            "sem": lambda nbar, vp: Atom("and_3v", T2, T3, T1).pre(nbar, vp),
         },
         # vp
         {
@@ -50,8 +50,8 @@ def get_read_grammar():
             "sem": lambda: "burns_rapidly",
         },
         # article
-        {"syn": "a() -> 'a'", "sem": lambda: []},
-        {"syn": "a() -> 'an'", "sem": lambda: []},
+        {"syn": "a() -> 'a'", "sem": lambda: None},
+        {"syn": "a() -> 'an'", "sem": lambda: None},
         # noun
         {
             "syn": "noun(E1, T1) -> common_noun(E1, T1)",

@@ -13,10 +13,11 @@ def generate_variables(term: any, variable_generator: VariableGenerator, variabl
         return tuple([generate_variables(arg, variable_generator, variable_map) for arg in term])
     # atom
     elif isinstance(term, Atom):
-        return Atom(
-            term.predicate,
-            *[generate_variables(arg, variable_generator, variable_map) for arg in term.arguments],
-        ).mod([generate_variables(mod, variable_generator, variable_map) for mod in term.modifiers])
+        # return Atom(
+        #     term.predicate,
+        #     *[generate_variables(arg, variable_generator, variable_map) for arg in term.arguments],
+        # ).mod([generate_variables(mod, variable_generator, variable_map) for mod in term.modifiers])
+        return term.apply(lambda arg: generate_variables(arg, variable_generator, variable_map))
     # variable
     elif isinstance(term, Variable):
         if term.name in variable_map:

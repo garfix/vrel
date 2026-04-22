@@ -3,14 +3,23 @@ from vrel.entity.Sentinel import Sentinel
 from vrel.entity.Variable import Variable
 
 
+MODIFIER_TYPE_PRE = "pre"
+MODIFIER_TYPE_POST = "post"
+MODIFIER_TYPE_DURING = "during"
+MODIFIER_TYPE_ANYWHERE = "anywhere"
+
+
 class Atom:
     predicate: str
     arguments: list
     modifiers: list[Atom]
+    type: str
 
     def __init__(self, *args):
         self.arguments = []
         self.modifiers = []
+        self.type = MODIFIER_TYPE_ANYWHERE
+        self.determiner = None
 
         if len(args) < 1:
             raise Exception("Atom must have at least a predicate")
@@ -39,7 +48,15 @@ class Atom:
             self.predicate,
             *self.arguments,
         )
+        a.type = self.type
+        a.determiner = self.determiner
         a.modifiers.extend(self.modifiers)
+        return a
+
+    def apply(self, func):
+        a = self.copy()
+        a.arguments = [func(arg) for arg in a.arguments]
+        a.modifiers = [func(mod) for mod in a.modifiers]
         return a
 
     def mod(self, modifier: list[Atom]):
@@ -53,6 +70,28 @@ class Atom:
             return a
         else:
             raise Exception("A modifier must be an atom or a list of atoms")
+
+    def with_determiner(self, determiner: Atom):
+        a = self.copy()
+        a.determiner = determiner
+        return a
+
+    def pre(self, *atoms: list[Atom]):
+        return self._modify(MODIFIER_TYPE_PRE, atoms)
+
+    def post(self, *atoms: list[Atom]):
+        return self._modify(MODIFIER_TYPE_POST, atoms)
+
+    def any(self, *atoms: list[Atom]):
+        return self._modify(MODIFIER_TYPE_ANYWHERE, atoms)
+
+    def _modify(self, type: str, atoms: list[Atom]):
+        if len(self.modifiers) > 0:
+            raise Exception("The atom already has modifiers")
+        a = self.copy()
+        a.modifiers = atoms
+        a.type = type
+        return a
 
     def clear_modifiers(self):
         return Atom(

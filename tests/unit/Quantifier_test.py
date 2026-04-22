@@ -76,7 +76,7 @@ class TestQuantification(unittest.TestCase):
             {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: "have"},
             {
                 "syn": "np(E1) -> det(E1) nbar(E1)",
-                "sem": lambda det, nbar: nbar.mod(Atom(ARG_DETERMINER, det)),
+                "sem": lambda det, nbar: nbar.with_determiner(det),
             },
             {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
             {"syn": "det(E1) -> 'every'", "sem": lambda: Atom("all")},

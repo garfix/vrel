@@ -10,4 +10,4 @@ class Variable:
         return self.name
 
     def __eq__(self, value):
-        return self.name == value.name
+        return isinstance(value, Variable) and self.name == value.name
