@@ -14,8 +14,8 @@ def get_read_grammar():
         # sentence
         # magnesium is a metal
         {
-            "syn": "s() -> proper_noun(E1) 'is' a() np(E1, T1)",
-            "sem": lambda proper_noun, a, np: [Atom("intent_tell", [proper_noun, np], T1)],
+            "syn": "s() -> proper_noun(E1) 'is' np(E1, T1)",
+            "sem": lambda proper_noun, np: [Atom("intent_tell", [proper_noun, np], T1)],
         },
         # magnesium burns rapidly
         {
@@ -23,14 +23,11 @@ def get_read_grammar():
             "sem": lambda noun, vp: [Atom("intent_tell", [noun, vp], T1)],
         },
         # np
+        {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
+        {"syn": "np(E1, T1) -> 'not' np(E1, T2)", "sem": lambda np: Atom("not_3v", T2, T1).pre([np])},
         {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
         # nbar
         {"syn": "nbar(E1, T1) -> noun(E1, T1)", "sem": lambda noun: noun},
-        # {"syn": "nbar(E1, T1) -> nbar(E1, T1) 'that' vp(E1)", "sem": lambda nbar, vp: Atom("and_3v", nbar, vp, T1)},
-        # {
-        #     "syn": "nbar(E1, T1) -> nbar(E1, T1) 'that' vp(E1, T1)",
-        #     "sem": lambda nbar, vp: Atom("and_3v", T1).mod([nbar, vp]),
-        # },
         {
             "syn": "nbar(E1, T1) -> nbar(E1, T2) 'that' vp(E1, T3)",
             "sem": lambda nbar, vp: Atom("and_3v", T2, T3, T1).pre([nbar, vp]),
