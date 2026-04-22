@@ -53,36 +53,47 @@ class Atom:
         a.modifiers.extend(self.modifiers)
         return a
 
-    def apply(self, func):
+    def apply_to_each_atom(self, func):
         a = self.copy()
         a.arguments = [func(arg) for arg in a.arguments]
         a.modifiers = [func(mod) for mod in a.modifiers]
         return a
 
-    def mod(self, modifier: list[Atom]):
-        if isinstance(modifier, Atom):
-            a = self.copy()
-            a.modifiers.append(modifier)
-            return a
-        elif isinstance(modifier, list):
-            a = self.copy()
-            a.modifiers.extend(modifier)
-            return a
-        else:
-            raise Exception("A modifier must be an atom or a list of atoms")
+    # def apply_to_each_list(self, func):
+    #     a = self.copy()
+    #     a.arguments = func(a.arguments)
+    #     a.modifiers = func(a.modifiers)
+    #     return a
+
+    # def mod(self, modifier: list[Atom]):
+    #     if isinstance(modifier, Atom):
+    #         a = self.copy()
+    #         a.modifiers.append(modifier)
+    #         return a
+    #     elif isinstance(modifier, list):
+    #         a = self.copy()
+    #         a.modifiers.extend(modifier)
+    #         return a
+    #     else:
+    #         raise Exception("A modifier must be an atom or a list of atoms")
+
+    def flatten(self):
+        a = Atom(self.predicate)
+        a.arguments = self.arguments
+        return a
 
     def with_determiner(self, determiner: Atom):
         a = self.copy()
         a.determiner = determiner
         return a
 
-    def pre(self, *atoms: list[Atom]):
+    def pre(self, atoms: list[Atom]):
         return self._modify(MODIFIER_TYPE_PRE, atoms)
 
-    def post(self, *atoms: list[Atom]):
+    def post(self, atoms: list[Atom]):
         return self._modify(MODIFIER_TYPE_POST, atoms)
 
-    def any(self, *atoms: list[Atom]):
+    def any(self, atoms: list[Atom]):
         return self._modify(MODIFIER_TYPE_ANYWHERE, atoms)
 
     def _modify(self, type: str, atoms: list[Atom]):
@@ -93,11 +104,11 @@ class Atom:
         a.type = type
         return a
 
-    def clear_modifiers(self):
-        return Atom(
-            self.predicate,
-            *self.arguments,
-        )
+    # def clear_modifiers(self):
+    #     return Atom(
+    #         self.predicate,
+    #         *self.arguments,
+    #     )
 
     def get_modifier(self, predicate: str) -> Atom | None:
         for mod in self.modifiers:
@@ -105,16 +116,16 @@ class Atom:
                 return mod
         return None
 
-    def remove_modifiers(self, predicate: str) -> Atom:
-        new_modifiers = []
-        for mod in self.modifiers:
-            if mod.predicate != predicate:
-                new_modifiers.append(mod)
+    # def remove_modifiers(self, predicate: str) -> Atom:
+    #     new_modifiers = []
+    #     for mod in self.modifiers:
+    #         if mod.predicate != predicate:
+    #             new_modifiers.append(mod)
 
-        return Atom(
-            self.predicate,
-            *self.arguments,
-        ).mod(new_modifiers)
+    #     return Atom(
+    #         self.predicate,
+    #         *self.arguments,
+    #     ).mod(new_modifiers)
 
     def get_modifiers(self, predicate: str) -> list[Atom]:
         mods = []
@@ -129,6 +140,8 @@ class Atom:
             and self.predicate == value.predicate
             and self.arguments == value.arguments
             and self.modifiers == value.modifiers
+            and self.determiner == value.determiner
+            and self.type == value.type
         )
 
     def __repr__(self):

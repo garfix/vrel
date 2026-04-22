@@ -6,13 +6,13 @@ intent_tell(Fact, Truth) :-
     create_records(Resolved, Records),
     (
         # check if the fact is known
-        print(Records),
+        # print(Records),
         scoped(Records),
         store(output_type(Truth))
     ;
         # add the fact as a truth
         let(Truth, "true"),
-        print(Records),
+        # print(Records),
         store(Records),
         store(output_type('ok'))
     ).

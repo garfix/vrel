@@ -52,7 +52,7 @@ class TestComposer(unittest.TestCase):
             {"syn": "verb(E1, E2) -> 'flows' 'to'", "sem": lambda: "flows"},
             {
                 "syn": "np(E1) -> det(E1) nbar(E1)",
-                "sem": lambda det, nbar: nbar.mod(det),
+                "sem": lambda det, nbar: nbar.any([det]),
             },
             {"syn": "det(E1) -> 'the'", "sem": lambda: Atom("quantifier" "the")},
             {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: Atom(noun, E1)},

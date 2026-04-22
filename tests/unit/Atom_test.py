@@ -16,8 +16,7 @@ def test_atom():
     assert a.arguments[2] == "mary"
     assert a.arguments == [E1, "john", "mary"]
 
-    c = a.mod(Atom("much", E2, E1))
-    c = c.mod([Atom("location", E3, "here", E1)])
+    c = a.any([Atom("much", E2, E1), Atom("location", E3, "here", E1)])
 
     assert a.modifiers == []
     assert c.modifiers == [Atom("much", E2, E1), Atom("location", E3, "here", E1)]

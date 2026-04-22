@@ -100,7 +100,7 @@ def bind_variables(term: any, binding: dict) -> any:
         #     term.predicate,
         #     *[bind_variables(arg, binding) for arg in term.arguments],
         # ).mod([bind_variables(mod, binding) for mod in term.modifiers])
-        return term.apply(lambda arg: bind_variables(arg, binding))
+        return term.apply_to_each_atom(lambda arg: bind_variables(arg, binding))
     # variable
     elif isinstance(term, Variable):
         # bound?

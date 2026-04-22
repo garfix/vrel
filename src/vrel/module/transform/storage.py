@@ -1,11 +1,14 @@
-from vrel.entity.Atom import Atom
+from vrel.entity.Atom import MODIFIER_TYPE_PRE, Atom
 
 
 def create_records(atoms: list[Atom]):
     records = []
     for atom in atoms:
-        a = Atom(atom.predicate, *atom.arguments)
-        records.append(a)
-        # todo: consider pre/post
-        records.extend(create_records(atom.modifiers))
+        flat = atom.flatten()
+        if atom.type == MODIFIER_TYPE_PRE:
+            records.extend(create_records(atom.modifiers))
+            records.append(flat)
+        else:
+            records.append(flat)
+            records.extend(create_records(atom.modifiers))
     return records

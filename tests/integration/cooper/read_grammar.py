@@ -33,7 +33,7 @@ def get_read_grammar():
         # },
         {
             "syn": "nbar(E1, T1) -> nbar(E1, T2) 'that' vp(E1, T3)",
-            "sem": lambda nbar, vp: Atom("and_3v", T2, T3, T1).pre(nbar, vp),
+            "sem": lambda nbar, vp: Atom("and_3v", T2, T3, T1).pre([nbar, vp]),
         },
         # vp
         {
