@@ -1,3 +1,4 @@
+from create_records_3v import create_records_3v
 from vrel.core.constants import AUTO
 from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
@@ -16,6 +17,7 @@ class CooperModule(SomeModule):
         self.add_relation(Relation("resolve_name", query_function=self.resolve_name))
         self.add_relation(Relation("not_3v", query_function=self.not_3v))
         self.add_relation(Relation("and_3v", query_function=self.and_3v))
+        self.add_relation(Relation("create_records_3v", query_function=self.create_records_3v))
         self.add_relation(
             Relation(
                 "metal",
@@ -201,6 +203,11 @@ class CooperModule(SomeModule):
             return [[None, None, "unknown"]]
 
         raise Exception(f"'and_3v' doesn't accept arguments: {arguments}")
+
+    def create_records_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
+        atoms = arguments[0]
+        result = create_records_3v(atoms)
+        return [[None, result]]
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
         results = self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)

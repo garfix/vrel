@@ -100,7 +100,7 @@ class TestCooper(unittest.TestCase):
         tests1 = [
             ["magnesium is a metal", "OK"],
             ["magnesium burns rapidly", "OK"],
-            # ["magnesium oxide is a white metallic oxide", "OK"],
+            ["magnesium oxide is a white metallic oxide", "OK"],
             # ["oxygen is a nonmetal", "OK"],
             # ["ferrous sulfide is a dark-gray compound that is brittle", "OK"],
             # ["iron is a metal", "OK"],

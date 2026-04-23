@@ -32,6 +32,10 @@ def get_read_grammar():
             "syn": "nbar(E1, T1) -> nbar(E1, T2) 'that' vp(E1, T3)",
             "sem": lambda nbar, vp: Atom("and_3v", T2, T3, T1).pre([nbar, vp]),
         },
+        {
+            "syn": "nbar(E1, T1) -> adj(E1, T2) nbar(E1, T3)",
+            "sem": lambda adj, nbar: Atom("and_3v", T2, T3, T1).pre([nbar, adj]),
+        },
         # vp
         {
             "syn": "vp(E1, T1) -> verb(E1)",
@@ -58,11 +62,19 @@ def get_read_grammar():
             "syn": "noun(E1, T1) -> proper_noun(E1)",
             "sem": lambda proper_noun: proper_noun,
         },
+        # adjective
+        {"syn": "adj(E1, T1) -> 'white'", "sem": lambda: Atom("white", E1, T1)},
+        {"syn": "adj(E1, T1) -> 'metallic'", "sem": lambda: Atom("metal", E1, T1)},
         # common noun
         {"syn": "common_noun(E1, T1) -> 'metal'", "sem": lambda: Atom("metal", E1, T1)},
+        {"syn": "common_noun(E1, T1) -> 'oxide'", "sem": lambda: Atom("oxide", E1, T1)},
         # proper noun ("magnesium")
         {
             "syn": "proper_noun(E1) -> /\\w+/",
             "sem": lambda token: Atom("name", E1, token),
+        },
+        {
+            "syn": "proper_noun(E1) -> /\\w+/ /\\w+/",
+            "sem": lambda token1, token2: Atom("name", E1, token1 + " " + token2),
         },
     ]

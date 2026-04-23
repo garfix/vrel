@@ -1,3 +1,9 @@
+## 2026-04-23
+
+magnesium oxide is a white metallic oxide
+
+This sentence is encoded as a nested `and_3v`. This is fine for querying. For storing information it is necessary to loose the `and_3v`'s. I thought about and I think it's best to create a `create_records_3v`, which binds the truth values to `true`, and discards the `and_3v`'s.
+
 ## 2026-04-22
 
 Some modifications. `during` allows for two possibilities. Either pass in the atoms as an argument or as a modifier. This causes confusion to the developer. It also requires the operation to read from the modifiers in the operation. And both would be done only in rare exceptions. This is undesirable.
@@ -19,6 +25,10 @@ AND can stay the same
     Atom('and_3v', T1, T2, T3).pre(np1, np2)
 
 Also I want to give the determiner a special place.
+
+===
+
+It's also possible to detemine the modifier type in the relation.
 
 ## 2026-04-21
 
