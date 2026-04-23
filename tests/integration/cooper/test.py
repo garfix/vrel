@@ -101,7 +101,7 @@ class TestCooper(unittest.TestCase):
             ["magnesium is a metal", "OK"],
             ["magnesium burns rapidly", "OK"],
             ["magnesium oxide is a white metallic oxide", "OK"],
-            # ["oxygen is a nonmetal", "OK"],
+            ["oxygen is a nonmetal", "OK"],
             # ["ferrous sulfide is a dark-gray compound that is brittle", "OK"],
             # ["iron is a metal", "OK"],
             # ["sulfur is a nonmetal", "OK"],

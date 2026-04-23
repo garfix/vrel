@@ -67,6 +67,7 @@ def get_read_grammar():
         {"syn": "adj(E1, T1) -> 'metallic'", "sem": lambda: Atom("metal", E1, T1)},
         # common noun
         {"syn": "common_noun(E1, T1) -> 'metal'", "sem": lambda: Atom("metal", E1, T1)},
+        {"syn": "common_noun(E1, T1) -> 'nonmetal'", "sem": lambda: Atom("nonmetal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'oxide'", "sem": lambda: Atom("oxide", E1, T1)},
         # proper noun ("magnesium")
         {
