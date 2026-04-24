@@ -44,6 +44,22 @@ class CooperModule(SomeModule):
         )
         self.add_relation(
             Relation(
+                "solid",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["id", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "gas",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["id", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
                 "nonmetal",
                 query_function=self.common_query,
                 write_function=self.common_write,

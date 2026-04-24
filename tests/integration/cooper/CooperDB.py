@@ -15,6 +15,8 @@ class CooperDB(Sqlite3DataSource):
         cursor.execute("CREATE TABLE metal (id INTEGER PRIMARY KEY, truth TEXT)")
         cursor.execute("CREATE TABLE element (id INTEGER PRIMARY KEY, truth TEXT)")
         cursor.execute("CREATE TABLE compound (id INTEGER PRIMARY KEY, truth TEXT)")
+        cursor.execute("CREATE TABLE solid (id INTEGER PRIMARY KEY, truth TEXT)")
+        cursor.execute("CREATE TABLE gas (id INTEGER PRIMARY KEY, truth TEXT)")
         cursor.execute("CREATE TABLE nonmetal (id INTEGER PRIMARY KEY, truth TEXT)")
         cursor.execute("CREATE TABLE white (id INTEGER PRIMARY KEY, truth TEXT)")
         cursor.execute("CREATE TABLE dark_gray (id INTEGER PRIMARY KEY, truth TEXT)")
