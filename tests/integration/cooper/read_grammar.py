@@ -17,6 +17,11 @@ def get_read_grammar():
             "syn": "s() -> proper_noun(E1) 'is' np(E1, T1)",
             "sem": lambda proper_noun, np: [Atom("intent_tell", [proper_noun, np], T1)],
         },
+        # gasoline is combustable
+        {
+            "syn": "s() -> proper_noun(E1) 'is' adj(E1, T1)",
+            "sem": lambda proper_noun, adj: [Atom("intent_tell", [proper_noun, adj], T1)],
+        },
         # magnesium burns rapidly
         {
             "syn": "s() -> noun(E1, T1) vp(E1, T1)",
@@ -40,6 +45,10 @@ def get_read_grammar():
         {
             "syn": "vp(E1, T1) -> verb(E1)",
             "sem": lambda verb: Atom(verb, E1, T1),
+        },
+        {
+            "syn": "vp(E1, T1) -> 'is' adj(E1, T1)",
+            "sem": lambda adj: adj,
         },
         # verb
         {
@@ -65,10 +74,15 @@ def get_read_grammar():
         # adjective
         {"syn": "adj(E1, T1) -> 'white'", "sem": lambda: Atom("white", E1, T1)},
         {"syn": "adj(E1, T1) -> 'metallic'", "sem": lambda: Atom("metal", E1, T1)},
+        {"syn": "adj(E1, T1) -> 'dark-gray'", "sem": lambda: Atom("dark_gray", E1, T1)},
+        {"syn": "adj(E1, T1) -> 'combustable'", "sem": lambda: Atom("combustable", E1, T1)},
+        {"syn": "adj(E1, T1) -> 'brittle'", "sem": lambda: Atom("brittle", E1, T1)},
         # common noun
+        {"syn": "common_noun(E1, T1) -> 'compound'", "sem": lambda: Atom("compound", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'metal'", "sem": lambda: Atom("metal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'nonmetal'", "sem": lambda: Atom("nonmetal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'oxide'", "sem": lambda: Atom("oxide", E1, T1)},
+        {"syn": "common_noun(E1, T1) -> 'fuel'", "sem": lambda: Atom("fuel", E1, T1)},
         # proper noun ("magnesium")
         {
             "syn": "proper_noun(E1) -> /\\w+/",
