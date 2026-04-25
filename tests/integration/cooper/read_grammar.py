@@ -22,6 +22,27 @@ def get_read_grammar():
             "syn": "s() -> proper_noun(E1) copula() adj(E1, T1)",
             "sem": lambda proper_noun, copula, adj: [Atom("intent_tell", [proper_noun, adj], T1)],
         },
+        {
+            "syn": "s() -> common_noun(E1, T1) copula() 'not' common_noun(E2, T2)",
+            "sem": lambda common_noun1, copula, common_noun2: [
+                Atom(
+                    "scoped2",
+                    [
+                        Atom("let", T1, "false"),
+                        Atom("let", T2, "true"),
+                        Atom("intent_learn", common_noun1, [common_noun2]),
+                    ],
+                ),
+                Atom(
+                    "scoped2",
+                    [
+                        Atom("let", T1, "true"),
+                        Atom("let", T2, "false"),
+                        Atom("intent_learn", common_noun2, [common_noun1]),
+                    ],
+                ),
+            ],
+        },
         # magnesium burns rapidly
         {
             "syn": "s() -> noun(E1, T1) vp(E1, T1)",
@@ -90,7 +111,9 @@ def get_read_grammar():
         {"syn": "adj(E1, T1) -> 'brittle'", "sem": lambda: Atom("brittle", E1, T1)},
         # common noun
         {"syn": "common_noun(E1, T1) -> 'compound'", "sem": lambda: Atom("compound", E1, T1)},
+        {"syn": "common_noun(E1, T1) -> 'compounds'", "sem": lambda: Atom("compound", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'element'", "sem": lambda: Atom("element", E1, T1)},
+        {"syn": "common_noun(E1, T1) -> 'elements'", "sem": lambda: Atom("element", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'metal'", "sem": lambda: Atom("metal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'nonmetal'", "sem": lambda: Atom("nonmetal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'oxide'", "sem": lambda: Atom("oxide", E1, T1)},

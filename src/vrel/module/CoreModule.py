@@ -33,6 +33,7 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("all", query_function=self.determiner_all)),
         self.add_relation(Relation("none", query_function=self.determiner_none)),
         self.add_relation(Relation("scoped", query_function=self.scoped)),
+        self.add_relation(Relation("scoped2", query_function=self.scoped2)),
         self.add_relation(Relation("reify", query_function=self.reify)),
         self.add_relation(Relation("store", query_function=self.store)),
         self.add_relation(Relation("$unification", query_function=self.unification)),
@@ -327,6 +328,21 @@ class CoreModule(SomeModule):
             result = []
         else:
             result = BindingResult(results)
+
+        return result
+
+    # ('scoped2', [body-atoms])
+    # a wrapper around a list of atoms, that allows the execution of the atoms in a variable
+    def scoped2(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
+        body = arguments[0]
+
+        results = context.solver.solve(body)
+        count = len(results)
+
+        if count == 0:
+            result = []
+        else:
+            result = [[None]]
 
         return result
 

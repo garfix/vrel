@@ -6,6 +6,7 @@ intent_tell(Fact, Truth) :-
     (
         # check if the fact is known
         create_records(Resolved, Records),
+        # print(Records),
         scoped(Records),
         store(output_type(Truth))
     ;
@@ -16,11 +17,9 @@ intent_tell(Fact, Truth) :-
         store(output_type('ok'))
     ).
 
+# learn an induction rule
 intent_learn(Head, Body) :-
-    resolve_names(Atom, Resolved),
-    learn_rule(Head, Body),
+    create_records_3v(Head, Head_r),
+    create_records_3v(Body, Body_r),
+    learn_rule(Head_r, Body_r),
     store(output_type('ok')).
-
-# check
-intent_check(Truth) :- store(output_type(Truth)).
-

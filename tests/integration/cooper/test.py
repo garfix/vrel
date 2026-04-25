@@ -123,7 +123,7 @@ class TestCooper(unittest.TestCase):
             ["sugar is a compound", "OK"],
             ["water is a compound", "OK"],
             ["sulfuric acid is a compound", "OK"],
-            # ["elements are not compounds", "OK"],
+            ["elements are not compounds", "OK"],
             # ["salt is sodium chloride", "OK"],
             # ["sodium chloride is salt", "OK"],
             # ["oxides are compounds", "OK"],
@@ -155,14 +155,14 @@ class TestCooper(unittest.TestCase):
             # ["no dark-gray thing is a sulfide", "False"],
             # ["ferrous sulfide is white", "False"],
             # ["sodium chloride is a compound", "True"],
-            # ["salt is an element", "False"],
+            ["salt is an element", "False"],
             # ["sodium chloride is an element", "False"],
             # ["gasoline is a fuel that burns", "True"],
         ]
 
         logger.log_no_tests()
-        # logger.log_all_tests()
-        logger.log_only_last_test()
+        logger.log_all_tests()
+        # logger.log_only_last_test()
         logger.log_products()
 
         tester = DialogTester(self, tests1, system, logger)

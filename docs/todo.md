@@ -1,6 +1,8 @@
 ## todo
 
 - learn_rule
+- scoped2 => scoped
+- scoped => exec
 
 - api: bv tk.keras.layers.Dense
 
