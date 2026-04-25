@@ -1,3 +1,17 @@
+## 2026-04-25
+
+    salt is a compound (id = 16)
+
+    compound(16)
+
+    salt is sodium chloride (id = 20)
+
+    same_as(16, 20)
+
+    sodium chloride is a compound (id = 20)
+
+    compound(20)
+
 ## 2026-04-23
 
 magnesium oxide is a white metallic oxide

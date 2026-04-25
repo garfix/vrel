@@ -3,6 +3,7 @@ from vrel.core.functions.results import tuple_results_to_bindings
 from vrel.core.constants import DISJUNCTION
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
+from vrel.entity.Relation import Relation
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.entity.ExecutionContext import ExecutionContext
@@ -19,10 +20,6 @@ class Solver(SomeSolver):
         self.sentence = sentence
 
     def solve(self, atoms: Atom | list[Atom]) -> list[dict]:
-
-        # if isinstance(atoms, Atom):
-        #     atoms = [atoms]
-
         if not isinstance(atoms, list):
             raise Exception("Solver can only solve lists of atoms, this is not a list: " + str(atoms))
 
@@ -43,17 +40,10 @@ class Solver(SomeSolver):
         if not isinstance(atom, Atom):
             raise Exception("Solver can only solve atoms, this is not an atom: " + str(atom))
 
-        predicate = atom.predicate
-        unbound_arguments = atom.arguments
-
-        if predicate == DISJUNCTION:
+        if atom.predicate == DISJUNCTION:
             return self.solve_disjunction(atom.arguments[0], binding)
 
-        arguments = bind_variables(unbound_arguments, binding)
-
-        out_bindings = self.find_relation_values(predicate, arguments, binding)
-
-        return out_bindings
+        return self.solve_for_all_relations(atom, binding)
 
     def solve_disjunction(self, disjuncts: list[list[Atom]], binding: dict):
         for disjunct in disjuncts:
@@ -62,7 +52,9 @@ class Solver(SomeSolver):
                 return results
         return []
 
-    def find_relation_values(self, predicate: str, arguments: list, binding: dict) -> list[list]:
+    def solve_for_all_relations(self, atom: Atom, binding: dict):
+        predicate = atom.predicate
+        bound_arguments = bind_variables(atom.arguments, binding)
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:
@@ -71,38 +63,44 @@ class Solver(SomeSolver):
         deduplicated_bindings = {}
 
         for relation in relations:
-            context = ExecutionContext(relation, self, self.sentence, self.model)
+            out_bindings = self.find_relation_values(relation, bound_arguments, binding)
 
-            # call the relation's query function
-            out_values = relation.query_function(arguments, context)
+            # deduplicate results
+            for out_binding in out_bindings:
+                deduplicated_bindings[str(out_binding)] = out_binding
 
-            if isinstance(out_values, BindingResult):
+        return list(deduplicated_bindings.values())
 
-                # note: only one predicate can have a BindingResult, at this time
-                # also: no validity checks are done, nor deduplication
-                completed_values = [binding | out_value for out_value in out_values]
-                return list(completed_values)
+    def find_relation_values(self, relation: Relation, bound_arguments: list, binding: dict) -> list[list]:
 
-            elif isinstance(out_values, list):
+        predicate = relation.predicate
+        context = ExecutionContext(relation, self, self.sentence, self.model)
 
-                if len(out_values) > 0:
-                    if not isinstance(out_values[0], list) and not isinstance(out_values[0], tuple):
-                        raise Exception("The results of '" + predicate + "' should be lists or tuples")
-                    if len(out_values[0]) != len(arguments):
-                        raise Exception(
-                            f"The number of arguments in the results of '{predicate}' is {str(len(out_values[0]))} and should be {len(arguments)}"
-                        )
+        # call the relation's query function
+        out_values = relation.query_function(bound_arguments, context)
 
-                out_bindings = tuple_results_to_bindings(predicate, arguments, out_values, binding)
+        if isinstance(out_values, BindingResult):
 
-                # deduplicate results
-                for out_binding in out_bindings:
-                    deduplicated_bindings[str(out_binding)] = out_binding
+            # note: only one predicate can have a BindingResult
+            completed_values = [binding | out_value for out_value in out_values]
+            out_bindings = list(completed_values)
 
-            else:
-                raise Exception("The result of '" + predicate + "' should be a list")
+        elif isinstance(out_values, list):
 
-        return deduplicated_bindings.values()
+            if len(out_values) > 0:
+                if not isinstance(out_values[0], list) and not isinstance(out_values[0], tuple):
+                    raise Exception("The results of '" + predicate + "' should be lists or tuples")
+                if len(out_values[0]) != len(bound_arguments):
+                    raise Exception(
+                        f"The number of arguments in the results of '{predicate}' is {str(len(out_values[0]))} and should be {len(bound_arguments)}"
+                    )
+
+            out_bindings = tuple_results_to_bindings(predicate, bound_arguments, out_values, binding)
+
+        else:
+            raise Exception("The result of '" + predicate + "' should be a list")
+
+        return out_bindings
 
     def write_atom(self, atom: Atom):
 
