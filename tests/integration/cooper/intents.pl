@@ -13,6 +13,7 @@ intent_tell(Fact, Truth) :-
         # add the fact as a truth
         let(Truth, "true"),
         create_records_3v(Resolved, Records),
+        print(Records),
         store(Records),
         store(output_type('ok'))
     ).

@@ -53,6 +53,10 @@
 
 - the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
 
+## same as
+
+Same as now assumes that the identifiers are unique in the whole domain, while in practise they're only unique within the relation.
+
 ## dialog or LTM
 
 When we `store` a structure, is that in dialog or LTM? Should that be decidable from the application?

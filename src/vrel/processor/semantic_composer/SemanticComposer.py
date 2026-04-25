@@ -146,7 +146,7 @@ class SemanticComposer(SomeProcessor):
             # ).mod([self.unify_variables(mod, map) for mod in term.modifiers])
             return term.apply_to_each_atom(lambda arg: self.unify_variables(arg, map))
         elif isinstance(term, tuple):
-            raise ("tuple found 9")
+            raise Exception(f"tuple found 9: {term}")
             return tuple([self.unify_variables(term, map) for term in term])
         elif isinstance(term, SemanticFunction):
             return SemanticFunction(term.args, self.unify_variables(term.body, map))

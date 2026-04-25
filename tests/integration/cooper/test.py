@@ -6,6 +6,7 @@ from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.Logger import Logger
 from vrel.grammar.en_us_write import get_en_us_write_grammar
+from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
@@ -59,6 +60,9 @@ class TestCooper(unittest.TestCase):
         inferences = DeductionModule()
         inferences.import_rules(path + "intents.pl")
 
+        # database for same_as
+        dialog_context = BasicDialogContext()
+
         # a data source to store information for output
 
         output_buffer = BasicOutputBuffer()
@@ -67,6 +71,7 @@ class TestCooper(unittest.TestCase):
 
         model = Model(
             [
+                dialog_context,
                 facts,
                 inferences,
                 output_buffer,
@@ -124,8 +129,8 @@ class TestCooper(unittest.TestCase):
             ["water is a compound", "OK"],
             ["sulfuric acid is a compound", "OK"],
             ["elements are not compounds", "OK"],
-            # ["salt is sodium chloride", "OK"],
-            # ["sodium chloride is salt", "OK"],
+            ["salt is sodium chloride", "OK"],
+            ["sodium chloride is salt", "OK"],
             # ["oxides are compounds", "OK"],
             # ["metals are metallic", "OK"],
             # ["no metal is a nonmetal", "OK"],
@@ -161,8 +166,8 @@ class TestCooper(unittest.TestCase):
         ]
 
         logger.log_no_tests()
-        logger.log_all_tests()
-        # logger.log_only_last_test()
+        # logger.log_all_tests()
+        logger.log_only_last_test()
         logger.log_products()
 
         tester = DialogTester(self, tests1, system, logger)

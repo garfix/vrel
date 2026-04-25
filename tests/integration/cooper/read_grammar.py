@@ -1,4 +1,4 @@
-from vrel.core.constants import AUTO, E1, E2, E3, E4, E5, UNKNOWN_PREDICATE
+from vrel.core.constants import E1, E2, E3, E4, E5
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
@@ -22,6 +22,18 @@ def get_read_grammar():
             "syn": "s() -> proper_noun(E1) copula() adj(E1, T1)",
             "sem": lambda proper_noun, copula, adj: [Atom("intent_tell", [proper_noun, adj], T1)],
         },
+        # X is Y
+        {
+            "syn": "s() -> proper_noun(E1) 'is' proper_noun(E2)",
+            "sem": lambda proper_noun1, proper_noun2: [
+                Atom("intent_tell", [Atom("same_as", proper_noun1, proper_noun2)], T1)
+            ],
+        },
+        # mutual exclusivity
+        # -A :- B
+        # -B :- A
+        # works only with facts are stored positively
+        # cannot use A :- not(B), B :- not(A), because of infinite recursion
         {
             "syn": "s() -> common_noun(E1, T1) copula() 'not' common_noun(E2, T2)",
             "sem": lambda common_noun1, copula, common_noun2: [
@@ -36,8 +48,8 @@ def get_read_grammar():
                 Atom(
                     "scoped2",
                     [
-                        Atom("let", T1, "true"),
                         Atom("let", T2, "false"),
+                        Atom("let", T1, "true"),
                         Atom("intent_learn", common_noun2, [common_noun1]),
                     ],
                 ),
@@ -51,7 +63,6 @@ def get_read_grammar():
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
         {"syn": "np(E1, T1) -> 'not' np(E1, T2)", "sem": lambda np: Atom("not_3v", T2, T1).pre([np])},
-        {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
         # nbar
         {"syn": "nbar(E1, T1) -> noun(E1, T1)", "sem": lambda noun: noun},
         {
