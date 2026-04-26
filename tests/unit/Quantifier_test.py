@@ -3,6 +3,7 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
+from vrel.core.Solver import Solver
 from vrel.core.constants import ARG_DETERMINER, E1, E3
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
@@ -61,6 +62,7 @@ class TestQuantification(unittest.TestCase):
         data_source.insert("has_child", ["parent", "child"], ["william", "bertrand"])
 
         model = Model([SimpleModule(data_source)])
+        solver = Solver(model)
 
         def have(det: Atom, nbar: Atom):
             return nbar.mod(Atom(ARG_DETERMINER, [det]))
@@ -93,7 +95,7 @@ class TestQuantification(unittest.TestCase):
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model)
+        executor = AtomExecutor(composer, model, solver)
 
         system = BasicSystem(
             model=model,

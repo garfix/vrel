@@ -8,6 +8,7 @@ from vrel.interface.SomeGenerator import SomeGenerator
 from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeParser import SomeParser
+from vrel.interface.SomeSolver import SomeSolver
 from vrel.interface.SomeSystem import SomeSystem
 from vrel.processor.parser.BasicParserProduct import BasicParserProduct
 from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
@@ -20,6 +21,7 @@ class BasicSystem(SomeSystem):
     executor: SomeExecutor
     output_generator: SomeGenerator
     model: SomeModel
+    solver: SomeSolver
     logger: SomeLogger
 
     def __init__(
@@ -29,10 +31,12 @@ class BasicSystem(SomeSystem):
         composer: SomeComposer = None,
         executor: SomeExecutor = None,
         output_generator: SomeGenerator = None,
+        solver: SomeSolver = None,
         logger: SomeLogger = None,
     ):
 
         self.model = model if model else Model([])
+        self.solver = solver if solver else None
         self.parser = parser
         self.composer = composer
         self.executor = executor

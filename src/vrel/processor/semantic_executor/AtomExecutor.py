@@ -3,6 +3,7 @@ from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeProcessor import SomeProcessor
 from vrel.core.Solver import Solver
+from vrel.interface.SomeSolver import SomeSolver
 from vrel.processor.semantic_composer.SemanticComposerProduct import (
     SemanticComposerProduct,
 )
@@ -17,10 +18,11 @@ class AtomExecutor(SomeProcessor):
     composer: SomeProcessor
     model: SomeModel
 
-    def __init__(self, composer: SomeProcessor, model: SomeModel) -> None:
+    def __init__(self, composer: SomeProcessor, model: SomeModel, solver: SomeSolver) -> None:
         super().__init__()
         self.composer = composer
         self.model = model
+        self.solver = solver
 
     def get_name(self) -> str:
         return "Executor"
@@ -31,13 +33,11 @@ class AtomExecutor(SomeProcessor):
         products = []
         for sentence in sentences:
 
-            solver = Solver(self.model, sentence)
-
             # store the inferences in the sentence context
             for inference in sentence.inferences:
-                solver.write_atom(inference)
+                self.solver.write_atom(inference)
 
-            bindings = solver.solve(sentence.semantics)
+            bindings = self.solver.solve(sentence.semantics, sentence=sentence)
 
             product = AtomExecutorProduct(bindings)
 

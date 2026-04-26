@@ -1,10 +1,12 @@
 import pathlib
 import unittest
 
+from vrel.core.SameAs import SameAs
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.Logger import Logger
+from vrel.core.Solver import Solver
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
@@ -83,8 +85,11 @@ class TestCooper(unittest.TestCase):
         grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
         parser = BasicParser(grammar1)
 
+        solver = Solver(model)
+        solver.same_as = SameAs(model)
+
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model)
+        executor = AtomExecutor(composer, model, solver)
 
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)
@@ -100,6 +105,7 @@ class TestCooper(unittest.TestCase):
             executor=executor,
             output_generator=generator,
             logger=logger,
+            solver=solver,
         )
 
         tests1 = [

@@ -1,12 +1,11 @@
-from itertools import product
-
 from vrel.core.functions.terms import bind_variables, flatten, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
-from vrel.core.constants import DISJUNCTION, E1, E2
+from vrel.core.constants import DISJUNCTION
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeModel import SomeModel
+from vrel.interface.SomeSameAs import SomeSameAs
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
@@ -15,46 +14,47 @@ from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
 class Solver(SomeSolver):
 
     model: SomeModel
-    sentence: SemanticSentence
+    same_as: SomeSameAs
 
-    def __init__(self, model: SomeModel, sentence: SemanticSentence = None) -> None:
+    def __init__(self, model: SomeModel) -> None:
         self.model = model
-        self.sentence = sentence
+        self.same_as = None
 
-    def solve(self, atoms: Atom | list[Atom]) -> list[dict]:
+    def solve(self, atoms: Atom | list[Atom], sentence: SemanticSentence = None) -> list[dict]:
         if not isinstance(atoms, list):
             raise Exception("Solver can only solve lists of atoms, this is not a list: " + str(atoms))
 
-        return self.solve_rest(atoms, {})
+        return self.solve_rest(atoms, {}, sentence)
 
-    def solve_rest(self, atoms: list[Atom], binding: dict = {}) -> list[dict]:
+    def solve_rest(self, atoms: list[Atom], binding: dict = {}, sentence: SemanticSentence = None) -> list[dict]:
         if len(atoms) == 0:
             return [binding]
         else:
             result = []
-            bindings = self.solve_single(atoms[0], binding)
+            bindings = self.solve_single(atoms[0], binding, sentence)
             for b in bindings:
-                result.extend(self.solve_rest(atoms[1:], b))
+                result.extend(self.solve_rest(atoms[1:], b, sentence))
             return result
 
-    def solve_single(self, atom: Atom, binding: dict):
+    def solve_single(self, atom: Atom, binding: dict, sentence: SemanticSentence = None):
 
         if not isinstance(atom, Atom):
             raise Exception("Solver can only solve atoms, this is not an atom: " + str(atom))
 
         if atom.predicate == DISJUNCTION:
-            return self.solve_disjunction(atom.arguments[0], binding)
+            return self.solve_disjunction(atom.arguments[0], binding, sentence)
 
-        return self.solve_for_all_relations(atom, binding)
+        return self.solve_for_all_relations(atom, binding, sentence)
 
-    def solve_disjunction(self, disjuncts: list[list[Atom]], binding: dict):
+    def solve_disjunction(self, disjuncts: list[list[Atom]], binding: dict, sentence: SemanticSentence = None):
+
         for disjunct in disjuncts:
-            results = self.solve_rest(disjunct, binding)
+            results = self.solve_rest(disjunct, binding, sentence)
             if len(results) > 0:
                 return results
         return []
 
-    def solve_for_all_relations(self, atom: Atom, binding: dict):
+    def solve_for_all_relations(self, atom: Atom, binding: dict, sentence: SemanticSentence = None):
         predicate = atom.predicate
         bound_arguments = bind_variables(atom.arguments, binding)
 
@@ -65,65 +65,27 @@ class Solver(SomeSolver):
         deduplicated_bindings = {}
 
         for relation in relations:
-            out_bindings = self.solve_for_same_as_variants(bound_arguments, relation, binding)
+            for bound_argument_variant in self.get_same_as_variants(bound_arguments, relation):
+                out_bindings = self.find_relation_values(relation, bound_argument_variant, binding, sentence)
 
-            # deduplicate results
-            for out_binding in out_bindings:
-                deduplicated_bindings[str(out_binding)] = out_binding
+                # deduplicate results
+                for out_binding in out_bindings:
+                    deduplicated_bindings[str(out_binding)] = out_binding
 
         return list(deduplicated_bindings.values())
 
-    def solve_for_same_as_variants(self, bound_arguments: list, relation: Relation, binding: dict):
-        same_as_variants = self.get_same_as_variants(bound_arguments, relation)
-        result = []
-
-        for variant in same_as_variants:
-            out_bindings = self.find_relation_values(relation, variant, binding)
-            for out_binding in out_bindings:
-                result.append(out_binding)
-        return result
-
     def get_same_as_variants(self, bound_arguments: list, relation: Relation):
-        if relation.formal_parameters is None:
+        if self.same_as:
+            return self.same_as.get_same_as_variants(bound_arguments, relation)
+        else:
             return [bound_arguments]
 
-        group = []
-        for i, formal in enumerate(relation.formal_parameters):
-            # todo: generalize
-            if formal == "id":
-                group.append(self.get_same_as(bound_arguments[i]))
-            else:
-                group.append([bound_arguments[i]])
-
-        # Carthesian product to produce all combinations that the lists in group allow
-        result = list(product(*group))
-
-        return result
-
-    def get_same_as(self, id: int) -> list[int]:
-
-        relations = self.model.find_relations("same_as")
-        if len(relations) == 0:
-            return [id]
-
-        relation = relations[0]
-        context = ExecutionContext(relation, self, self.sentence, self.model)
-        results = relation.query_function([E1, E2], context)
-        variants = set([id])
-        for result in results:
-            if result[0] == str(id):
-                variants.add(int(result[1]))
-            elif result[1] == str(id):
-                variants.add(int(result[0]))
-        # print(id)
-        # print(results)
-        # print(variants)
-        return list(variants)
-
-    def find_relation_values(self, relation: Relation, bound_arguments: list, binding: dict) -> list[dict]:
+    def find_relation_values(
+        self, relation: Relation, bound_arguments: list, binding: dict, sentence: SemanticSentence = None
+    ) -> list[dict]:
 
         predicate = relation.predicate
-        context = ExecutionContext(relation, self, self.sentence, self.model)
+        context = ExecutionContext(relation, self, sentence, self.model)
 
         # call the relation's query function
         out_values = relation.query_function(bound_arguments, context)
@@ -170,7 +132,7 @@ class Solver(SomeSolver):
 
         for relation in relations:
             if relation.write_function is not None:
-                context = ExecutionContext(relation, self, self.sentence, self.model)
+                context = ExecutionContext(relation, self, None, self.model)
                 relation.write_function(flat, context)
 
     def write_atoms(self, atoms: list[Atom]):

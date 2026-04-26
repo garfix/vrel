@@ -2,6 +2,7 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
+from vrel.core.Solver import Solver
 from vrel.core.constants import E1
 from vrel.entity.Atom import Atom
 from vrel.entity.SentenceRequest import SentenceRequest
@@ -26,10 +27,11 @@ class TestComposer(unittest.TestCase):
         ]
 
         model = Model([])
+        solver = Solver(model)
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model)
+        executor = AtomExecutor(composer, model, solver)
 
         system = BasicSystem(model=model, parser=parser, composer=composer, executor=executor)
 

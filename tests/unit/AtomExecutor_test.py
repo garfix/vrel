@@ -3,6 +3,7 @@ import unittest
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
+from vrel.core.Solver import Solver
 from vrel.core.constants import E1
 from vrel.entity.Atom import Atom
 from vrel.entity.SentenceRequest import SentenceRequest
@@ -42,11 +43,13 @@ class TestAtomExecutor(unittest.TestCase):
             ]
         )
 
+        solver = Solver(model)
+
         read_grammar = SimpleGrammarRulesParser().parse_read_grammar(read_grammar)
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_write_grammar())
         parser = BasicParser(read_grammar)
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model)
+        executor = AtomExecutor(composer, model, solver)
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
         system = BasicSystem(

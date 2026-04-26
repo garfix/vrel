@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass
 
 from vrel.entity.Relation import Relation
