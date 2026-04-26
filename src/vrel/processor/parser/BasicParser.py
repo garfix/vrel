@@ -17,21 +17,18 @@ class BasicParser(SomeProcessor):
     tree_sorter: SomeParseTreeSortHeuristics
     sentence_categories: str
 
-
-    def __init__(self, grammar: GrammarRules, sentence_categories = ["s"]) -> None:
+    def __init__(self, grammar: GrammarRules, sentence_categories=["s"]) -> None:
         self.grammar = grammar
         self.parser = EarleyParser()
         self.tree_sorter = BasicParseTreeSortHeuristics()
         self.sentence_categories = sentence_categories
 
-
     def get_name(self) -> str:
         return "Parser"
 
-
     def process(self, request: SentenceRequest) -> ProcessResult:
         # replace whitespace sequences by single space
-        source_text = re.sub('\s+', ' ', request.text)
+        source_text = re.sub("\s+", " ", request.text)
 
         result = self.parser.parse(self.grammar, source_text)
 
@@ -43,8 +40,4 @@ class BasicParser(SomeProcessor):
             if len(sentence_trees) > 0:
                 products.append(BasicParserProduct(sentence_trees))
 
-        return ProcessResult(
-            products,
-            result.error_type,
-            result.error_args
-        )
+        return ProcessResult(products, result.error_type, result.error_args)

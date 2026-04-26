@@ -140,7 +140,7 @@ class TestCooper(unittest.TestCase):
             ["oxides are compounds", "OK"],
             ["metals are metallic", "OK"],
             ["no metal is a nonmetal", "OK"],
-            # ["dark-gray things are not white", "OK"],
+            ["dark-gray things are not white", "OK"],
             # ["a solid is not a gas", "OK"],
             # ["any thing that burns rapidly burns", "OK"],
         ]
@@ -172,7 +172,7 @@ class TestCooper(unittest.TestCase):
         ]
 
         logger.log_no_tests()
-        # logger.log_all_tests()
+        logger.log_all_tests()
         logger.log_only_last_test()
         logger.log_products()
 

@@ -9,6 +9,10 @@ T3 = Variable("T3")
 
 
 def get_read_grammar():
+    # I distinguish between
+    # * proper nouns: instances of things, whose names are learned
+    # * np's: complex statements about things that are available in the system
+    # * usually proper nouns are parts of np's, but in this case this seems impossible
 
     return [
         # sentence
@@ -64,6 +68,15 @@ def get_read_grammar():
                 Atom("intent_learn", common_noun2, [common_noun1]),
             ],
         },
+        # dark-gray things are not white
+        {
+            "syn": "s() -> np(E1, T1) 'are' 'not' adj(E2, T2)",
+            "sem": lambda np, adj: [
+                Atom("let", T2, "false"),
+                Atom("let", T1, "true"),
+                Atom("intent_learn", adj, [np]),
+            ],
+        },
         # metals are metallic
         {
             "syn": "s() -> common_noun(E1, T1) 'are' adj(E2, T2)",
@@ -84,11 +97,12 @@ def get_read_grammar():
         },
         # magnesium burns rapidly
         {
-            "syn": "s() -> noun(E1, T1) vp(E1, T1)",
-            "sem": lambda noun, vp: [Atom("intent_tell", [noun, vp], T1)],
+            "syn": "s() -> proper_noun(E1) vp(E1, T1)",
+            "sem": lambda proper_noun, vp: [Atom("intent_tell", [proper_noun, vp], T1)],
         },
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
+        {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
         {"syn": "np(E1, T1) -> 'not' np(E1, T2)", "sem": lambda np: Atom("not_3v", T2, T1).pre([np])},
         # nbar
         {"syn": "nbar(E1, T1) -> noun(E1, T1)", "sem": lambda noun: noun},
@@ -102,7 +116,7 @@ def get_read_grammar():
         },
         {
             "syn": "nbar(E1, T1) -> adj(E1, T2) thing()",
-            "sem": lambda adj: adj,
+            "sem": lambda adj, thing: adj,
         },
         # vp
         {
@@ -137,10 +151,6 @@ def get_read_grammar():
             "syn": "noun(E1, T1) -> common_noun(E1, T1)",
             "sem": lambda common_noun: common_noun,
         },
-        {
-            "syn": "noun(E1, T1) -> proper_noun(E1)",
-            "sem": lambda proper_noun: proper_noun,
-        },
         # adjective
         {"syn": "adj(E1, T1) -> 'white'", "sem": lambda: Atom("white", E1, T1)},
         {"syn": "adj(E1, T1) -> 'metallic'", "sem": lambda: Atom("metallic", E1, T1)},
@@ -161,7 +171,7 @@ def get_read_grammar():
             "sem": lambda common_noun: common_noun,
         },
         # special
-        {"syn": "thing() -> 'things'", "sem": None},
+        {"syn": "thing() -> 'things'", "sem": lambda: None},
         # proper noun ("magnesium")
         {
             "syn": "proper_noun(E1) -> /\\w+/",
