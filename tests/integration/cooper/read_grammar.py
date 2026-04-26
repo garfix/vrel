@@ -143,7 +143,7 @@ def get_read_grammar():
         },
         # adjective
         {"syn": "adj(E1, T1) -> 'white'", "sem": lambda: Atom("white", E1, T1)},
-        {"syn": "adj(E1, T1) -> 'metallic'", "sem": lambda: Atom("metal", E1, T1)},
+        {"syn": "adj(E1, T1) -> 'metallic'", "sem": lambda: Atom("metallic", E1, T1)},
         {"syn": "adj(E1, T1) -> 'dark-gray'", "sem": lambda: Atom("dark_gray", E1, T1)},
         {"syn": "adj(E1, T1) -> 'combustable'", "sem": lambda: Atom("combustable", E1, T1)},
         {"syn": "adj(E1, T1) -> 'brittle'", "sem": lambda: Atom("brittle", E1, T1)},

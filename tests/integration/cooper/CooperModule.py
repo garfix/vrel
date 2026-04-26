@@ -28,6 +28,14 @@ class CooperModule(SomeModule):
         )
         self.add_relation(
             Relation(
+                "metallic",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["id", "truth"],
+            )
+        )
+        self.add_relation(
+            Relation(
                 "element",
                 query_function=self.common_query,
                 write_function=self.common_write,

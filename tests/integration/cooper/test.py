@@ -138,7 +138,7 @@ class TestCooper(unittest.TestCase):
             ["salt is sodium chloride", "OK"],
             ["sodium chloride is salt", "OK"],
             ["oxides are compounds", "OK"],
-            # ["metals are metallic", "OK"],
+            ["metals are metallic", "OK"],
             ["no metal is a nonmetal", "OK"],
             # ["dark-gray things are not white", "OK"],
             # ["a solid is not a gas", "OK"],
