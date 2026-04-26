@@ -1,7 +1,7 @@
 import pathlib
 import unittest
 
-from vrel.core.SameAs import SameAs
+from vrel.core.SameAsHandler import SameAsHandler
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
@@ -86,7 +86,7 @@ class TestCooper(unittest.TestCase):
         parser = BasicParser(grammar1)
 
         solver = Solver(model)
-        solver.same_as = SameAs(model)
+        solver.same_as_handler = SameAsHandler(model)
 
         composer = SemanticComposer(parser)
         executor = AtomExecutor(composer, model, solver)
@@ -165,7 +165,7 @@ class TestCooper(unittest.TestCase):
             # ["anything that is not a compound is not ferrous sulfide", "True"],
             # ["no dark-gray thing is a sulfide", "False"],
             # ["ferrous sulfide is white", "False"],
-            ["sodium chloride is a compound", "True"],
+            ["sodium chloride is a compound", "True1"],
             # ["salt is an element", "False"],
             # ["sodium chloride is an element", "False"],
             # ["gasoline is a fuel that burns", "True"],

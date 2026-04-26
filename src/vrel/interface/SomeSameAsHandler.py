@@ -3,7 +3,7 @@ from abc import abstractmethod
 from vrel.entity.Relation import Relation
 
 
-class SomeSameAs:
+class SomeSameAsHandler:
 
     @abstractmethod
     def get_name(self) -> str:
@@ -11,4 +11,7 @@ class SomeSameAs:
 
     @abstractmethod
     def get_same_as_variants(self, bound_arguments: list, relation: Relation) -> list[list]:
+        pass
+
+    def clear_cache(self):
         pass

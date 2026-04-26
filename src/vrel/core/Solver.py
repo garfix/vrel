@@ -1,11 +1,11 @@
 from vrel.core.functions.terms import bind_variables, flatten, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
-from vrel.core.constants import DISJUNCTION
+from vrel.core.constants import DISJUNCTION, SAME_AS
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeModel import SomeModel
-from vrel.interface.SomeSameAs import SomeSameAs
+from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
@@ -14,11 +14,11 @@ from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
 class Solver(SomeSolver):
 
     model: SomeModel
-    same_as: SomeSameAs
+    same_as_handler: SomeSameAsHandler
 
     def __init__(self, model: SomeModel) -> None:
         self.model = model
-        self.same_as = None
+        self.same_as_handler = None
 
     def solve(self, atoms: Atom | list[Atom], sentence: SemanticSentence = None) -> list[dict]:
         if not isinstance(atoms, list):
@@ -75,8 +75,8 @@ class Solver(SomeSolver):
         return list(deduplicated_bindings.values())
 
     def get_same_as_variants(self, bound_arguments: list, relation: Relation):
-        if self.same_as:
-            return self.same_as.get_same_as_variants(bound_arguments, relation)
+        if self.same_as_handler:
+            return self.same_as_handler.get_same_as_variants(bound_arguments, relation)
         else:
             return [bound_arguments]
 
@@ -120,6 +120,10 @@ class Solver(SomeSolver):
 
         if not isinstance(atom, Atom):
             raise Exception(f"Solver only writes atoms, and this is not an atom: {atom}")
+
+        # when a new same_as record is added, clear the same_as handler's cache
+        if predicate == SAME_AS and self.same_as_handler:
+            self.same_as_handler.clear_cache()
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:

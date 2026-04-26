@@ -65,3 +65,4 @@ AUTO = Sentinel("<auto-generate>")
 
 # predicates
 UNKNOWN_PREDICATE = "<unknown>"
+SAME_AS = "same_as"
