@@ -1,6 +1,8 @@
+from itertools import product
+
 from vrel.core.functions.terms import bind_variables, flatten, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
-from vrel.core.constants import DISJUNCTION
+from vrel.core.constants import DISJUNCTION, E1, E2
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Relation
@@ -63,7 +65,7 @@ class Solver(SomeSolver):
         deduplicated_bindings = {}
 
         for relation in relations:
-            out_bindings = self.find_relation_values(relation, bound_arguments, binding)
+            out_bindings = self.solve_for_same_as_variants(bound_arguments, relation, binding)
 
             # deduplicate results
             for out_binding in out_bindings:
@@ -71,7 +73,54 @@ class Solver(SomeSolver):
 
         return list(deduplicated_bindings.values())
 
-    def find_relation_values(self, relation: Relation, bound_arguments: list, binding: dict) -> list[list]:
+    def solve_for_same_as_variants(self, bound_arguments: list, relation: Relation, binding: dict):
+        same_as_variants = self.get_same_as_variants(bound_arguments, relation)
+        result = []
+
+        for variant in same_as_variants:
+            out_bindings = self.find_relation_values(relation, variant, binding)
+            for out_binding in out_bindings:
+                result.append(out_binding)
+        return result
+
+    def get_same_as_variants(self, bound_arguments: list, relation: Relation):
+        if relation.formal_parameters is None:
+            return [bound_arguments]
+
+        group = []
+        for i, formal in enumerate(relation.formal_parameters):
+            # todo: generalize
+            if formal == "id":
+                group.append(self.get_same_as(bound_arguments[i]))
+            else:
+                group.append([bound_arguments[i]])
+
+        # Carthesian product to produce all combinations that the lists in group allow
+        result = list(product(*group))
+
+        return result
+
+    def get_same_as(self, id: int) -> list[int]:
+
+        relations = self.model.find_relations("same_as")
+        if len(relations) == 0:
+            return [id]
+
+        relation = relations[0]
+        context = ExecutionContext(relation, self, self.sentence, self.model)
+        results = relation.query_function([E1, E2], context)
+        variants = set([id])
+        for result in results:
+            if result[0] == str(id):
+                variants.add(int(result[1]))
+            elif result[1] == str(id):
+                variants.add(int(result[0]))
+        # print(id)
+        # print(results)
+        # print(variants)
+        return list(variants)
+
+    def find_relation_values(self, relation: Relation, bound_arguments: list, binding: dict) -> list[dict]:
 
         predicate = relation.predicate
         context = ExecutionContext(relation, self, self.sentence, self.model)
