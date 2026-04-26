@@ -19,8 +19,8 @@ def get_read_grammar():
         },
         # gasoline is combustable
         {
-            "syn": "s() -> proper_noun(E1) copula() adj(E1, T1)",
-            "sem": lambda proper_noun, copula, adj: [Atom("intent_tell", [proper_noun, adj], T1)],
+            "syn": "s() -> proper_noun(E1) 'is' adj(E1, T1)",
+            "sem": lambda proper_noun, adj: [Atom("intent_tell", [proper_noun, adj], T1)],
         },
         # X is Y
         {
@@ -53,6 +53,33 @@ def get_read_grammar():
                         Atom("intent_learn", common_noun2, [common_noun1]),
                     ],
                 ),
+            ],
+        },
+        # oxides are compounds
+        {
+            "syn": "s() -> common_noun(E1, T1) 'are' common_noun(E2, T2)",
+            "sem": lambda common_noun1, common_noun2: [
+                Atom("let", T1, "true"),
+                Atom("let", T2, "true"),
+                Atom("intent_learn", common_noun2, [common_noun1]),
+            ],
+        },
+        # metals are metallic
+        {
+            "syn": "s() -> common_noun(E1, T1) 'are' adj(E2, T2)",
+            "sem": lambda common_noun, adj: [
+                Atom("let", T1, "true"),
+                Atom("let", T2, "true"),
+                Atom("intent_learn", adj, [common_noun]),
+            ],
+        },
+        # no metal is a nonmetal
+        {
+            "syn": "s() -> 'no' common_noun(E1, T1) 'is' 'a' common_noun(E2, T2)",
+            "sem": lambda common_noun1, common_noun2: [
+                Atom("let", T2, "false"),
+                Atom("let", T1, "true"),
+                Atom("intent_learn", common_noun2, [common_noun1]),
             ],
         },
         # magnesium burns rapidly
@@ -122,16 +149,17 @@ def get_read_grammar():
         {"syn": "adj(E1, T1) -> 'brittle'", "sem": lambda: Atom("brittle", E1, T1)},
         # common noun
         {"syn": "common_noun(E1, T1) -> 'compound'", "sem": lambda: Atom("compound", E1, T1)},
-        {"syn": "common_noun(E1, T1) -> 'compounds'", "sem": lambda: Atom("compound", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'element'", "sem": lambda: Atom("element", E1, T1)},
-        {"syn": "common_noun(E1, T1) -> 'elements'", "sem": lambda: Atom("element", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'metal'", "sem": lambda: Atom("metal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'nonmetal'", "sem": lambda: Atom("nonmetal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'oxide'", "sem": lambda: Atom("oxide", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'solid'", "sem": lambda: Atom("solid", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'gas'", "sem": lambda: Atom("gas", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'fuel'", "sem": lambda: Atom("fuel", E1, T1)},
-        {"syn": "common_noun(E1, T1) -> 'fuels'", "sem": lambda: Atom("fuel", E1, T1)},
+        {
+            "syn": "common_noun(E1, T1) -> common_noun(E1, T1)+'s'",
+            "sem": lambda common_noun: common_noun,
+        },
         # special
         {"syn": "thing() -> 'things'", "sem": None},
         # proper noun ("magnesium")

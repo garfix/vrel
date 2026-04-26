@@ -59,7 +59,9 @@ Create proper Argument objects for the Relation
 
 ## same as
 
-Same as now assumes that the identifiers are unique in the whole domain, while in practise they're only unique within the relation.
+- Same as now assumes that the identifiers are unique in the whole domain, while in practise they're only unique within the relation.
+- Find id arguments in stead of arguments named "id"
+- Id's are now presumed integers, while stored as text
 
 ## dialog or LTM
 

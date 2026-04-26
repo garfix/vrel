@@ -137,9 +137,9 @@ class TestCooper(unittest.TestCase):
             ["elements are not compounds", "OK"],
             ["salt is sodium chloride", "OK"],
             ["sodium chloride is salt", "OK"],
-            # ["oxides are compounds", "OK"],
+            ["oxides are compounds", "OK"],
             # ["metals are metallic", "OK"],
-            # ["no metal is a nonmetal", "OK"],
+            ["no metal is a nonmetal", "OK"],
             # ["dark-gray things are not white", "OK"],
             # ["a solid is not a gas", "OK"],
             # ["any thing that burns rapidly burns", "OK"],
@@ -148,8 +148,8 @@ class TestCooper(unittest.TestCase):
         tests2 = [
             ["magnesium is a metal", "True"],
             ["magnesium is not a metal", "False"],
-            # ["magnesium is a nonmetal", "False"],
-            # ["magnesium is not a nonmetal", "True"],
+            ["magnesium is a nonmetal", "False"],
+            ["magnesium is not a nonmetal", "True"],
             ["magnesium is a metal that burns rapidly", "True"],
             # ["magnesium is magnesium", "True"],
             # ["some oxides are white", "True"],
@@ -165,7 +165,7 @@ class TestCooper(unittest.TestCase):
             # ["anything that is not a compound is not ferrous sulfide", "True"],
             # ["no dark-gray thing is a sulfide", "False"],
             # ["ferrous sulfide is white", "False"],
-            ["sodium chloride is a compound", "True1"],
+            ["sodium chloride is a compound", "True"],
             # ["salt is an element", "False"],
             # ["sodium chloride is an element", "False"],
             # ["gasoline is a fuel that burns", "True"],
@@ -173,7 +173,7 @@ class TestCooper(unittest.TestCase):
 
         logger.log_no_tests()
         # logger.log_all_tests()
-        # logger.log_only_last_test()
+        logger.log_only_last_test()
         logger.log_products()
 
         tester = DialogTester(self, tests1, system, logger)
