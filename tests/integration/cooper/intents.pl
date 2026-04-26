@@ -3,6 +3,7 @@
 # tell a fact
 intent_tell(Fact, Truth) :-
     resolve_names(Fact, Resolved),
+    print(Resolved),
     (
         # check if the fact is known
         create_records(Resolved, Records),

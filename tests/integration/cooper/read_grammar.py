@@ -12,10 +12,16 @@ def get_read_grammar():
     # I distinguish between
     # * proper nouns: instances of things, whose names are learned
     # * np's: complex statements about things that are available in the system
+    # * common nouns/adj: the head of a induction rule can't be a complex np, but it can be a common noun
     # * usually proper nouns are parts of np's, but in this case this seems impossible
 
     return [
         # sentence
+        # magnesium burns rapidly
+        {
+            "syn": "s() -> proper_noun(E1) vp(E1, T1)",
+            "sem": lambda proper_noun, vp: [Atom("intent_tell", [proper_noun, vp], T1)],
+        },
         # magnesium is a metal
         {
             "syn": "s() -> proper_noun(E1) 'is' np(E1, T1)",
@@ -68,24 +74,24 @@ def get_read_grammar():
                 Atom("intent_learn", common_noun2, [common_noun1]),
             ],
         },
-        # dark-gray things are not white
-        {
-            "syn": "s() -> np(E1, T1) 'are' 'not' adj(E2, T2)",
-            "sem": lambda np, adj: [
-                Atom("let", T2, "false"),
-                Atom("let", T1, "true"),
-                Atom("intent_learn", adj, [np]),
-            ],
-        },
         # metals are metallic
         {
-            "syn": "s() -> common_noun(E1, T1) 'are' adj(E2, T2)",
+            "syn": "s() -> np(E1, T1) 'are' adj(E2, T2)",
             "sem": lambda common_noun, adj: [
                 Atom("let", T1, "true"),
                 Atom("let", T2, "true"),
                 Atom("intent_learn", adj, [common_noun]),
             ],
         },
+        # dark-gray things are not white
+        # {
+        #     "syn": "s() -> np(E1, T1) 'are' 'not' adj(E2, T2)",
+        #     "sem": lambda np, adj: [
+        #         Atom("let", T2, "false"),
+        #         Atom("let", T1, "true"),
+        #         Atom("intent_learn", adj, [np]),
+        #     ],
+        # },
         # no metal is a nonmetal
         {
             "syn": "s() -> 'no' common_noun(E1, T1) 'is' 'a' common_noun(E2, T2)",
@@ -94,11 +100,6 @@ def get_read_grammar():
                 Atom("let", T1, "true"),
                 Atom("intent_learn", common_noun2, [common_noun1]),
             ],
-        },
-        # magnesium burns rapidly
-        {
-            "syn": "s() -> proper_noun(E1) vp(E1, T1)",
-            "sem": lambda proper_noun, vp: [Atom("intent_tell", [proper_noun, vp], T1)],
         },
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
@@ -157,6 +158,7 @@ def get_read_grammar():
         {"syn": "adj(E1, T1) -> 'dark-gray'", "sem": lambda: Atom("dark_gray", E1, T1)},
         {"syn": "adj(E1, T1) -> 'combustable'", "sem": lambda: Atom("combustable", E1, T1)},
         {"syn": "adj(E1, T1) -> 'brittle'", "sem": lambda: Atom("brittle", E1, T1)},
+        {"syn": "adj(E1, T1) -> 'not' adj(E1, T2)", "sem": lambda adj: Atom("not_3v", T2, T1).pre([adj])},
         # common noun
         {"syn": "common_noun(E1, T1) -> 'compound'", "sem": lambda: Atom("compound", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'element'", "sem": lambda: Atom("element", E1, T1)},
