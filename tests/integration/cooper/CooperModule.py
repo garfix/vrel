@@ -200,31 +200,37 @@ class CooperModule(SomeModule):
         else:
             return [[None, "unknown"]]
 
-    # ('and_3v', in1, in2, out)
+    # ('and_3v', atoms1, atoms2, truth1, truth2, out)
     def and_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        in1, in2, _ = arguments
+        atoms1, atoms2, var1, var2, _ = arguments
 
-        if in1 == "true" and in2 == "false":
-            return [[None, None, "false"]]
-        elif in1 == "true" and in2 == "unknown":
-            return [[None, None, "unknown"]]
-        elif in1 == "true" and in2 == "true":
-            return [[None, None, "true"]]
+        results1 = context.solver.solve(atoms1)
+        results2 = context.solver.solve(atoms2)
 
-        elif in1 == "false" and in2 == "false":
-            return [[None, None, "false"]]
-        elif in1 == "false" and in2 == "unknown":
-            return [[None, None, "unknown"]]
-        elif in1 == "false" and in2 == "true":
-            return [[None, None, "false"]]
+        truth1 = results1[0][var1.name] if len(results1) > 0 else "unknown"
+        truth2 = results2[0][var2.name] if len(results2) > 0 else "unknown"
 
-        elif in1 == "unknown" and in2 == "false":
-            return [[None, None, "unknown"]]
-        elif in1 == "unknown" and in2 == "unknown":
-            return [[None, None, "unknown"]]
-        elif in1 == "unknown" and in2 == "true":
-            return [[None, None, "unknown"]]
+        if truth1 == "true" and truth2 == "false":
+            return [[None, None, None, None, "false"]]
+        elif truth1 == "true" and truth2 == "unknown":
+            return [[None, None, None, None, "unknown"]]
+        elif truth1 == "true" and truth2 == "true":
+            return [[None, None, None, None, "true"]]
+
+        elif truth1 == "false" and truth2 == "false":
+            return [[None, None, None, None, "false"]]
+        elif truth1 == "false" and truth2 == "unknown":
+            return [[None, None, None, None, "unknown"]]
+        elif truth1 == "false" and truth2 == "true":
+            return [[None, None, None, None, "false"]]
+
+        elif truth1 == "unknown" and truth2 == "false":
+            return [[None, None, None, None, "unknown"]]
+        elif truth1 == "unknown" and truth2 == "unknown":
+            return [[None, None, None, None, "unknown"]]
+        elif truth1 == "unknown" and truth2 == "true":
+            return [[None, None, None, None, "unknown"]]
 
         raise Exception(f"'and_3v' doesn't accept arguments: {arguments}")
 

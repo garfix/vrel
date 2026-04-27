@@ -16,6 +16,7 @@ class CoreModule(SomeModule):
     def __init__(self) -> None:
         super().__init__()
         self.add_relation(Relation("equals", query_function=self.equals)),
+        self.add_relation(Relation("not_equals", query_function=self.not_equals)),
         self.add_relation(Relation("greater_than", query_function=self.greater_than)),
         self.add_relation(Relation("less_than", query_function=self.less_than)),
         self.add_relation(Relation("multiply", query_function=self.multiply)),
@@ -60,6 +61,25 @@ class CoreModule(SomeModule):
                 return [[e1, e1]]
 
         if e1 == e2:
+            return [[e1, e2]]
+        return []
+
+    # ('not_equals', E1, E2)
+    def not_equals(self, arguments: list, context: ExecutionContext) -> list[list]:
+
+        e1 = arguments[0]
+        e2 = arguments[1]
+
+        if isinstance(e1, Variable):
+            if isinstance(e2, Variable):
+                raise Exception("== is called with two variables")
+            else:
+                return [[e2, e2]]
+        else:
+            if isinstance(e2, Variable):
+                return [[e1, e1]]
+
+        if e1 != e2:
             return [[e1, e2]]
         return []
 

@@ -90,6 +90,13 @@ def get_read_grammar():
                 Atom("intent_learn", adj, [common_noun]),
             ],
         },
+        # some oxides are white
+        {
+            "syn": "s() -> 'some' np(E1, T2) 'are' adj(E1, T3)",
+            "sem": lambda np, adj: [
+                Atom("intent_check", [Atom("and_3v", [np], [adj], T2, T3, T1)], T1),
+            ],
+        },
         # no metal is a nonmetal
         {
             "syn": "s() -> 'no' common_noun(E1, T1) 'is' 'a' common_noun(E2, T2)",
@@ -107,11 +114,11 @@ def get_read_grammar():
         {"syn": "nbar(E1, T1) -> noun(E1, T1)", "sem": lambda noun: noun},
         {
             "syn": "nbar(E1, T1) -> nbar(E1, T2) 'that' vp(E1, T3)",
-            "sem": lambda nbar, vp: Atom("and_3v", T2, T3, T1).pre([nbar, vp]),
+            "sem": lambda nbar, vp: Atom("and_3v", [nbar], [vp], T2, T3, T1),
         },
         {
             "syn": "nbar(E1, T1) -> adj(E1, T2) nbar(E1, T3)",
-            "sem": lambda adj, nbar: Atom("and_3v", T2, T3, T1).pre([nbar, adj]),
+            "sem": lambda adj, nbar: Atom("and_3v", [adj], [nbar], T2, T3, T1),
         },
         {
             "syn": "nbar(E1, T1) -> adj(E1, T2) thing()",

@@ -153,7 +153,7 @@ class TestCooper(unittest.TestCase):
             ["magnesium is not a nonmetal", "True"],
             ["magnesium is a metal that burns rapidly", "True"],
             ["magnesium is magnesium", "True"],
-            # ["some oxides are white", "True"],
+            ["some oxides are white", "True"],
             # ["no oxide is white", "False"],
             # ["oxides are not white", "False"],
             # ["magnesium oxide is an oxide", "True"],
@@ -172,17 +172,8 @@ class TestCooper(unittest.TestCase):
             # ["gasoline is a fuel that burns", "True"],
         ]
 
-        logger.log_no_tests()
-        # logger.log_all_tests()
-        # logger.log_only_last_test()
-        logger.log_products()
-
-        tester = DialogTester(self, tests1, system, logger)
+        tester = DialogTester(self, tests1, system)
         tester.run()
 
-        # print(logger)
-
-        tester = DialogTester(self, tests2, system, logger)
+        tester = DialogTester(self, tests2, system)
         tester.run()
-
-        print(logger)

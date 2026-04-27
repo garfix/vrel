@@ -6,12 +6,14 @@ from vrel.entity.Variable import Variable
 def create_records_3v(input: list[Atom], binding: dict = {}):
     if isinstance(input, list):
         return create_records_list(input, binding)
-    else:
+    elif isinstance(input, Atom):
         result = create_records_atom(input, binding)
         if len(result) == 1:
             return result[0]
         else:
             raise Exception("Create records results in a list for an atom")
+    else:
+        return []
 
 
 def create_records_list(atoms: list[Atom], binding: dict = {}):
@@ -29,7 +31,11 @@ def create_records_atom(atom: Atom, binding: dict):
         for arg in atom.arguments:
             if isinstance(arg, Variable):
                 binding[arg.name] = "true"
+        for arg in atom.arguments:
+            if not isinstance(arg, Variable):
+                records.extend(create_records_3v(arg, binding))
     elif atom.predicate == "not_3v":
+        # todo: modifier => argument
         arg_in, arg_out = atom.arguments
         if isinstance(arg_out, Variable) and arg_out.name in binding:
             value_in = binding[arg_out.name]
@@ -37,11 +43,13 @@ def create_records_atom(atom: Atom, binding: dict):
             value_in = "true"
         value_out = "false" if value_in == "true" else "true"
         binding[arg_in.name] = value_out
+        records.extend(create_records_3v(atom.modifiers, binding))
+
     else:
         # other atoms: create a record, and bind the variables to `true`
         new_atom = bind_variables(atom, binding)
         records.append(new_atom)
 
-    records.extend(create_records_3v(atom.modifiers, binding))
+        records.extend(create_records_3v(atom.modifiers, binding))
 
     return records
