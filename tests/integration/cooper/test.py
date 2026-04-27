@@ -136,7 +136,8 @@ class TestCooper(unittest.TestCase):
             ["sulfuric acid is a compound", "OK"],
             ["elements are not compounds", "OK"],
             ["salt is sodium chloride", "OK"],
-            ["sodium chloride is salt", "OK"],
+            # In Cooper, the next phrase results to "OK"
+            ["sodium chloride is salt", "True"],
             ["oxides are compounds", "OK"],
             ["metals are metallic", "OK"],
             ["no metal is a nonmetal", "OK"],
@@ -151,7 +152,7 @@ class TestCooper(unittest.TestCase):
             ["magnesium is a nonmetal", "False"],
             ["magnesium is not a nonmetal", "True"],
             ["magnesium is a metal that burns rapidly", "True"],
-            # ["magnesium is magnesium", "True"],
+            ["magnesium is magnesium", "True"],
             # ["some oxides are white", "True"],
             # ["no oxide is white", "False"],
             # ["oxides are not white", "False"],
@@ -172,8 +173,8 @@ class TestCooper(unittest.TestCase):
         ]
 
         logger.log_no_tests()
-        logger.log_all_tests()
-        logger.log_only_last_test()
+        # logger.log_all_tests()
+        # logger.log_only_last_test()
         logger.log_products()
 
         tester = DialogTester(self, tests1, system, logger)

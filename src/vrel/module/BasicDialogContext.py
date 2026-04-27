@@ -1,4 +1,6 @@
+from vrel.core.constants import SAME_AS
 from vrel.entity.Relation import Relation
+from vrel.entity.Variable import Variable
 from vrel.module.SqliteMemoryModule import SqliteMemoryModule
 from vrel.entity.ExecutionContext import ExecutionContext
 
@@ -18,7 +20,9 @@ class BasicDialogContext(SqliteMemoryModule):
         self.add_relation(Relation("start_context", formal_parameters=["name"], query_function=self.start_context))
         self.add_relation(Relation("end_context", formal_parameters=["name"], query_function=self.end_context))
         self.add_relation(
-            Relation("same_as", formal_parameters=["id1", "id2"], query_function=self.query, write_function=self.write)
+            Relation(
+                "same_as", formal_parameters=["id1", "id2"], query_function=self.same_as, write_function=self.write
+            )
         )
 
     def with_context(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -38,6 +42,18 @@ class BasicDialogContext(SqliteMemoryModule):
         name = arguments[0]
         self.data_source.delete("context", ["name"], [name])
         return [[None]]
+
+    def same_as(self, arguments: list, context: ExecutionContext) -> list[list]:
+        term1, term2 = arguments
+
+        if isinstance(term1, Variable) and isinstance(term2, Variable):
+            return self.data_source.select(SAME_AS, ["id1", "id2"], [term1, term2])
+
+        handler = context.solver.get_same_as_handler()
+        if handler and handler.same_as(term1, term2):
+            return [[None, None]]
+        else:
+            return []
 
     def clear(self):
         super().clear()

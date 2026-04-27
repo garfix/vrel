@@ -142,3 +142,6 @@ class Solver(SomeSolver):
     def write_atoms(self, atoms: list[Atom]):
         for atom in atoms:
             self.write_atom(atom)
+
+    def get_same_as_handler(self) -> SomeSameAsHandler | None:
+        return self.same_as_handler

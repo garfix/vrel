@@ -55,6 +55,9 @@ class SameAsHandler(SomeSameAsHandler):
         else:
             return [id]
 
+    def same_as(self, id1: int, id2: int):
+        return id2 in self.get_same_as(id1)
+
     def build_cache(self):
         relations = self.model.find_relations(SAME_AS)
         if len(relations) == 0:

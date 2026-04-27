@@ -32,11 +32,18 @@ def get_read_grammar():
             "syn": "s() -> proper_noun(E1) 'is' adj(E1, T1)",
             "sem": lambda proper_noun, adj: [Atom("intent_tell", [proper_noun, adj], T1)],
         },
-        # X is Y
+        # salt in natrium chloride
+        # magnesium is magnesium
         {
             "syn": "s() -> proper_noun(E1) 'is' proper_noun(E2)",
             "sem": lambda proper_noun1, proper_noun2: [
-                Atom("intent_tell", [Atom("same_as", proper_noun1, proper_noun2)], T1)
+                Atom(
+                    "intent_tell",
+                    # on query, use `same_as` query function: provide nonempty resultset on success
+                    # on write, simply write to the table `same_as`
+                    [Atom("same_as", proper_noun1, proper_noun2), Atom("let", T1, "true")],
+                    T1,
+                )
             ],
         },
         # mutual exclusivity
@@ -83,15 +90,6 @@ def get_read_grammar():
                 Atom("intent_learn", adj, [common_noun]),
             ],
         },
-        # dark-gray things are not white
-        # {
-        #     "syn": "s() -> np(E1, T1) 'are' 'not' adj(E2, T2)",
-        #     "sem": lambda np, adj: [
-        #         Atom("let", T2, "false"),
-        #         Atom("let", T1, "true"),
-        #         Atom("intent_learn", adj, [np]),
-        #     ],
-        # },
         # no metal is a nonmetal
         {
             "syn": "s() -> 'no' common_noun(E1, T1) 'is' 'a' common_noun(E2, T2)",
