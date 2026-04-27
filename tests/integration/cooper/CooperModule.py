@@ -191,14 +191,18 @@ class CooperModule(SomeModule):
     # ('not_3v', in, out)
     def not_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        value = arguments[0]
+        atoms, var, _ = arguments
 
-        if value == "true":
-            return [[None, "false"]]
-        elif value == "false":
-            return [[None, "true"]]
+        results = context.solver.solve(atoms)
+
+        truth = results[0][var.name] if len(results) > 0 else "unknown"
+
+        if truth == "true":
+            return [[None, None, "false"]]
+        elif truth == "false":
+            return [[None, None, "true"]]
         else:
-            return [[None, "unknown"]]
+            return [[None, None, "unknown"]]
 
     # ('and_3v', atoms1, atoms2, truth1, truth2, out)
     def and_3v(self, arguments: list, context: ExecutionContext) -> list[list]:

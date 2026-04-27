@@ -36,14 +36,14 @@ def create_records_atom(atom: Atom, binding: dict):
                 records.extend(create_records_3v(arg, binding))
     elif atom.predicate == "not_3v":
         # todo: modifier => argument
-        arg_in, arg_out = atom.arguments
+        atoms, arg_in, arg_out = atom.arguments
         if isinstance(arg_out, Variable) and arg_out.name in binding:
             value_in = binding[arg_out.name]
         else:
             value_in = "true"
         value_out = "false" if value_in == "true" else "true"
         binding[arg_in.name] = value_out
-        records.extend(create_records_3v(atom.modifiers, binding))
+        records.extend(create_records_3v(atoms, binding))
 
     else:
         # other atoms: create a record, and bind the variables to `true`

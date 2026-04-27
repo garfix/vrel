@@ -109,7 +109,7 @@ def get_read_grammar():
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
         {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
-        {"syn": "np(E1, T1) -> 'not' np(E1, T2)", "sem": lambda np: Atom("not_3v", T2, T1).pre([np])},
+        {"syn": "np(E1, T1) -> 'not' np(E1, T2)", "sem": lambda np: Atom("not_3v", [np], T2, T1)},
         # nbar
         {"syn": "nbar(E1, T1) -> noun(E1, T1)", "sem": lambda noun: noun},
         {
@@ -163,7 +163,7 @@ def get_read_grammar():
         {"syn": "adj(E1, T1) -> 'dark-gray'", "sem": lambda: Atom("dark_gray", E1, T1)},
         {"syn": "adj(E1, T1) -> 'combustable'", "sem": lambda: Atom("combustable", E1, T1)},
         {"syn": "adj(E1, T1) -> 'brittle'", "sem": lambda: Atom("brittle", E1, T1)},
-        {"syn": "adj(E1, T1) -> 'not' adj(E1, T2)", "sem": lambda adj: Atom("not_3v", T2, T1).pre([adj])},
+        {"syn": "adj(E1, T1) -> 'not' adj(E1, T2)", "sem": lambda adj: Atom("not_3v", [adj], T2, T1)},
         # common noun
         {"syn": "common_noun(E1, T1) -> 'compound'", "sem": lambda: Atom("compound", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'element'", "sem": lambda: Atom("element", E1, T1)},
