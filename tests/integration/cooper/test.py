@@ -142,7 +142,7 @@ class TestCooper(unittest.TestCase):
             ["metals are metallic", "OK"],
             ["no metal is a nonmetal", "OK"],
             ["dark-gray things are not white", "OK"],
-            # ["a solid is not a gas", "OK"],
+            ["a solid is not a gas", "OK"],
             # ["any thing that burns rapidly burns", "OK"],
         ]
 

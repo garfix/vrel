@@ -106,6 +106,15 @@ def get_read_grammar():
                 Atom("intent_learn", common_noun2, [common_noun1]),
             ],
         },
+        # a solid is not a gas
+        {
+            "syn": "s() -> a() common_noun(E1, T1) 'is' 'not' 'a' common_noun(E2, T2)",
+            "sem": lambda a, common_noun1, common_noun2: [
+                Atom("let", T2, "false"),
+                Atom("let", T1, "true"),
+                Atom("intent_learn", common_noun2, [common_noun1]),
+            ],
+        },
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
         {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
