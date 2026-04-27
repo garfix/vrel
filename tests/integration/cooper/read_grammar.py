@@ -115,6 +115,15 @@ def get_read_grammar():
                 Atom("intent_learn", common_noun2, [common_noun1]),
             ],
         },
+        # any thing that burns rapidly burns
+        {
+            "syn": "s() -> 'any' nbar(E1, T1) vp(E1, T2)",
+            "sem": lambda nbar, vp: [
+                Atom("let", T1, "true"),
+                Atom("let", T2, "true"),
+                Atom("intent_learn", vp, [nbar]),
+            ],
+        },
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
         {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
@@ -124,6 +133,10 @@ def get_read_grammar():
         {
             "syn": "nbar(E1, T1) -> nbar(E1, T2) 'that' vp(E1, T3)",
             "sem": lambda nbar, vp: Atom("and_3v", [nbar], [vp], T2, T3, T1),
+        },
+        {
+            "syn": "nbar(E1, T1) -> thing() 'that' vp(E1, T3)",
+            "sem": lambda thing, vp: vp,
         },
         {
             "syn": "nbar(E1, T1) -> adj(E1, T2) nbar(E1, T3)",
@@ -187,6 +200,7 @@ def get_read_grammar():
             "sem": lambda common_noun: common_noun,
         },
         # special
+        {"syn": "thing() -> 'thing'", "sem": lambda: None},
         {"syn": "thing() -> 'things'", "sem": lambda: None},
         # proper noun ("magnesium")
         {
