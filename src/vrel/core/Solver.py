@@ -4,6 +4,7 @@ from vrel.core.constants import DISJUNCTION, SAME_AS
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Relation
+from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 from vrel.interface.SomeSolver import SomeSolver
@@ -15,10 +16,12 @@ class Solver(SomeSolver):
 
     model: SomeModel
     same_as_handler: SomeSameAsHandler
+    logger: SomeLogger
 
-    def __init__(self, model: SomeModel) -> None:
+    def __init__(self, model: SomeModel, logger: SomeLogger = None) -> None:
         self.model = model
         self.same_as_handler = None
+        self.logger = logger
 
     def solve(self, atoms: Atom | list[Atom], sentence: SemanticSentence = None) -> list[dict]:
         if not isinstance(atoms, list):
@@ -85,7 +88,7 @@ class Solver(SomeSolver):
     ) -> list[dict]:
 
         predicate = relation.predicate
-        context = ExecutionContext(relation, self, sentence, self.model)
+        context = ExecutionContext(relation, self, sentence, self.model, self.logger)
 
         # call the relation's query function
         out_values = relation.query_function(bound_arguments, context)
@@ -136,7 +139,7 @@ class Solver(SomeSolver):
 
         for relation in relations:
             if relation.write_function is not None:
-                context = ExecutionContext(relation, self, None, self.model)
+                context = ExecutionContext(relation, self, None, self.model, self.logger)
                 relation.write_function(flat, context)
 
     def write_atoms(self, atoms: list[Atom]):

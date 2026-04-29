@@ -1,5 +1,6 @@
 from itertools import product
 
+from vrel.core.Logger import Logger
 from vrel.core.constants import E1, E2, SAME_AS
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.Relation import Relation
@@ -66,7 +67,7 @@ class SameAsHandler(SomeSameAsHandler):
         self.id_variants = {}
 
         relation = relations[0]
-        context = ExecutionContext(relation, None, None, self.model)
+        context = ExecutionContext(relation, None, None, self.model, Logger())
         results = relation.query_function([E1, E2], context)
 
         for result in results:

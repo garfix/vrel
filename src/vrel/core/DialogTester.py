@@ -40,13 +40,14 @@ class DialogTester:
     #         self.do_run()
 
     def run(self):
+
+        logger = self.system.logger
+
         for i, test in enumerate(self.tests):
 
-            logger = Logger()
+            logger.clear()
             logger.log_all_tests()
             logger.log_products()
-
-            self.system.logger = logger
 
             if len(test) != 2:
                 raise Exception("A test item must have two elements: a sentence and an expected response")

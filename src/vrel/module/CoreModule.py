@@ -44,6 +44,7 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("create_query", query_function=self.create_query)),
         self.add_relation(Relation("create_records", query_function=self.create_records)),
         self.add_relation(Relation("print", query_function=self.print)),
+        self.add_relation(Relation("log", query_function=self.log)),
         self.add_relation(Relation("resolve_names", query_function=self.resolve_names)),
         self.add_relation(Relation("exec_code", query_function=self.exec_code)),
 
@@ -477,14 +478,21 @@ class CoreModule(SomeModule):
 
         return [[None]]
 
+    # ('log', term)
+    # writes `term` to the logger
+    def log(self, arguments: list, context: ExecutionContext) -> list[list]:
+        term = arguments[0]
+
+        context.logger.add_comment(str(term))
+
+        return [[None]]
+
     # ('resolve_names', body-atoms, result-variable)
     # Replaces named atoms with their id's
     def resolve_names(self, arguments: list, context: ExecutionContext) -> list[list]:
         body = arguments[0]
 
         result = resolve_names(body, context.solver)
-
-        # print("result", result)
 
         return [[None, result]]
 

@@ -85,7 +85,9 @@ class TestCooper(unittest.TestCase):
         grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
         parser = BasicParser(grammar1)
 
-        solver = Solver(model)
+        logger = Logger()
+
+        solver = Solver(model, logger)
         solver.same_as_handler = SameAsHandler(model)
 
         composer = SemanticComposer(parser)
@@ -93,8 +95,6 @@ class TestCooper(unittest.TestCase):
 
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)
-
-        logger = Logger()
 
         # define the system
 
@@ -154,7 +154,7 @@ class TestCooper(unittest.TestCase):
             ["magnesium is a metal that burns rapidly", "True"],
             ["magnesium is magnesium", "True"],
             ["some oxides are white", "True"],
-            # ["no oxide is white", "False"],
+            ["no oxide is white", "False"],
             # ["oxides are not white", "False"],
             ["magnesium oxide is an oxide", "True"],
             # ["every oxide is an oxide", "True"],

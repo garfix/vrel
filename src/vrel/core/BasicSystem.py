@@ -1,4 +1,5 @@
 from vrel.core.Solver import Solver
+from vrel.core.Logger import Logger
 from vrel.entity.Atom import Atom
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.SentenceRequest import SentenceRequest
@@ -36,12 +37,12 @@ class BasicSystem(SomeSystem):
     ):
 
         self.model = model if model else Model([])
-        self.solver = solver if solver else None
+        self.logger = logger if logger else Logger()
+        self.solver = solver if solver else Solver(self.model, logger=self.logger)
         self.parser = parser
         self.composer = composer
         self.executor = executor
         self.output_generator = output_generator
-        self.logger = logger
 
     def enter(self, request: SentenceRequest) -> ProcessResult | None:
         if not self.parser:
