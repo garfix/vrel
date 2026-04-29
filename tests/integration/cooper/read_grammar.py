@@ -32,7 +32,7 @@ def get_read_grammar():
             "syn": "s() -> proper_noun(E1) 'is' adj(E1, T1)",
             "sem": lambda proper_noun, adj: [Atom("intent_tell", [proper_noun, adj], T1)],
         },
-        # salt in natrium chloride
+        # salt is natrium chloride
         # magnesium is magnesium
         {
             "syn": "s() -> proper_noun(E1) 'is' proper_noun(E2)",
@@ -46,6 +46,7 @@ def get_read_grammar():
                 )
             ],
         },
+        # elements are not compounds
         # mutual exclusivity
         # -A :- B
         # -B :- A
@@ -82,6 +83,7 @@ def get_read_grammar():
             ],
         },
         # metals are metallic
+        # oxides are not white
         {
             "syn": "s() -> np(E1, T1) 'are' adj(E2, T2)",
             "sem": lambda common_noun, adj: [
@@ -93,6 +95,13 @@ def get_read_grammar():
         # some oxides are white
         {
             "syn": "s() -> 'some' np(E1, T2) 'are' adj(E1, T3)",
+            "sem": lambda np, adj: [
+                Atom("intent_check", [Atom("and_3v", [np], [adj], T2, T3, T1)], T1),
+            ],
+        },
+        # no oxide is white
+        {
+            "syn": "s() -> 'no' np(E1, T2) 'is' adj(E1, T3)",
             "sem": lambda np, adj: [
                 Atom("intent_check", [Atom("and_3v", [np], [adj], T2, T3, T1)], T1),
             ],
@@ -192,6 +201,7 @@ def get_read_grammar():
         {"syn": "common_noun(E1, T1) -> 'metal'", "sem": lambda: Atom("metal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'nonmetal'", "sem": lambda: Atom("nonmetal", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'oxide'", "sem": lambda: Atom("oxide", E1, T1)},
+        {"syn": "common_noun(E1, T1) -> 'sulfide'", "sem": lambda: Atom("sulfide", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'solid'", "sem": lambda: Atom("solid", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'gas'", "sem": lambda: Atom("gas", E1, T1)},
         {"syn": "common_noun(E1, T1) -> 'fuel'", "sem": lambda: Atom("fuel", E1, T1)},
@@ -210,5 +220,11 @@ def get_read_grammar():
         {
             "syn": "proper_noun(E1) -> /\\w+/ /\\w+/",
             "sem": lambda token1, token2: Atom("name", E1, token1 + " " + token2),
+        },
+        {
+            "syn": "proper_noun(E1) -> /\\w+/ common_noun(E1, T1)",
+            "sem": lambda token, common_noun: Atom("name", E1, token + " " + common_noun.predicate).execute(
+                [Atom("let", T1, "true"), Atom("store", [common_noun])]
+            ),
         },
     ]

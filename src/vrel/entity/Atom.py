@@ -14,12 +14,14 @@ class Atom:
     arguments: list
     modifiers: list[Atom]
     type: str
+    exec: list[Atom]
 
     def __init__(self, *args):
         self.arguments = []
         self.modifiers = []
         self.type = MODIFIER_TYPE_ANYWHERE
         self.determiner = None
+        self.exec = []
 
         if len(args) < 1:
             raise Exception("Atom must have at least a predicate")
@@ -51,31 +53,20 @@ class Atom:
         a.type = self.type
         a.determiner = self.determiner
         a.modifiers.extend(self.modifiers)
+        a.exec = self.exec
         return a
 
     def apply_to_each_atom(self, func):
         a = self.copy()
         a.arguments = [func(arg) for arg in a.arguments]
         a.modifiers = [func(mod) for mod in a.modifiers]
+        a.exec = [func(command) for command in a.exec]
         return a
 
-    # def apply_to_each_list(self, func):
-    #     a = self.copy()
-    #     a.arguments = func(a.arguments)
-    #     a.modifiers = func(a.modifiers)
-    #     return a
-
-    # def mod(self, modifier: list[Atom]):
-    #     if isinstance(modifier, Atom):
-    #         a = self.copy()
-    #         a.modifiers.append(modifier)
-    #         return a
-    #     elif isinstance(modifier, list):
-    #         a = self.copy()
-    #         a.modifiers.extend(modifier)
-    #         return a
-    #     else:
-    #         raise Exception("A modifier must be an atom or a list of atoms")
+    def execute(self, atoms: list[Atom]):
+        a = self.copy()
+        a.exec = atoms
+        return a
 
     def flatten(self):
         a = Atom(self.predicate)
@@ -104,28 +95,11 @@ class Atom:
         a.type = type
         return a
 
-    # def clear_modifiers(self):
-    #     return Atom(
-    #         self.predicate,
-    #         *self.arguments,
-    #     )
-
     def get_modifier(self, predicate: str) -> Atom | None:
         for mod in self.modifiers:
             if mod.predicate == predicate:
                 return mod
         return None
-
-    # def remove_modifiers(self, predicate: str) -> Atom:
-    #     new_modifiers = []
-    #     for mod in self.modifiers:
-    #         if mod.predicate != predicate:
-    #             new_modifiers.append(mod)
-
-    #     return Atom(
-    #         self.predicate,
-    #         *self.arguments,
-    #     ).mod(new_modifiers)
 
     def get_modifiers(self, predicate: str) -> list[Atom]:
         mods = []

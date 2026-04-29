@@ -6,6 +6,7 @@ from vrel.entity.Variable import Variable
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.OrderedSet import OrderedSet
+from vrel.module.transform.exec_code import exec_code
 from vrel.module.transform.query import create_query
 from vrel.module.transform.resolve_names import resolve_names
 from vrel.module.transform.storage import create_records
@@ -44,6 +45,7 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("create_records", query_function=self.create_records)),
         self.add_relation(Relation("print", query_function=self.print)),
         self.add_relation(Relation("resolve_names", query_function=self.resolve_names)),
+        self.add_relation(Relation("exec_code", query_function=self.exec_code)),
 
     # ('equals', E1, E2)
     def equals(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -485,3 +487,12 @@ class CoreModule(SomeModule):
         # print("result", result)
 
         return [[None, result]]
+
+    # ('exec-code', body-atoms)
+    # Executes the exec part of the body-atoms
+    def exec_code(self, arguments: list, context: ExecutionContext) -> list[list]:
+        body = arguments[0]
+
+        exec_code(body, context.solver)
+
+        return [[None]]

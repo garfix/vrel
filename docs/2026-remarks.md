@@ -1,3 +1,7 @@
+## 2026-04-29
+
+I added executable code to the Atom, in order to infer from the name "ferrous sulfide" that it is a sulfide (and store that fact in the database).
+
 ## 2026-04-27
 
 `and_3v`, as `or_3v`, should use arguments, not modifiers, because it should always produce a result (`"true"` or `"false"`). If the modifiers are executed separately, and fail, the `and_3v` is not executed.

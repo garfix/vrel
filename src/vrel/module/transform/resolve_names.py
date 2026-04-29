@@ -3,6 +3,7 @@ from vrel.core.functions.terms import bind_variables
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeSolver import SomeSolver
+from vrel.module.transform.exec_code import exec_code
 
 
 def resolve_names(atoms: list[Atom], solver: SomeSolver):
@@ -16,15 +17,16 @@ def resolve_names(atoms: list[Atom], solver: SomeSolver):
     variable_to_id = {variable: resolve_name(name, solver) for variable, name in named_variables.items()}
     # print(variable_to_id)
 
-    # remove the names
-    removed = remove_names_from_atoms(atoms)
-    # print(result)
-
     # create a new atom with bound named variables
-    new_atoms = bind_variables(removed, variable_to_id)
+    atoms1 = bind_variables(atoms, variable_to_id)
     # print(new_atoms)
 
-    return new_atoms
+    exec_code(atoms1, solver)
+
+    # remove the names
+    atoms2 = remove_names_from_atoms(atoms1)
+
+    return atoms2
 
 
 def find_named_variables(term: any) -> dict:

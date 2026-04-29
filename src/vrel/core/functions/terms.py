@@ -32,6 +32,9 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
     elif pre == "T":
         color = CYAN
         start = "MD"
+    elif pre == "E":
+        color = CYAN
+        start = "EX"
 
     prefix = f"{color}{start}{RESET} "
 
@@ -45,6 +48,8 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
             text += format_term(term.type, indent + 1, None, "T")
         for i, mod in enumerate(term.modifiers):
             text += format_term(mod, indent + 1, i + 1, "M")
+        if len(term.exec) > 0:
+            text += format_term(term.exec, indent + 1, None, "E")
         text += ")"
 
     elif isinstance(term, list):
