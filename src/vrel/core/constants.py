@@ -58,11 +58,11 @@ UNIFICATION = "$unification"
 
 # arguments
 ARG_DETERMINER = "determiner"
-ARG_NAME = "name"
 
 # some common semantic variables
 AUTO = Sentinel("<auto-generate>")
 
 # predicates
+PRED_NAME = "name"
 UNKNOWN_PREDICATE = "<unknown>"
 SAME_AS = "same_as"

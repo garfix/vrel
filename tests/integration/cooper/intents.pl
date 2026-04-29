@@ -28,9 +28,9 @@ intent_learn(Head, Body) :-
     store(output_type('ok')).
 
 intent_check(Fact, Truth) :-
-    log(Fact),
     resolve_names(Fact, Resolved),
     create_records(Resolved, Records),
+    log(Records),
     # print(Records),
     # print(Truth),
     scoped(Records),

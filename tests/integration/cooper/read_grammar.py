@@ -6,6 +6,7 @@ from vrel.entity.Variable import Variable
 T1 = Variable("T1")
 T2 = Variable("T2")
 T3 = Variable("T3")
+T4 = Variable("T4")
 
 
 def get_read_grammar():
@@ -103,7 +104,18 @@ def get_read_grammar():
         {
             "syn": "s() -> 'no' np(E1, T2) 'is' adj(E1, T3)",
             "sem": lambda np, adj: [
-                Atom("intent_check", [Atom("and_3v", [np], [adj], T2, T3, T1)], T1),
+                Atom(
+                    "intent_check",
+                    [
+                        Atom(
+                            "not_3v",
+                            [Atom("and_3v", [np], [adj], T2, T3, T1)],
+                            T1,
+                            T4,
+                        )
+                    ],
+                    T4,
+                ),
             ],
         },
         # no metal is a nonmetal

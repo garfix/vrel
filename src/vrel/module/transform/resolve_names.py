@@ -1,4 +1,4 @@
-from vrel.core.constants import ARG_NAME
+from vrel.core.constants import PRED_NAME
 from vrel.core.functions.terms import bind_variables
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
@@ -38,7 +38,7 @@ def find_named_variables(term: any) -> dict:
         variables |= find_named_variables(term.arguments)
         variables |= find_named_variables(term.modifiers)
 
-        if term.predicate == ARG_NAME:
+        if term.predicate == PRED_NAME:
             variable, name = term.arguments
             variables[variable.name] = name
 
@@ -60,7 +60,7 @@ def resolve_name(name: str, solver: SomeSolver):
 def remove_names_from_atoms(atoms: list[Atom]) -> list[Atom]:
     new_atoms = []
     for atom in atoms:
-        if atom.predicate != ARG_NAME:
+        if atom.predicate != PRED_NAME:
             new_atoms.append(remove_names_from_atom(atom))
 
     return new_atoms
@@ -72,7 +72,7 @@ def remove_names_from_arguments(args: list[any]) -> list[any]:
         if isinstance(arg, list):
             new_atoms.append(remove_names_from_atoms(arg))
         elif isinstance(arg, Atom):
-            if arg.predicate == ARG_NAME:
+            if arg.predicate == PRED_NAME:
                 new_atoms.append(arg.arguments[0])
             else:
                 new_atoms.append(remove_names_from_atom(arg))
