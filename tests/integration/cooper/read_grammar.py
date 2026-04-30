@@ -74,16 +74,16 @@ def get_read_grammar():
                 ),
             ],
         },
-        # oxides are compounds
+        # oxides are compounds, compound(X) :- oxide(X)
         {
-            "syn": "s() -> common_noun(E1, T1) 'are' common_noun(E2, T2)",
+            "syn": "s() -> np(E1, T1) 'are' common_noun(E2, T2)",
             "sem": lambda common_noun1, common_noun2: [
                 Atom("let", T1, "true"),
                 Atom("let", T2, "true"),
                 Atom("intent_learn", common_noun2, [common_noun1]),
             ],
         },
-        # metals are metallic
+        # metals are metallic, metallic(X) :- metal(X)
         # oxides are not white
         {
             "syn": "s() -> np(E1, T1) 'are' adj(E2, T2)",
@@ -95,7 +95,7 @@ def get_read_grammar():
         },
         # some oxides are white
         {
-            "syn": "s() -> 'some' np(E1, T2) 'are' adj(E1, T3)",
+            "syn": "s() -> 'some' nbar(E1, T2) 'are' adj(E1, T3)",
             "sem": lambda np, adj: [
                 Atom("intent_check", [Atom("and_3v", [np], [adj], T2, T3, T1)], T1),
             ],
