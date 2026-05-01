@@ -157,19 +157,21 @@ class SimpleInferenceRuleParser:
         atoms = []
 
         while True:
-            atom, new_pos = self.parse_atom(tokens, pos)
+            new_pos = pos
+            if len(atoms) > 0:
+                comma, new_pos = self.parse_token(tokens, pos)
+
+                if comma != ",":
+                    break
+
+            atom, new_pos = self.parse_atom(tokens, new_pos)
             if not atom:
-                return None, new_pos
+                break
+
             pos = new_pos
             atoms.append(atom)
 
-            comma, new_pos = self.parse_token(tokens, pos)
-
-            if comma != ",":
-                break
-            pos = new_pos
-
-        return atoms, pos
+        return atoms if len(atoms) > 0 else None, pos
 
     # ( parent(X, Y), parent(Y, Z) )
     def parse_grouped_atoms(self, tokens: list[str], pos: int):
