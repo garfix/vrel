@@ -157,7 +157,7 @@ class TestCooper(unittest.TestCase):
             ["no oxide is white", "False"],
             ["oxides are not white", "False"],
             ["magnesium oxide is an oxide", "True"],
-            # ["every oxide is an oxide", "True"],
+            ["every oxide is an oxide", "True"],
             ["ferrous sulfide is dark-gray", "True"],
             ["ferrous sulfide is a brittle compound", "True"],
             ["ferrous sulfide is not brittle", "False"],

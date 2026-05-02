@@ -93,6 +93,13 @@ def get_read_grammar():
                 Atom("intent_check", [Atom("and_3v", [np], [adj], T2, T3, T1)], T1),
             ],
         },
+        # every oxide is an oxide
+        {
+            "syn": "s() -> 'every' common_noun(E1, T2) 'is' a() common_noun(E1, T3)",
+            "sem": lambda common_noun1, a, common_noun2: [
+                Atom("intent_check", [Atom("and_3v", [common_noun1], [common_noun2], T2, T3, T1)], T1),
+            ],
+        },
         # no oxide is white
         {
             "syn": "s() -> 'no' np(E1, T2) 'is' adj(E1, T3)",
