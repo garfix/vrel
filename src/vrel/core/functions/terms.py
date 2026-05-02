@@ -64,6 +64,15 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
     return text
 
 
+def as_solver_string(term: any):
+    if isinstance(term, list):
+        return ",".join([as_solver_string(element) for element in term])
+    elif isinstance(term, Atom):
+        return term.predicate + "/" + as_solver_string(term.arguments)
+    else:
+        return str(term)
+
+
 def has_variables(term: any) -> bool:
     return len(get_variables(term)) > 0
 

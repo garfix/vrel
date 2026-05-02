@@ -41,7 +41,7 @@ class SemanticComposer(SomeProcessor):
             root_variables = [self.variable_generator.next() for _ in parse_tree.rule.antecedent.arguments]
             semantics = self.compose(parse_tree, root_variables)
 
-            sentences.append(SemanticSentence(semantics, root_variables))
+            sentences.append(SemanticSentence(semantics, root_variables, {}))
 
         product = SemanticComposerProduct(sentences)
 

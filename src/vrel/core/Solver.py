@@ -1,4 +1,4 @@
-from vrel.core.functions.terms import bind_variables, flatten, get_variables
+from vrel.core.functions.terms import as_solver_string, bind_variables, flatten, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
 from vrel.core.constants import DISJUNCTION, SAME_AS
 from vrel.entity.Atom import Atom
@@ -15,49 +15,68 @@ from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
 class Solver(SomeSolver):
 
     model: SomeModel
-    same_as_handler: SomeSameAsHandler
     logger: SomeLogger
+    sentence: SemanticSentence
 
-    def __init__(self, model: SomeModel, logger: SomeLogger = None) -> None:
+    def __init__(self, model: SomeModel, sentence: SemanticSentence = None, logger: SomeLogger = None) -> None:
         self.model = model
-        self.same_as_handler = None
+        self.sentence = sentence
         self.logger = logger
 
-    def solve(self, atoms: Atom | list[Atom], sentence: SemanticSentence = None) -> list[dict]:
+    def solve(self, atoms: Atom | list[Atom]) -> list[dict]:
         if not isinstance(atoms, list):
             raise Exception("Solver can only solve lists of atoms, this is not a list: " + str(atoms))
 
-        return self.solve_rest(atoms, {}, sentence)
+        return self.solve_rest(atoms, {})
 
-    def solve_rest(self, atoms: list[Atom], binding: dict = {}, sentence: SemanticSentence = None) -> list[dict]:
+    def solve_rest(self, atoms: list[Atom], binding: dict = {}) -> list[dict]:
         if len(atoms) == 0:
             return [binding]
         else:
             result = []
-            bindings = self.solve_single(atoms[0], binding, sentence)
+            bindings = self.solve_single(atoms[0], binding)
             for b in bindings:
-                result.extend(self.solve_rest(atoms[1:], b, sentence))
+                result.extend(self.solve_rest(atoms[1:], b))
             return result
 
-    def solve_single(self, atom: Atom, binding: dict, sentence: SemanticSentence = None):
+    def solve_single(self, atom: Atom, binding: dict):
 
         if not isinstance(atom, Atom):
             raise Exception("Solver can only solve atoms, this is not an atom: " + str(atom))
 
         if atom.predicate == DISJUNCTION:
-            return self.solve_disjunction(atom.arguments[0], binding, sentence)
+            return self.solve_disjunction(atom.arguments[0], binding)
 
-        return self.solve_for_all_relations(atom, binding, sentence)
+        # print(atom)
+        # print(sentence is not None)
 
-    def solve_disjunction(self, disjuncts: list[list[Atom]], binding: dict, sentence: SemanticSentence = None):
+        if self.sentence:
+            key = as_solver_string(atom)
+
+            # print(key)
+
+            if key in self.sentence.problems:
+                print("Found")
+                return []
+
+            self.sentence.problems[key] = True
+
+        result = self.solve_for_all_relations(atom, binding)
+
+        if self.sentence:
+            del self.sentence.problems[key]
+
+        return result
+
+    def solve_disjunction(self, disjuncts: list[list[Atom]], binding: dict):
 
         for disjunct in disjuncts:
-            results = self.solve_rest(disjunct, binding, sentence)
+            results = self.solve_rest(disjunct, binding)
             if len(results) > 0:
                 return results
         return []
 
-    def solve_for_all_relations(self, atom: Atom, binding: dict, sentence: SemanticSentence = None):
+    def solve_for_all_relations(self, atom: Atom, binding: dict):
         predicate = atom.predicate
         bound_arguments = bind_variables(atom.arguments, binding)
 
@@ -69,7 +88,7 @@ class Solver(SomeSolver):
 
         for relation in relations:
             for bound_argument_variant in self.get_same_as_variants(bound_arguments, relation):
-                out_bindings = self.find_relation_values(relation, bound_argument_variant, binding, sentence)
+                out_bindings = self.find_relation_values(relation, bound_argument_variant, binding)
 
                 # deduplicate results
                 for out_binding in out_bindings:
@@ -78,8 +97,8 @@ class Solver(SomeSolver):
         return list(deduplicated_bindings.values())
 
     def get_same_as_variants(self, bound_arguments: list, relation: Relation):
-        if self.same_as_handler:
-            return self.same_as_handler.get_same_as_variants(bound_arguments, relation)
+        if self.model.same_as_handler:
+            return self.model.same_as_handler.get_same_as_variants(bound_arguments, relation)
         else:
             return [bound_arguments]
 
@@ -125,8 +144,8 @@ class Solver(SomeSolver):
             raise Exception(f"Solver only writes atoms, and this is not an atom: {atom}")
 
         # when a new same_as record is added, clear the same_as handler's cache
-        if predicate == SAME_AS and self.same_as_handler:
-            self.same_as_handler.clear_cache()
+        if predicate == SAME_AS and self.model.same_as_handler:
+            self.model.same_as_handler.clear_cache()
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:
@@ -147,4 +166,4 @@ class Solver(SomeSolver):
             self.write_atom(atom)
 
     def get_same_as_handler(self) -> SomeSameAsHandler | None:
-        return self.same_as_handler
+        return self.model.same_as_handler

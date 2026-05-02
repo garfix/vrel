@@ -487,7 +487,10 @@ class CoreModule(SomeModule):
 
         comment = map(lambda a: str(a), arguments)
 
-        context.logger.add_comment(", ".join(comment))
+        if context.logger:
+            context.logger.add_comment(", ".join(comment))
+        else:
+            print(", ".join(comment))
 
         return [[None] * len(arguments)]
 

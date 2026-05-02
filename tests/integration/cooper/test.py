@@ -62,14 +62,13 @@ class TestCooper(unittest.TestCase):
         inferences = DeductionModule()
         inferences.import_rules(path + "intents.pl")
 
+        # define the model
+
         # database for same_as
         dialog_context = BasicDialogContext()
 
         # a data source to store information for output
-
         output_buffer = BasicOutputBuffer()
-
-        # define the model
 
         model = Model(
             [
@@ -77,26 +76,20 @@ class TestCooper(unittest.TestCase):
                 facts,
                 inferences,
                 output_buffer,
-            ]
+            ],
+            same_as_handler=SameAsHandler(),
         )
 
-        # define the first pipeline
+        # define the system
 
-        grammar1 = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
-        parser = BasicParser(grammar1)
-
-        logger = Logger()
-
-        solver = Solver(model, logger)
-        solver.same_as_handler = SameAsHandler(model)
+        grammar = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
+        parser = BasicParser(grammar)
 
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model, solver)
+        executor = AtomExecutor(composer, model)
 
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)
-
-        # define the system
 
         system = BasicSystem(
             model=model,
@@ -104,8 +97,6 @@ class TestCooper(unittest.TestCase):
             composer=composer,
             executor=executor,
             output_generator=generator,
-            logger=logger,
-            solver=solver,
         )
 
         tests1 = [
@@ -136,7 +127,7 @@ class TestCooper(unittest.TestCase):
             ["sulfuric acid is a compound", "OK"],
             ["elements are not compounds", "OK"],
             ["salt is sodium chloride", "OK"],
-            # In Cooper, the next phrase results to "OK"
+            # In Cooper, the next phrase results to "OK", but this is not new information
             ["sodium chloride is salt", "True"],
             ["oxides are compounds", "OK"],
             ["metals are metallic", "OK"],
@@ -157,7 +148,8 @@ class TestCooper(unittest.TestCase):
             ["no oxide is white", "False"],
             ["oxides are not white", "False"],
             ["magnesium oxide is an oxide", "True"],
-            ["every oxide is an oxide", "True"],
+            # In Cooper, the next phrase results to "True", but this is not just a check; it's a rule
+            ["every oxide is an oxide", "OK"],
             ["ferrous sulfide is dark-gray", "True"],
             ["ferrous sulfide is a brittle compound", "True"],
             ["ferrous sulfide is not brittle", "False"],

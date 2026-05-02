@@ -14,23 +14,22 @@ class BasicGenerator(SomeGenerator):
     solver: SomeSolver
     output_buffer: BasicOutputBuffer
 
-
     def __init__(self, grammar: GrammarRules, model: SomeModel, output_buffer: BasicOutputBuffer):
 
         from vrel.core.Solver import Solver
 
         self.grammar = grammar
-        self.solver = Solver(model)
+        self.solver = Solver(model, None, None)
         self.output_buffer = output_buffer
-
 
     def generate_output(self):
         output = self.generate_node([], "s", [], False)
         self.output_buffer.clear()
         return output
 
-
-    def generate_node(self, used_rules: list[int], antecedent_cat: str, antecedent_arguments: list[any], optional: bool) -> list[str]:
+    def generate_node(
+        self, used_rules: list[int], antecedent_cat: str, antecedent_arguments: list[any], optional: bool
+    ) -> list[str]:
 
         words = []
         rule, binding, found = self.find_rule(used_rules, antecedent_cat, antecedent_arguments)
@@ -42,7 +41,14 @@ class BasicGenerator(SomeGenerator):
 
             for i, consequent in enumerate(rule.consequents):
                 consequent_vals = self.get_consequent_values(rule, i, binding)
-                consequent_result = self.generate_single_consequent(rule, used_rules, consequent.predicate, consequent_vals, rule.consequents[i].position_type, consequent.optional)
+                consequent_result = self.generate_single_consequent(
+                    rule,
+                    used_rules,
+                    consequent.predicate,
+                    consequent_vals,
+                    rule.consequents[i].position_type,
+                    consequent.optional,
+                )
                 words.append(consequent_result)
 
                 # todo?
@@ -56,8 +62,8 @@ class BasicGenerator(SomeGenerator):
         # combine the child results
         all_text = list(filter(lambda word: isinstance(word, str), words))
         if len(all_text) == len(words):
-              # all strings: concatencate
-              result = "".join(words)
+            # all strings: concatencate
+            result = "".join(words)
         elif len(words) == 1:
             # single value: pick it
             result = words[0]
@@ -70,7 +76,6 @@ class BasicGenerator(SomeGenerator):
             return rule.post(result)
         else:
             return result
-
 
     def get_consequent_values(self, rule: GrammarRule, i: int, binding: dict) -> any:
         consequent_values = []
@@ -89,7 +94,6 @@ class BasicGenerator(SomeGenerator):
             consequent_values.append(consequent_value)
 
         return consequent_values
-
 
     def find_rule(self, used_rules: list, antecedent_cat: str, antecedent_arguments: list[any]):
 
@@ -130,7 +134,6 @@ class BasicGenerator(SomeGenerator):
                     result_rule = rule
                     found = True
 
-
             if found:
                 # make sure the same rule is not executed again and again
                 if rule.hash not in used_rules:
@@ -138,8 +141,15 @@ class BasicGenerator(SomeGenerator):
 
         return result_rule, binding, found
 
-
-    def generate_single_consequent(self, rule: GrammarRule, used_rules: list[str], category: str, arguments: list[any], position_type: str, optional: bool) -> list[str]:
+    def generate_single_consequent(
+        self,
+        rule: GrammarRule,
+        used_rules: list[str],
+        category: str,
+        arguments: list[any],
+        position_type: str,
+        optional: bool,
+    ) -> list[str]:
 
         if position_type == POS_TYPE_WORD_FORM:
             result = category

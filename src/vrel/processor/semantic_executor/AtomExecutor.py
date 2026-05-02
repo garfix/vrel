@@ -1,5 +1,6 @@
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.SentenceRequest import SentenceRequest
+from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeProcessor import SomeProcessor
 from vrel.core.Solver import Solver
@@ -18,22 +19,23 @@ class AtomExecutor(SomeProcessor):
     composer: SomeProcessor
     model: SomeModel
 
-    def __init__(self, composer: SomeProcessor, model: SomeModel, solver: SomeSolver) -> None:
+    def __init__(self, composer: SomeProcessor, model: SomeModel) -> None:
         super().__init__()
         self.composer = composer
         self.model = model
-        self.solver = solver
 
     def get_name(self) -> str:
         return "Executor"
 
-    def process(self, incoming: SemanticComposerProduct) -> ProcessResult:
+    def process(self, incoming: SemanticComposerProduct, logger: SomeLogger) -> ProcessResult:
         sentences = incoming.sentences
 
         products = []
         for sentence in sentences:
 
-            bindings = self.solver.solve(sentence.semantics, sentence=sentence)
+            solver = Solver(self.model, sentence, logger)
+
+            bindings = solver.solve(sentence.semantics)
 
             product = AtomExecutorProduct(bindings)
 

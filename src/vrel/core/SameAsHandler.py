@@ -23,8 +23,7 @@ class SameAsHandler(SomeSameAsHandler):
     model: SomeModel
     id_variants: dict
 
-    def __init__(self, model: SomeModel) -> None:
-        self.model = model
+    def __init__(self) -> None:
         self.id_variants = None
 
     def get_same_as_variants(self, bound_arguments: list, relation: Relation):

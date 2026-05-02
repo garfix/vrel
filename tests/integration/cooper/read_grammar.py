@@ -95,9 +95,9 @@ def get_read_grammar():
         },
         # every oxide is an oxide
         {
-            "syn": "s() -> 'every' common_noun(E1, T2) 'is' a() common_noun(E1, T3)",
+            "syn": "s() -> 'every' common_noun(E1, T1) 'is' a() common_noun(E1, T2)",
             "sem": lambda common_noun1, a, common_noun2: [
-                Atom("intent_check", [Atom("and_3v", [common_noun1], [common_noun2], T2, T3, T1)], T1),
+                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "true", "true"),
             ],
         },
         # no oxide is white

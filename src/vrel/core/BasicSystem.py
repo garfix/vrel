@@ -22,7 +22,6 @@ class BasicSystem(SomeSystem):
     executor: SomeExecutor
     output_generator: SomeGenerator
     model: SomeModel
-    solver: SomeSolver
     logger: SomeLogger
 
     def __init__(
@@ -32,13 +31,11 @@ class BasicSystem(SomeSystem):
         composer: SomeComposer = None,
         executor: SomeExecutor = None,
         output_generator: SomeGenerator = None,
-        solver: SomeSolver = None,
         logger: SomeLogger = None,
     ):
 
         self.model = model if model else Model([])
         self.logger = logger if logger else Logger()
-        self.solver = solver if solver else Solver(self.model, logger=self.logger)
         self.parser = parser
         self.composer = composer
         self.executor = executor
@@ -90,7 +87,7 @@ class BasicSystem(SomeSystem):
 
     def execute(self, composer_product: SemanticComposerProduct):
 
-        executor_result = self.executor.process(composer_product)
+        executor_result = self.executor.process(composer_product, self.logger)
         if executor_result.error_type != "":
             return self.log_error(executor_result)
 

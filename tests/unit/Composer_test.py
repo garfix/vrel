@@ -27,11 +27,10 @@ class TestComposer(unittest.TestCase):
         ]
 
         model = Model([])
-        solver = Solver(model)
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model, solver)
+        executor = AtomExecutor(composer, model)
 
         system = BasicSystem(model=model, parser=parser, composer=composer, executor=executor)
 

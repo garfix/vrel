@@ -49,7 +49,7 @@ class TestAtomExecutor(unittest.TestCase):
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_write_grammar())
         parser = BasicParser(read_grammar)
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model, solver)
+        executor = AtomExecutor(composer, model)
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
         system = BasicSystem(
