@@ -34,8 +34,8 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("det_less_than", query_function=self.determiner_less_than)),
         self.add_relation(Relation("all", query_function=self.determiner_all)),
         self.add_relation(Relation("none", query_function=self.determiner_none)),
-        self.add_relation(Relation("scoped", query_function=self.scoped)),
-        self.add_relation(Relation("scoped2", query_function=self.scoped2)),
+        self.add_relation(Relation("exec", query_function=self.exec)),
+        self.add_relation(Relation("scope", query_function=self.scope)),
         self.add_relation(Relation("reify", query_function=self.reify)),
         self.add_relation(Relation("store", query_function=self.store)),
         self.add_relation(Relation("$unification", query_function=self.unification)),
@@ -339,9 +339,9 @@ class CoreModule(SomeModule):
         else:
             return []
 
-    # ('scoped', [body-atoms], [body-atoms], ...)
-    # a wrapper around a list of atoms, that allows the execution of the atoms in a variable
-    def scoped(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
+    # ('exec', [body-atoms], [body-atoms], ...)
+    # executes body atoms and returns the binding
+    def exec(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
         body = []
         for argument in arguments:
             body.extend(argument)
@@ -356,9 +356,9 @@ class CoreModule(SomeModule):
 
         return result
 
-    # ('scoped2', [body-atoms], [body-atoms], ...)
-    # a wrapper around a list of atoms, that allows the execution of the atoms in a variable
-    def scoped2(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
+    # ('scope', [body-atoms], [body-atoms], ...)
+    # executes the body atoms but returns no bindings
+    def scope(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
 
         body = []
         for argument in arguments:

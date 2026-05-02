@@ -31,7 +31,7 @@ intent_count(Atoms) :- count(C, Atoms), not(output_type(T)), store(output_type('
 
 # yes/no
 intent_yn(Atoms) :- (
-    scoped(Atoms), store(output_type('yes'))
+    exec(Atoms), store(output_type('yes'))
 ;
     store(output_type('no'))
 ).

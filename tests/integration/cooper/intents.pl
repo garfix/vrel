@@ -5,7 +5,7 @@ intent_tell(Fact, Truth) :-
     resolve_names(Fact, Resolved),
     (
         # check if the fact is known
-        scoped(Resolved),
+        exec(Resolved),
         not_equals(Truth, "unknown"),
         store(output_type(Truth))
     ;
@@ -40,5 +40,5 @@ intent_learn(Head, Body, T1, T2, Truth1, Truth2) :-
 
 intent_check(Fact, Truth) :-
     resolve_names(Fact, Resolved),
-    scoped(Resolved),
+    exec(Resolved),
     store(output_type(Truth)).

@@ -18,7 +18,7 @@ intent_table(Variables, Units, Sem) :-
 
 intent_yn(Sem) :- (
     optimize(Sem, SemOpt),
-    scoped(SemOpt),  store(output_type('yes'))
+    exec(SemOpt),  store(output_type('yes'))
 ;   store(output_type('no'))
 ).
 

@@ -57,13 +57,13 @@ def get_read_grammar():
             "syn": "s() -> common_noun(E1, T1) copula() 'not' common_noun(E2, T2)",
             "sem": lambda common_noun1, copula, common_noun2: [
                 Atom(
-                    "scoped2",
+                    "scope",
                     [
                         Atom("intent_learn", [common_noun1], [common_noun2], T1, T2, "false", "true"),
                     ],
                 ),
                 Atom(
-                    "scoped2",
+                    "scope",
                     [
                         Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "false", "true"),
                     ],

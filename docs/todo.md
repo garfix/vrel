@@ -2,8 +2,6 @@
 
 - head as syntactic category
 - learn_rule
-- scoped2 => scoped
-- scoped => exec
 - remove inferences from executor
 
 - api: bv tk.keras.layers.Dense
@@ -55,7 +53,7 @@
 
 - the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
 
-## Infitite loop detection
+## Infinite loop detection
 
 If the executor comes into a loop, stop it, and print the looping commands.
 

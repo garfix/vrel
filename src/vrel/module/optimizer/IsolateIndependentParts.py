@@ -38,7 +38,7 @@ class IsolateIndependentParts:
                 # do the same for the atoms in this batch
                 recursed = self.isolate(batch.atoms, [])
                 # isolate the batch
-                new_atoms.append(("scoped", recursed))
+                new_atoms.append(("scope", recursed))
 
         return new_atoms
 

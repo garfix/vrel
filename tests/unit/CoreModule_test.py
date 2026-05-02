@@ -41,15 +41,26 @@ class TestCoreModule(unittest.TestCase):
         bindings = solver.solve([Atom("let", E1, 5)])
         self.assertEqual(bindings, [{"E1": 5}])
 
-    def test_scoped(self):
+    def test_scope(self):
 
         model = Model([])
         solver = Solver(model)
 
-        bindings = solver.solve([Atom("scoped", [Atom("let", E1, 3)])])
-        self.assertEqual(bindings, [{"E1": 3}])
+        bindings = solver.solve([Atom("scope", [Atom("let", E1, 3)])])
+        self.assertEqual(bindings, [{}])
 
-        bindings = solver.solve([Atom("scoped", [Atom("equals", 2, 3)])])
+        bindings = solver.solve([Atom("scope", [Atom("equals", 2, 3)])])
+        self.assertEqual(bindings, [])
+
+    def test_exec(self):
+
+        model = Model([])
+        solver = Solver(model)
+
+        bindings = solver.solve([Atom("exec", [Atom("let", E1, 3)], [Atom("let", E2, E1)])])
+        self.assertEqual(bindings, [{"E1": 3, "E2": 3}])
+
+        bindings = solver.solve([Atom("exec", [Atom("equals", 2, 3)])])
         self.assertEqual(bindings, [])
 
     def test_unification(self):
