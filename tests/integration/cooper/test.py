@@ -1,12 +1,11 @@
 import pathlib
 import unittest
 
-from vrel.core.SameAsHandler import SameAsHandler
+from vrel.core.handlers.SameAsHandler import SameAsHandler
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
-from vrel.core.Logger import Logger
-from vrel.core.Solver import Solver
+from vrel.core.handlers.StackOverflowHandler import StackOverflowHandler
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
@@ -78,6 +77,7 @@ class TestCooper(unittest.TestCase):
                 output_buffer,
             ],
             same_as_handler=SameAsHandler(),
+            stack_overflow_handler=StackOverflowHandler(),
         )
 
         # define the system

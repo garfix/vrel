@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
+from vrel.interface.SomeStackOverflowHandler import SomeStackOverflowHandler
 
 
 class SomeModel(ABC):
@@ -15,4 +16,8 @@ class SomeModel(ABC):
 
     @abstractmethod
     def get_same_as_handler(self) -> SomeSameAsHandler | None:
+        pass
+
+    @abstractmethod
+    def get_stack_overflow_handler(self) -> SomeStackOverflowHandler | None:
         pass

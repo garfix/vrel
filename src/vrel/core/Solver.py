@@ -1,4 +1,4 @@
-from vrel.core.functions.terms import as_solver_string, bind_variables, flatten, get_variables
+from vrel.core.functions.terms import bind_variables, flatten, get_variables
 from vrel.core.functions.results import tuple_results_to_bindings
 from vrel.core.constants import DISJUNCTION, SAME_AS
 from vrel.entity.Atom import Atom
@@ -6,7 +6,6 @@ from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeModel import SomeModel
-from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
@@ -47,17 +46,15 @@ class Solver(SomeSolver):
         if atom.predicate == DISJUNCTION:
             return self.solve_disjunction(atom.arguments[0], binding)
 
-        if self.sentence:
-            key = as_solver_string(atom)
-            if key in self.sentence.problems:
-                return []
-
-            self.sentence.problems[key] = True
+        # handle infinite recursion
+        stack_overflow_handler = self.model.get_stack_overflow_handler()
+        if stack_overflow_handler.check_stack(atom):
+            return []
 
         result = self.solve_for_all_relations(atom, binding)
 
-        if self.sentence:
-            del self.sentence.problems[key]
+        # handle infinite recursion
+        stack_overflow_handler.remove(atom)
 
         return result
 

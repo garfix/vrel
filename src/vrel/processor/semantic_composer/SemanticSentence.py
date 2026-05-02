@@ -8,7 +8,6 @@ from vrel.entity.Atom import Atom
 class SemanticSentence:
     semantics: list[Atom]
     root_variables: list[str]
-    problems: dict
 
     def log(self, logger: Logger):
         logger.add_subheader("Semantics")
