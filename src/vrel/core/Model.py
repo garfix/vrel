@@ -22,6 +22,9 @@ class Model(SomeModel):
         if self.same_as_handler:
             self.same_as_handler.model = self
 
+    def get_same_as_handler(self) -> SomeSameAsHandler | None:
+        return self.same_as_handler
+
     def find_relations(self, predicate: str) -> list[Relation]:
         result = []
         for module in self.modules:

@@ -49,7 +49,7 @@ class BasicDialogContext(SqliteMemoryModule):
         if isinstance(term1, Variable) and isinstance(term2, Variable):
             return self.data_source.select(SAME_AS, ["id1", "id2"], [term1, term2])
 
-        handler = context.solver.get_same_as_handler()
+        handler = context.model.get_same_as_handler()
         if handler and handler.same_as(term1, term2):
             return [[None, None]]
         else:

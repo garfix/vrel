@@ -47,16 +47,9 @@ class Solver(SomeSolver):
         if atom.predicate == DISJUNCTION:
             return self.solve_disjunction(atom.arguments[0], binding)
 
-        # print(atom)
-        # print(sentence is not None)
-
         if self.sentence:
             key = as_solver_string(atom)
-
-            # print(key)
-
             if key in self.sentence.problems:
-                print("Found")
                 return []
 
             self.sentence.problems[key] = True
@@ -97,8 +90,9 @@ class Solver(SomeSolver):
         return list(deduplicated_bindings.values())
 
     def get_same_as_variants(self, bound_arguments: list, relation: Relation):
-        if self.model.same_as_handler:
-            return self.model.same_as_handler.get_same_as_variants(bound_arguments, relation)
+        same_as_handler = self.model.get_same_as_handler()
+        if same_as_handler:
+            return same_as_handler.get_same_as_variants(bound_arguments, relation)
         else:
             return [bound_arguments]
 
@@ -144,8 +138,9 @@ class Solver(SomeSolver):
             raise Exception(f"Solver only writes atoms, and this is not an atom: {atom}")
 
         # when a new same_as record is added, clear the same_as handler's cache
-        if predicate == SAME_AS and self.model.same_as_handler:
-            self.model.same_as_handler.clear_cache()
+        same_as_handler = self.model.get_same_as_handler()
+        if same_as_handler and predicate == SAME_AS:
+            same_as_handler.clear_cache()
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:
@@ -164,6 +159,3 @@ class Solver(SomeSolver):
     def write_atoms(self, atoms: list[Atom]):
         for atom in atoms:
             self.write_atom(atom)
-
-    def get_same_as_handler(self) -> SomeSameAsHandler | None:
-        return self.model.same_as_handler

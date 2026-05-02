@@ -22,7 +22,3 @@ class SomeSolver(ABC):
     @abstractmethod
     def write_atom(self, atom: Atom):
         pass
-
-    @abstractmethod
-    def get_same_as_handler(self) -> SomeSameAsHandler | None:
-        pass
