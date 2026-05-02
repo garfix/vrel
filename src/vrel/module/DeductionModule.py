@@ -85,9 +85,9 @@ class DeductionModule(SomeModule):
     def learn_rule(self, arguments: list, context: ExecutionContext) -> list[list]:
         head, body = arguments
 
-        if not isinstance(head, Atom):
+        if not isinstance(head, list) or len(head) != 1 or not isinstance(head[0], Atom):
             raise Exception("The head of a rule must be a single atom: " + str(head))
 
-        self.insert_rule(InferenceRule(head, body))
+        self.insert_rule(InferenceRule(head[0], body))
 
         return [[None, None]]

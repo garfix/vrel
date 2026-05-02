@@ -59,17 +59,13 @@ def get_read_grammar():
                 Atom(
                     "scoped2",
                     [
-                        Atom("let", T1, "false"),
-                        Atom("let", T2, "true"),
-                        Atom("intent_learn", common_noun1, [common_noun2]),
+                        Atom("intent_learn", [common_noun1], [common_noun2], T1, T2, "false", "true"),
                     ],
                 ),
                 Atom(
                     "scoped2",
                     [
-                        Atom("let", T2, "false"),
-                        Atom("let", T1, "true"),
-                        Atom("intent_learn", common_noun2, [common_noun1]),
+                        Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "false", "true"),
                     ],
                 ),
             ],
@@ -78,19 +74,16 @@ def get_read_grammar():
         {
             "syn": "s() -> np(E1, T1) 'are' common_noun(E2, T2)",
             "sem": lambda common_noun1, common_noun2: [
-                Atom("let", T1, "true"),
-                Atom("let", T2, "true"),
-                Atom("intent_learn", common_noun2, [common_noun1]),
+                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "true", "true"),
             ],
         },
         # metals are metallic, metallic(X) :- metal(X)
         # oxides are not white
+        # dark-gray things are not white
         {
-            "syn": "s() -> np(E1, T1) 'are' adj(E2, T2)",
-            "sem": lambda common_noun, adj: [
-                Atom("let", T1, "true"),
-                Atom("let", T2, "true"),
-                Atom("intent_learn", adj, [common_noun]),
+            "syn": "s() -> np(E1, T1) 'are' adj(E1, T2)",
+            "sem": lambda np, adj: [
+                Atom("intent_learn", [adj], [np], T2, T1, "true", "true"),
             ],
         },
         # some oxides are white
@@ -120,29 +113,23 @@ def get_read_grammar():
         },
         # no metal is a nonmetal
         {
-            "syn": "s() -> 'no' common_noun(E1, T1) 'is' 'a' common_noun(E2, T2)",
+            "syn": "s() -> 'no' common_noun(E1, T1) 'is' 'a' common_noun(E1, T2)",
             "sem": lambda common_noun1, common_noun2: [
-                Atom("let", T2, "false"),
-                Atom("let", T1, "true"),
-                Atom("intent_learn", common_noun2, [common_noun1]),
+                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "false", "true"),
             ],
         },
         # a solid is not a gas
         {
-            "syn": "s() -> a() common_noun(E1, T1) 'is' 'not' 'a' common_noun(E2, T2)",
+            "syn": "s() -> a() common_noun(E1, T1) 'is' 'not' 'a' common_noun(E1, T2)",
             "sem": lambda a, common_noun1, common_noun2: [
-                Atom("let", T2, "false"),
-                Atom("let", T1, "true"),
-                Atom("intent_learn", common_noun2, [common_noun1]),
+                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "false", "true"),
             ],
         },
         # any thing that burns rapidly burns
         {
             "syn": "s() -> 'any' nbar(E1, T1) vp(E1, T2)",
             "sem": lambda nbar, vp: [
-                Atom("let", T1, "true"),
-                Atom("let", T2, "true"),
-                Atom("intent_learn", vp, [nbar]),
+                Atom("intent_learn", [vp], [nbar], T2, T1, "true", "true"),
             ],
         },
         # np
@@ -156,7 +143,7 @@ def get_read_grammar():
             "sem": lambda nbar, vp: Atom("and_3v", [nbar], [vp], T2, T3, T1),
         },
         {
-            "syn": "nbar(E1, T1) -> thing() 'that' vp(E1, T3)",
+            "syn": "nbar(E1, T1) -> thing() 'that' vp(E1, T1)",
             "sem": lambda thing, vp: vp,
         },
         {
@@ -164,7 +151,7 @@ def get_read_grammar():
             "sem": lambda adj, nbar: Atom("and_3v", [adj], [nbar], T2, T3, T1),
         },
         {
-            "syn": "nbar(E1, T1) -> adj(E1, T2) thing()",
+            "syn": "nbar(E1, T1) -> adj(E1, T1) thing()",
             "sem": lambda adj, thing: adj,
         },
         # vp

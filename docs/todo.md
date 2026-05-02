@@ -4,6 +4,7 @@
 - learn_rule
 - scoped2 => scoped
 - scoped => exec
+- remove inferences from executor
 
 - api: bv tk.keras.layers.Dense
 
@@ -53,6 +54,16 @@
 - I added `sentence` as an extra data source for `match`. This works for now, but I'm not confident it's the final solution
 
 - the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
+
+## Infitite loop detection
+
+If the executor comes into a loop, stop it, and print the looping commands.
+
+Also, possibly, add an option to just skip and continue from a loop.
+
+## DSL parser
+
+Proper error messages with line numbers.
 
 ## Agreement
 

@@ -195,7 +195,10 @@ class CooperModule(SomeModule):
 
         results = context.solver.solve(atoms)
 
-        truth = results[0][var.name] if len(results) > 0 else "unknown"
+        if isinstance(var, Variable):
+            truth = results[0][var.name] if len(results) > 0 else "unknown"
+        else:
+            truth = var
 
         if truth == "true":
             return [[None, None, "false"]]
@@ -206,14 +209,23 @@ class CooperModule(SomeModule):
 
     # ('and_3v', atoms1, atoms2, truth1, truth2, out)
     def and_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
+        """
+        Performs an and on atoms1 and atoms2.
+        """
 
         atoms1, atoms2, var1, var2, _ = arguments
 
-        results1 = context.solver.solve(atoms1)
-        results2 = context.solver.solve(atoms2)
+        results = context.solver.solve(atoms1 + atoms2)
 
-        truth1 = results1[0][var1.name] if len(results1) > 0 else "unknown"
-        truth2 = results2[0][var2.name] if len(results2) > 0 else "unknown"
+        if isinstance(var1, Variable):
+            truth1 = results[0][var1.name] if len(results) > 0 else "unknown"
+        else:
+            truth1 = var1
+
+        if isinstance(var2, Variable):
+            truth2 = results[0][var2.name] if len(results) > 0 else "unknown"
+        else:
+            truth2 = var2
 
         if truth1 == "true" and truth2 == "false":
             return [[None, None, None, None, "false"]]

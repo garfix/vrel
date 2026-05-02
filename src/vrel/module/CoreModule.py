@@ -339,10 +339,12 @@ class CoreModule(SomeModule):
         else:
             return []
 
-    # ('scoped', [body-atoms])
+    # ('scoped', [body-atoms], [body-atoms], ...)
     # a wrapper around a list of atoms, that allows the execution of the atoms in a variable
     def scoped(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
-        body = arguments[0]
+        body = []
+        for argument in arguments:
+            body.extend(argument)
 
         results = context.solver.solve(body)
         count = len(results)
@@ -354,18 +356,19 @@ class CoreModule(SomeModule):
 
         return result
 
-    # ('scoped2', [body-atoms])
+    # ('scoped2', [body-atoms], [body-atoms], ...)
     # a wrapper around a list of atoms, that allows the execution of the atoms in a variable
     def scoped2(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
-        body = arguments[0]
+
+        body = []
+        for argument in arguments:
+            body.extend(argument)
 
         results = context.solver.solve(body)
-        count = len(results)
+        if len(results) == 0:
+            return []
 
-        if count == 0:
-            result = []
-        else:
-            result = [[None]]
+        result = [[None] * len(arguments)]
 
         return result
 
@@ -478,14 +481,15 @@ class CoreModule(SomeModule):
 
         return [[None]]
 
-    # ('log', term)
+    # ('log', term, ...)
     # writes `term` to the logger
     def log(self, arguments: list, context: ExecutionContext) -> list[list]:
-        term = arguments[0]
 
-        context.logger.add_comment(str(term))
+        comment = map(lambda a: str(a), arguments)
 
-        return [[None]]
+        context.logger.add_comment(", ".join(comment))
+
+        return [[None] * len(arguments)]
 
     # ('resolve_names', body-atoms, result-variable)
     # Replaces named atoms with their id's

@@ -1,3 +1,11 @@
+## 2026-04-30
+
+    oxides are not white
+
+This is presented as a rule, but the knowledge base already has a fact that denies it ("magnesium oxide is a white metallic oxide"), so the result must be `"false"`.
+
+Denying something that is told it pretty cool. Let's find out if I can implement it.
+
 ## 2026-04-29
 
 I added executable code to the Atom, in order to infer from the name "ferrous sulfide" that it is a sulfide (and store that fact in the database).
