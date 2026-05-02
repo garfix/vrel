@@ -2,7 +2,6 @@
 
 - head as syntactic category
 - learn_rule
-- remove inferences from executor
 
 - api: bv tk.keras.layers.Dense
 

@@ -33,10 +33,6 @@ class AtomExecutor(SomeProcessor):
         products = []
         for sentence in sentences:
 
-            # store the inferences in the sentence context
-            for inference in sentence.inferences:
-                self.solver.write_atom(inference)
-
             bindings = self.solver.solve(sentence.semantics, sentence=sentence)
 
             product = AtomExecutorProduct(bindings)
