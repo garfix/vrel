@@ -33,9 +33,10 @@ class TestCooper(unittest.TestCase):
     - Aristotelian logic
     - Learning names and concepts
     - Learning rules
-    - Users with different roles
-    - Adverbs ("rapidly")
-    - the name "magnesium oxide" implies that it is an oxide
+    - Rejecting incompatible rules
+    - Handling infinite recursion
+    - Same-as relation
+    - The name "magnesium oxide" implies that it is an oxide
 
     Cooper's (unnamed) system has a knowledge base that contains information like "ferrous sulfide is a dark-gray compound that is brittle".
     This information is entered as natural language and stored in logical form by a system-user with write-access.

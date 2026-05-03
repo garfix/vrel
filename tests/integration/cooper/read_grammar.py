@@ -149,12 +149,6 @@ def get_read_grammar():
             ],
         },
         # any thing that burns rapidly burns
-        {
-            "syn": "s() -> 'any' nbar(E1, T1) vp(E1, T2)",
-            "sem": lambda nbar, vp: [
-                Atom("intent_learn", [vp], [nbar], T2, T1, "true", "true"),
-            ],
-        },
         # combustable things burn
         {
             "syn": "s() -> np(E1, T1) vp(E1, T2)",
@@ -164,6 +158,7 @@ def get_read_grammar():
         },
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
+        {"syn": "np(E1, T1) -> 'any' nbar(E1, T1)", "sem": lambda nbar: nbar},
         {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
         {"syn": "np(E1, T1) -> 'not' np(E1, T2)", "sem": lambda np: Atom("not_3v", [np], T2, T1)},
         {
