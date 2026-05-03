@@ -2,9 +2,10 @@
 
 - test create_records_3v
 - check and_3v and not_3v
+- simplify the grammar
+- write docs
 
-- head as syntactic category
-- learn_rule
+- head as syntactic category?
 
 - api: bv tk.keras.layers.Dense
 

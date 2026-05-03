@@ -161,7 +161,7 @@ class TestCooper(unittest.TestCase):
             ["sodium chloride is a compound", "True"],
             ["salt is an element", "False"],
             ["sodium chloride is an element", "False"],
-            # ["gasoline is a fuel that burns", "True"],
+            ["gasoline is a fuel that burns", "True"],
         ]
 
         tester = DialogTester(self, tests1, system)

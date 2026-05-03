@@ -157,6 +157,13 @@ def get_read_grammar():
                 Atom("intent_learn", [vp], [nbar], T2, T1, "true", "true"),
             ],
         },
+        # combustable things burn
+        {
+            "syn": "s() -> np(E1, T1) vp(E1, T2)",
+            "sem": lambda nbar, vp: [
+                Atom("intent_learn", [vp], [nbar], T2, T1, "true", "true"),
+            ],
+        },
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
         {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
