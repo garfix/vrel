@@ -2,11 +2,11 @@ from vrel.core.constants import E1, E2, E3, E4, E5
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
-
 T1 = Variable("T1")
 T2 = Variable("T2")
 T3 = Variable("T3")
 T4 = Variable("T4")
+Name = Variable("name")
 
 
 def get_read_grammar():
@@ -54,7 +54,7 @@ def get_read_grammar():
         # works only with facts are stored positively
         # cannot use A :- not(B), B :- not(A), because of infinite recursion
         {
-            "syn": "s() -> common_noun(E1, T1) copula() 'not' common_noun(E2, T2)",
+            "syn": "s() -> common_noun(E1, T1) copula() 'not' common_noun(E1, T2)",
             "sem": lambda common_noun1, copula, common_noun2: [
                 Atom(
                     "scope",
@@ -98,6 +98,15 @@ def get_read_grammar():
             "syn": "s() -> 'every' common_noun(E1, T1) 'is' a() common_noun(E1, T2)",
             "sem": lambda common_noun1, a, common_noun2: [
                 Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "true", "true"),
+            ],
+        },
+        # anything that is not a compound is not ferrous sulfide
+        {
+            "syn": "s() -> 'anything' 'that' 'is' 'not' 'a' common_noun(E1, T2) 'is' not_proper_noun(E1, T3)",
+            "sem": lambda np, not_proper_noun: [
+                Atom(
+                    "intent_check", [Atom("let", T2, "false"), Atom("and_3v", [np], [not_proper_noun], T2, T3, T1)], T1
+                ),
             ],
         },
         # no oxide is white
@@ -231,6 +240,15 @@ def get_read_grammar():
             "syn": "proper_noun(E1) -> /\\w+/ common_noun(E1, T1)",
             "sem": lambda token, common_noun: Atom("name", E1, token + " " + common_noun.predicate).execute(
                 [Atom("let", T1, "true"), Atom("store", [common_noun])]
+            ),
+        },
+        {
+            "syn": "not_proper_noun(E1, T1) -> 'not' proper_noun(E2)",
+            "sem": lambda proper_noun: Atom(
+                "not_equals_3v",
+                E1,
+                proper_noun,
+                T1,
             ),
         },
     ]

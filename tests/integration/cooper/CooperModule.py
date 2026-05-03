@@ -17,7 +17,16 @@ class CooperModule(SomeModule):
         self.add_relation(Relation("resolve_name", query_function=self.resolve_name))
         self.add_relation(Relation("not_3v", query_function=self.not_3v))
         self.add_relation(Relation("and_3v", query_function=self.and_3v))
+        self.add_relation(Relation("not_equals_3v", query_function=self.not_equals_3v))
         self.add_relation(Relation("create_records_3v", query_function=self.create_records_3v))
+        self.add_relation(
+            Relation(
+                "entity",
+                query_function=self.common_query,
+                write_function=self.common_write,
+                formal_parameters=["id", "name"],
+            )
+        )
         self.add_relation(
             Relation(
                 "metal",
@@ -211,6 +220,7 @@ class CooperModule(SomeModule):
     def and_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
         """
         Performs an and on atoms1 and atoms2.
+        todo: currently this only works when all results are the same (it presumes there's one result)
         """
 
         atoms1, atoms2, var1, var2, _ = arguments
@@ -220,12 +230,12 @@ class CooperModule(SomeModule):
         if isinstance(var1, Variable):
             truth1 = results[0][var1.name] if len(results) > 0 else "unknown"
         else:
-            truth1 = var1
+            truth1 = "true" if len(results) > 0 else "false"
 
         if isinstance(var2, Variable):
             truth2 = results[0][var2.name] if len(results) > 0 else "unknown"
         else:
-            truth2 = var2
+            truth2 = "true" if len(results) > 0 else "false"
 
         if truth1 == "true" and truth2 == "false":
             return [[None, None, None, None, "false"]]
@@ -249,6 +259,18 @@ class CooperModule(SomeModule):
             return [[None, None, None, None, "unknown"]]
 
         raise Exception(f"'and_3v' doesn't accept arguments: {arguments}")
+
+    def not_equals_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
+        """
+        Performs an and on atoms1 and atoms2.
+        """
+
+        value1, value2, _ = arguments
+
+        if value1 != value2:
+            return [[None, None, "true"]]
+        else:
+            return [[None, None, "false"]]
 
     def create_records_3v(self, arguments: list, context: ExecutionContext) -> list[list]:
         atoms = arguments[0]
