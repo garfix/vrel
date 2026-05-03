@@ -207,7 +207,7 @@ class CooperModule(SomeModule):
         if isinstance(var, Variable):
             truth = results[0][var.name] if len(results) > 0 else "unknown"
         else:
-            truth = "true" if len(results) > 0 else "false"
+            raise Exception("Unhandled case")
 
         if truth == "true":
             return [[None, None, "false"]]

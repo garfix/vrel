@@ -4,6 +4,10 @@ from vrel.entity.Variable import Variable
 
 
 def create_records_3v(input: list[Atom], binding: dict = {}):
+    """
+    Remove AND and NOT from the input, and bind all the truth values
+    in preparation for storage in the database
+    """
     if isinstance(input, list):
         return create_records_list(input, binding)
     elif isinstance(input, Atom):
@@ -37,19 +41,15 @@ def create_records_atom(atom: Atom, binding: dict):
     elif atom.predicate == "not_3v":
         atoms, arg_in, arg_out = atom.arguments
         if isinstance(arg_out, Variable):
-            if arg_out.name in binding:
-                value_in = binding[arg_out.name]
-            else:
-                value_in = "true"
+            value_out = "true"
         else:
-            value_in = arg_out
+            value_out = arg_out
 
-        value_out = "false" if value_in == "true" else "true"
-        binding[arg_in.name] = value_out
+        value_in = "false" if value_out == "true" else "true"
+        binding[arg_in.name] = value_in
         records.extend(create_records_3v(atoms, binding))
 
     else:
-        # other atoms: create a record, and bind the variables to `true`
         new_atom = bind_variables(atom, binding)
         records.append(new_atom)
 
