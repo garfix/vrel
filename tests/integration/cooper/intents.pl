@@ -20,12 +20,21 @@ intent_tell(Fact, Truth) :-
 intent_learn(Head, Body, T1, T2, Truth1, Truth2) :-
     (
         # try to find a counter example: Body AND NOT(Head)
+        scope(
+            # dark_gray(E4, 'true'),
+            # log(E4),
+            # sulfide(E1, 'true'),
+            let(T1, 'false'),
+            not_3v(sulfide(E1, T1), T1, T4),
+            # log(T4)
+        ),
         and_3v(
             Body,
             not_3v(Head, T1, T4),
             T2,
             T4,
             T3),
+        log(T3),
         equals(T3, 'true'),
         store(output_type('false'))
     ;
@@ -34,6 +43,8 @@ intent_learn(Head, Body, T1, T2, Truth1, Truth2) :-
         let(T2, Truth2),
         create_records_3v(Head, Head_r),
         create_records_3v(Body, Body_r),
+        log(Head_r),
+        log(Body_r),
         learn_rule(Head_r, Body_r),
         store(output_type('ok'))
     ).

@@ -207,7 +207,7 @@ class CooperModule(SomeModule):
         if isinstance(var, Variable):
             truth = results[0][var.name] if len(results) > 0 else "unknown"
         else:
-            truth = var
+            truth = "true" if len(results) > 0 else "false"
 
         if truth == "true":
             return [[None, None, "false"]]
@@ -226,6 +226,12 @@ class CooperModule(SomeModule):
         atoms1, atoms2, var1, var2, _ = arguments
 
         results = context.solver.solve(atoms1 + atoms2)
+
+        context.logger.add_comment(str(atoms1))
+        context.logger.add_comment(str(var1))
+        context.logger.add_comment(str(atoms2))
+        context.logger.add_comment(str(var2))
+        context.logger.add_comment(str(results))
 
         if isinstance(var1, Variable):
             truth1 = results[0][var1.name] if len(results) > 0 else "unknown"

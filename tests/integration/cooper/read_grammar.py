@@ -128,10 +128,19 @@ def get_read_grammar():
             ],
         },
         # no metal is a nonmetal
+        # no dark-gray thing is a sulfide
         {
-            "syn": "s() -> 'no' common_noun(E1, T1) 'is' 'a' common_noun(E1, T2)",
+            "syn": "s() -> 'no' np(E1, T1) 'is' 'a' common_noun(E1, T2)",
             "sem": lambda common_noun1, common_noun2: [
-                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "false", "true"),
+                Atom(
+                    "intent_learn",
+                    [Atom("not_3v", [common_noun2], T2, T4)],
+                    [common_noun1],
+                    T4,
+                    T1,
+                    "true",
+                    "true",
+                ),
             ],
         },
         # a solid is not a gas
