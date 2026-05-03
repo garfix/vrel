@@ -53,6 +53,4 @@ def create_records_atom(atom: Atom, binding: dict):
         new_atom = bind_variables(atom, binding)
         records.append(new_atom)
 
-        # records.extend(create_records_3v(atom.modifiers, binding))
-
     return records

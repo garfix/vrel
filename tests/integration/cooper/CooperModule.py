@@ -227,21 +227,21 @@ class CooperModule(SomeModule):
 
         results = context.solver.solve(atoms1 + atoms2)
 
-        context.logger.add_comment(str(atoms1))
-        context.logger.add_comment(str(var1))
-        context.logger.add_comment(str(atoms2))
-        context.logger.add_comment(str(var2))
-        context.logger.add_comment(str(results))
+        # context.logger.add_comment(str(atoms1))
+        # context.logger.add_comment(str(var1))
+        # context.logger.add_comment(str(atoms2))
+        # context.logger.add_comment(str(var2))
+        # context.logger.add_comment(str(results))
 
         if isinstance(var1, Variable):
             truth1 = results[0][var1.name] if len(results) > 0 else "unknown"
         else:
-            truth1 = "true" if len(results) > 0 else "false"
+            raise Exception("Unhandled case")
 
         if isinstance(var2, Variable):
             truth2 = results[0][var2.name] if len(results) > 0 else "unknown"
         else:
-            truth2 = "true" if len(results) > 0 else "false"
+            raise Exception("Unhandled case")
 
         if truth1 == "true" and truth2 == "false":
             return [[None, None, None, None, "false"]]

@@ -102,11 +102,9 @@ def get_read_grammar():
         },
         # anything that is not a compound is not ferrous sulfide
         {
-            "syn": "s() -> 'anything' 'that' 'is' 'not' 'a' common_noun(E1, T2) 'is' not_proper_noun(E1, T3)",
+            "syn": "s() -> np(E1, T2) 'is' not_proper_noun(E1, T3)",
             "sem": lambda np, not_proper_noun: [
-                Atom(
-                    "intent_check", [Atom("let", T2, "false"), Atom("and_3v", [np], [not_proper_noun], T2, T3, T1)], T1
-                ),
+                Atom("intent_check", [Atom("and_3v", [np], [not_proper_noun], T2, T3, T1)], T1),
             ],
         },
         # no oxide is white
@@ -168,6 +166,10 @@ def get_read_grammar():
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},
         {"syn": "np(E1, T1) -> nbar(E1, T1)", "sem": lambda nbar: nbar},
         {"syn": "np(E1, T1) -> 'not' np(E1, T2)", "sem": lambda np: Atom("not_3v", [np], T2, T1)},
+        {
+            "syn": "np(E1, T1) -> 'anything' 'that' 'is' np(E1, T3)",
+            "sem": lambda np: Atom("and_3v", [Atom("entity", E1, Name), Atom("let", T2, "true")], [np], T2, T3, T1),
+        },
         # nbar
         {"syn": "nbar(E1, T1) -> noun(E1, T1)", "sem": lambda noun: noun},
         {
