@@ -59,13 +59,29 @@ def get_read_grammar():
                 Atom(
                     "scope",
                     [
-                        Atom("intent_learn", [common_noun1], [common_noun2], T1, T2, "false", "true"),
+                        Atom(
+                            "intent_learn",
+                            [Atom("not_3v", [common_noun1], T1, T4)],
+                            [common_noun2],
+                            T4,
+                            T2,
+                            "true",
+                            "true",
+                        ),
                     ],
                 ),
                 Atom(
                     "scope",
                     [
-                        Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "false", "true"),
+                        Atom(
+                            "intent_learn",
+                            [Atom("not_3v", [common_noun2], T2, T4)],
+                            [common_noun1],
+                            T4,
+                            T1,
+                            "true",
+                            "true",
+                        ),
                     ],
                 ),
             ],
@@ -145,7 +161,7 @@ def get_read_grammar():
         {
             "syn": "s() -> a() common_noun(E1, T1) 'is' 'not' 'a' common_noun(E1, T2)",
             "sem": lambda a, common_noun1, common_noun2: [
-                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "false", "true"),
+                Atom("intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1, "true", "true"),
             ],
         },
         # any thing that burns rapidly burns
