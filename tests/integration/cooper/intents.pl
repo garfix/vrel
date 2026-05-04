@@ -17,7 +17,7 @@ intent_tell(Fact, Truth) :-
     ).
 
 # learn an induction rule
-intent_learn(Head, Body, T1, T2, Truth1, Truth2) :-
+intent_learn(Head, Body, T1, T2) :-
     (
         # try to find a counter example: Body AND NOT(Head)
         and_3v(
@@ -30,8 +30,8 @@ intent_learn(Head, Body, T1, T2, Truth1, Truth2) :-
         store(output_type('false'))
     ;
         # add the rule
-        let(T1, Truth1),
-        let(T2, Truth2),
+        let(T1, "true"),
+        let(T2, "true"),
         create_records_3v(Head, Head_r),
         create_records_3v(Body, Body_r),
         learn_rule(Head_r, Body_r),

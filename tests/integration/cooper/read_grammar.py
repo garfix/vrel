@@ -59,29 +59,13 @@ def get_read_grammar():
                 Atom(
                     "scope",
                     [
-                        Atom(
-                            "intent_learn",
-                            [Atom("not_3v", [common_noun1], T1, T4)],
-                            [common_noun2],
-                            T4,
-                            T2,
-                            "true",
-                            "true",
-                        ),
+                        Atom("intent_learn", [Atom("not_3v", [common_noun1], T1, T4)], [common_noun2], T4, T2),
                     ],
                 ),
                 Atom(
                     "scope",
                     [
-                        Atom(
-                            "intent_learn",
-                            [Atom("not_3v", [common_noun2], T2, T4)],
-                            [common_noun1],
-                            T4,
-                            T1,
-                            "true",
-                            "true",
-                        ),
+                        Atom("intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1),
                     ],
                 ),
             ],
@@ -90,7 +74,7 @@ def get_read_grammar():
         {
             "syn": "s() -> np(E1, T1) 'are' common_noun(E2, T2)",
             "sem": lambda common_noun1, common_noun2: [
-                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "true", "true"),
+                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1),
             ],
         },
         # metals are metallic, metallic(X) :- metal(X)
@@ -99,7 +83,7 @@ def get_read_grammar():
         {
             "syn": "s() -> np(E1, T1) 'are' adj(E1, T2)",
             "sem": lambda np, adj: [
-                Atom("intent_learn", [adj], [np], T2, T1, "true", "true"),
+                Atom("intent_learn", [adj], [np], T2, T1),
             ],
         },
         # some oxides are white
@@ -113,7 +97,7 @@ def get_read_grammar():
         {
             "syn": "s() -> 'every' common_noun(E1, T1) 'is' a() common_noun(E1, T2)",
             "sem": lambda common_noun1, a, common_noun2: [
-                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1, "true", "true"),
+                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1),
             ],
         },
         # anything that is not a compound is not ferrous sulfide
@@ -146,22 +130,14 @@ def get_read_grammar():
         {
             "syn": "s() -> 'no' np(E1, T1) 'is' 'a' common_noun(E1, T2)",
             "sem": lambda common_noun1, common_noun2: [
-                Atom(
-                    "intent_learn",
-                    [Atom("not_3v", [common_noun2], T2, T4)],
-                    [common_noun1],
-                    T4,
-                    T1,
-                    "true",
-                    "true",
-                ),
+                Atom("intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1),
             ],
         },
         # a solid is not a gas
         {
             "syn": "s() -> a() common_noun(E1, T1) 'is' 'not' 'a' common_noun(E1, T2)",
             "sem": lambda a, common_noun1, common_noun2: [
-                Atom("intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1, "true", "true"),
+                Atom("intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1),
             ],
         },
         # any thing that burns rapidly burns
@@ -169,7 +145,7 @@ def get_read_grammar():
         {
             "syn": "s() -> np(E1, T1) vp(E1, T2)",
             "sem": lambda nbar, vp: [
-                Atom("intent_learn", [vp], [nbar], T2, T1, "true", "true"),
+                Atom("intent_learn", [vp], [nbar], T2, T1),
             ],
         },
         # np
