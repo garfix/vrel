@@ -110,20 +110,7 @@ def get_read_grammar():
         # no oxide is white
         {
             "syn": "s() -> 'no' np(E1, T2) 'is' adj(E1, T3)",
-            "sem": lambda np, adj: [
-                Atom(
-                    "intent_check",
-                    [
-                        Atom(
-                            "not_3v",
-                            [Atom("and_3v", [np], [adj], T2, T3, T1)],
-                            T1,
-                            T4,
-                        )
-                    ],
-                    T4,
-                ),
-            ],
+            "sem": lambda np, adj: [Atom("intent_learn", [Atom("not_3v", [adj], T3, T4)], [np], T4, T2)],
         },
         # no metal is a nonmetal
         # no dark-gray thing is a sulfide
