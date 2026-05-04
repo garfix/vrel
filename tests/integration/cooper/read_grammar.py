@@ -21,31 +21,29 @@ def get_read_grammar():
         # magnesium burns rapidly
         {
             "syn": "s() -> proper_noun(E1) vp(E1, T1)",
-            "sem": lambda proper_noun, vp: [Atom("intent_tell", [proper_noun, vp], T1)],
+            "sem": lambda proper_noun, vp: Atom("intent_tell", [proper_noun, vp], T1),
         },
         # magnesium is a metal
         {
             "syn": "s() -> proper_noun(E1) 'is' np(E1, T1)",
-            "sem": lambda proper_noun, np: [Atom("intent_tell", [proper_noun, np], T1)],
+            "sem": lambda proper_noun, np: Atom("intent_tell", [proper_noun, np], T1),
         },
         # gasoline is combustable
         {
             "syn": "s() -> proper_noun(E1) 'is' adj(E1, T1)",
-            "sem": lambda proper_noun, adj: [Atom("intent_tell", [proper_noun, adj], T1)],
+            "sem": lambda proper_noun, adj: Atom("intent_tell", [proper_noun, adj], T1),
         },
         # salt is natrium chloride
         # magnesium is magnesium
         {
             "syn": "s() -> proper_noun(E1) 'is' proper_noun(E2)",
-            "sem": lambda proper_noun1, proper_noun2: [
-                Atom(
-                    "intent_tell",
-                    # on query, use `same_as` query function: provide nonempty resultset on success
-                    # on write, simply write to the table `same_as`
-                    [Atom("same_as", proper_noun1, proper_noun2), Atom("let", T1, "true")],
-                    T1,
-                )
-            ],
+            "sem": lambda proper_noun1, proper_noun2: Atom(
+                "intent_tell",
+                # on query, use `same_as` query function: provide nonempty resultset on success
+                # on write, simply write to the table `same_as`
+                [Atom("same_as", proper_noun1, proper_noun2), Atom("let", T1, "true")],
+                T1,
+            ),
         },
         # elements are not compounds
         # mutual exclusivity
@@ -55,85 +53,64 @@ def get_read_grammar():
         # cannot use A :- not(B), B :- not(A), because of infinite recursion
         {
             "syn": "s() -> common_noun(E1, T1) copula() 'not' common_noun(E1, T2)",
-            "sem": lambda common_noun1, copula, common_noun2: [
-                Atom(
-                    "scope",
-                    [
-                        Atom("intent_learn", [Atom("not_3v", [common_noun1], T1, T4)], [common_noun2], T4, T2),
-                    ],
-                ),
-                Atom(
-                    "scope",
-                    [
-                        Atom("intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1),
-                    ],
-                ),
-            ],
+            "sem": lambda common_noun1, copula, common_noun2: Atom(
+                "intent_mutual_exclusive", [common_noun1], [common_noun2], T1, T2
+            ),
         },
         # oxides are compounds, compound(X) :- oxide(X)
         {
             "syn": "s() -> np(E1, T1) 'are' common_noun(E2, T2)",
-            "sem": lambda common_noun1, common_noun2: [
-                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1),
-            ],
+            "sem": lambda common_noun1, common_noun2: Atom("intent_learn", [common_noun2], [common_noun1], T2, T1),
         },
         # metals are metallic, metallic(X) :- metal(X)
         # oxides are not white
         # dark-gray things are not white
         {
             "syn": "s() -> np(E1, T1) 'are' adj(E1, T2)",
-            "sem": lambda np, adj: [
-                Atom("intent_learn", [adj], [np], T2, T1),
-            ],
+            "sem": lambda np, adj: Atom("intent_learn", [adj], [np], T2, T1),
         },
         # some oxides are white
         {
             "syn": "s() -> 'some' nbar(E1, T2) 'are' adj(E1, T3)",
-            "sem": lambda np, adj: [
-                Atom("intent_check", [Atom("and_3v", [np], [adj], T2, T3, T1)], T1),
-            ],
+            "sem": lambda np, adj: Atom("intent_check", [Atom("and_3v", [np], [adj], T2, T3, T1)], T1),
         },
         # every oxide is an oxide
         {
             "syn": "s() -> 'every' common_noun(E1, T1) 'is' a() common_noun(E1, T2)",
-            "sem": lambda common_noun1, a, common_noun2: [
-                Atom("intent_learn", [common_noun2], [common_noun1], T2, T1),
-            ],
+            "sem": lambda common_noun1, a, common_noun2: Atom("intent_learn", [common_noun2], [common_noun1], T2, T1),
         },
         # anything that is not a compound is not ferrous sulfide
         {
             "syn": "s() -> np(E1, T2) 'is' not_proper_noun(E1, T3)",
-            "sem": lambda np, not_proper_noun: [
-                Atom("intent_check", [Atom("and_3v", [np], [not_proper_noun], T2, T3, T1)], T1),
-            ],
+            "sem": lambda np, not_proper_noun: Atom(
+                "intent_check", [Atom("and_3v", [np], [not_proper_noun], T2, T3, T1)], T1
+            ),
         },
         # no oxide is white
         {
             "syn": "s() -> 'no' np(E1, T2) 'is' adj(E1, T3)",
-            "sem": lambda np, adj: [Atom("intent_learn", [Atom("not_3v", [adj], T3, T4)], [np], T4, T2)],
+            "sem": lambda np, adj: Atom("intent_learn", [Atom("not_3v", [adj], T3, T4)], [np], T4, T2),
         },
         # no metal is a nonmetal
         # no dark-gray thing is a sulfide
         {
             "syn": "s() -> 'no' np(E1, T1) 'is' 'a' common_noun(E1, T2)",
-            "sem": lambda common_noun1, common_noun2: [
-                Atom("intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1),
-            ],
+            "sem": lambda common_noun1, common_noun2: Atom(
+                "intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1
+            ),
         },
         # a solid is not a gas
         {
             "syn": "s() -> a() common_noun(E1, T1) 'is' 'not' 'a' common_noun(E1, T2)",
-            "sem": lambda a, common_noun1, common_noun2: [
-                Atom("intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1),
-            ],
+            "sem": lambda a, common_noun1, common_noun2: Atom(
+                "intent_learn", [Atom("not_3v", [common_noun2], T2, T4)], [common_noun1], T4, T1
+            ),
         },
         # any thing that burns rapidly burns
         # combustable things burn
         {
             "syn": "s() -> np(E1, T1) vp(E1, T2)",
-            "sem": lambda nbar, vp: [
-                Atom("intent_learn", [vp], [nbar], T2, T1),
-            ],
+            "sem": lambda nbar, vp: Atom("intent_learn", [vp], [nbar], T2, T1),
         },
         # np
         {"syn": "np(E1, T1) -> a() nbar(E1, T1)", "sem": lambda a, nbar: nbar},

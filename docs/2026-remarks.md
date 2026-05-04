@@ -1,3 +1,9 @@
+## 2026-05-04
+
+Started Chat-80 again.
+
+Sentences must also yield Atoms, not a list of atoms.
+
 ## 2026-04-30
 
     oxides are not white

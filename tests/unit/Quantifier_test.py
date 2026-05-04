@@ -3,11 +3,11 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.Solver import Solver
-from vrel.core.constants import ARG_DETERMINER, E1, E3
+from vrel.core.constants import E1, E3
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Relation
+from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
@@ -61,19 +61,20 @@ class TestQuantification(unittest.TestCase):
         data_source.insert("has_child", ["parent", "child"], ["william", "oswald"])
         data_source.insert("has_child", ["parent", "child"], ["william", "bertrand"])
 
-        model = Model([SimpleModule(data_source)])
-        solver = Solver(model)
+        Query = Variable("query")
 
-        def have(det: Atom, nbar: Atom):
-            return nbar.mod(Atom(ARG_DETERMINER, [det]))
+        model = Model([SimpleModule(data_source)])
 
         simple_grammar = [
             {
                 "syn": "s() -> np(E1) verb(E1, E2) np(E2)",
-                "sem": lambda np1, verb, np2: [
-                    Atom("create_query", [Atom(verb, np1, np2)], E3),
-                    Atom("exec", E3),
-                ],
+                "sem": lambda np1, verb, np2: Atom(
+                    "exec",
+                    [
+                        Atom("create_query", [Atom(verb, np1, np2)], Query),
+                        Atom("exec", Query),
+                    ],
+                ),
             },
             {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: "have"},
             {

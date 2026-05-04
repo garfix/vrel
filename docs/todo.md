@@ -53,6 +53,10 @@
 
 - the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
 
+## Dialog and database
+
+Make a distinction between dialog constants (short term) and database ids (long term)
+
 ## booleans
 
 Create constants for true / false.

@@ -35,7 +35,7 @@ class AtomExecutor(SomeProcessor):
 
             solver = Solver(self.model, sentence, logger)
 
-            bindings = solver.solve(sentence.semantics)
+            bindings = solver.solve([sentence.semantics])
 
             product = AtomExecutorProduct(bindings)
 

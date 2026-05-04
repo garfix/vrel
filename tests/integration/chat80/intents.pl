@@ -2,8 +2,7 @@
 
 optimize(SemIn, SemOut) :-
     create_query(SemIn, Q),
-    optimize_frontize(Q, F),
-    optimize_cost_sort(F, S),
+    optimize_cost_sort(Q, S),
     optimize_isolate(S, SemOut).
 
 intent_list(E1, Sem) :-

@@ -93,12 +93,10 @@ class Solver(SomeSolver):
         else:
             return [bound_arguments]
 
-    def find_relation_values(
-        self, relation: Relation, bound_arguments: list, binding: dict, sentence: SemanticSentence = None
-    ) -> list[dict]:
+    def find_relation_values(self, relation: Relation, bound_arguments: list, binding: dict) -> list[dict]:
 
         predicate = relation.predicate
-        context = ExecutionContext(relation, self, sentence, self.model, self.logger)
+        context = ExecutionContext(relation, self, self.sentence, self.model, self.logger)
 
         # call the relation's query function
         out_values = relation.query_function(bound_arguments, context)

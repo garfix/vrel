@@ -38,6 +38,10 @@ intent_learn(Head, Body, T1, T2) :-
         store(output_type('ok'))
     ).
 
+intent_mutual_exclusive(CommonNoun1, CommonNoun2, T1, T2) :-
+    scope(intent_learn(not_3v(CommonNoun1, T1, T4), CommonNoun2, T4, T2)),
+    scope(intent_learn(not_3v(CommonNoun2, T2, T4), CommonNoun1, T4, T1)).
+
 intent_check(Fact, Truth) :-
     resolve_names(Fact, Resolved),
     exec(Resolved),

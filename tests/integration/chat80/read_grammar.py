@@ -7,9 +7,7 @@ def get_read_grammar():
         # sentence
         {
             "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
-            "sem": lambda np1, verb, np2: Atom(
-                E1, "intent_yn", Atom(E1, verb, np1, np2)
-            ),
+            "sem": lambda np1, verb, np2: Atom("intent_yn", E1, Atom(E1, verb, np1, np2)),
         },
         # {
         #     "syn": "s(E1) -> 'is' 'there' np(E1) + '?'",
@@ -21,7 +19,7 @@ def get_read_grammar():
         # },
         {
             "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' + '?'",
-            "sem": lambda nbar: Atom(E1, "intent_list", nbar),
+            "sem": lambda nbar: Atom("intent_list", E1, [nbar]),
         },
         # {
         #     "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' pp(E1) + '?'",
@@ -189,7 +187,7 @@ def get_read_grammar():
         # { "syn": "adj(E1) -> 'american'", "sem": lambda: [('american', E1)] },
         # { "syn": "adj(E1) -> 'asian'", "sem": lambda: [('asian', E1)] },
         # noun
-        {"syn": "noun(E1) -> 'river'", "sem": lambda: Atom(E1, "river")},
+        {"syn": "noun(E1) -> 'river'", "sem": lambda: Atom("river", E1)},
         # { "syn": "noun(E1) -> 'capital'",       "sem": lambda: [('capital', E1)] },
         # { "syn": "noun(E1) -> 'ocean'",         "sem": lambda: [('ocean', E1)] },
         # { "syn": "noun(E1) -> 'country'",       "sem": lambda: [('country', E1)] },

@@ -10,24 +10,27 @@ def get_en_us_read_grammar():
         {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
         {
             "syn": "np(E1) -> det(E1) nbar(E1)",
-            "sem": lambda det, nbar: nbar.add_arguments(det),
+            "sem": lambda det, nbar: nbar.with_determiner(det),
         },
         # det
-        {"syn": "det(E1) -> 'a'", "sem": lambda: {"determiner": "a"}},
+        {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
         # noun
         {
             "syn": "noun(E1) -> /\\w+/+'s'",
-            "sem": lambda token: Atom(E1, token),
+            "sem": lambda token: Atom(token, E1),
             "boost": -1,
         },
         {
             "syn": "noun(E1) -> /\\w+/+'ies'",
-            "sem": lambda token: lambda: Atom(E1, token + "y"),
+            "sem": lambda token: lambda: Atom(
+                token + "y",
+                E1,
+            ),
             "boost": -1,
         },
         {
             "syn": "noun(E1) -> proper_noun(E1)",
-            "sem": lambda proper_noun: Atom(UNKNOWN_PREDICATE, E1, {"name": proper_noun}),
+            "sem": lambda proper_noun: Atom("name", E1, proper_noun),
             "boost": -2,
         },
         # proper noun

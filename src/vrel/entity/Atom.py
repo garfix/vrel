@@ -2,7 +2,6 @@ from __future__ import annotations
 from vrel.entity.Sentinel import Sentinel
 from vrel.entity.Variable import Variable
 
-
 MODIFIER_TYPE_PRE = "pre"
 MODIFIER_TYPE_POST = "post"
 MODIFIER_TYPE_DURING = "during"

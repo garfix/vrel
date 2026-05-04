@@ -23,7 +23,6 @@ from write_grammar import get_write_grammar
 from Chat80Module import Chat80Module
 from read_grammar import get_read_grammar
 
-
 tests = [
     [
         "What rivers are there?",
@@ -107,17 +106,13 @@ class Chat80Test(unittest.TestCase):
 
         # define the pipeline
 
-        read_grammar = SimpleGrammarRulesParser().parse_read_grammar(
-            get_en_us_read_grammar() + get_read_grammar()
-        )
+        read_grammar = SimpleGrammarRulesParser().parse_read_grammar(get_en_us_read_grammar() + get_read_grammar())
         parser = BasicParser(read_grammar)
 
         composer = SemanticComposer(parser)
         executor = AtomExecutor(composer, model)
 
-        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(
-            get_en_us_write_grammar() + get_write_grammar()
-        )
+        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
         logger = Logger()
@@ -133,11 +128,5 @@ class Chat80Test(unittest.TestCase):
             logger=logger,
         )
 
-        # logger.log_no_tests()
-        # logger.log_all_tests()
-        logger.log_products()
-
         tester = DialogTester(self, tests, system, logger)
         tester.run()
-
-        print(logger)

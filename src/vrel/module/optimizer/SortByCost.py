@@ -59,10 +59,10 @@ class SortByCost:
     ) -> Atom:
         new_args = atom.arguments.copy()
         replaced = False
-        for key, value in atom.arguments.items():
+        for index, value in enumerate(atom.arguments):
             if isinstance(value, list):
                 if len(value) > 0 and isinstance(value[0], Atom):
-                    new_args[key] = self.sort(value, solver, model, bound_variables)
+                    new_args[index] = self.sort(value, solver, model, bound_variables)
                     replaced = True
         if replaced:
             return Atom(atom.predicate, new_args)
@@ -78,7 +78,7 @@ class SortByCost:
         costs = []
         for relation in relations:
             unbound_argument_size_product = 1
-            arguments = atom.numbered_arguments
+            arguments = atom.arguments
 
             if relation.relation_size == IGNORED:
                 cost = INFINITE

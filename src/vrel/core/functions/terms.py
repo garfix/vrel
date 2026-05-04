@@ -90,8 +90,8 @@ def get_variables(term: any) -> list[str]:
             for v in get_variables(arg):
                 variables.add(v)
     elif isinstance(term, Atom):
-        for _, value in term.arguments.items():
-            for v in get_variables(value):
+        for arg in term.arguments:
+            for v in get_variables(arg):
                 variables.add(v)
 
     return list(variables)
