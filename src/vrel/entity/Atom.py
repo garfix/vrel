@@ -87,6 +87,8 @@ class Atom:
         return self._modify(MODIFIER_TYPE_ANYWHERE, atoms)
 
     def _modify(self, type: str, atoms: list[Atom]):
+        if not isinstance(atoms, list):
+            raise Exception(f"Modifiers must be a list: {atoms}")
         if len(self.modifiers) > 0:
             raise Exception("The atom already has modifiers")
         a = self.copy()

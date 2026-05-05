@@ -25,10 +25,10 @@ def get_read_grammar():
         #     "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' pp(E1) + '?'",
         #     "sem": lambda nbar, pp: [('intent_list', e1, nbar + pp)],
         # },
-        # {
-        #     "syn": "s(E1) -> 'what' 'is' np(E1) + '?'",
-        #     "sem": lambda np: [('intent_list', e1, apply(np, []))],
-        # },
+        {
+            "syn": "s(E1) -> 'what' 'is' np(E1) + '?'",
+            "sem": lambda np: Atom("intent_list", E1, [np]),
+        },
         # {
         #     "syn": "s(E1) -> 'what' 'are' np(E1) + '?'",
         #     "sem": lambda np: [('intent_list', e1, apply(np, []))],
@@ -116,10 +116,6 @@ def get_read_grammar():
         # { "syn": "tv_continuous(E1, E2) -> 'exceeding'", "sem": lambda: [('greater_than', E1, E2)] },
         # ditransitive verbs
         # { "syn": "dtv(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: [('flows_from_to', E1, E2, E3)] },
-        # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
-        # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
-        # { "syn": "nbar(E1) -> nbar(E1) relative_clause(E1)", "sem": lambda nbar, relative_clause: nbar + relative_clause },
-        # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
         # relative clauses
         # { "syn": "relative_clause(E1) -> 'that' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
         # { "syn": "relative_clause(E1) -> 'that' vp_noobj_sub(E1)", "sem": lambda vp_noobj_sub: vp_noobj_sub },
@@ -130,14 +126,19 @@ def get_read_grammar():
         # { "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_nosub_obj_continuous(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
         # np
         {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
-        # nbar
-        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
         {
             "syn": "np(E1) -> det(E1) nbar(E1)",
             "sem": lambda det, nbar: nbar.with_determiner(det),
         },
+        # nbar
+        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
+        # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
+        # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
+        # { "syn": "nbar(E1) -> nbar(E1) relative_clause(E1)", "sem": lambda nbar, relative_clause: nbar + relative_clause },
+        {"syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar.any([pp])},
         # det
         {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
+        {"syn": "det(E1) -> 'the'", "sem": lambda: Atom("the")},
         # np
         # { "syn": "np(E1) -> nbar(E1)", "sem": lambda nbar:
         #     SemanticFunction([Body], nbar + Body) },
@@ -185,11 +186,11 @@ def get_read_grammar():
         # { "syn": "number(E1) -> number(E1) 'million'", "sem": lambda number: number * 1000000 },
         # pp
         # { "syn": "pp(E1) -> 'not' pp(E1)", "sem": lambda pp: [('not', pp)] },
-        # { "syn": "pp(E1) -> preposition(E1, E2) np(E2)", "sem": lambda preposition, np: apply(np, preposition) },
+        {"syn": "pp(E1) -> preposition(E1, E2) np(E2)", "sem": lambda preposition, np: preposition.any([np])},
         # { "syn": "pp(E1) -> 'south' 'of' np(E2)", "sem": lambda np: apply(np, [('south_of', E1, E2)]) },
         # { "syn": "pp(E1) -> pp(E1) 'and' pp(E1)", "sem": lambda pp1, pp2: pp1 + pp2 },
         # { "syn": "preposition(E1, E2) -> 'in'", "sem": lambda: [("in", E1, E2)]},
-        # { "syn": "preposition(E1, E2) -> 'of'", "sem": lambda: [("of", E1, E2)]},
+        {"syn": "preposition(E1, E2) -> 'of'", "sem": lambda: Atom("of", E1, E2)},
         # adjective phrases
         # { "syn": "adjp(E1) -> adj(E1)", "sem": lambda adj: adj },
         # { "syn": "adj(E1) -> 'european'", "sem": lambda: [('european', E1)] },
@@ -197,7 +198,7 @@ def get_read_grammar():
         # { "syn": "adj(E1) -> 'american'", "sem": lambda: [('american', E1)] },
         # { "syn": "adj(E1) -> 'asian'", "sem": lambda: [('asian', E1)] },
         # noun
-        {"syn": "noun(E1) -> singular_noun(E1)", "sem": lambda token: Atom(token, E1)},
+        {"syn": "noun(E1) -> singular_noun(E1)", "sem": lambda singular_noun: singular_noun},
         {
             "syn": "noun(E1) -> singular_noun(E1)+'s'",
             "sem": lambda singular_noun: singular_noun,
