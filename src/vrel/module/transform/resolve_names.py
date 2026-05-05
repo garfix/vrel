@@ -87,7 +87,3 @@ def remove_names_from_atom(atom: Atom) -> Atom:
     a.arguments = remove_names_from_arguments(atom.arguments)
     a.modifiers = remove_names_from_atoms(atom.modifiers)
     return a
-
-    # return Atom(atom.predicate, *remove_names_from_arguments(atom.arguments)).mod(
-    #     remove_names_from_atoms(atom.modifiers)
-    # )

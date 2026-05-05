@@ -7,7 +7,7 @@ def get_read_grammar():
         # sentence
         {
             "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
-            "sem": lambda np1, verb, np2: Atom("intent_yn", E1, Atom(E1, verb, np1, np2)),
+            "sem": lambda np1, verb, np2: Atom("intent_yn", [Atom(verb, E2, E3).any([np1, np2])]),
         },
         # {
         #     "syn": "s(E1) -> 'is' 'there' np(E1) + '?'",
@@ -129,6 +129,16 @@ def get_read_grammar():
         # { "syn": "relative_clause(E1) -> 'whose' attr(E1, E2) vp_nosub_obj(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
         # { "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_nosub_obj_continuous(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
         # np
+        {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
+        # nbar
+        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
+        {
+            "syn": "np(E1) -> det(E1) nbar(E1)",
+            "sem": lambda det, nbar: nbar.with_determiner(det),
+        },
+        # det
+        {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
+        # np
         # { "syn": "np(E1) -> nbar(E1)", "sem": lambda nbar:
         #     SemanticFunction([Body], nbar + Body) },
         # { "syn": "np(E1) -> det(E1) nbar(E1)", "sem": lambda det, nbar:
@@ -187,11 +197,29 @@ def get_read_grammar():
         # { "syn": "adj(E1) -> 'american'", "sem": lambda: [('american', E1)] },
         # { "syn": "adj(E1) -> 'asian'", "sem": lambda: [('asian', E1)] },
         # noun
-        {"syn": "noun(E1) -> 'river'", "sem": lambda: Atom("river", E1)},
-        # { "syn": "noun(E1) -> 'capital'",       "sem": lambda: [('capital', E1)] },
-        # { "syn": "noun(E1) -> 'ocean'",         "sem": lambda: [('ocean', E1)] },
-        # { "syn": "noun(E1) -> 'country'",       "sem": lambda: [('country', E1)] },
-        # { "syn": "noun(E1) -> 'sea'",           "sem": lambda: [('sea', E1)] },
-        # { "syn": "noun(E1) -> 'city'",          "sem": lambda: [('city', E1)] },
-        # { "syn": "noun(E1) -> 'continent'",     "sem": lambda: [('continent', E1)] },
+        {"syn": "noun(E1) -> singular_noun(E1)", "sem": lambda token: Atom(token, E1)},
+        {
+            "syn": "noun(E1) -> singular_noun(E1)+'s'",
+            "sem": lambda singular_noun: singular_noun,
+            "boost": -1,
+        },
+        {
+            "syn": "noun(E1) -> proper_noun(E1)",
+            "sem": lambda proper_noun: proper_noun,
+            "boost": -2,
+        },
+        {"syn": "singular_noun(E1) -> 'river'", "sem": lambda: Atom("river", E1)},
+        {"syn": "singular_noun(E1) -> 'capital'", "sem": lambda: Atom("capital", E1)},
+        {"syn": "singular_noun(E1) -> 'ocean'", "sem": lambda: Atom("ocean", E1)},
+        {"syn": "singular_noun(E1) -> 'country'", "sem": lambda: Atom("country", E1)},
+        {"syn": "singular_noun(E1) -> 'sea'", "sem": lambda: Atom("sea", E1)},
+        {"syn": "singular_noun(E1) -> 'city'", "sem": lambda: Atom("city", E1)},
+        {"syn": "singular_noun(E1) -> 'continent'", "sem": lambda: Atom("continent", E1)},
+        {"syn": "noun(E1) -> 'countries'", "sem": lambda: Atom("country", E1)},
+        {"syn": "noun(E1) -> 'cities'", "sem": lambda: Atom("city", E1)},
+        # proper noun
+        {
+            "syn": "proper_noun(E1) -> /\\w+/",
+            "sem": lambda token: Atom("name", E1, token),
+        },
     ]

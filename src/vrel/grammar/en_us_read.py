@@ -4,16 +4,6 @@ from vrel.entity.Atom import Atom
 
 def get_en_us_read_grammar():
     return [
-        # np
-        {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
-        # nbar
-        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
-        {
-            "syn": "np(E1) -> det(E1) nbar(E1)",
-            "sem": lambda det, nbar: nbar.with_determiner(det),
-        },
-        # det
-        {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
         # noun
         {
             "syn": "noun(E1) -> /\\w+/+'s'",

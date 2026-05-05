@@ -198,12 +198,12 @@ class Chat80Module(SomeModule):
         return pops1 + pops2
 
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
-        name = arguments[0].lower()
+        name = arguments[1].lower()
 
         for type in ["country", "city", "sea", "river", "ocean", "continent"]:
             out_values = self.ds.select(type, ["id", "id"], [name, Variable("E1")])
             if len(out_values) > 0:
-                return [[None, value[1]] for value in out_values]
+                return [[value[1], None] for value in out_values]
 
         if name == "equator":
             return [[None, "equator"]]
