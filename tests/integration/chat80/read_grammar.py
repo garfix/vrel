@@ -66,10 +66,10 @@ def get_read_grammar():
         #     "syn": "s(E2) -> 'how' 'large' 'is' np(E1) + '?'",
         #     "sem": lambda np: [('intent_value_with_unit', e2, "ksqmiles", apply(np, []) + [('size_of', E1, E2)])],
         # },
-        # {
-        #     "syn": "s(E1) -> 'which' nbar(E1) 'are' adjp(E1) + '?'",
-        #     "sem": lambda nbar, adjp: [('intent_list', e1, nbar + adjp)],
-        # },
+        {
+            "syn": "s(E1) -> 'which' nbar(E1) 'are' adjp(E1) + '?'",
+            "sem": lambda nbar, adjp: Atom("intent_list", E1, [nbar, adjp]),
+        },
         # {
         #     "syn": "s(E1) -> 'which' nbar(E1) 'are' vp_noobj_sub(E1) + '?'",
         #     "sem": lambda nbar, vp_noobj_sub: [('intent_list', e1, nbar + vp_noobj_sub)],
@@ -198,11 +198,11 @@ def get_read_grammar():
         # { "syn": "preposition(E1, E2) -> 'in'", "sem": lambda: [("in", E1, E2)]},
         {"syn": "preposition(E1, E2) -> 'of'", "sem": lambda: Atom("of", E1, E2)},
         # adjective phrases
-        # { "syn": "adjp(E1) -> adj(E1)", "sem": lambda adj: adj },
-        # { "syn": "adj(E1) -> 'european'", "sem": lambda: [('european', E1)] },
-        # { "syn": "adj(E1) -> 'african'", "sem": lambda: [('african', E1)] },
-        # { "syn": "adj(E1) -> 'american'", "sem": lambda: [('american', E1)] },
-        # { "syn": "adj(E1) -> 'asian'", "sem": lambda: [('asian', E1)] },
+        {"syn": "adjp(E1) -> adj(E1)", "sem": lambda adj: adj},
+        {"syn": "adj(E1) -> 'european'", "sem": lambda: Atom("european", E1)},
+        {"syn": "adj(E1) -> 'african'", "sem": lambda: Atom("african", E1)},
+        {"syn": "adj(E1) -> 'american'", "sem": lambda: Atom("american", E1)},
+        {"syn": "adj(E1) -> 'asian'", "sem": lambda: Atom("asian", E1)},
         # noun
         {"syn": "noun(E1) -> singular_noun(E1)", "sem": lambda singular_noun: singular_noun},
         {
