@@ -2,7 +2,6 @@ from vrel.entity.Sentinel import Sentinel
 from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.Variable import Variable
 
-
 # abstract word categories
 TERMINAL = "terminal"
 GAMMA = "gamma"
@@ -64,5 +63,6 @@ AUTO = Sentinel("<auto-generate>")
 
 # predicates
 PRED_NAME = "name"
+PRED_AND = "and"
 UNKNOWN_PREDICATE = "<unknown>"
 SAME_AS = "same_as"

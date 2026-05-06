@@ -1,4 +1,4 @@
-from vrel.core.constants import ARG_DETERMINER
+from vrel.core.constants import ARG_DETERMINER, PRED_AND
 from vrel.core.functions.terms import format_term
 from vrel.entity.Atom import Atom
 
@@ -59,6 +59,12 @@ def create_atom_query(atom: Atom) -> list[Atom]:
 
     """
 
+    if atom.predicate == PRED_AND:
+        result = []
+        for arg in atom.arguments:
+            result.extend(create_query(arg))
+        return result
+
     extracted_atoms = atom.modifiers
 
     # - extract scoping arguments (the ones with determiners)
@@ -66,7 +72,9 @@ def create_atom_query(atom: Atom) -> list[Atom]:
     new_args = []
     scoping_arguments = []
     for arg in atom.arguments:
-        if isinstance(arg, Atom):
+        if isinstance(arg, list):
+            new_args.append(create_query(arg))
+        elif isinstance(arg, Atom):
             det = arg.determiner
             if det is not None:
                 scoping_arguments.append(arg)

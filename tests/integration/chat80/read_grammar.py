@@ -78,10 +78,11 @@ def get_read_grammar():
         #     "syn": "s(E1) -> 'which' nbar(E1) 'are' vp_noobj_sub(E1) + '?'",
         #     "sem": lambda nbar, vp_noobj_sub: [('intent_list', e1, nbar + vp_noobj_sub)],
         # },
-        # {
-        #     "syn": "s(E1) -> 'which' 'is' np(E1) + '?'",
-        #     "sem": lambda np: [('intent_list', e1, apply(np, []))],
-        # },
+        {
+            # Which is the largest african country?
+            "syn": "s(E1) -> 'which' 'is' np(E1) + '?'",
+            "sem": lambda np: Atom("intent_list", E1, [np]),
+        },
         {
             # Which country's capital is London?
             "syn": "s(E1) -> 'which' nbar(E1, E2) 'is' np(E2) + '?'",
@@ -140,6 +141,7 @@ def get_read_grammar():
             "sem": lambda det, nbar: nbar.with_determiner(det),
         },
         # nbar
+        {"syn": "nbar(E1) -> adjp(E1) nbar(E1)", "sem": lambda adjp, nbar: Atom("and", [adjp], [nbar])},
         {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
         # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
         # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },

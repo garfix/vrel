@@ -33,7 +33,7 @@ tests = [
         "albania, andorra, austria, belgium, bulgaria, cyprus, czechoslovakia, denmark, east_germany, eire, finland, france, greece, hungary, iceland, italy, liechtenstein, luxembourg, malta, monaco, netherlands, norway, poland, portugal, romania, san_marino, spain, sweden, switzerland, united_kingdom, west_germany, yugoslavia",
     ],
     ["Which country's capital is London?", "united_kingdom"],
-    # ["Which is the largest african country?", "sudan"],
+    ["Which is the largest african country?", "sudan"],
     # ["How large is the smallest american country?", "0 ksqmiles"],
     # ["What is the ocean that borders African countries?", "atlantic, indian_ocean"],
     # ["What is the ocean that borders African countries and that borders Asian countries?", "indian_ocean"],

@@ -35,6 +35,7 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("all", query_function=self.determiner_all)),
         self.add_relation(Relation("none", query_function=self.determiner_none)),
         self.add_relation(Relation("exec", query_function=self.exec)),
+        self.add_relation(Relation("and", query_function=self.and_func)),
         self.add_relation(Relation("scope", query_function=self.scope)),
         self.add_relation(Relation("reify", query_function=self.reify)),
         self.add_relation(Relation("store", query_function=self.store)),
@@ -343,6 +344,23 @@ class CoreModule(SomeModule):
     # ('exec', [body-atoms], [body-atoms], ...)
     # executes body atoms and returns the binding
     def exec(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
+        body = []
+        for argument in arguments:
+            body.extend(argument)
+
+        results = context.solver.solve(body)
+        count = len(results)
+
+        if count == 0:
+            result = []
+        else:
+            result = BindingResult(results)
+
+        return result
+
+    # ('and', [body-atoms], [body-atoms], ...)
+    # executes body atoms and returns the binding
+    def and_func(self, arguments: list, context: ExecutionContext) -> BindingResult | list[list]:
         body = []
         for argument in arguments:
             body.extend(argument)
