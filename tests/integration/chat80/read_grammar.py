@@ -66,10 +66,11 @@ def get_read_grammar():
             "syn": "s(E2) -> 'where' 'is' np(E1) + '?'",
             "sem": lambda np: Atom("intent_list", E2, [np, Atom("where", E1, E2)]),
         },
-        # {
-        #     "syn": "s(E2) -> 'how' 'large' 'is' np(E1) + '?'",
-        #     "sem": lambda np: [('intent_value_with_unit', e2, "ksqmiles", apply(np, []) + [('size_of', E1, E2)])],
-        # },
+        {
+            # How large is the smallest american country?
+            "syn": "s(E2) -> 'how' 'large' 'is' np(E1) + '?'",
+            "sem": lambda np: Atom("intent_value_with_unit", E2, "ksqmiles", [np, Atom("size_of", E1, E2)]),
+        },
         {
             "syn": "s(E1) -> 'which' nbar(E1) 'are' adjp(E1) + '?'",
             "sem": lambda nbar, adjp: Atom("intent_list", E1, [nbar, adjp]),
@@ -148,6 +149,10 @@ def get_read_grammar():
         {
             "syn": "np(E1) -> 'the' 'largest' nbar(E1)",
             "sem": lambda nbar: Atom("arg_max", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
+        },
+        {
+            "syn": "np(E1) -> 'the' 'smallest' nbar(E1)",
+            "sem": lambda nbar: Atom("arg_min", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
         },
         {
             "syn": "nbar(E1, E2) -> nbar(E1)+'\\''+'s' np(E2)",

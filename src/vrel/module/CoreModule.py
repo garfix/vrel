@@ -167,8 +167,9 @@ class CoreModule(SomeModule):
         min_var = arguments[0]
         element_var = arguments[1]
         body = arguments[2]
+        function = arguments[3]
 
-        results = context.solver.solve(body)
+        results = context.solver.solve(body + function)
 
         if len(results) == 0:
             return []
@@ -180,7 +181,7 @@ class CoreModule(SomeModule):
                 min = result[element_var.name]
                 entity = result[min_var.name]
 
-        return [[entity, min, None]]
+        return [[entity, min, None, None]]
 
     # ('arg_max', E1, E2, [body-atoms], [function])
     # returns the maximum value of results of the values of E2 in body-atoms in E1
