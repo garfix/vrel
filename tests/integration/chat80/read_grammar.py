@@ -10,6 +10,7 @@ def get_read_grammar():
     return [
         # sentence
         {
+            # Does Afghanistan border China?
             "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
             "sem": lambda np1, verb, np2: Atom("intent_yn", [Atom(verb, E2, E3).any([np1, np2])]),
         },
@@ -22,6 +23,7 @@ def get_read_grammar():
         #     "sem": lambda np, preposition, nbar: [('intent_yn', [('all', E2, nbar, apply(np, preposition))])],
         # },
         {
+            # What rivers are there?
             "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' + '?'",
             "sem": lambda nbar: Atom("intent_list", E1, [nbar]),
         },
@@ -30,6 +32,7 @@ def get_read_grammar():
         #     "sem": lambda nbar, pp: [('intent_list', e1, nbar + pp)],
         # },
         {
+            # What is the capital of Upper_Volta?
             "syn": "s(E1) -> 'what' 'is' np(E1) + '?'",
             "sem": lambda np: Atom("intent_list", E1, [np]),
         },
@@ -59,6 +62,7 @@ def get_read_grammar():
         #     "sem": lambda np, tv, nbar: [('intent_table', [e2, e3], ['', ''], nbar + [('percentage', E3, apply(np, tv), apply(np, []))])],
         # },
         {
+            # Where is the largest country?
             "syn": "s(E2) -> 'where' 'is' np(E1) + '?'",
             "sem": lambda np: Atom("intent_list", E2, [np, Atom("where", E1, E2)]),
         },
@@ -78,10 +82,11 @@ def get_read_grammar():
         #     "syn": "s(E1) -> 'which' 'is' np(E1) + '?'",
         #     "sem": lambda np: [('intent_list', e1, apply(np, []))],
         # },
-        # {
-        #     "syn": "s(E1) -> 'which' nbar(E1)+'\\''+'s' np(E2) 'is' np(E3) + '?'",
-        #     "sem": lambda nbar, np1, np2: [('intent_list', e1, nbar + apply(np1, [('of', E2, E1)] + apply(np2, [('equals', E2, E3)])))],
-        # },
+        {
+            # Which country's capital is London?
+            "syn": "s(E1) -> 'which' nbar(E1, E2) 'is' np(E2) + '?'",
+            "sem": lambda nbar, np: Atom("intent_list", E1, [nbar, np]),  # , Atom("equals", E2, E3)
+        },
         # {
         #     "syn": "s(E1) -> 'which' np(E1) vp_nosub_obj(E1) + '?'",
         #     "sem": lambda np, vp_nosub_obj: [('intent_list', e1, apply(np, vp_nosub_obj))],
@@ -141,6 +146,10 @@ def get_read_grammar():
         {
             "syn": "np(E1) -> 'the' 'largest' nbar(E1)",
             "sem": lambda nbar: Atom("arg_max", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
+        },
+        {
+            "syn": "nbar(E1, E2) -> nbar(E1)+'\\''+'s' np(E2)",
+            "sem": lambda nbar, np: Atom("of", E2, E1).any([nbar, np]),
         },
         #
         # { "syn": "nbar(E1) -> nbar(E1) relative_clause(E1)", "sem": lambda nbar, relative_clause: nbar + relative_clause },
