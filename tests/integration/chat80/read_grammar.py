@@ -1,5 +1,9 @@
 from vrel.core.constants import E1, E2, E3, E4
 from vrel.entity.Atom import Atom
+from vrel.entity.Variable import Variable
+
+Body = Variable("Body")
+Size = Variable("Size")
 
 
 def get_read_grammar():
@@ -54,10 +58,10 @@ def get_read_grammar():
         #     "syn": "s(E2, E3) -> 'what' 'percentage' 'of' np(E1) tv(E1, E2) 'each' nbar(E2) + '?'",
         #     "sem": lambda np, tv, nbar: [('intent_table', [e2, e3], ['', ''], nbar + [('percentage', E3, apply(np, tv), apply(np, []))])],
         # },
-        # {
-        #     "syn": "s(E2) -> 'where' 'is' np(E1) + '?'",
-        #     "sem": lambda np: [('intent_list', e2, apply(np, []) + [('where', E1, E2)])],
-        # },
+        {
+            "syn": "s(E2) -> 'where' 'is' np(E1) + '?'",
+            "sem": lambda np: Atom("intent_list", E2, [np, Atom("where", E1, E2)]),
+        },
         # {
         #     "syn": "s(E2) -> 'how' 'large' 'is' np(E1) + '?'",
         #     "sem": lambda np: [('intent_value_with_unit', e2, "ksqmiles", apply(np, []) + [('size_of', E1, E2)])],
@@ -134,6 +138,11 @@ def get_read_grammar():
         {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
         # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
         # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
+        {
+            "syn": "np(E1) -> 'the' 'largest' nbar(E1)",
+            "sem": lambda nbar: Atom("arg_max", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
+        },
+        #
         # { "syn": "nbar(E1) -> nbar(E1) relative_clause(E1)", "sem": lambda nbar, relative_clause: nbar + relative_clause },
         {"syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar.any([pp])},
         # det
@@ -163,9 +172,6 @@ def get_read_grammar():
         #     SemanticFunction([Range, Body], [('det_equals', Range + Body, number)]) },
         # { "syn": "det(E1) -> 'more' 'than' number(E1)", "sem": lambda number:
         #     SemanticFunction([Range, Body], [('det_greater_than', Range + Body, number)]) },
-        # superlatives
-        # { "syn": "superlative(E1) -> 'largest'", "sem": lambda:
-        #     SemanticFunction([Body], [('arg_max', E1, E2, Body + [('size_of', E1, E2)])]) },
         # { "syn": "superlative(E1) -> 'smallest'", "sem": lambda:
         #     SemanticFunction([Body], [('arg_min', E1, E2, Body + [('size_of', E1, E2)])]) },
         # attribute

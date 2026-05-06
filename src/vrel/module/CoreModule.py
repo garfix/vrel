@@ -181,15 +181,16 @@ class CoreModule(SomeModule):
 
         return [[entity, min, None]]
 
-    # ('arg_max', E1, E2, [body-atoms])
+    # ('arg_max', E1, E2, [body-atoms], [function])
     # returns the maximum value of results of the values of E2 in body-atoms in E1
     def arg_max(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         max_var = arguments[0]
         element_var = arguments[1]
         body = arguments[2]
+        function = arguments[3]
 
-        results = context.solver.solve(body)
+        results = context.solver.solve(body + function)
 
         if len(results) == 0:
             return []
@@ -201,7 +202,7 @@ class CoreModule(SomeModule):
                 max = result[element_var.name]
                 entity = result[max_var.name]
 
-        return [[entity, max, None]]
+        return [[entity, max, None, None]]
 
     # ('avg', E1, E2, [body-atoms])
     # returns the average of results of the values of E2 in body-atoms in E1
@@ -459,7 +460,7 @@ class CoreModule(SomeModule):
     def create_query(self, arguments: list, context: ExecutionContext) -> list[list]:
         body = arguments[0]
 
-        result = create_query(body[0])
+        result = create_query(body)
 
         return [[None, result]]
 

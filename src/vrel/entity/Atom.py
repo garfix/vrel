@@ -12,6 +12,7 @@ class Atom:
     predicate: str
     arguments: list
     modifiers: list[Atom]
+    determiner: Atom | None
     type: str
     exec: list[Atom]
 

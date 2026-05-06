@@ -3,7 +3,6 @@
 optimize(SemIn, SemOut) :-
     resolve_names(SemIn, R),
     create_query(R, Q),
-    log(Q),
     optimize_cost_sort(Q, S),
     optimize_isolate(S, SemOut).
 

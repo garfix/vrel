@@ -11,13 +11,7 @@ class SortByCost:
     Based on "Efficient processing of interactive relational database queries in logic" - David H.D. Warren (1981)
     """
 
-    def sort(
-        self,
-        composition: list[Atom],
-        solver: SomeSolver,
-        model: SomeModel,
-        bound_variables: set[str] = set(),
-    ):
+    def sort(self, composition: list[Atom], solver: SomeSolver, model: SomeModel, bound_variables: set[str] = set()):
         if len(composition) == 0:
             return []
 
@@ -26,12 +20,7 @@ class SortByCost:
         return result
 
     def sort_rest(
-        self,
-        done: list[Atom],
-        todo: list[Atom],
-        solver: SomeSolver,
-        model: SomeModel,
-        bound_variables: set[str],
+        self, done: list[Atom], todo: list[Atom], solver: SomeSolver, model: SomeModel, bound_variables: set[str]
     ) -> list[Atom]:
 
         if len(todo) == 0:
@@ -50,24 +39,18 @@ class SortByCost:
 
         return self.sort_rest(done + [sorted_first_atom], sorted[1:], solver, model, bound_variables)
 
-    def sort_arguments(
-        self,
-        atom: Atom,
-        solver: SomeSolver,
-        model: SomeModel,
-        bound_variables: set[str],
-    ) -> Atom:
-        new_args = atom.arguments.copy()
-        replaced = False
-        for index, value in enumerate(atom.arguments):
-            if isinstance(value, list):
-                if len(value) > 0 and isinstance(value[0], Atom):
-                    new_args[index] = self.sort(value, solver, model, bound_variables)
-                    replaced = True
-        if replaced:
-            return Atom(atom.predicate, new_args)
-        else:
-            return atom
+    def sort_arguments(self, atom: Atom, solver: SomeSolver, model: SomeModel, bound_variables: set[str]) -> Atom:
+        new_arguments = []
+        for arg in atom.arguments:
+            new_arg = arg
+            if isinstance(arg, list):
+                if len(arg) > 0 and isinstance(arg[0], Atom):
+                    new_arg = self.sort(arg, solver, model, bound_variables)
+            new_arguments.append(new_arg)
+
+        a = atom.copy()
+        a.arguments = new_arguments
+        return a
 
     def calculate_cost(self, model: SomeModel, atom: Atom, bound_variables: set, solver: SomeSolver):
         predicate = atom.predicate

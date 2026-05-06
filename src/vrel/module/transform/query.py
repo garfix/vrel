@@ -3,7 +3,14 @@ from vrel.core.functions.terms import format_term
 from vrel.entity.Atom import Atom
 
 
-def create_query(atom: Atom) -> list[Atom]:
+def create_query(atoms: list[Atom]) -> list[Atom]:
+    result = []
+    for atom in atoms:
+        result.extend(create_atom_query(atom))
+    return result
+
+
+def create_atom_query(atom: Atom) -> list[Atom]:
     """
     Transforms an atom based on its determiners.
     Each argument holding a determiner modifier is replaced by its entity variable,

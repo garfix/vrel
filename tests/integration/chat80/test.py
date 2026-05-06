@@ -27,7 +27,7 @@ tests = [
     ],
     ["Does Afghanistan border China?", "yes"],
     ["What is the capital of Upper_Volta?", "ouagadougou"],
-    # ["Where is the largest country?", "northern_asia"],
+    ["Where is the largest country?", "northern_asia"],
     # ["Which countries are European?", "albania, andorra, austria, belgium, bulgaria, cyprus, czechoslovakia, denmark, east_germany, eire, finland, france, greece, hungary, iceland, italy, liechtenstein, luxembourg, malta, monaco, netherlands, norway, poland, portugal, romania, san_marino, spain, sweden, switzerland, united_kingdom, west_germany, yugoslavia"],
     # ["Which country's capital is London?", "united_kingdom"],
     # ["Which is the largest african country?", "sudan"],
