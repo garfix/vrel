@@ -65,7 +65,7 @@ def create_atom_query(atom: Atom) -> list[Atom]:
             result.extend(create_query(arg))
         return result
 
-    extracted_atoms = atom.modifiers
+    extracted_atoms = create_query(atom.modifiers)
 
     # - extract scoping arguments (the ones with determiners)
     # - replace scoping arguments with their variables

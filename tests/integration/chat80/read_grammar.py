@@ -33,6 +33,7 @@ def get_read_grammar():
         # },
         {
             # What is the capital of Upper_Volta?
+            # What is the ocean that borders African countries?
             "syn": "s(E1) -> 'what' 'is' np(E1) + '?'",
             "sem": lambda np: Atom("intent_list", E1, [np]),
         },
@@ -103,6 +104,7 @@ def get_read_grammar():
         # },
         # active transitive: sub obj
         # { "syn": "vp_nosub_obj(E1) -> tv(E1, E2) np(E2)", "sem": lambda tv, np: apply(np, tv) },
+        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
         # { "syn": "vp_nosub_obj(E1) -> 'does' 'not' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: [('not', vp_nosub_obj)] },
         # { "syn": "vp_nosub_obj(E1) -> 'have' 'a' attr(E1, E2)", "sem": lambda attr: attr },
         # passive transitive
@@ -116,6 +118,7 @@ def get_read_grammar():
         # { "syn": "vp_noobj_nosub_iob(E1, E2) -> dtv(E2, E1, E3) np(E3)", "sem": lambda dtv, np: apply(np, dtv) },
         # verbs
         {"syn": "verb(E1, E2) -> 'border'", "sem": lambda: "borders"},
+        {"syn": "verb(E1, E2) -> 'borders'", "sem": lambda: "borders"},
         # transitive verbs
         # { "syn": "tv(E1, E2) -> 'border'", "sem": lambda: [('borders', E1, E2)] },
         # { "syn": "tv(E1, E2) -> 'borders'", "sem": lambda: [('borders', E1, E2)] },
@@ -129,6 +132,7 @@ def get_read_grammar():
         # { "syn": "dtv(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: [('flows_from_to', E1, E2, E3)] },
         # relative clauses
         # { "syn": "relative_clause(E1) -> 'that' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
+        {"syn": "relative_clause(E1) -> 'that' vp(E1)", "sem": lambda vp: vp},
         # { "syn": "relative_clause(E1) -> 'that' vp_noobj_sub(E1)", "sem": lambda vp_noobj_sub: vp_noobj_sub },
         # { "syn": "relative_clause(E1) -> relative_clause(E1) 'and' relative_clause(E1)", "sem": lambda relative_clause1, relative_clause2: relative_clause1 + relative_clause2 },
         # { "syn": "relative_clause(E1) -> vp_nosub_obj_continuous(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
@@ -141,11 +145,6 @@ def get_read_grammar():
             "syn": "np(E1) -> det(E1) nbar(E1)",
             "sem": lambda det, nbar: nbar.with_determiner(det),
         },
-        # nbar
-        {"syn": "nbar(E1) -> adjp(E1) nbar(E1)", "sem": lambda adjp, nbar: Atom("and", [adjp], [nbar])},
-        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
-        # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
-        # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
         {
             "syn": "np(E1) -> 'the' 'largest' nbar(E1)",
             "sem": lambda nbar: Atom("arg_max", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
@@ -155,12 +154,19 @@ def get_read_grammar():
             "sem": lambda nbar: Atom("arg_min", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
         },
         {
+            "syn": "np(E1) -> np(E1) relative_clause(E1)",
+            "sem": lambda nbar, relative_clause: Atom("and", [nbar], [relative_clause]),
+        },
+        # nbar
+        {"syn": "nbar(E1) -> adjp(E1) nbar(E1)", "sem": lambda adjp, nbar: Atom("and", [adjp], [nbar])},
+        {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
+        {
             "syn": "nbar(E1, E2) -> nbar(E1)+'\\''+'s' np(E2)",
             "sem": lambda nbar, np: Atom("of", E2, E1).any([nbar, np]),
         },
-        #
-        # { "syn": "nbar(E1) -> nbar(E1) relative_clause(E1)", "sem": lambda nbar, relative_clause: nbar + relative_clause },
         {"syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar.any([pp])},
+        # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
+        # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
         # det
         {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
         {"syn": "det(E1) -> 'the'", "sem": lambda: Atom("the")},

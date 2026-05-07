@@ -19,7 +19,6 @@ def resolve_names(atoms: list[Atom], solver: SomeSolver):
 
     # create a new atom with bound named variables
     atoms1 = bind_variables(atoms, variable_to_id)
-    # print(new_atoms)
 
     exec_code(atoms1, solver)
 
