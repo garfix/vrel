@@ -444,8 +444,8 @@ class CoreModule(SomeModule):
             if is_list:
                 item = []
                 for v in variable:
-                    if v in binding:
-                        item.append(binding[v])
+                    if v.name in binding:
+                        item.append(binding[v.name])
                     else:
                         item.append(None)
                 # skip duplicates

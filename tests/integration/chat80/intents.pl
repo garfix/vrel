@@ -5,9 +5,9 @@ optimize(SemIn, SemOut) :-
     create_query(R, Q),
     optimize_cost_sort(Q, S),
     optimize_isolate(S, SemOut),
-    log(R),
-    log(Q),
-    log(S),
+    # log(R),
+    # log(Q),
+    # log(S),
     log(SemOut)
     .
 

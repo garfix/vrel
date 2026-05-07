@@ -74,7 +74,7 @@ class DialogTester:
                 logger.add_comment(str(ceil((end_time - start_time) * 1000)) + " msecs")
 
                 if output != expected:
-                    logger.add_error("[Expected] " + expected)
+                    logger.add_error("[Expected] " + str(expected))
 
                 self.test_case.assertEqual(output, expected)
 

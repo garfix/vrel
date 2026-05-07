@@ -45,11 +45,12 @@ def get_read_grammar():
         #     "syn": "s(E1) -> 'what' 'are' np(E1) vp_noobj_sub_iob(E1) + '?'",
         #     "sem": lambda np, vp_noobj_sub_iob: [('intent_list', e1, apply(np, vp_noobj_sub_iob))],
         # },
-        # {
-        #     "syn": "s(E1, E2) -> 'what' 'are' 'the' noun(E1) 'of' np(E2) + '?'",
-        #     "sem": lambda noun, np: [('intent_table', [e2, e1], ['', ''], noun + [('of', E1, E2)] + apply(np, []))],
-        #     "boost": 1
-        # },
+        {
+            # What are the capitals of the countries bordering the Baltic?
+            "syn": "s(E1, E2) -> 'what' 'are' 'the' noun(E1) 'of' np(E2) + '?'",
+            "sem": lambda noun, np: Atom("intent_table", [E2, E1], ["", ""], [noun, Atom("of", E1, E2), np]),
+            "boost": 1,
+        },
         # {
         #     "syn": "s(E1) -> 'what' 'is' 'the' 'total' 'area' 'of' np(E2) + '?'",
         #     "sem": lambda np: [('intent_value_with_unit', e1, 'ksqmiles', [("sum", E1, E3, apply(np, []) + [('size_of', E2, E3)])])],
@@ -113,6 +114,7 @@ def get_read_grammar():
         # { "syn": "vp_noobj_sub(E1) -> 'is' tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
         # active transitive continuous
         # { "syn": "vp_nosub_obj_continuous(E1) -> tv_continuous(E1, E2) np(E2)", "sem": lambda tv_continuous, np: apply(np, tv_continuous) },
+        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
         # passive ditransitive: obj sub iob
         # { "syn": "vp_noobj_sub_iob(E1) -> 'from' 'which' np(E2) vp_noobj_nosub_iob(E1, E2)", "sem": lambda np, vp_noobj_nosub_iob: apply(np, vp_noobj_nosub_iob) },
         # { "syn": "vp_noobj_nosub_iob(E1, E2) -> dtv(E2, E1, E3) np(E3)", "sem": lambda dtv, np: apply(np, dtv) },
@@ -127,21 +129,10 @@ def get_read_grammar():
         # { "syn": "tv(E1, E2) -> 'flow' 'through'", "sem": lambda: [('flows_through', E1, E2)] },
         # { "syn": "tv(E1, E2) -> 'exceeds'", "sem": lambda: [('greater_than', E1, E2)] },
         # { "syn": "tv_continuous(E1, E2) -> 'bordering'", "sem": lambda: [('borders', E1, E2)] },
+        {"syn": "verb(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
         # { "syn": "tv_continuous(E1, E2) -> 'exceeding'", "sem": lambda: [('greater_than', E1, E2)] },
         # ditransitive verbs
         # { "syn": "dtv(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: [('flows_from_to', E1, E2, E3)] },
-        # relative clauses
-        # { "syn": "relative_clause(E1) -> 'that' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
-        {"syn": "relative_clause(E1) -> 'that' vp(E1)", "sem": lambda vp: vp},
-        # { "syn": "relative_clause(E1) -> 'that' vp_noobj_sub(E1)", "sem": lambda vp_noobj_sub: vp_noobj_sub },
-        {
-            "syn": "relative_clause(E1) -> relative_clause(E1) 'and' relative_clause(E1)",
-            "sem": lambda relative_clause1, relative_clause2: Atom("and", [relative_clause1], [relative_clause2]),
-        },
-        # { "syn": "relative_clause(E1) -> vp_nosub_obj_continuous(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
-        # { "syn": "relative_clause(E1) -> np(E2) preposition(E2, E1) 'which' vp_nosub_obj(E2)", "sem": lambda np, preposition, vp_nosub_obj: apply(np, preposition + vp_nosub_obj) },
-        # { "syn": "relative_clause(E1) -> 'whose' attr(E1, E2) vp_nosub_obj(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
-        # { "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_nosub_obj_continuous(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
         # np
         {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
         {
@@ -173,6 +164,19 @@ def get_read_grammar():
         # det
         {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
         {"syn": "det(E1) -> 'the'", "sem": lambda: Atom("the")},
+        # relative clauses
+        # { "syn": "relative_clause(E1) -> 'that' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
+        {"syn": "relative_clause(E1) -> 'that' vp(E1)", "sem": lambda vp: vp},
+        # { "syn": "relative_clause(E1) -> 'that' vp_noobj_sub(E1)", "sem": lambda vp_noobj_sub: vp_noobj_sub },
+        {
+            "syn": "relative_clause(E1) -> relative_clause(E1) 'and' relative_clause(E1)",
+            "sem": lambda relative_clause1, relative_clause2: Atom("and", [relative_clause1], [relative_clause2]),
+        },
+        # { "syn": "relative_clause(E1) -> vp_nosub_obj_continuous(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
+        {"syn": "relative_clause(E1) -> vp(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj},
+        # { "syn": "relative_clause(E1) -> np(E2) preposition(E2, E1) 'which' vp_nosub_obj(E2)", "sem": lambda np, preposition, vp_nosub_obj: apply(np, preposition + vp_nosub_obj) },
+        # { "syn": "relative_clause(E1) -> 'whose' attr(E1, E2) vp_nosub_obj(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
+        # { "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_nosub_obj_continuous(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
         # np
         # { "syn": "np(E1) -> nbar(E1)", "sem": lambda nbar:
         #     SemanticFunction([Body], nbar + Body) },
