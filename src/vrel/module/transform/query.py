@@ -1,6 +1,7 @@
 from vrel.core.constants import ARG_DETERMINER, PRED_AND
 from vrel.core.functions.terms import format_term
 from vrel.entity.Atom import Atom
+from vrel.entity.Variable import Variable
 
 
 def create_query(atoms: list[Atom]) -> list[Atom]:
@@ -19,18 +20,19 @@ def create_atom_query(atom: Atom) -> list[Atom]:
     input (example):
 
     (have
-        A1. (parent
+        A1. $1
+        A2. $2
+        M1. (parent
             A1. $1
             M1. (determiner
                 A1. (all)))
             M2. <modifier_clause_p>
-        A2. (child
+        M2. (child
             A1. $2
             M1. (determiner
                 A1. (equals
                     A1. 2))))
             M2. <modifier_clause_c>
-        M1. <modifier_clause_h>
 
     output:
 
@@ -65,36 +67,27 @@ def create_atom_query(atom: Atom) -> list[Atom]:
             result.extend(create_query(mod))
         return result
 
-    extracted_atoms = []  # create_query(atom.modifiers)
+    modifiers = reversed(atom.modifiers)
+    extracted_atoms = []
 
-    # - extract scoping arguments (the ones with determiners)
-    # - replace scoping arguments with their variables
-    determiner_modifiers = []
-    determiner_arguments = []
-    for i, mod in enumerate(atom.modifiers):
-        # if isinstance(mod, Atom):
-        det = mod.determiner
-        if det is not None:
-            determiner_modifiers.append(mod)
+    new_atom = atom.copy()
+    new_atom.modifiers = []
+
+    for mod in modifiers:
+        if mod.determiner is not None:
+            new_atom = create_quantification(new_atom, mod)
         else:
             extracted_atoms.append(mod)
-
-    # new_atom = Atom(atom.predicate, *new_args)
-    new_atom = atom.copy()
-
-    # add a scoping layer around the simplified atom for each determiner
-    for determiner_modifier in reversed(determiner_modifiers):
-        new_atom = create_quantification(new_atom, determiner_modifier)
 
     return [new_atom] + extracted_atoms
 
 
-def create_quantification(atom: Atom, scoping_argument: Atom):
+def create_quantification(atom: Atom, determiner_modifier: Atom):
     # get the determiner atom from the argument
-    det = scoping_argument.determiner
+    det = determiner_modifier.determiner
 
     # the determiner atom should now be removed
-    cleared_arg = scoping_argument.with_determiner(None)
+    cleared_arg = determiner_modifier.with_determiner(None)
     # the scoping argument may itself contain scoping, so recurse into it
     range = create_atom_query(cleared_arg)
 
@@ -102,7 +95,7 @@ def create_quantification(atom: Atom, scoping_argument: Atom):
         # ('all', E1, [range-atoms], [body-atoms])
         q_atom = Atom(
             "all",
-            scoping_argument.arguments[0],
+            cleared_arg.arguments[0],
             # Range
             range,
             # Body
