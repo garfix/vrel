@@ -36,7 +36,7 @@ tests = [
     ["Which is the largest african country?", "sudan"],
     ["How large is the smallest american country?", "0 ksqmiles"],
     ["What is the ocean that borders African countries?", "atlantic, indian_ocean"],
-    # ["What is the ocean that borders African countries and that borders Asian countries?", "indian_ocean"],
+    ["What is the ocean that borders African countries and that borders Asian countries?", "indian_ocean"],
     # ["What are the capitals of the countries bordering the Baltic?", [
     #     ['denmark', 'copenhagen'],
     #     ['east_germany', 'east_berlin'],
