@@ -3,7 +3,7 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.constants import E1, E3
+from vrel.core.constants import E1, E2
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Relation
@@ -71,7 +71,7 @@ class TestQuantification(unittest.TestCase):
                 "sem": lambda np1, verb, np2: Atom(
                     "exec",
                     [
-                        Atom("create_query", [Atom(verb, np1, np2)], Query),
+                        Atom("create_query", [Atom(verb, E1, E2).any([np1, np2])], Query),
                         Atom("exec", Query),
                     ],
                 ),

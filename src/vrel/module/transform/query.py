@@ -61,35 +61,30 @@ def create_atom_query(atom: Atom) -> list[Atom]:
 
     if atom.predicate == PRED_AND:
         result = []
-        for arg in atom.arguments:
-            result.extend(create_query(arg))
+        for mod in atom.arguments:
+            result.extend(create_query(mod))
         return result
 
-    extracted_atoms = create_query(atom.modifiers)
+    extracted_atoms = []  # create_query(atom.modifiers)
 
     # - extract scoping arguments (the ones with determiners)
     # - replace scoping arguments with their variables
-    new_args = []
-    scoping_arguments = []
-    for arg in atom.arguments:
-        if isinstance(arg, list):
-            new_args.append(create_query(arg))
-        elif isinstance(arg, Atom):
-            det = arg.determiner
-            if det is not None:
-                scoping_arguments.append(arg)
-                # replace the scoping argument with its entity variable
-                new_args.append(arg.arguments[0])
-            else:
-                new_args.append(arg)
+    determiner_modifiers = []
+    determiner_arguments = []
+    for i, mod in enumerate(atom.modifiers):
+        # if isinstance(mod, Atom):
+        det = mod.determiner
+        if det is not None:
+            determiner_modifiers.append(mod)
         else:
-            new_args.append(arg)
+            extracted_atoms.append(mod)
 
-    new_atom = Atom(atom.predicate, *new_args)
+    # new_atom = Atom(atom.predicate, *new_args)
+    new_atom = atom.copy()
 
     # add a scoping layer around the simplified atom for each determiner
-    for scoping_argument in reversed(scoping_arguments):
-        new_atom = create_quantification(new_atom, scoping_argument)
+    for determiner_modifier in reversed(determiner_modifiers):
+        new_atom = create_quantification(new_atom, determiner_modifier)
 
     return [new_atom] + extracted_atoms
 
@@ -101,7 +96,7 @@ def create_quantification(atom: Atom, scoping_argument: Atom):
     # the determiner atom should now be removed
     cleared_arg = scoping_argument.with_determiner(None)
     # the scoping argument may itself contain scoping, so recurse into it
-    range = create_query(cleared_arg)
+    range = create_atom_query(cleared_arg)
 
     if det.predicate == "all":
         # ('all', E1, [range-atoms], [body-atoms])

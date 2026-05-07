@@ -77,10 +77,11 @@ def get_read_grammar():
             "syn": "s(E1) -> 'which' nbar(E1) 'are' adjp(E1) + '?'",
             "sem": lambda nbar, adjp: Atom("intent_list", E1, [nbar, adjp]),
         },
-        # {
-        #     "syn": "s(E1) -> 'which' nbar(E1) 'are' vp_noobj_sub(E1) + '?'",
-        #     "sem": lambda nbar, vp_noobj_sub: [('intent_list', e1, nbar + vp_noobj_sub)],
-        # },
+        {
+            # Which countries are bordered by two seas?
+            "syn": "s(E1) -> 'which' nbar(E1) 'are' vp(E1) + '?'",
+            "sem": lambda nbar, vp: Atom("intent_list", E1, [nbar, vp]),
+        },
         {
             # Which is the largest african country?
             "syn": "s(E1) -> 'which' 'is' np(E1) + '?'",
@@ -110,6 +111,7 @@ def get_read_grammar():
         # { "syn": "vp_nosub_obj(E1) -> 'have' 'a' attr(E1, E2)", "sem": lambda attr: attr },
         # passive transitive
         # { "syn": "vp_noobj_sub(E1) -> tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
+        {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
         # { "syn": "vp_noobj_sub(E1) -> 'does' np(E2) tv(E2, E1)", "sem": lambda np, tv: apply(np, tv) },
         # { "syn": "vp_noobj_sub(E1) -> 'is' tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
         # active transitive continuous
@@ -124,7 +126,7 @@ def get_read_grammar():
         # transitive verbs
         # { "syn": "tv(E1, E2) -> 'border'", "sem": lambda: [('borders', E1, E2)] },
         # { "syn": "tv(E1, E2) -> 'borders'", "sem": lambda: [('borders', E1, E2)] },
-        # { "syn": "tv(E1, E2) -> 'bordered'", "sem": lambda: [('borders', E1, E2)] },
+        {"syn": "verb(E1, E2) -> 'bordered'", "sem": lambda: "borders"},
         # { "syn": "tv(E1, E2) -> 'contains'", "sem": lambda: [('contains', E1, E2)] },
         # { "syn": "tv(E1, E2) -> 'flow' 'through'", "sem": lambda: [('flows_through', E1, E2)] },
         # { "syn": "tv(E1, E2) -> 'exceeds'", "sem": lambda: [('greater_than', E1, E2)] },
@@ -161,9 +163,6 @@ def get_read_grammar():
         {"syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar.any([pp])},
         # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
         # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
-        # det
-        {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
-        {"syn": "det(E1) -> 'the'", "sem": lambda: Atom("the")},
         # relative clauses
         # { "syn": "relative_clause(E1) -> 'that' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
         {"syn": "relative_clause(E1) -> 'that' vp(E1)", "sem": lambda vp: vp},
@@ -187,6 +186,8 @@ def get_read_grammar():
         # { "syn": "np(E1) -> number(E1)", "sem": lambda number:
         #     SemanticFunction([Body], [('let', E1, number)] + Body) },
         # det
+        {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
+        {"syn": "det(E1) -> 'the'", "sem": lambda: Atom("the")},
         # { "syn": "det(E1) -> 'a'", "sem": lambda:
         #     SemanticFunction([Range, Body], Range + Body) },
         # { "syn": "det(E1) -> 'the'", "sem": lambda:
@@ -199,6 +200,15 @@ def get_read_grammar():
         #     SemanticFunction([Range, Body], [('none', Range + Body)]) },
         # { "syn": "det(E1) -> number(E1)", "sem": lambda number:
         #     SemanticFunction([Range, Body], [('det_equals', Range + Body, number)]) },
+        {
+            "syn": "det(E1) -> number(E1)",
+            "sem": lambda number: Atom("equals", number),
+        },
+        # {
+        #     "syn": "det(E1) -> number(E1)",
+        #     "sem": lambda number: SemanticFunction([Range, Body], [("det_equals", Range + Body, number)]),
+        #     # "sem": lambda number: SemanticFunction([Range, Body], [("det_equals", Range + Body, number)]),
+        # },
         # { "syn": "det(E1) -> 'more' 'than' number(E1)", "sem": lambda number:
         #     SemanticFunction([Range, Body], [('det_greater_than', Range + Body, number)]) },
         # { "syn": "superlative(E1) -> 'smallest'", "sem": lambda:
@@ -207,18 +217,18 @@ def get_read_grammar():
         # { "syn": "attr(E1, E2) -> 'population'", "sem": lambda: [('has_population', E1, E2)] },
         # { "syn": "attr(E1, E2) -> attr(E1, E2) relative_clause(E2)", "sem": lambda attr, relative_clause: attr + relative_clause },
         # number
-        # { "syn": "number(E1) -> 'one'", "sem": lambda: 1 },
-        # { "syn": "number(E1) -> 'two'", "sem": lambda: 2 },
-        # { "syn": "number(E1) -> 'three'", "sem": lambda: 3 },
-        # { "syn": "number(E1) -> 'four'", "sem": lambda: 4 },
-        # { "syn": "number(E1) -> 'five'", "sem": lambda: 5 },
-        # { "syn": "number(E1) -> 'six'", "sem": lambda: 6 },
-        # { "syn": "number(E1) -> 'seven'", "sem": lambda: 7 },
-        # { "syn": "number(E1) -> 'eight'", "sem": lambda: 8 },
-        # { "syn": "number(E1) -> 'nine'", "sem": lambda: 9 },
-        # { "syn": "number(E1) -> 'ten'", "sem": lambda: 10 },
-        # { "syn": "number(E1) -> /\\d+/", "sem": lambda token: int(token) },
-        # { "syn": "number(E1) -> number(E1) 'million'", "sem": lambda number: number * 1000000 },
+        {"syn": "number(E1) -> 'one'", "sem": lambda: 1},
+        {"syn": "number(E1) -> 'two'", "sem": lambda: 2},
+        {"syn": "number(E1) -> 'three'", "sem": lambda: 3},
+        {"syn": "number(E1) -> 'four'", "sem": lambda: 4},
+        {"syn": "number(E1) -> 'five'", "sem": lambda: 5},
+        {"syn": "number(E1) -> 'six'", "sem": lambda: 6},
+        {"syn": "number(E1) -> 'seven'", "sem": lambda: 7},
+        {"syn": "number(E1) -> 'eight'", "sem": lambda: 8},
+        {"syn": "number(E1) -> 'nine'", "sem": lambda: 9},
+        {"syn": "number(E1) -> 'ten'", "sem": lambda: 10},
+        {"syn": "number(E1) -> /\\d+/", "sem": lambda token: int(token)},
+        {"syn": "number(E1) -> number(E1) 'million'", "sem": lambda number: number * 1000000},
         # pp
         # { "syn": "pp(E1) -> 'not' pp(E1)", "sem": lambda pp: [('not', pp)] },
         {"syn": "pp(E1) -> preposition(E1, E2) np(E2)", "sem": lambda preposition, np: preposition.any([np])},
@@ -253,6 +263,7 @@ def get_read_grammar():
         {"syn": "singular_noun(E1) -> 'continent'", "sem": lambda: Atom("continent", E1)},
         {"syn": "noun(E1) -> 'countries'", "sem": lambda: Atom("country", E1)},
         {"syn": "noun(E1) -> 'cities'", "sem": lambda: Atom("city", E1)},
+        {"syn": "noun(E1) -> 'seas'", "sem": lambda: Atom("sea", E1)},
         # proper noun
         {
             "syn": "proper_noun(E1) -> /\\w+/",
