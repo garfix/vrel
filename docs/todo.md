@@ -2,6 +2,7 @@
 
 - wel of niet modifiers toevoegen als er al modifiers zijn? ervoor of erachter?
 - kan de echter determiner in het determiner object?
+- Atom("and", [pp1], [pp2]) of Atom("and").any([pp1, pp2])
 
 - api: bv tk.keras.layers.Dense
 

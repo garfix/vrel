@@ -37,10 +37,11 @@ def get_read_grammar():
             "syn": "s(E1) -> 'what' 'is' np(E1) + '?'",
             "sem": lambda np: Atom("intent_list", E1, [np]),
         },
-        # {
-        #     "syn": "s(E1) -> 'what' 'are' np(E1) + '?'",
-        #     "sem": lambda np: [('intent_list', e1, apply(np, []))],
-        # },
+        {
+            # What are the countries south of the Equator and not in Australasia?
+            "syn": "s(E1) -> 'what' 'are' np(E1) + '?'",
+            "sem": lambda np: Atom("intent_list", E1, [np]),
+        },
         # {
         #     "syn": "s(E1) -> 'what' 'are' np(E1) vp_noobj_sub_iob(E1) + '?'",
         #     "sem": lambda np, vp_noobj_sub_iob: [('intent_list', e1, apply(np, vp_noobj_sub_iob))],
@@ -74,6 +75,7 @@ def get_read_grammar():
             "sem": lambda np: Atom("intent_value_with_unit", E2, "ksqmiles", [np, Atom("size_of", E1, E2)]),
         },
         {
+            # Which countries are bordered by two seas?
             "syn": "s(E1) -> 'which' nbar(E1) 'are' adjp(E1) + '?'",
             "sem": lambda nbar, adjp: Atom("intent_list", E1, [nbar, adjp]),
         },
@@ -229,11 +231,11 @@ def get_read_grammar():
         {"syn": "number(E1) -> /\\d+/", "sem": lambda token: int(token)},
         {"syn": "number(E1) -> number(E1) 'million'", "sem": lambda number: number * 1000000},
         # pp
-        # { "syn": "pp(E1) -> 'not' pp(E1)", "sem": lambda pp: [('not', pp)] },
+        {"syn": "pp(E1) -> 'not' pp(E1)", "sem": lambda pp: Atom("not", [pp])},
         {"syn": "pp(E1) -> preposition(E1, E2) np(E2)", "sem": lambda preposition, np: preposition.any([np])},
-        # { "syn": "pp(E1) -> 'south' 'of' np(E2)", "sem": lambda np: apply(np, [('south_of', E1, E2)]) },
-        # { "syn": "pp(E1) -> pp(E1) 'and' pp(E1)", "sem": lambda pp1, pp2: pp1 + pp2 },
-        # { "syn": "preposition(E1, E2) -> 'in'", "sem": lambda: [("in", E1, E2)]},
+        {"syn": "pp(E1) -> 'south' 'of' np(E2)", "sem": lambda np: Atom("south_of", E1, E2).any([np])},
+        {"syn": "pp(E1) -> pp(E1) 'and' pp(E1)", "sem": lambda pp1, pp2: Atom("and", [pp1], [pp2])},
+        {"syn": "preposition(E1, E2) -> 'in'", "sem": lambda: Atom("in", E1, E2)},
         {"syn": "preposition(E1, E2) -> 'of'", "sem": lambda: Atom("of", E1, E2)},
         # adjective phrases
         {"syn": "adjp(E1) -> adj(E1)", "sem": lambda adj: adj},

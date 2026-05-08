@@ -1,3 +1,40 @@
+## 2026-05-08
+
+As the arguments and modifiers give me multiple ways to do the same thing, I need to think about the right way to do them all.
+
+- questions
+- commands
+- statements
+
+For questions the form with the variable arguments works best.
+For commands a form with an atom for each argument works best.
+For pam, a form with an atom for each argument works best.
+
+```
+"syn": "s() -> np(E1) verb(E1, E2) np(E2)"
+    [Atom(verb, E1, E2).any([np1, np2])]
+
+"syn": "s() -> np(E1) vp(E1)"
+    [vp.any([np])]
+"syn": "vp(E1) -> verb2(E1, E2) np(E2)"
+    Atom(verb, E1, E2).any([np])
+
+SHRDLU / nli-go
+{ rule: vp_imperative(P1) -> 'put' np(E1) 'on' 'top' 'of' np(E2),                 sense: go:do($np1, go:do($np2, dom:do_put_on_smart(E1, E2))) }
+
+MicroPAM
+[
+    [['goal', ['planner', '?x'], ['objective', ['is', ['actor', '?x'], ['state', ['hunger', ['val', [0]]]]]]]],
+    [['do-$restaurant-plan', ['planner', '?x'], ['restaurant', '?y']]]
+
+],
+```
+
+It's not possible to create a tree from a flat tuple structure, but it is possible to create a flat structure from a tree. Therefore the sentence semantics must remain a tree as much as possible. But
+
+- what about the modifiers? Are they still needed?
+- what about `[vp.any([np])]`, `Atom(verb, E1, E2).any([np])`. Is that still possible?
+
 ## 2026-05-04
 
 Started Chat-80 again.

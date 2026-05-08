@@ -70,7 +70,16 @@ def create_atom_query(atom: Atom) -> list[Atom]:
     modifiers = reversed(atom.modifiers)
     extracted_atoms = []
 
+    # new_args = []
+    # for arg in atom.arguments:
+    #     if isinstance(arg, list):
+    #         new_args.append(create_query(arg))
+    #     else:
+    #         new_args.append(arg)
+
     new_atom = atom.copy()
+    # new_atom.arguments = new_args
+
     new_atom.modifiers = []
 
     for mod in modifiers:
@@ -79,7 +88,7 @@ def create_atom_query(atom: Atom) -> list[Atom]:
         else:
             extracted_atoms.append(mod)
 
-    return [new_atom] + extracted_atoms
+    return [new_atom] + create_query(extracted_atoms)
 
 
 def create_quantification(atom: Atom, determiner_modifier: Atom):

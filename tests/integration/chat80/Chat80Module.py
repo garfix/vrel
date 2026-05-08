@@ -206,7 +206,7 @@ class Chat80Module(SomeModule):
                 return [[value[1], None] for value in out_values]
 
         if name == "equator":
-            return [[None, "equator"]]
+            return [["equator", None]]
 
         context.solver.solve(
             [Atom("store", [Atom("output_type", "name_not_found"), Atom("output_name_not_found", name)])]
