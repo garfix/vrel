@@ -49,7 +49,7 @@ tests = [
             ["west_germany", "bonn"],
         ],
     ],
-    ["Which countries are bordered by two seas?", "egypt, iran, israel, saudi_arabia, turkey1"],
+    ["Which countries are bordered by two seas?", "egypt, iran, israel, saudi_arabia, turkey"],
     # ["How many countries does the Danube flow through?", 6],
     # ["What are the countries south of the Equator and not in Australasia?", "angola, argentina, bolivia, botswana, brazil, burundi, chile, congo, ecuador, indonesia, lesotho, malagasy, malawi, mauritius, mozambique, paraguay, peru, rwanda, seychelles, south_africa, swaziland, tanzania, uruguay, zaire, zambia, zimbabwe"],
     # ["What is the total area of countries south of the Equator and not in Australasia?", "10228 ksqmiles"],

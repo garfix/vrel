@@ -76,7 +76,20 @@ class TestQuantification(unittest.TestCase):
                     ],
                 ),
             },
+            {
+                "syn": "s() -> np(E1) vp(E1)",
+                "sem": lambda np, vp: Atom(
+                    "exec",
+                    [
+                        Atom("create_query", [vp.any([np])], Query),
+                        Atom("print", Query),
+                        Atom("exec", Query),
+                    ],
+                ),
+            },
+            {"syn": "vp(E1) -> verb2(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
             {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: "have"},
+            {"syn": "verb2(E1, E2) -> 'has2'", "sem": lambda: "have"},
             {
                 "syn": "np(E1) -> det(E1) nbar(E1)",
                 "sem": lambda det, nbar: nbar.with_determiner(det),
@@ -112,3 +125,7 @@ class TestQuantification(unittest.TestCase):
         request = SentenceRequest("Every parent has three children")
         response = system.enter(request)
         self.assertEqual(len(response.products[0].bindings), 0)
+
+        request = SentenceRequest("Every parent has2 two children")
+        response = system.enter(request)
+        self.assertEqual(len(response.products[0].bindings), 3)

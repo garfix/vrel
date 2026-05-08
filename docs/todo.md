@@ -1,8 +1,7 @@
 ## todo
 
-- simplify the grammar
-
-- head as syntactic category?
+- wel of niet modifiers toevoegen als er al modifiers zijn? ervoor of erachter?
+- kan de echter determiner in het determiner object?
 
 - api: bv tk.keras.layers.Dense
 
@@ -52,6 +51,11 @@
 - I added `sentence` as an extra data source for `match`. This works for now, but I'm not confident it's the final solution
 
 - the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
+
+## Documenteer
+
+De eerste argument van een atom moet zijn identifier variable zijn.
+De volgorder van de modifiers van een atom doet ertoe als ze determiners hebben.
 
 ## Dialog and database
 
