@@ -96,10 +96,11 @@ def get_read_grammar():
         #     "syn": "s(E1) -> 'which' np(E1) vp_nosub_obj(E1) + '?'",
         #     "sem": lambda np, vp_nosub_obj: [('intent_list', e1, apply(np, vp_nosub_obj))],
         # },
-        # {
-        #     "syn": "s(E1) -> 'how' 'many' nbar(E2) vp_noobj_sub(E2) + '?'",
-        #     "sem": lambda nbar, vp_noobj_sub: [('intent_value', e1, [('count', E1, nbar + vp_noobj_sub)])],
-        # },
+        {
+            # How many countries does the Danube flow through?
+            "syn": "s(E1) -> 'how' 'many' nbar(E1) vp(E1) + '?'",
+            "sem": lambda nbar, vp: Atom("intent_value", E1, [Atom("count", E1, [nbar, vp])]),
+        },
         # {
         #     "syn": "s(E1) -> 'bye' + '.'?",
         #     "sem": lambda: [('intent_close_conversation',)],
@@ -112,7 +113,7 @@ def get_read_grammar():
         # passive transitive
         # { "syn": "vp_noobj_sub(E1) -> tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
         {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
-        # { "syn": "vp_noobj_sub(E1) -> 'does' np(E2) tv(E2, E1)", "sem": lambda np, tv: apply(np, tv) },
+        {"syn": "vp(E1) -> 'does' np(E2) verb(E2, E1)", "sem": lambda np, verb: Atom(verb, E2, E1).any([np])},
         # { "syn": "vp_noobj_sub(E1) -> 'is' tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
         # active transitive continuous
         # { "syn": "vp_nosub_obj_continuous(E1) -> tv_continuous(E1, E2) np(E2)", "sem": lambda tv_continuous, np: apply(np, tv_continuous) },
@@ -124,11 +125,9 @@ def get_read_grammar():
         {"syn": "verb(E1, E2) -> 'border'", "sem": lambda: "borders"},
         {"syn": "verb(E1, E2) -> 'borders'", "sem": lambda: "borders"},
         # transitive verbs
-        # { "syn": "tv(E1, E2) -> 'border'", "sem": lambda: [('borders', E1, E2)] },
-        # { "syn": "tv(E1, E2) -> 'borders'", "sem": lambda: [('borders', E1, E2)] },
         {"syn": "verb(E1, E2) -> 'bordered'", "sem": lambda: "borders"},
         # { "syn": "tv(E1, E2) -> 'contains'", "sem": lambda: [('contains', E1, E2)] },
-        # { "syn": "tv(E1, E2) -> 'flow' 'through'", "sem": lambda: [('flows_through', E1, E2)] },
+        {"syn": "verb(E1, E2) -> 'flow' 'through'", "sem": lambda: "flows_through"},
         # { "syn": "tv(E1, E2) -> 'exceeds'", "sem": lambda: [('greater_than', E1, E2)] },
         # { "syn": "tv_continuous(E1, E2) -> 'bordering'", "sem": lambda: [('borders', E1, E2)] },
         {"syn": "verb(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
