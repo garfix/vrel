@@ -1,6 +1,8 @@
+import copy
+
 from vrel.core.constants import PRED_NAME
 from vrel.core.functions.terms import bind_variables
-from vrel.entity.Atom import Atom
+from vrel.entity.Atom import Atom, Modifier
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.module.transform.exec_code import exec_code
@@ -10,7 +12,7 @@ def resolve_names(atoms: list[Atom], solver: SomeSolver):
 
     # find all variables associated with names
     named_variables = find_named_variables(atoms)
-    # print(atom)
+    # print(atoms)
     # print(named_variables)
 
     # create ids for all variables
@@ -35,7 +37,7 @@ def find_named_variables(term: any) -> dict:
             variables |= find_named_variables(element)
     elif isinstance(term, Atom):
         variables |= find_named_variables(term.arguments)
-        variables |= find_named_variables(term.modifiers)
+        variables |= find_named_variables(term.get_modifier_atoms())
 
         if term.predicate == PRED_NAME:
             variable, name = term.arguments
@@ -65,6 +67,17 @@ def remove_names_from_atoms(atoms: list[Atom]) -> list[Atom]:
     return new_atoms
 
 
+def remove_names_from_modifiers(modifiers: list[Modifier]) -> list[Atom]:
+    new_modifiers = []
+    for mod in modifiers:
+        if mod.atom.predicate != PRED_NAME:
+            new_modifiers.append(
+                Modifier(variable=mod.variable, atom=remove_names_from_atom(mod.atom), position=mod.position)
+            )
+
+    return new_modifiers
+
+
 def remove_names_from_arguments(args: list[any]) -> list[any]:
     new_atoms = []
     for arg in args:
@@ -84,5 +97,5 @@ def remove_names_from_arguments(args: list[any]) -> list[any]:
 def remove_names_from_atom(atom: Atom) -> Atom:
     a = atom.copy()
     a.arguments = remove_names_from_arguments(atom.arguments)
-    a.modifiers = remove_names_from_atoms(atom.modifiers)
+    a.modifiers = remove_names_from_modifiers(atom.modifiers)
     return a

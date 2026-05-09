@@ -34,6 +34,55 @@ It's not possible to create a tree from a flat tuple structure, but it is possib
 
 - what about the modifiers? Are they still needed?
 - what about `[vp.any([np])]`, `Atom(verb, E1, E2).any([np])`. Is that still possible?
+- what about relative clauses?
+
+An example
+
+    What is the ocean that borders African countries and that borders Asian countries?
+
+    What is E1
+        borders(
+            [ocean(E1)],
+            [african(E2), country(E2)]
+        ),
+        borders(
+            [ocean(E1)],
+            [asian(E2), country(E2)]
+        )
+
+    What are the continents no country in which contains more than two cities whose population exceeds 1 million?
+
+    continent(E1)
+        mod
+            contains(
+                country(E1).det(none)
+                    mod in(E1, E2)
+                city(E2).det(>=2)
+                    mod pop >= 1M
+            )
+
+    AMR representation (Claude)
+
+```
+
+    (q / continent
+   :ARG0-of (r / recommend-01   ; interrogative root
+      :polarity ?)
+   :ARG1-of (h / have-org-role-91
+      :ARG2 (c / country
+         :ARG1-of (h2 / have-org-role-91
+            :ARG2 (c2 / city
+               :quant-of (e / exceed-01
+                  :ARG1 (p / population
+                     :poss c2)
+                  :ARG2 (v / value
+                     :quant 1000000)))
+            :quant (a / at-most
+               :op1 2)
+            :polarity -)   ; "no country"
+         :quant (n / no)))))
+
+```
 
 ## 2026-05-04
 

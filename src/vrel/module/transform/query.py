@@ -61,32 +61,31 @@ def create_atom_query(atom: Atom) -> list[Atom]:
 
     """
 
-    if atom.predicate == PRED_AND:
-        result = []
-        for mod in atom.arguments:
-            result.extend(create_query(mod))
-        return result
-
-    modifiers = reversed(atom.modifiers)
     extracted_atoms = []
 
-    # new_args = []
-    # for arg in atom.arguments:
-    #     if isinstance(arg, list):
-    #         new_args.append(create_query(arg))
-    #     else:
-    #         new_args.append(arg)
+    new_args = []
+    for arg in atom.arguments:
+        if isinstance(arg, list):
+            new_args.append(create_query(arg))
+        elif isinstance(arg, Atom):
+            new_args.append(create_atom_query(arg))
+        else:
+            new_args.append(arg)
 
     new_atom = atom.copy()
-    # new_atom.arguments = new_args
+    new_atom.arguments = new_args
 
     new_atom.modifiers = []
-
-    for mod in modifiers:
-        if mod.determiner is not None:
-            new_atom = create_quantification(new_atom, mod)
+    determiners = {}
+    for mod in atom.modifiers:
+        if mod.atom.determiner is not None:
+            determiners[mod.variable.name] = mod.atom
         else:
-            extracted_atoms.append(mod)
+            extracted_atoms.append(mod.atom)
+
+    for arg in reversed(atom.arguments):
+        if isinstance(arg, Variable) and arg.name in determiners:
+            new_atom = create_quantification(new_atom, determiners[arg.name])
 
     return [new_atom] + create_query(extracted_atoms)
 

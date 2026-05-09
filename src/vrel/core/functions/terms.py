@@ -1,4 +1,4 @@
-from vrel.entity.Atom import Atom
+from vrel.entity.Atom import Atom, Modifier
 from vrel.entity.Variable import Variable
 
 RED = "\033[31m"
@@ -32,11 +32,19 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
     elif pre == "T":
         color = CYAN
         start = "MD"
+    elif pre == "MA":
+        color = CYAN
+        start = ""
     elif pre == "E":
         color = CYAN
         start = "EX"
 
     prefix = f"{color}{start}{RESET} "
+
+    if isinstance(term, Modifier):
+        text = "\n" + space + f"{prefix}{MAGENTA}{term.variable} {term.position}{RESET}"
+        text += format_term(term.atom, indent + 1, 0, "MA")
+        return text
 
     if isinstance(term, Atom):
         text = "\n" + space + f"{prefix}({YELLOW}{term.predicate}{RESET}"
@@ -44,8 +52,6 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
             text += format_term(term.determiner, indent + 1, None, "D")
         for i, arg in enumerate(term.arguments):
             text += format_term(arg, indent + 1, i + 1, "A")
-        if len(term.modifiers) > 0:
-            text += format_term(term.type, indent + 1, None, "T")
         for i, mod in enumerate(term.modifiers):
             text += format_term(mod, indent + 1, i + 1, "M")
         if len(term.exec) > 0:

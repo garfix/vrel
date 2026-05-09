@@ -207,7 +207,7 @@ def get_read_grammar():
         },
         {
             "syn": "proper_noun(E1) -> /\\w+/ common_noun(E1, T1)",
-            "sem": lambda token, common_noun: Atom("name", E1, token + " " + common_noun.predicate).execute(
+            "sem": lambda token, common_noun: Atom("name", E1, token + " " + common_noun.predicate).with_execute(
                 [Atom("let", T1, "true"), Atom("store", [common_noun])]
             ),
         },

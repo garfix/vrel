@@ -71,7 +71,7 @@ class TestQuantification(unittest.TestCase):
                 "sem": lambda np1, verb, np2: Atom(
                     "exec",
                     [
-                        Atom("create_query", [Atom(verb, E1, E2).any([np1, np2])], Query),
+                        Atom("create_query", [Atom(verb, E1, E2).mod(np1).mod(np2)], Query),
                         Atom("exec", Query),
                     ],
                 ),
@@ -81,13 +81,13 @@ class TestQuantification(unittest.TestCase):
                 "sem": lambda np, vp: Atom(
                     "exec",
                     [
-                        Atom("create_query", [vp.any([np])], Query),
+                        Atom("create_query", [vp.mod(np)], Query),
                         Atom("print", Query),
                         Atom("exec", Query),
                     ],
                 ),
             },
-            {"syn": "vp(E1) -> verb2(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
+            {"syn": "vp(E1) -> verb2(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
             {"syn": "verb(E1, E2) -> 'has'", "sem": lambda: "have"},
             {"syn": "verb2(E1, E2) -> 'has2'", "sem": lambda: "have"},
             {

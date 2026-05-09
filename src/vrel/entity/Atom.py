@@ -1,25 +1,30 @@
 from __future__ import annotations
+from dataclasses import dataclass
 from vrel.entity.Sentinel import Sentinel
 from vrel.entity.Variable import Variable
 
-MODIFIER_TYPE_PRE = "pre"
-MODIFIER_TYPE_POST = "post"
-MODIFIER_TYPE_DURING = "during"
-MODIFIER_TYPE_ANYWHERE = "anywhere"
+MODIFIER_POSITION_PRE = "modifier pre"
+MODIFIER_POSITION_POST = "modifier post"
+MODIFIER_POSITION_ANYWHERE = "modifier"
+
+
+@dataclass(frozen=True)
+class Modifier:
+    atom: Atom
+    variable: Variable
+    position: str
 
 
 class Atom:
     predicate: str
     arguments: list
-    modifiers: list[Atom]
+    modifiers: list[Modifier]
     determiner: Atom | None
-    type: str
     exec: list[Atom]
 
     def __init__(self, *args):
         self.arguments = []
         self.modifiers = []
-        self.type = MODIFIER_TYPE_ANYWHERE
         self.determiner = None
         self.exec = []
 
@@ -50,22 +55,19 @@ class Atom:
             self.predicate,
             *self.arguments,
         )
-        a.type = self.type
         a.determiner = self.determiner
-        a.modifiers.extend(self.modifiers)
-        a.exec = self.exec
+        a.modifiers = [*self.modifiers]
+        a.exec = [*self.exec]
         return a
 
     def apply_to_each_atom(self, func):
         a = self.copy()
         a.arguments = [func(arg) for arg in a.arguments]
-        a.modifiers = [func(mod) for mod in a.modifiers]
-        a.exec = [func(command) for command in a.exec]
-        return a
+        a.modifiers = []
+        for mod in self.modifiers:
+            a.modifiers.append(Modifier(variable=mod.variable, atom=func(mod.atom), position=mod.position))
 
-    def execute(self, atoms: list[Atom]):
-        a = self.copy()
-        a.exec = atoms
+        a.exec = [func(command) for command in a.exec]
         return a
 
     def flatten(self):
@@ -73,42 +75,41 @@ class Atom:
         a.arguments = self.arguments
         return a
 
+    def with_execute(self, atoms: list[Atom]):
+        a = self.copy()
+        a.exec = atoms
+        return a
+
     def with_determiner(self, determiner: Atom):
         a = self.copy()
         a.determiner = determiner
         return a
 
-    def pre(self, atoms: list[Atom]):
-        return self._modify(MODIFIER_TYPE_PRE, atoms)
+    def mod(self, atom: Atom, variable: Variable = None, position: str = MODIFIER_POSITION_ANYWHERE):
+        if variable is None:
+            variable_count = 0
 
-    def post(self, atoms: list[Atom]):
-        return self._modify(MODIFIER_TYPE_POST, atoms)
+            for arg in atom.arguments:
+                if isinstance(arg, Variable):
+                    variable_count += 1
+                    variable = arg
+            # if variable_count > 1:
+            #     raise Exception(f"Please specify the variable for this mod: {atom}")
 
-    def any(self, atoms: list[Atom]):
-        return self._modify(MODIFIER_TYPE_ANYWHERE, atoms)
+            if len(atom.arguments) > 0 and isinstance(atom.arguments[0], Variable):
+                variable = atom.arguments[0]
+        elif not isinstance(variable, Variable):
+            raise Exception(f"Is not a variable: {variable}")
+        if not isinstance(atom, Atom):
+            raise Exception(f"Is not an atom: {atom}")
 
-    def _modify(self, type: str, atoms: list[Atom]):
-        if not isinstance(atoms, list):
-            raise Exception(f"Modifiers must be a list: {atoms}")
-        # if len(self.modifiers) > 0:
-        #     raise Exception("The atom already has modifiers")
         a = self.copy()
-        a.modifiers = atoms + a.modifiers
+        a.modifiers.append(Modifier(atom, variable, position))
         a.type = type
         return a
 
-    def get_modifier(self, predicate: str) -> Atom | None:
-        for mod in self.modifiers:
-            if mod.predicate == predicate:
-                return mod
-        return None
-
-    def get_modifiers(self, predicate: str) -> list[Atom]:
-        mods = []
-        for mod in self.modifiers:
-            if mod.predicate == predicate:
-                mods.append(mod)
-        return mods
+    def get_modifier_atoms(self):
+        return list(map(lambda mod: mod.atom, self.modifiers))
 
     def __eq__(self, value):
         return (
@@ -117,7 +118,7 @@ class Atom:
             and self.arguments == value.arguments
             and self.modifiers == value.modifiers
             and self.determiner == value.determiner
-            and self.type == value.type
+            and self.exec == value.exec
         )
 
     def __repr__(self):

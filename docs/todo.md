@@ -1,8 +1,6 @@
 ## todo
 
-- wel of niet modifiers toevoegen als er al modifiers zijn? ervoor of erachter?
 - kan de echter determiner in het determiner object?
-- Atom("and", [pp1], [pp2]) of Atom("and").any([pp1, pp2])
 
 - api: bv tk.keras.layers.Dense
 
@@ -52,6 +50,10 @@
 - I added `sentence` as an extra data source for `match`. This works for now, but I'm not confident it's the final solution
 
 - the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
+
+## New relation function: command
+
+Just an idea: next to `query_function` and `write_function`, create a `command_function` that allows the predicate to be executed as a command. There would be no need to create a separate predicate (like in nli-go) for commands.
 
 ## Documenteer
 

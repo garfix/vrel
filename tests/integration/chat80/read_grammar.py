@@ -12,7 +12,7 @@ def get_read_grammar():
         {
             # Does Afghanistan border China?
             "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
-            "sem": lambda np1, verb, np2: Atom("intent_yn", [Atom(verb, E2, E3).any([np1, np2])]),
+            "sem": lambda np1, verb, np2: Atom("intent_yn", [Atom(verb, E2, E3).mod(np1).mod(np2)]),
         },
         # {
         #     "syn": "s(E1) -> 'is' 'there' np(E1) + '?'",
@@ -109,17 +109,17 @@ def get_read_grammar():
         # },
         # active transitive: sub obj
         # { "syn": "vp_nosub_obj(E1) -> tv(E1, E2) np(E2)", "sem": lambda tv, np: apply(np, tv) },
-        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
+        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
         # { "syn": "vp_nosub_obj(E1) -> 'does' 'not' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: [('not', vp_nosub_obj)] },
         # { "syn": "vp_nosub_obj(E1) -> 'have' 'a' attr(E1, E2)", "sem": lambda attr: attr },
         # passive transitive
         # { "syn": "vp_noobj_sub(E1) -> tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
-        {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
-        {"syn": "vp(E1) -> 'does' np(E2) verb(E2, E1)", "sem": lambda np, verb: Atom(verb, E2, E1).any([np])},
+        {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
+        {"syn": "vp(E1) -> 'does' np(E2) verb(E2, E1)", "sem": lambda np, verb: Atom(verb, E2, E1).mod(np)},
         # { "syn": "vp_noobj_sub(E1) -> 'is' tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
         # active transitive continuous
         # { "syn": "vp_nosub_obj_continuous(E1) -> tv_continuous(E1, E2) np(E2)", "sem": lambda tv_continuous, np: apply(np, tv_continuous) },
-        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).any([np])},
+        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
         # passive ditransitive: obj sub iob
         # { "syn": "vp_noobj_sub_iob(E1) -> 'from' 'which' np(E2) vp_noobj_nosub_iob(E1, E2)", "sem": lambda np, vp_noobj_nosub_iob: apply(np, vp_noobj_nosub_iob) },
         # { "syn": "vp_noobj_nosub_iob(E1, E2) -> dtv(E2, E1, E3) np(E3)", "sem": lambda dtv, np: apply(np, dtv) },
@@ -152,16 +152,16 @@ def get_read_grammar():
         },
         {
             "syn": "np(E1) -> np(E1) relative_clause(E1)",
-            "sem": lambda nbar, relative_clause: Atom("and", [nbar], [relative_clause]),
+            "sem": lambda nbar, relative_clause: nbar.mod(relative_clause),
         },
         # nbar
-        {"syn": "nbar(E1) -> adjp(E1) nbar(E1)", "sem": lambda adjp, nbar: Atom("and", [adjp], [nbar])},
+        {"syn": "nbar(E1) -> adjp(E1) nbar(E1)", "sem": lambda adjp, nbar: nbar.mod(adjp)},
         {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
         {
             "syn": "nbar(E1, E2) -> nbar(E1)+'\\''+'s' np(E2)",
-            "sem": lambda nbar, np: Atom("of", E2, E1).any([nbar, np]),
+            "sem": lambda nbar, np: nbar.mod(Atom("of", E2, E1).mod(np, E2), E1),
         },
-        {"syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar.any([pp])},
+        {"syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar.mod(pp)},
         # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
         # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
         # relative clauses
@@ -170,7 +170,7 @@ def get_read_grammar():
         # { "syn": "relative_clause(E1) -> 'that' vp_noobj_sub(E1)", "sem": lambda vp_noobj_sub: vp_noobj_sub },
         {
             "syn": "relative_clause(E1) -> relative_clause(E1) 'and' relative_clause(E1)",
-            "sem": lambda relative_clause1, relative_clause2: Atom("and", [relative_clause1], [relative_clause2]),
+            "sem": lambda relative_clause1, relative_clause2: relative_clause1.mod(relative_clause2),
         },
         # { "syn": "relative_clause(E1) -> vp_nosub_obj_continuous(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
         {"syn": "relative_clause(E1) -> vp(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj},
@@ -232,9 +232,9 @@ def get_read_grammar():
         {"syn": "number(E1) -> number(E1) 'million'", "sem": lambda number: number * 1000000},
         # pp
         {"syn": "pp(E1) -> 'not' pp(E1)", "sem": lambda pp: Atom("not", [pp])},
-        {"syn": "pp(E1) -> preposition(E1, E2) np(E2)", "sem": lambda preposition, np: preposition.any([np])},
-        {"syn": "pp(E1) -> 'south' 'of' np(E2)", "sem": lambda np: Atom("south_of", E1, E2).any([np])},
-        {"syn": "pp(E1) -> pp(E1) 'and' pp(E1)", "sem": lambda pp1, pp2: Atom("and", [pp1], [pp2])},
+        {"syn": "pp(E1) -> preposition(E1, E2) np(E2)", "sem": lambda preposition, np: preposition.mod(np)},
+        {"syn": "pp(E1) -> 'south' 'of' np(E2)", "sem": lambda np: Atom("south_of", E1, E2).mod(np)},
+        {"syn": "pp(E1) -> pp(E1) 'and' pp(E1)", "sem": lambda pp1, pp2: pp1.mod(pp2)},
         {"syn": "preposition(E1, E2) -> 'in'", "sem": lambda: Atom("in", E1, E2)},
         {"syn": "preposition(E1, E2) -> 'of'", "sem": lambda: Atom("of", E1, E2)},
         # adjective phrases

@@ -19,5 +19,5 @@ def exec_atom(atom: Atom, solver: SomeSolver):
         if isinstance(arg, Atom):
             exec_atom(arg, solver)
 
-    for mod in atom.modifiers:
+    for mod in atom.get_modifier_atoms():
         exec_atom(mod, solver)

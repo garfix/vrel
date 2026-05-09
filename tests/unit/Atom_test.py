@@ -1,5 +1,5 @@
 from vrel.core.constants import E1, E2, E3
-from vrel.entity.Atom import Atom
+from vrel.entity.Atom import MODIFIER_POSITION_ANYWHERE, Atom, Modifier
 
 
 def test_atom():
@@ -16,7 +16,10 @@ def test_atom():
     assert a.arguments[2] == "mary"
     assert a.arguments == [E1, "john", "mary"]
 
-    c = a.any([Atom("much", E2, E1), Atom("location", E3, "here", E1)])
+    c = a.mod(Atom("much", E2, E1), E1).mod(Atom("location", E3, "here", E1), E1)
 
     assert a.modifiers == []
-    assert c.modifiers == [Atom("much", E2, E1), Atom("location", E3, "here", E1)]
+    assert c.modifiers == [
+        Modifier(atom=Atom("much", E2, E1), variable=E1, position=MODIFIER_POSITION_ANYWHERE),
+        Modifier(atom=Atom("location", E3, "here", E1), variable=E1, position=MODIFIER_POSITION_ANYWHERE),
+    ]
