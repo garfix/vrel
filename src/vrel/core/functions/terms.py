@@ -42,7 +42,7 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
     prefix = f"{color}{start}{RESET} "
 
     if isinstance(term, Modifier):
-        text = "\n" + space + f"{prefix}{MAGENTA}{term.variable} {term.position}{RESET}"
+        text = "\n" + space + f"{prefix}{MAGENTA}{term.position}{RESET}"
         text += format_term(term.atom, indent + 1, 0, "MA")
         return text
 

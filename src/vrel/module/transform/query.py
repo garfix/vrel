@@ -50,55 +50,68 @@ Turns a list of sentence molecules into a queryable list of atoms.
 """
 
 
-def create_query(atoms: list[Atom]) -> list[Atom]:
-    result = []
-    for atom in atoms:
-        result.extend(create_atom_query(atom))
-    return result
+def create_query(term: any) -> list[Atom]:
+
+    if isinstance(term, list):
+        result = []
+        for element in term:
+            result.extend(create_query(element))
+        return result
+
+    elif isinstance(term, Atom):
+
+        atom = term
+
+        new_atom = atom.copy()
+        new_atom.arguments = [create_query(arg) for arg in atom.arguments]
+        new_atom.modifiers = []
+        new_atom.determiner = None
+
+        extracted_atoms = []
+        for mod in atom.modifiers:
+            if mod.atom.determiner is None:
+                extracted_atoms.append(mod.atom)
+
+        # quantifier precedence is here based on the reversed order of the arguments
+        # this works most of the time, but not always: there are counter examples
+        for arg in reversed(atom.arguments):
+            if isinstance(arg, Variable):
+                np_with_determiner = get_modifier_with_determiner(atom, arg)
+                if np_with_determiner is not None:
+                    new_atom = create_quantification(new_atom, np_with_determiner)
+
+        return [new_atom] + create_query(extracted_atoms)
+
+    else:
+        return term
 
 
-def create_atom_query(atom: Atom) -> list[Atom]:
-
-    new_args = []
-    for arg in atom.arguments:
-        if isinstance(arg, list):
-            new_args.append(create_query(arg))
-        elif isinstance(arg, Atom):
-            new_args.append(create_atom_query(arg))
-        else:
-            new_args.append(arg)
-
-    new_atom = atom.copy()
-    new_atom.arguments = new_args
-    new_atom.modifiers = []
-    new_atom.determiner = None
-
-    extracted_atoms = []
+def get_modifier_with_determiner(atom: Atom, variable: Variable) -> Atom | None:
+    """
+    Returns the (first) modifier of `atom` that has `variable` as an argument, and that has a determiner
+    The goal was to link each modifier to an argument, but it's dreary and error-prone for a developer to do that.
+    The insight here is that each modifier can be linked only to a single argument, based on the variable in the modifier.
+    """
     for mod in atom.modifiers:
-        if mod.atom.determiner is None:
-            extracted_atoms.append(mod.atom)
-
-    for arg in reversed(atom.arguments):
-        if isinstance(arg, Variable):
-            np_with_determiner = atom.get_determiner_np(arg)
-            if np_with_determiner is not None:
-                new_atom = create_quantification(new_atom, np_with_determiner)
-
-    return [new_atom] + create_query(extracted_atoms)
+        if mod.atom.determiner is not None:
+            for arg in mod.atom.arguments:
+                if arg == variable:
+                    return mod.atom
+    return None
 
 
-def create_quantification(atom: Atom, determiner_with_np: Atom):
+def create_quantification(atom: Atom, np_with_determiner: Atom):
     # get the determiner atom from the argument
-    det = determiner_with_np.determiner
+    det = np_with_determiner.determiner
 
     # the scoping argument may itself contain scoping, so recurse into it
-    range = create_atom_query(determiner_with_np)
+    range = create_query(np_with_determiner)
 
     if det.predicate == "all":
         # ('all', E1, [range-atoms], [body-atoms])
         q_atom = Atom(
             "all",
-            determiner_with_np.arguments[0],
+            np_with_determiner.arguments[0],
             # Range
             range,
             # Body

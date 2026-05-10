@@ -71,9 +71,7 @@ def remove_names_from_modifiers(modifiers: list[Modifier]) -> list[Atom]:
     new_modifiers = []
     for mod in modifiers:
         if mod.atom.predicate != PRED_NAME:
-            new_modifiers.append(
-                Modifier(variable=mod.variable, atom=remove_names_from_atom(mod.atom), position=mod.position)
-            )
+            new_modifiers.append(Modifier(atom=remove_names_from_atom(mod.atom), position=mod.position))
 
     return new_modifiers
 

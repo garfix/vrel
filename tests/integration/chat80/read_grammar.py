@@ -159,7 +159,7 @@ def get_read_grammar():
         {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
         {
             "syn": "nbar(E1, E2) -> nbar(E1)+'\\''+'s' np(E2)",
-            "sem": lambda nbar, np: nbar.mod(Atom("of", E2, E1).mod(np, E2), E1),
+            "sem": lambda nbar, np: nbar.mod(Atom("of", E2, E1).mod(np)),
         },
         {"syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar.mod(pp)},
         # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
