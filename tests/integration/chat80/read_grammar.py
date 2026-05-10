@@ -52,10 +52,13 @@ def get_read_grammar():
             "sem": lambda noun, np: Atom("intent_table", [E2, E1], ["", ""], [noun, Atom("of", E1, E2), np]),
             "boost": 1,
         },
-        # {
-        #     "syn": "s(E1) -> 'what' 'is' 'the' 'total' 'area' 'of' np(E2) + '?'",
-        #     "sem": lambda np: [('intent_value_with_unit', e1, 'ksqmiles', [("sum", E1, E3, apply(np, []) + [('size_of', E2, E3)])])],
-        # },
+        {
+            # What is the total area of countries south of the Equator and not in Australasia?
+            "syn": "s(E1) -> 'what' 'is' 'the' 'total' 'area' 'of' np(E2) + '?'",
+            "sem": lambda np: Atom(
+                "intent_value_with_unit", E1, "ksqmiles", [Atom("sum", E1, E3, [np, Atom("size_of", E2, E3)])]
+            ),
+        },
         # {
         #     "syn": "s(E1, E3) -> 'what' 'is' 'the' 'average' 'area' 'of' np(E2) preposition(E2, E3) 'each' nbar(E3) + '?'",
         #     "sem": lambda np, preposition, nbar: [('intent_table', [e3, e1], ['', 'ksqmiles'], nbar + [('avg', E1, E4, apply(np, preposition) + [('size_of', E2, E4)])])],

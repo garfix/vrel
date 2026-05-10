@@ -55,7 +55,7 @@ tests = [
         "What are the countries south of the Equator and not in Australasia?",
         "angola, argentina, bolivia, botswana, brazil, burundi, chile, congo, ecuador, indonesia, lesotho, malagasy, malawi, mauritius, mozambique, paraguay, peru, rwanda, seychelles, south_africa, swaziland, tanzania, uruguay, zaire, zambia, zimbabwe",
     ],
-    # ["What is the total area of countries south of the Equator and not in Australasia?", "10228 ksqmiles"],
+    ["What is the total area of countries south of the Equator and not in Australasia?", "10228 ksqmiles"],
     # ["What is the average area of the countries in each continent?", [
     #     ["africa", "233 ksqmiles"],
     #     ["america", "496 ksqmiles"],
