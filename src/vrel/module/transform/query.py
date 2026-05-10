@@ -126,6 +126,15 @@ def create_quantification(atom: Atom, np_with_determiner: Atom):
             range + [atom],
             n,
         )
+    elif det.predicate == "greater_than":
+        # ('det_greater_than', [body-atoms], Number)
+        n = det.arguments[0]
+        q_atom = Atom(
+            "det_greater_than",
+            # Range + Body
+            range + [atom],
+            n,
+        )
     else:
         raise Exception(f"Unknown determiner: {det.predicate}")
 

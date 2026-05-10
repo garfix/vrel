@@ -18,10 +18,11 @@ def get_read_grammar():
         #     "syn": "s(E1) -> 'is' 'there' np(E1) + '?'",
         #     "sem": lambda np: [('intent_yn', apply(np, []))],
         # },
-        # {
-        #     "syn": "s(E2) -> 'is' 'there' np(E1) preposition(E1, E2) 'each' nbar(E2) + '?'",
-        #     "sem": lambda np, preposition, nbar: [('intent_yn', [('all', E2, nbar, apply(np, preposition))])],
-        # },
+        {
+            # Is there more than one country in each continent?
+            "syn": "s(E2) -> 'is' 'there' np(E1) preposition(E1, E2) 'each' nbar(E2) + '?'",
+            "sem": lambda np, preposition, nbar: Atom("intent_yn", [Atom("all", E2, nbar, [np, preposition])]),
+        },
         {
             # What rivers are there?
             "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' + '?'",
@@ -221,6 +222,7 @@ def get_read_grammar():
         # },
         # { "syn": "det(E1) -> 'more' 'than' number(E1)", "sem": lambda number:
         #     SemanticFunction([Range, Body], [('det_greater_than', Range + Body, number)]) },
+        {"syn": "det(E1) -> 'more' 'than' number(E1)", "sem": lambda number: Atom("greater_than", number)},
         # { "syn": "superlative(E1) -> 'smallest'", "sem": lambda:
         #     SemanticFunction([Body], [('arg_min', E1, E2, Body + [('size_of', E1, E2)])]) },
         # attribute
