@@ -55,14 +55,9 @@ IGNORED = "ignored"
 DISJUNCTION = "$disjunction"
 UNIFICATION = "$unification"
 
-# arguments
-ARG_DETERMINER = "determiner"
-
 # some common semantic variables
 AUTO = Sentinel("<auto-generate>")
 
 # predicates
 PRED_NAME = "name"
-PRED_AND = "and"
-UNKNOWN_PREDICATE = "<unknown>"
 SAME_AS = "same_as"

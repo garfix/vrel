@@ -1,4 +1,4 @@
-from vrel.core.constants import E1, UNKNOWN_PREDICATE
+from vrel.core.constants import E1
 from vrel.entity.Atom import Atom
 
 

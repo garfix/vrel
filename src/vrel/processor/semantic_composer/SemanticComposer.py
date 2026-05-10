@@ -127,10 +127,6 @@ class SemanticComposer(SomeProcessor):
         if isinstance(term, list):
             return [self.unify_variables(atom, map) for atom in term]
         elif isinstance(term, Atom):
-            # return Atom(
-            #     term.predicate,
-            #     *[self.unify_variables(arg, map) for arg in term.arguments],
-            # ).mod([self.unify_variables(mod, map) for mod in term.modifiers])
             return term.apply_to_each_atom(lambda arg: self.unify_variables(arg, map))
         elif isinstance(term, tuple):
             raise Exception(f"tuple found 9: {term}")
