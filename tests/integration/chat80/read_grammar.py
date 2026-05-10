@@ -59,10 +59,16 @@ def get_read_grammar():
                 "intent_value_with_unit", E1, "ksqmiles", [Atom("sum", E1, E3, [np, Atom("size_of", E2, E3)])]
             ),
         },
-        # {
-        #     "syn": "s(E1, E3) -> 'what' 'is' 'the' 'average' 'area' 'of' np(E2) preposition(E2, E3) 'each' nbar(E3) + '?'",
-        #     "sem": lambda np, preposition, nbar: [('intent_table', [e3, e1], ['', 'ksqmiles'], nbar + [('avg', E1, E4, apply(np, preposition) + [('size_of', E2, E4)])])],
-        # },
+        {
+            # What is the average area of the countries in each continent?
+            "syn": "s(E1, E3) -> 'what' 'is' 'the' 'average' 'area' 'of' np(E2) preposition(E2, E3) 'each' nbar(E3) + '?'",
+            "sem": lambda np, preposition, nbar: Atom(
+                "intent_table",
+                [E3, E1],
+                ["", "ksqmiles"],
+                [nbar, Atom("avg", E1, E4, [np, preposition, Atom("size_of", E2, E4)])],
+            ),
+        },
         # {
         #     "syn": "s(E2, E3) -> 'what' 'percentage' 'of' np(E1) tv(E1, E2) 'each' nbar(E2) + '?'",
         #     "sem": lambda np, tv, nbar: [('intent_table', [e2, e3], ['', ''], nbar + [('percentage', E3, apply(np, tv), apply(np, []))])],

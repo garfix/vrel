@@ -1,7 +1,5 @@
 ## todo
 
-- het is niet nodig een variabele op te nemen voor de modifier; de variabele zit in de modifier
-
 - kan de echter determiner in het determiner object?
 
 - api: bv tk.keras.layers.Dense

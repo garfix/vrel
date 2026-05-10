@@ -56,12 +56,16 @@ tests = [
         "angola, argentina, bolivia, botswana, brazil, burundi, chile, congo, ecuador, indonesia, lesotho, malagasy, malawi, mauritius, mozambique, paraguay, peru, rwanda, seychelles, south_africa, swaziland, tanzania, uruguay, zaire, zambia, zimbabwe",
     ],
     ["What is the total area of countries south of the Equator and not in Australasia?", "10228 ksqmiles"],
-    # ["What is the average area of the countries in each continent?", [
-    #     ["africa", "233 ksqmiles"],
-    #     ["america", "496 ksqmiles"],
-    #     ["asia", "485 ksqmiles"],
-    #     ["australasia", "543 ksqmiles"],
-    #     ["europe", "58 ksqmiles"]]],
+    [
+        "What is the average area of the countries in each continent?",
+        [
+            ["africa", "233 ksqmiles"],
+            ["america", "496 ksqmiles"],
+            ["asia", "485 ksqmiles"],
+            ["australasia", "543 ksqmiles"],
+            ["europe", "58 ksqmiles"],
+        ],
+    ],
     # ["Is there more than one country in each continent?", 'no'],
     # ["Is there some ocean that does not border any country?", "yes"],
     # ["What are the countries from which a river flows into the Black_Sea?", "romania, soviet_union"],
