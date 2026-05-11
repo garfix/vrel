@@ -67,7 +67,7 @@ tests = [
         ],
     ],
     ["Is there more than one country in each continent?", "no"],
-    # ["Is there some ocean that does not border any country?", "yes"],
+    ["Is there some ocean that does not border any country?", "yes"],
     # ["What are the countries from which a river flows into the Black_Sea?", "romania, soviet_union"],
     # ["What are the continents no country in which contains more than two cities whose population exceeds 1 million?", "africa, antarctica, australasia"],
     # ["Which country bordering the Mediterranean borders a country that is bordered by a country whose population exceeds the population of India?", "turkey"],

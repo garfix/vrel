@@ -15,10 +15,11 @@ def get_read_grammar():
             "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
             "sem": lambda np1, verb, np2: Atom("intent_yn", [Atom(verb, E2, E3).mod(np1).mod(np2)]),
         },
-        # {
-        #     "syn": "s(E1) -> 'is' 'there' np(E1) + '?'",
-        #     "sem": lambda np: [('intent_yn', apply(np, []))],
-        # },
+        {
+            # Is there some ocean that does not border any country?
+            "syn": "s(E1) -> 'is' 'there' np(E1) + '?'",
+            "sem": lambda np: Atom("intent_yn", [np]),
+        },
         {
             # Is there more than one country in each continent?
             "syn": "s(E2) -> 'is' 'there' np(E1) preposition(E1, E2) 'each' nbar(E2) + '?'",
@@ -122,6 +123,7 @@ def get_read_grammar():
         # { "syn": "vp_nosub_obj(E1) -> tv(E1, E2) np(E2)", "sem": lambda tv, np: apply(np, tv) },
         {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
         # { "syn": "vp_nosub_obj(E1) -> 'does' 'not' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: [('not', vp_nosub_obj)] },
+        {"syn": "vp(E1) -> 'does' 'not' vp(E1)", "sem": lambda vp: Atom("not", vp)},
         # { "syn": "vp_nosub_obj(E1) -> 'have' 'a' attr(E1, E2)", "sem": lambda attr: attr },
         # passive transitive
         # { "syn": "vp_noobj_sub(E1) -> tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
@@ -204,10 +206,8 @@ def get_read_grammar():
         #     SemanticFunction([Range, Body], Range + Body) },
         # { "syn": "det(E1) -> 'the'", "sem": lambda:
         #     SemanticFunction([Range, Body], Range + Body) },
-        # { "syn": "det(E1) -> 'some'", "sem": lambda:
-        #     SemanticFunction([Range, Body], Range + Body) },
-        # { "syn": "det(E1) -> 'any'", "sem": lambda:
-        #     SemanticFunction([Range, Body], Range + Body) },
+        {"syn": "det(E1) -> 'some'", "sem": lambda: None},
+        {"syn": "det(E1) -> 'any'", "sem": lambda: None},
         # { "syn": "det(E1) -> 'no'", "sem": lambda:
         #     SemanticFunction([Range, Body], [('none', Range + Body)]) },
         # { "syn": "det(E1) -> number(E1)", "sem": lambda number:
