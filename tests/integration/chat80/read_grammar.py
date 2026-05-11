@@ -45,10 +45,11 @@ def get_read_grammar():
             "syn": "s(E1) -> 'what' 'are' np(E1) + '?'",
             "sem": lambda np: Atom("intent_list", E1, [np]),
         },
-        # {
-        #     "syn": "s(E1) -> 'what' 'are' np(E1) vp_noobj_sub_iob(E1) + '?'",
-        #     "sem": lambda np, vp_noobj_sub_iob: [('intent_list', e1, apply(np, vp_noobj_sub_iob))],
-        # },
+        {
+            # What are the countries from which a river flows into the Black_Sea?
+            "syn": "s(E1) -> 'what' 'are' np(E1) vp(E1) + '?'",
+            "sem": lambda np, vp: Atom("intent_list", E1, [np, vp]),
+        },
         {
             # What are the capitals of the countries bordering the Baltic?
             "syn": "s(E1, E2) -> 'what' 'are' 'the' noun(E1) 'of' np(E2) + '?'",
@@ -134,8 +135,8 @@ def get_read_grammar():
         # { "syn": "vp_nosub_obj_continuous(E1) -> tv_continuous(E1, E2) np(E2)", "sem": lambda tv_continuous, np: apply(np, tv_continuous) },
         {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
         # passive ditransitive: obj sub iob
-        # { "syn": "vp_noobj_sub_iob(E1) -> 'from' 'which' np(E2) vp_noobj_nosub_iob(E1, E2)", "sem": lambda np, vp_noobj_nosub_iob: apply(np, vp_noobj_nosub_iob) },
-        # { "syn": "vp_noobj_nosub_iob(E1, E2) -> dtv(E2, E1, E3) np(E3)", "sem": lambda dtv, np: apply(np, dtv) },
+        {"syn": "vp(E1) -> 'from' 'which' np(E2) vp(E1, E2)", "sem": lambda np, vp: vp.mod(np)},
+        {"syn": "vp(E1, E2) -> verb(E2, E1, E3) np(E3)", "sem": lambda verb, np: Atom(verb, E2, E1, E3).mod(np)},
         # verbs
         {"syn": "verb(E1, E2) -> 'border'", "sem": lambda: "borders"},
         {"syn": "verb(E1, E2) -> 'borders'", "sem": lambda: "borders"},
@@ -148,7 +149,7 @@ def get_read_grammar():
         {"syn": "verb(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
         # { "syn": "tv_continuous(E1, E2) -> 'exceeding'", "sem": lambda: [('greater_than', E1, E2)] },
         # ditransitive verbs
-        # { "syn": "dtv(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: [('flows_from_to', E1, E2, E3)] },
+        {"syn": "verb(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: "flows_from_to"},
         # np
         {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
         {
@@ -200,8 +201,8 @@ def get_read_grammar():
         # { "syn": "np(E1) -> number(E1)", "sem": lambda number:
         #     SemanticFunction([Body], [('let', E1, number)] + Body) },
         # det
-        {"syn": "det(E1) -> 'a'", "sem": lambda: Atom("a")},
-        {"syn": "det(E1) -> 'the'", "sem": lambda: Atom("the")},
+        {"syn": "det(E1) -> 'a'", "sem": lambda: None},
+        {"syn": "det(E1) -> 'the'", "sem": lambda: None},
         # { "syn": "det(E1) -> 'a'", "sem": lambda:
         #     SemanticFunction([Range, Body], Range + Body) },
         # { "syn": "det(E1) -> 'the'", "sem": lambda:
