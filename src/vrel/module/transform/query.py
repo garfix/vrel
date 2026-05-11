@@ -106,36 +106,11 @@ def create_quantification(atom: Atom, np_with_determiner: Atom):
 
     # the scoping argument may itself contain scoping, so recurse into it
     range = create_query(np_with_determiner)
+    body = [atom]
 
-    if det.predicate == "all":
-        # ('all', E1, [range-atoms], [body-atoms])
-        q_atom = Atom(
-            "all",
-            np_with_determiner.arguments[0],
-            # Range
-            range,
-            # Body
-            [atom],
-        )
-    elif det.predicate == "equals":
-        # ('det_equals', [body-atoms], Number)
-        n = det.arguments[0]
-        q_atom = Atom(
-            "det_equals",
-            # Range + Body
-            range + [atom],
-            n,
-        )
-    elif det.predicate == "greater_than":
-        # ('det_greater_than', [body-atoms], Number)
-        n = det.arguments[0]
-        q_atom = Atom(
-            "det_greater_than",
-            # Range + Body
-            range + [atom],
-            n,
-        )
-    else:
-        raise Exception(f"Unknown determiner: {det.predicate}")
+    # bind the range and body
+    q_atom = det.copy()
+    q_atom.arguments[1] = range
+    q_atom.arguments[2] = body
 
     return q_atom

@@ -1,3 +1,14 @@
+## 2028-05-11
+
+Determiner / quantifier
+
+- Code sentence molecule minimaal
+- Duidelijke betekenis
+- De determiner moet herkenbaar zijn in de molecule
+- de determiner in de query moet wel uitvoerbaar zijn en resultaat opleveren
+
+"sem": lambda number: Atom("det_equals", Range, Body, number),
+
 ## 2026-05-08
 
 As the arguments and modifiers give me multiple ways to do the same thing, I need to think about the right way to do them all.

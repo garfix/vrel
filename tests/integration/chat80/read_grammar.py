@@ -3,6 +3,7 @@ from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
 Body = Variable("Body")
+Range = Variable("Range")
 Size = Variable("Size")
 
 
@@ -213,7 +214,7 @@ def get_read_grammar():
         #     SemanticFunction([Range, Body], [('det_equals', Range + Body, number)]) },
         {
             "syn": "det(E1) -> number(E1)",
-            "sem": lambda number: Atom("equals", number),
+            "sem": lambda number: Atom("det_equals", E1, Range, Body, number),
         },
         # {
         #     "syn": "det(E1) -> number(E1)",
@@ -222,7 +223,10 @@ def get_read_grammar():
         # },
         # { "syn": "det(E1) -> 'more' 'than' number(E1)", "sem": lambda number:
         #     SemanticFunction([Range, Body], [('det_greater_than', Range + Body, number)]) },
-        {"syn": "det(E1) -> 'more' 'than' number(E1)", "sem": lambda number: Atom("greater_than", number)},
+        {
+            "syn": "det(E1) -> 'more' 'than' number(E1)",
+            "sem": lambda number: Atom("det_greater_than", E1, Range, Body, number),
+        },
         # { "syn": "superlative(E1) -> 'smallest'", "sem": lambda:
         #     SemanticFunction([Body], [('arg_min', E1, E2, Body + [('size_of', E1, E2)])]) },
         # attribute

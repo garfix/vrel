@@ -268,39 +268,39 @@ class CoreModule(SomeModule):
     # ('det_equals', [body-atoms], E2)
     def determiner_equals(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        body, number = arguments
+        quant_var, range, body, number = arguments
 
-        results = context.solver.solve(body)
+        results = context.solver.solve(range + body)
         count = len(results)
 
         if count == number:
-            return [[None, None]]
+            return [[None, None, None, None]]
         else:
             return []
 
     # ('det_greater_than', [body-atoms], E2)
     def determiner_greater_than(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        body, number = arguments
+        quant_var, range, body, number = arguments
 
-        results = context.solver.solve(body)
+        results = context.solver.solve(range + body)
         count = len(results)
 
         if count > number:
-            return [[None, None]]
+            return [[None, None, None, None]]
         else:
             return []
 
     # ('det_less_than', [body-atoms], E2)
     def determiner_less_than(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        body, number = arguments
+        quant_var, range, body, number = arguments
 
-        results = context.solver.solve(body)
+        results = context.solver.solve(range + body)
         count = len(results)
 
         if count < number:
-            return [[None, None]]
+            return [[None, None, None, None]]
         else:
             return []
 
