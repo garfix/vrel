@@ -1,4 +1,4 @@
-from vrel.core.constants import E1, E2, E3, E4
+from vrel.core.constants import CONSTANT, E1, E2, E3, E4, COMBINED, SEPARATE
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
@@ -42,6 +42,7 @@ def get_read_grammar():
         },
         {
             # What are the countries south of the Equator and not in Australasia?
+            # What are the continents no country in which contains more than two cities whose population exceeds 1 million?
             "syn": "s(E1) -> 'what' 'are' np(E1) + '?'",
             "sem": lambda np: Atom("intent_list", E1, [np]),
         },
@@ -142,9 +143,9 @@ def get_read_grammar():
         {"syn": "verb(E1, E2) -> 'borders'", "sem": lambda: "borders"},
         # transitive verbs
         {"syn": "verb(E1, E2) -> 'bordered'", "sem": lambda: "borders"},
-        # { "syn": "tv(E1, E2) -> 'contains'", "sem": lambda: [('contains', E1, E2)] },
+        {"syn": "verb(E1, E2) -> 'contains'", "sem": lambda: "contains"},
         {"syn": "verb(E1, E2) -> 'flow' 'through'", "sem": lambda: "flows_through"},
-        # { "syn": "tv(E1, E2) -> 'exceeds'", "sem": lambda: [('greater_than', E1, E2)] },
+        {"syn": "verb(E1, E2) -> 'exceeds'", "sem": lambda: "exceeds"},
         # { "syn": "tv_continuous(E1, E2) -> 'bordering'", "sem": lambda: [('borders', E1, E2)] },
         {"syn": "verb(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
         # { "syn": "tv_continuous(E1, E2) -> 'exceeding'", "sem": lambda: [('greater_than', E1, E2)] },
@@ -184,12 +185,15 @@ def get_read_grammar():
         # { "syn": "relative_clause(E1) -> 'that' vp_noobj_sub(E1)", "sem": lambda vp_noobj_sub: vp_noobj_sub },
         {
             "syn": "relative_clause(E1) -> relative_clause(E1) 'and' relative_clause(E1)",
-            "sem": lambda relative_clause1, relative_clause2: relative_clause1.mod(relative_clause2),
+            "sem": lambda rel1, rel2: rel1.mod(rel2),
         },
         # { "syn": "relative_clause(E1) -> vp_nosub_obj_continuous(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
-        {"syn": "relative_clause(E1) -> vp(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj},
-        # { "syn": "relative_clause(E1) -> np(E2) preposition(E2, E1) 'which' vp_nosub_obj(E2)", "sem": lambda np, preposition, vp_nosub_obj: apply(np, preposition + vp_nosub_obj) },
-        # { "syn": "relative_clause(E1) -> 'whose' attr(E1, E2) vp_nosub_obj(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
+        {"syn": "relative_clause(E1) -> vp(E1)", "sem": lambda vp: vp},
+        {
+            "syn": "relative_clause(E1) -> np(E2) preposition(E2, E1) 'which' vp(E2)",
+            "sem": lambda np, preposition, vp: vp.mod(np.mod(preposition)),
+        },
+        {"syn": "relative_clause(E1) -> 'whose' attr(E1, E2) vp(E2)", "sem": lambda attr, vp: attr.mod(vp)},
         # { "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_nosub_obj_continuous(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
         # np
         # { "syn": "np(E1) -> nbar(E1)", "sem": lambda nbar:
@@ -200,38 +204,23 @@ def get_read_grammar():
         #     SemanticFunction([Body], apply(det, nbar + attr, Body)) },
         # { "syn": "np(E1) -> number(E1)", "sem": lambda number:
         #     SemanticFunction([Body], [('let', E1, number)] + Body) },
+        {"syn": "np(E1) -> number(E1)", "sem": lambda number: Atom(CONSTANT, E1, number)},
         # det
         {"syn": "det(E1) -> 'a'", "sem": lambda: None},
         {"syn": "det(E1) -> 'the'", "sem": lambda: None},
-        # { "syn": "det(E1) -> 'a'", "sem": lambda:
-        #     SemanticFunction([Range, Body], Range + Body) },
-        # { "syn": "det(E1) -> 'the'", "sem": lambda:
-        #     SemanticFunction([Range, Body], Range + Body) },
         {"syn": "det(E1) -> 'some'", "sem": lambda: None},
         {"syn": "det(E1) -> 'any'", "sem": lambda: None},
-        # { "syn": "det(E1) -> 'no'", "sem": lambda:
-        #     SemanticFunction([Range, Body], [('none', Range + Body)]) },
-        # { "syn": "det(E1) -> number(E1)", "sem": lambda number:
-        #     SemanticFunction([Range, Body], [('det_equals', Range + Body, number)]) },
+        {"syn": "det(E1) -> 'no'", "sem": lambda: Atom("none", E1, COMBINED)},
         {
             "syn": "det(E1) -> number(E1)",
-            "sem": lambda number: Atom("det_equals", E1, Range, Body, number),
+            "sem": lambda number: Atom("det_equals", E1, COMBINED, number),
         },
-        # {
-        #     "syn": "det(E1) -> number(E1)",
-        #     "sem": lambda number: SemanticFunction([Range, Body], [("det_equals", Range + Body, number)]),
-        #     # "sem": lambda number: SemanticFunction([Range, Body], [("det_equals", Range + Body, number)]),
-        # },
-        # { "syn": "det(E1) -> 'more' 'than' number(E1)", "sem": lambda number:
-        #     SemanticFunction([Range, Body], [('det_greater_than', Range + Body, number)]) },
         {
             "syn": "det(E1) -> 'more' 'than' number(E1)",
-            "sem": lambda number: Atom("det_greater_than", E1, Range, Body, number),
+            "sem": lambda number: Atom("det_greater_than", E1, COMBINED, number),
         },
-        # { "syn": "superlative(E1) -> 'smallest'", "sem": lambda:
-        #     SemanticFunction([Body], [('arg_min', E1, E2, Body + [('size_of', E1, E2)])]) },
         # attribute
-        # { "syn": "attr(E1, E2) -> 'population'", "sem": lambda: [('has_population', E1, E2)] },
+        {"syn": "attr(E1, E2) -> 'population'", "sem": lambda: Atom("has_population", E1, E2)},
         # { "syn": "attr(E1, E2) -> attr(E1, E2) relative_clause(E2)", "sem": lambda attr, relative_clause: attr + relative_clause },
         # number
         {"syn": "number(E1) -> 'one'", "sem": lambda: 1},
@@ -278,6 +267,7 @@ def get_read_grammar():
         {"syn": "singular_noun(E1) -> 'sea'", "sem": lambda: Atom("sea", E1)},
         {"syn": "singular_noun(E1) -> 'city'", "sem": lambda: Atom("city", E1)},
         {"syn": "singular_noun(E1) -> 'continent'", "sem": lambda: Atom("continent", E1)},
+        {"syn": "noun(E1) -> 'continents'", "sem": lambda: Atom("continent", E1)},
         {"syn": "noun(E1) -> 'countries'", "sem": lambda: Atom("country", E1)},
         {"syn": "noun(E1) -> 'cities'", "sem": lambda: Atom("city", E1)},
         {"syn": "noun(E1) -> 'seas'", "sem": lambda: Atom("sea", E1)},

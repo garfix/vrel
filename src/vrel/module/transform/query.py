@@ -1,3 +1,4 @@
+from vrel.core.constants import COMBINED, SEPARATE
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
@@ -110,7 +111,12 @@ def create_quantification(atom: Atom, np_with_determiner: Atom):
 
     # bind the range and body
     q_atom = det.copy()
-    q_atom.arguments[1] = range
-    q_atom.arguments[2] = body
+
+    if det.arguments[1] == COMBINED:
+        q_atom.arguments = [det.arguments[0], range + body, *det.arguments[2:]]
+    elif det.arguments[1] == SEPARATE:
+        q_atom.arguments = [det.arguments[0], range, body, *det.arguments[2:]]
+    else:
+        raise Exception(f"Unknown sentinel: {det.arguments[1]}")
 
     return q_atom

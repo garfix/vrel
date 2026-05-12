@@ -6,6 +6,7 @@ from vrel.entity.Variable import Variable
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.OrderedSet import OrderedSet
+from vrel.module.transform.resolve_constants import resolve_constants
 from vrel.module.transform.exec_code import exec_code
 from vrel.module.transform.query import create_query
 from vrel.module.transform.resolve_names import resolve_names
@@ -250,9 +251,9 @@ class CoreModule(SomeModule):
     # otherwise, it returns a list with a single value: True
     def not_function(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        body = arguments[0]
+        combined = arguments[0]
 
-        results = context.solver.solve(body)
+        results = context.solver.solve(combined)
         count = len(results)
 
         if count > 0:
@@ -265,46 +266,47 @@ class CoreModule(SomeModule):
 
         return [[arguments[1], arguments[1]]]
 
-    # ('det_equals', [body-atoms], E2)
+    # ('det_equals', Var, [range-atoms], [body-atoms], E2)
     def determiner_equals(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        quant_var, range, body, number = arguments
+        quant_var, combined, number = arguments
 
-        results = context.solver.solve(range + body)
+        results = context.solver.solve(combined)
         count = len(results)
 
         if count == number:
-            return [[None, None, None, None]]
+            return [[None, None, None]]
         else:
             return []
 
-    # ('det_greater_than', [body-atoms], E2)
+    # ('det_greater_than', Var, [range-atoms], [body-atoms], E2)
     def determiner_greater_than(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        quant_var, range, body, number = arguments
+        quant_var, combined, number = arguments
 
-        results = context.solver.solve(range + body)
+        results = context.solver.solve(combined)
+
         count = len(results)
 
         if count > number:
-            return [[None, None, None, None]]
+            return [[None, None, None]]
         else:
             return []
 
-    # ('det_less_than', [body-atoms], E2)
+    # ('det_less_than', Var, [range-atoms], [body-atoms], Number)
     def determiner_less_than(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        quant_var, range, body, number = arguments
+        quant_var, combined, number = arguments
 
-        results = context.solver.solve(range + body)
+        results = context.solver.solve(combined)
         count = len(results)
 
         if count < number:
-            return [[None, None, None, None]]
+            return [[None, None, None]]
         else:
             return []
 
-    # ('all', E1, [range-atoms], [body-atoms])
+    # ('all', Var, [range-atoms], [body-atoms])
     def determiner_all(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         quant_var = arguments[0]
@@ -329,16 +331,16 @@ class CoreModule(SomeModule):
         else:
             return []
 
-    # ('none', [body-atoms])
+    # ('none', Var, [range-atoms], [body-atoms])
     def determiner_none(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        body = arguments[0]
+        quant_var, combined = arguments
 
-        results = context.solver.solve(body)
+        results = context.solver.solve(combined)
         count = len(results)
 
         if count == 0:
-            return [[None]]
+            return [[None, None]]
         else:
             return []
 
@@ -519,9 +521,10 @@ class CoreModule(SomeModule):
     def resolve_names(self, arguments: list, context: ExecutionContext) -> list[list]:
         body = arguments[0]
 
-        result = resolve_names(body, context.solver)
+        result1 = resolve_constants(body)
+        result2 = resolve_names(result1, context.solver)
 
-        return [[None, result]]
+        return [[None, result2]]
 
     # ('exec-code', body-atoms)
     # Executes the exec part of the body-atoms

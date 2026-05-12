@@ -12,12 +12,9 @@ def resolve_names(atoms: list[Atom], solver: SomeSolver):
 
     # find all variables associated with names
     named_variables = find_named_variables(atoms)
-    # print(atoms)
-    # print(named_variables)
 
     # create ids for all variables
     variable_to_id = {variable: resolve_name(name, solver) for variable, name in named_variables.items()}
-    # print(variable_to_id)
 
     # create a new atom with bound named variables
     atoms1 = bind_variables(atoms, variable_to_id)
@@ -47,9 +44,7 @@ def find_named_variables(term: any) -> dict:
 
 
 def resolve_name(name: str, solver: SomeSolver):
-    # print("x")
     result = solver.solve([Atom("resolve_name", Variable("Id"), name)])
-    # print("x", result)
     if len(result) == 1:
         return result[0]["Id"]
     elif len(result) == 0:

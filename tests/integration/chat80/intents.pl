@@ -6,7 +6,7 @@ optimize(SemIn, SemOut) :-
     optimize_cost_sort(Q, S),
     optimize_isolate(S, SemOut),
     # log(R),
-    log(Q),
+    # log(Q),
     # log(S),
     log(SemOut)
     .

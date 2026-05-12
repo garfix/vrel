@@ -3,7 +3,7 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.constants import E1, E2, Body, Range
+from vrel.core.constants import E1, E2, COMBINED, SEPARATE
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Relation
@@ -97,11 +97,11 @@ class TestQuantification(unittest.TestCase):
             {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
             {
                 "syn": "det(E1) -> 'every'",
-                "sem": lambda: Atom("all", E1, Range, Body),
+                "sem": lambda: Atom("all", E1, SEPARATE),
             },
             {
                 "syn": "det(E1) -> number(E1)",
-                "sem": lambda number: Atom("det_equals", E1, Range, Body, number),
+                "sem": lambda number: Atom("det_equals", E1, COMBINED, number),
             },
             {"syn": "number(D1) -> 'two'", "sem": lambda: 2},
             {"syn": "number(D1) -> 'three'", "sem": lambda: 3},

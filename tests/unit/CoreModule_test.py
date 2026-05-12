@@ -4,10 +4,11 @@ from resolve_name.SimpleModule import SimpleModule
 from resolve_name.SimpleDB import SimpleDB
 from vrel.core.Model import Model
 from vrel.core.Solver import Solver
-from vrel.core.constants import E1, E2, E3, E4, E5
+from vrel.core.constants import CONSTANT, E1, E2, E3, E4, E5
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.module.CoreModule import CoreModule
+from vrel.module.transform.resolve_constants import resolve_constants
 from vrel.module.transform.resolve_names import resolve_names
 
 
@@ -227,3 +228,16 @@ class TestCoreModule(unittest.TestCase):
         atoms = [Atom("likes", E1, [Atom("surprise", E1, Atom("name", E2, "Mary"))]).mod(Atom("name", E1, "John"))]
         result = resolve_names(atoms, solver)
         self.assertEqual(result, [Atom("likes", 1, [Atom("surprise", 1, 2)])])
+
+    def test_resolve_constant(self):
+        data_source = SimpleDB()
+        facts = SimpleModule(data_source)
+
+        model = Model([facts])
+        solver = Solver(model)
+
+        # auto-generate id's for new names
+        atoms = [Atom("name", E1, "John"), Atom(CONSTANT, E2, 56), Atom("age", E1, E2)]
+        result1 = resolve_constants(atoms)
+        result2 = resolve_names(result1, solver)
+        self.assertEqual(result2, [Atom("age", 1, 56)])

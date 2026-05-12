@@ -1,4 +1,79 @@
-## 2028-05-11
+## 2026-05-12
+
+I need a way to represent a number as an np like in "exceeds 1 million".
+
+    np(E1) -> number(E1)
+    Atom("$constant", E1, number)
+
+===
+
+Vrel:
+
+```
+ (continent
+    1. $53),
+ (scope
+    1. [
+         (none
+            1. $54
+            2. [
+                 (country
+                    1. $54)
+                 (in
+                    1. $54
+                    2. $53)
+            ]
+            3. [
+                 (det_greater_than
+                    1. $57
+                    2. [
+                         (city
+                            1. $57)
+                         (has_population
+                            1. $57
+                            2. $60)
+                         (exceeds
+                            1. $60
+                            2. 1000000)
+                    ]
+                    3. [
+                         (contains
+                            1. $54
+                            2. $57)
+                    ]
+                    4. 2)
+            ])
+    ])]
+```
+
+richard:
+
+```
+[
+    ('continent', $1)
+    ('scoped',
+        [
+            ('none',
+                [
+                    ('country', $2)
+                    ('in', $2, $1)
+                    ('det_greater_than',
+                        [
+                            ('contains', $2, $3)
+                            ('city', $3)
+                            ('has_population', $3, $4)
+                            ('let', $5, 1000000)
+                            ('greater_than', $4, $5)
+                        ], 2)
+                ])
+        ])
+]
+
+```
+
+Vrel is here much slower, because the sort by cost is about `range + body`, and vrel about both individually. Need to fix.
+
+## 2026-05-11
 
 Determiner / quantifier
 

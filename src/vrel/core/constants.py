@@ -32,10 +32,6 @@ E4 = Variable("E4")
 E5 = Variable("E5")
 
 
-# special semantic variables
-Range = Variable("Range")
-Body = Variable("Body")
-
 ONE = 1
 SMALL = 10
 MEDIUM = 100
@@ -48,9 +44,12 @@ IGNORED = "ignored"
 # internal predicates
 DISJUNCTION = "$disjunction"
 UNIFICATION = "$unification"
+CONSTANT = "$constant"
 
 # some common semantic variables
 AUTO = Sentinel("<auto-generate>")
+COMBINED = Sentinel("combined")
+SEPARATE = Sentinel("separate")
 
 # predicates
 PRED_NAME = "name"

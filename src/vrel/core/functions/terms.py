@@ -111,10 +111,6 @@ def bind_variables(term: any, binding: dict) -> any:
     # list
     if isinstance(term, list):
         return [bind_variables(e, binding) for e in term]
-    # tuple
-    elif isinstance(term, tuple):
-        raise Exception(f"tuple found 2: {term}")
-        return tuple([bind_variables(arg, binding) for arg in term])
     elif isinstance(term, Atom):
         return term.apply_to_each_atom(lambda arg: bind_variables(arg, binding))
     # variable
