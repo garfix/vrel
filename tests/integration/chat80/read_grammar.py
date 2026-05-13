@@ -30,10 +30,11 @@ def get_read_grammar():
             "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' + '?'",
             "sem": lambda nbar: Atom("intent_list", E1, [nbar]),
         },
-        # {
-        #     "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' pp(E1) + '?'",
-        #     "sem": lambda nbar, pp: [('intent_list', e1, nbar + pp)],
-        # },
+        {
+            # What countries are there in Europe?
+            "syn": "s(E1) -> 'what' nbar(E1) 'are' 'there' pp(E1) + '?'",
+            "sem": lambda nbar, pp: Atom("intent_list", E1, [nbar.mod(pp)]),
+        },
         {
             # What is the capital of Upper_Volta?
             # What is the ocean that borders African countries?
