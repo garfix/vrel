@@ -3,7 +3,8 @@
 - de optimizer kan echt nog beter, door
   - de relaties te sorteren op snelheid, in acht neming van de positions
   - de argumenten van de batches die niet geoptimized kunnen worden te optimizen
-- kan de echter determiner in het determiner object?
+- kijk naar de continuous en beschrijf de uitzonderinspositie
+  - waarom de np niet onder de vp_continuous?
 
 - api: bv tk.keras.layers.Dense
 

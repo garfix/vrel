@@ -111,6 +111,7 @@ def get_read_grammar():
         {
             # Which country bordering the Mediterranean borders a country that is bordered by a country whose population exceeds the population of India?
             # Which countries have a population exceeding 10 million?
+            # Which countries with a population exceeding 10 million border the Atlantic?
             "syn": "s(E1) -> 'which' np(E1) vp(E1) + '?'",
             "sem": lambda np, vp: Atom("intent_list", E1, [np, vp]),
         },
@@ -199,7 +200,10 @@ def get_read_grammar():
             "sem": lambda np, preposition, vp: vp.mod(np.mod(preposition)),
         },
         {"syn": "relative_clause(E1) -> 'whose' attr(E1, E2) vp(E2)", "sem": lambda attr, vp: attr.mod(vp)},
-        # { "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_nosub_obj_continuous(E2)", "sem": lambda attr, vp_nosub_obj: attr + vp_nosub_obj },
+        {
+            "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_continuous(E2)",
+            "sem": lambda attr, vp_continuous: attr.mod(vp_continuous),
+        },
         # np
         # { "syn": "np(E1) -> nbar(E1)", "sem": lambda nbar:
         #     SemanticFunction([Body], nbar + Body) },
