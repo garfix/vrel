@@ -60,19 +60,17 @@ def get_read_grammar():
         },
         {
             # What is the total area of countries south of the Equator and not in Australasia?
-            "syn": "s(E1) -> 'what' 'is' 'the' 'total' 'area' 'of' np(E2) + '?'",
-            "sem": lambda np: Atom(
-                "intent_value_with_unit", E1, "ksqmiles", [Atom("sum", E1, E3, [np, Atom("size_of", E2, E3)])]
-            ),
+            "syn": "s(E1) -> 'what' 'is' aggregate(E1) + '?'",
+            "sem": lambda aggregate: Atom("intent_value_with_unit", E1, "ksqmiles", [aggregate]),
         },
         {
             # What is the average area of the countries in each continent?
-            "syn": "s(E1, E3) -> 'what' 'is' 'the' 'average' 'area' 'of' np(E2) preposition(E2, E3) 'each' nbar(E3) + '?'",
-            "sem": lambda np, preposition, nbar: Atom(
+            "syn": "s(E1, E3) -> 'what' 'is' group_by(E1, E3) 'each' nbar(E3) + '?'",
+            "sem": lambda group_by, nbar: Atom(
                 "intent_table",
                 [E3, E1],
                 ["", "ksqmiles"],
-                [nbar, Atom("avg", E1, E4, [np, preposition, Atom("size_of", E2, E4)])],
+                [nbar, group_by],
             ),
         },
         {
@@ -275,5 +273,14 @@ def get_read_grammar():
         {
             "syn": "proper_noun(E1) -> /\\w+/",
             "sem": lambda token: Atom("name", E1, token),
+        },
+        # aggregates
+        {
+            "syn": "aggregate(E1) -> 'the' 'total' 'area' 'of' np(E2)",
+            "sem": lambda np: Atom("sum", E1, E3, [np, Atom("size_of", E2, E3)]),
+        },
+        {
+            "syn": "group_by(E1, E3) -> 'the' 'average' 'area' 'of' np(E2) preposition(E2, E3)",
+            "sem": lambda np, preposition: Atom("avg", E1, E4, [np, preposition, Atom("size_of", E2, E4)]),
         },
     ]
