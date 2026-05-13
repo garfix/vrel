@@ -5,6 +5,7 @@
   - de argumenten van de batches die niet geoptimized kunnen worden te optimizen
 - kijk naar de continuous en beschrijf de uitzonderinspositie
   - waarom de np niet onder de vp_continuous?
+- all => det_all, none => det_none
 
 - api: bv tk.keras.layers.Dense
 
