@@ -99,7 +99,7 @@ tests = [
         "What countries are there in Europe?",
         "albania, andorra, austria, belgium, bulgaria, cyprus, czechoslovakia, denmark, east_germany, eire, finland, france, greece, hungary, iceland, italy, liechtenstein, luxembourg, malta, monaco, netherlands, norway, poland, portugal, romania, san_marino, spain, sweden, switzerland, united_kingdom, west_germany, yugoslavia",
     ],
-    # ["Bye.", "Cheerio."],
+    ["Bye.", "Cheerio."],
 ]
 
 

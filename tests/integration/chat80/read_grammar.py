@@ -125,10 +125,13 @@ def get_read_grammar():
             "syn": "s(E1) -> 'how' 'many' nbar(E1) vp(E1) + '?'",
             "sem": lambda nbar, vp: Atom("intent_value", E1, [Atom("count", E1, [nbar, vp])]),
         },
-        # {
-        #     "syn": "s(E1) -> 'bye' + '.'?",
-        #     "sem": lambda: [('intent_close_conversation',)],
-        # },
+        {
+            # Bye.
+            "syn": "s(E1) -> 'bye' + '.'?",
+            "sem": lambda: Atom(
+                "intent_close_conversation",
+            ),
+        },
         # active transitive: sub obj
         # { "syn": "vp_nosub_obj(E1) -> tv(E1, E2) np(E2)", "sem": lambda tv, np: apply(np, tv) },
         {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
