@@ -75,11 +75,8 @@ def get_read_grammar():
         },
         {
             # What percentage of countries border each ocean?
-            "syn": "s(E2, E3) -> 'what' 'percentage' 'of' np(E1) verb(E1, E2) 'each' nbar(E2) + '?'",
-            # "sem": lambda np, tv, nbar: [('intent_table', [e2, e3], ['', ''], nbar + [('percentage', E3, apply(np, tv), apply(np, []))])],
-            "sem": lambda np, verb, nbar: Atom(
-                "intent_table", [E2, E3], ["", ""], [nbar, Atom("percentage", E3, [verb.mod(np)], np)]
-            ),
+            "syn": "s(E2, E1) -> 'what' group_by(E1, E2) 'each' nbar(E2) + '?'",
+            "sem": lambda group_by, nbar: Atom("intent_table", [E2, E1], ["", ""], [nbar, group_by]),
         },
         {
             # Where is the largest country?
@@ -282,5 +279,9 @@ def get_read_grammar():
         {
             "syn": "group_by(E1, E3) -> 'the' 'average' 'area' 'of' np(E2) preposition(E2, E3)",
             "sem": lambda np, preposition: Atom("avg", E1, E4, [np, preposition, Atom("size_of", E2, E4)]),
+        },
+        {
+            "syn": "group_by(E3, E2) -> 'percentage' 'of' np(E1) verb(E1, E2)",
+            "sem": lambda np, verb: Atom("percentage", E3, [verb.mod(np)], np),
         },
     ]
