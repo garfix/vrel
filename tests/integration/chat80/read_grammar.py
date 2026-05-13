@@ -132,38 +132,31 @@ def get_read_grammar():
                 "intent_close_conversation",
             ),
         },
-        # active transitive: sub obj
-        # { "syn": "vp_nosub_obj(E1) -> tv(E1, E2) np(E2)", "sem": lambda tv, np: apply(np, tv) },
+        # verb phrase
         {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
-        # { "syn": "vp_nosub_obj(E1) -> 'does' 'not' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: [('not', vp_nosub_obj)] },
         {"syn": "vp(E1) -> 'does' 'not' vp(E1)", "sem": lambda vp: Atom("not", vp)},
         {"syn": "vp(E1) -> 'have' 'a' attr(E1, E2)", "sem": lambda attr: attr},
-        # passive transitive
-        # { "syn": "vp_noobj_sub(E1) -> tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
         {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
         {"syn": "vp(E1) -> 'does' np(E2) verb(E2, E1)", "sem": lambda np, verb: Atom(verb, E2, E1).mod(np)},
         {"syn": "vp(E1) -> 'is' verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E2, E1).mod(np)},
-        # active transitive continuous
         {
             "syn": "vp_continuous(E1) -> verb_continuous(E1, E2) np(E2)",
             "sem": lambda verb_continuous, np: Atom(verb_continuous, E1, E2).mod(np),
         },
         {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
-        # passive ditransitive: obj sub iob
         {"syn": "vp(E1) -> 'from' 'which' np(E2) vp(E1, E2)", "sem": lambda np, vp: vp.mod(np)},
         {"syn": "vp(E1, E2) -> verb(E2, E1, E3) np(E3)", "sem": lambda verb, np: Atom(verb, E2, E1, E3).mod(np)},
-        # verbs
+        # verb
         {"syn": "verb(E1, E2) -> 'border'", "sem": lambda: "borders"},
         {"syn": "verb(E1, E2) -> 'borders'", "sem": lambda: "borders"},
-        # transitive verbs
         {"syn": "verb(E1, E2) -> 'bordered'", "sem": lambda: "borders"},
         {"syn": "verb(E1, E2) -> 'contains'", "sem": lambda: "contains"},
         {"syn": "verb(E1, E2) -> 'flow' 'through'", "sem": lambda: "flows_through"},
         {"syn": "verb(E1, E2) -> 'exceeds'", "sem": lambda: "exceeds"},
+        # continuous verb
         {"syn": "verb_continuous(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
-        # {"syn": "verb(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
         {"syn": "verb_continuous(E1, E2) -> 'exceeding'", "sem": lambda: "exceeds"},
-        # ditransitive verbs
+        # ditransitive verb
         {"syn": "verb(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: "flows_from_to"},
         # np
         {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
@@ -191,12 +184,8 @@ def get_read_grammar():
             "sem": lambda nbar, np: nbar.mod(Atom("of", E2, E1).mod(np)),
         },
         {"syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar.mod(pp)},
-        # { "syn": "nbar(E1) -> nbar(E1) pp(E1)", "sem": lambda nbar, pp: nbar + pp },
-        # { "syn": "nbar(E1) -> superlative(E1) nbar(E1)", "sem": lambda superlative, nbar: apply(superlative, nbar) },
         # relative clauses
-        # { "syn": "relative_clause(E1) -> 'that' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
         {"syn": "relative_clause(E1) -> 'that' vp(E1)", "sem": lambda vp: vp},
-        # { "syn": "relative_clause(E1) -> 'that' vp_noobj_sub(E1)", "sem": lambda vp_noobj_sub: vp_noobj_sub },
         {
             "syn": "relative_clause(E1) -> relative_clause(E1) 'and' relative_clause(E1)",
             "sem": lambda rel1, rel2: rel1.mod(rel2),
@@ -212,16 +201,9 @@ def get_read_grammar():
             "syn": "relative_clause(E1) -> 'with' 'a' attr(E1, E2) vp_continuous(E2)",
             "sem": lambda attr, vp_continuous: attr.mod(vp_continuous),
         },
-        # np
-        # { "syn": "np(E1) -> nbar(E1)", "sem": lambda nbar:
-        #     SemanticFunction([Body], nbar + Body) },
-        # { "syn": "np(E1) -> det(E1) nbar(E1)", "sem": lambda det, nbar:
-        #     SemanticFunction([Body], apply(det, nbar, Body)) },
         {"syn": "np(E1) -> 'the' attr(E2, E1) 'of' nbar(E2)", "sem": lambda attr, nbar: attr.mod(nbar)},
-        # { "syn": "np(E1) -> number(E1)", "sem": lambda number:
-        #     SemanticFunction([Body], [('let', E1, number)] + Body) },
         {"syn": "np(E1) -> number(E1)", "sem": lambda number: Atom(CONSTANT, E1, number)},
-        # det
+        # determiner
         {"syn": "det(E1) -> 'a'", "sem": lambda: None},
         {"syn": "det(E1) -> 'the'", "sem": lambda: None},
         {"syn": "det(E1) -> 'some'", "sem": lambda: None},
@@ -254,7 +236,7 @@ def get_read_grammar():
         {"syn": "number(E1) -> 'ten'", "sem": lambda: 10},
         {"syn": "number(E1) -> /\\d+/", "sem": lambda token: int(token)},
         {"syn": "number(E1) -> number(E1) 'million'", "sem": lambda number: number * 1000000},
-        # pp
+        # prepositional phrases
         {"syn": "pp(E1) -> 'not' pp(E1)", "sem": lambda pp: Atom("not", [pp])},
         {"syn": "pp(E1) -> preposition(E1, E2) np(E2)", "sem": lambda preposition, np: preposition.mod(np)},
         {"syn": "pp(E1) -> 'south' 'of' np(E2)", "sem": lambda np: Atom("south_of", E1, E2).mod(np)},
