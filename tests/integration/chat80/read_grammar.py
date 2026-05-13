@@ -108,10 +108,11 @@ def get_read_grammar():
             "syn": "s(E1) -> 'which' nbar(E1, E2) 'is' np(E2) + '?'",
             "sem": lambda nbar, np: Atom("intent_list", E1, [nbar, np]),  # , Atom("equals", E2, E3)
         },
-        # {
-        #     "syn": "s(E1) -> 'which' np(E1) vp_nosub_obj(E1) + '?'",
-        #     "sem": lambda np, vp_nosub_obj: [('intent_list', e1, apply(np, vp_nosub_obj))],
-        # },
+        {
+            # Which country bordering the Mediterranean borders a country that is bordered by a country whose population exceeds the population of India?
+            "syn": "s(E1) -> 'which' np(E1) vp(E1) + '?'",
+            "sem": lambda np, vp: Atom("intent_list", E1, [np, vp]),
+        },
         {
             # How many countries does the Danube flow through?
             "syn": "s(E1) -> 'how' 'many' nbar(E1) vp(E1) + '?'",
@@ -131,9 +132,12 @@ def get_read_grammar():
         # { "syn": "vp_noobj_sub(E1) -> tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
         {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
         {"syn": "vp(E1) -> 'does' np(E2) verb(E2, E1)", "sem": lambda np, verb: Atom(verb, E2, E1).mod(np)},
-        # { "syn": "vp_noobj_sub(E1) -> 'is' tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
+        {"syn": "vp(E1) -> 'is' verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E2, E1).mod(np)},
         # active transitive continuous
-        # { "syn": "vp_nosub_obj_continuous(E1) -> tv_continuous(E1, E2) np(E2)", "sem": lambda tv_continuous, np: apply(np, tv_continuous) },
+        {
+            "syn": "vp_continuous(E1) -> verb_continuous(E1, E2) np(E2)",
+            "sem": lambda verb_continuous, np: Atom(verb_continuous, E1, E2).mod(np),
+        },
         {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
         # passive ditransitive: obj sub iob
         {"syn": "vp(E1) -> 'from' 'which' np(E2) vp(E1, E2)", "sem": lambda np, vp: vp.mod(np)},
@@ -146,8 +150,8 @@ def get_read_grammar():
         {"syn": "verb(E1, E2) -> 'contains'", "sem": lambda: "contains"},
         {"syn": "verb(E1, E2) -> 'flow' 'through'", "sem": lambda: "flows_through"},
         {"syn": "verb(E1, E2) -> 'exceeds'", "sem": lambda: "exceeds"},
-        # { "syn": "tv_continuous(E1, E2) -> 'bordering'", "sem": lambda: [('borders', E1, E2)] },
-        {"syn": "verb(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
+        {"syn": "verb_continuous(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
+        # {"syn": "verb(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
         # { "syn": "tv_continuous(E1, E2) -> 'exceeding'", "sem": lambda: [('greater_than', E1, E2)] },
         # ditransitive verbs
         {"syn": "verb(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: "flows_from_to"},
@@ -187,7 +191,7 @@ def get_read_grammar():
             "syn": "relative_clause(E1) -> relative_clause(E1) 'and' relative_clause(E1)",
             "sem": lambda rel1, rel2: rel1.mod(rel2),
         },
-        # { "syn": "relative_clause(E1) -> vp_nosub_obj_continuous(E1)", "sem": lambda vp_nosub_obj: vp_nosub_obj },
+        {"syn": "relative_clause(E1) -> vp_continuous(E1)", "sem": lambda vp_continuous: vp_continuous},
         {"syn": "relative_clause(E1) -> vp(E1)", "sem": lambda vp: vp},
         {
             "syn": "relative_clause(E1) -> np(E2) preposition(E2, E1) 'which' vp(E2)",
@@ -200,8 +204,7 @@ def get_read_grammar():
         #     SemanticFunction([Body], nbar + Body) },
         # { "syn": "np(E1) -> det(E1) nbar(E1)", "sem": lambda det, nbar:
         #     SemanticFunction([Body], apply(det, nbar, Body)) },
-        # { "syn": "np(E1) -> det(E1) attr(E2, E1) 'of' nbar(E2)", "sem": lambda det, attr, nbar:
-        #     SemanticFunction([Body], apply(det, nbar + attr, Body)) },
+        {"syn": "np(E1) -> 'the' attr(E2, E1) 'of' nbar(E2)", "sem": lambda attr, nbar: attr.mod(nbar)},
         # { "syn": "np(E1) -> number(E1)", "sem": lambda number:
         #     SemanticFunction([Body], [('let', E1, number)] + Body) },
         {"syn": "np(E1) -> number(E1)", "sem": lambda number: Atom(CONSTANT, E1, number)},
