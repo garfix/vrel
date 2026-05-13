@@ -23,7 +23,7 @@ def get_read_grammar():
         {
             # Is there more than one country in each continent?
             "syn": "s(E2) -> 'is' 'there' np(E1) preposition(E1, E2) 'each' nbar(E2) + '?'",
-            "sem": lambda np, preposition, nbar: Atom("intent_yn", [Atom("all", E2, nbar, [np, preposition])]),
+            "sem": lambda np, preposition, nbar: Atom("intent_yn", [Atom("det_all", E2, nbar, [np, preposition])]),
         },
         {
             # What rivers are there?
@@ -207,7 +207,7 @@ def get_read_grammar():
         {"syn": "det(E1) -> 'the'", "sem": lambda: None},
         {"syn": "det(E1) -> 'some'", "sem": lambda: None},
         {"syn": "det(E1) -> 'any'", "sem": lambda: None},
-        {"syn": "det(E1) -> 'no'", "sem": lambda: Atom("none", E1, COMBINED)},
+        {"syn": "det(E1) -> 'no'", "sem": lambda: Atom("det_none", E1, COMBINED)},
         {
             "syn": "det(E1) -> number(E1)",
             "sem": lambda number: Atom("det_equals", E1, COMBINED, number),

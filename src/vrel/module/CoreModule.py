@@ -33,8 +33,8 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("det_equals", query_function=self.determiner_equals)),
         self.add_relation(Relation("det_greater_than", query_function=self.determiner_greater_than)),
         self.add_relation(Relation("det_less_than", query_function=self.determiner_less_than)),
-        self.add_relation(Relation("all", query_function=self.determiner_all)),
-        self.add_relation(Relation("none", query_function=self.determiner_none)),
+        self.add_relation(Relation("det_all", query_function=self.determiner_all)),
+        self.add_relation(Relation("det_none", query_function=self.determiner_none)),
         self.add_relation(Relation("exec", query_function=self.exec)),
         self.add_relation(Relation("and", query_function=self.and_func)),
         self.add_relation(Relation("scope", query_function=self.scope)),
@@ -306,7 +306,7 @@ class CoreModule(SomeModule):
         else:
             return []
 
-    # ('all', Var, [range-atoms], [body-atoms])
+    # ('det_all', Var, [range-atoms], [body-atoms])
     def determiner_all(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         quant_var = arguments[0]
@@ -331,7 +331,7 @@ class CoreModule(SomeModule):
         else:
             return []
 
-    # ('none', Var, [range-atoms], [body-atoms])
+    # ('det_none', Var, [range-atoms], [body-atoms])
     def determiner_none(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         quant_var, combined = arguments
