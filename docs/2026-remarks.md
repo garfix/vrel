@@ -2,6 +2,10 @@
 
 I'm trying to use the simple `vp` as much as possible, but making an exception for the continuous, that marks a relative clause. Without it its hard to create the proper sentence structure.
 
+---
+
+I rewrote all Chat-80 sentences. Speed is slower than Richard still: 0.42s against 0.64s. I'look into that, as well as some other things.
+
 ## 2026-05-12
 
 I need a way to represent a number as an np like in "exceeds 1 million".

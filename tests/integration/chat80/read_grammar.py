@@ -13,7 +13,7 @@ def get_read_grammar():
         {
             # Does Afghanistan border China?
             "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
-            "sem": lambda np1, verb, np2: Atom("intent_yn", [Atom(verb, E2, E3).mod(np1).mod(np2)]),
+            "sem": lambda np1, verb, np2: Atom("intent_yn", [verb.mod(np1).mod(np2)]),
         },
         {
             # Is there some ocean that does not border any country?
@@ -80,7 +80,7 @@ def get_read_grammar():
             "syn": "s(E2, E3) -> 'what' 'percentage' 'of' np(E1) verb(E1, E2) 'each' nbar(E2) + '?'",
             # "sem": lambda np, tv, nbar: [('intent_table', [e2, e3], ['', ''], nbar + [('percentage', E3, apply(np, tv), apply(np, []))])],
             "sem": lambda np, verb, nbar: Atom(
-                "intent_table", [E2, E3], ["", ""], [nbar, Atom("percentage", E3, [Atom(verb, E1, E2).mod(np)], np)]
+                "intent_table", [E2, E3], ["", ""], [nbar, Atom("percentage", E3, [verb.mod(np)], np)]
             ),
         },
         {
@@ -133,31 +133,30 @@ def get_read_grammar():
             ),
         },
         # verb phrase
-        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
+        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: verb.mod(np)},
+        {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: verb.mod(np)},
+        {"syn": "vp(E1) -> 'is' verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: verb.mod(np)},
+        {"syn": "vp(E1) -> 'does' np(E2) verb(E2, E1)", "sem": lambda np, verb: verb.mod(np)},
         {"syn": "vp(E1) -> 'does' 'not' vp(E1)", "sem": lambda vp: Atom("not", vp)},
         {"syn": "vp(E1) -> 'have' 'a' attr(E1, E2)", "sem": lambda attr: attr},
-        {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
-        {"syn": "vp(E1) -> 'does' np(E2) verb(E2, E1)", "sem": lambda np, verb: Atom(verb, E2, E1).mod(np)},
-        {"syn": "vp(E1) -> 'is' verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E2, E1).mod(np)},
+        {"syn": "vp(E1) -> 'from' 'which' np(E2) vp(E1, E2)", "sem": lambda np, vp: vp.mod(np)},
         {
             "syn": "vp_continuous(E1) -> verb_continuous(E1, E2) np(E2)",
-            "sem": lambda verb_continuous, np: Atom(verb_continuous, E1, E2).mod(np),
+            "sem": lambda verb_continuous, np: verb_continuous.mod(np),
         },
-        {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
-        {"syn": "vp(E1) -> 'from' 'which' np(E2) vp(E1, E2)", "sem": lambda np, vp: vp.mod(np)},
-        {"syn": "vp(E1, E2) -> verb(E2, E1, E3) np(E3)", "sem": lambda verb, np: Atom(verb, E2, E1, E3).mod(np)},
+        {"syn": "vp(E1, E2) -> verb(E2, E1, E3) np(E3)", "sem": lambda verb, np: verb.mod(np)},
         # verb
-        {"syn": "verb(E1, E2) -> 'border'", "sem": lambda: "borders"},
-        {"syn": "verb(E1, E2) -> 'borders'", "sem": lambda: "borders"},
-        {"syn": "verb(E1, E2) -> 'bordered'", "sem": lambda: "borders"},
-        {"syn": "verb(E1, E2) -> 'contains'", "sem": lambda: "contains"},
-        {"syn": "verb(E1, E2) -> 'flow' 'through'", "sem": lambda: "flows_through"},
-        {"syn": "verb(E1, E2) -> 'exceeds'", "sem": lambda: "exceeds"},
+        {"syn": "verb(E1, E2) -> 'border'", "sem": lambda: Atom("borders", E1, E2)},
+        {"syn": "verb(E1, E2) -> 'borders'", "sem": lambda: Atom("borders", E1, E2)},
+        {"syn": "verb(E1, E2) -> 'bordered'", "sem": lambda: Atom("borders", E1, E2)},
+        {"syn": "verb(E1, E2) -> 'contains'", "sem": lambda: Atom("contains", E1, E2)},
+        {"syn": "verb(E1, E2) -> 'flow' 'through'", "sem": lambda: Atom("flows_through", E1, E2)},
+        {"syn": "verb(E1, E2) -> 'exceeds'", "sem": lambda: Atom("exceeds", E1, E2)},
         # continuous verb
-        {"syn": "verb_continuous(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
-        {"syn": "verb_continuous(E1, E2) -> 'exceeding'", "sem": lambda: "exceeds"},
+        {"syn": "verb_continuous(E1, E2) -> 'bordering'", "sem": lambda: Atom("borders", E1, E2)},
+        {"syn": "verb_continuous(E1, E2) -> 'exceeding'", "sem": lambda: Atom("exceeds", E1, E2)},
         # ditransitive verb
-        {"syn": "verb(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: "flows_from_to"},
+        {"syn": "verb(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: Atom("flows_from_to", E1, E2, E3)},
         # np
         {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
         {

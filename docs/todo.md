@@ -12,21 +12,6 @@
 - neem in de Relation op welke parameter de unieke id bevat
   - check op deze parameter in extract_determiner_arguments (`arguments[0]`)
 
-- reified variables?
-  - this seems to be their only valid application
-
-    { "syn": "main_noun(E1) -> 'oxide'", "sem": lambda: 'oxide', "dialog": [("oxide", e1, 'true')] },
-    { "syn": "main_noun(E1) -> 'chloride'", "sem": lambda: 'chloride', "dialog": [("chloride", e1, 'true')] },
-    { "syn": "main_noun(E1) -> 'sulfide'", "sem": lambda: 'sulfide', "dialog": [("sulfide", e1, 'true')] },
-
-- rewrite for Atoms
-  - rewrite the internal parsers to produce Atoms in stead of tuples?
-    - With dummy main variables?
-    - Allow the main variable, as in `include(E1 | E2, E3)`
-  - Atoms also have a limitation, in that they can't have lists of atoms for an argument
-  - create a function that transforms an Atom into a recursively quantified tuple list?
-    - Use just in question intents
-
 - answer the question
   - wat vinden we in de literatuur over het beantwoorden van vragen in de CD context?
 
