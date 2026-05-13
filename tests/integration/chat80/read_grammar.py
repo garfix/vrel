@@ -110,6 +110,7 @@ def get_read_grammar():
         },
         {
             # Which country bordering the Mediterranean borders a country that is bordered by a country whose population exceeds the population of India?
+            # Which countries have a population exceeding 10 million?
             "syn": "s(E1) -> 'which' np(E1) vp(E1) + '?'",
             "sem": lambda np, vp: Atom("intent_list", E1, [np, vp]),
         },
@@ -127,7 +128,7 @@ def get_read_grammar():
         {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
         # { "syn": "vp_nosub_obj(E1) -> 'does' 'not' vp_nosub_obj(E1)", "sem": lambda vp_nosub_obj: [('not', vp_nosub_obj)] },
         {"syn": "vp(E1) -> 'does' 'not' vp(E1)", "sem": lambda vp: Atom("not", vp)},
-        # { "syn": "vp_nosub_obj(E1) -> 'have' 'a' attr(E1, E2)", "sem": lambda attr: attr },
+        {"syn": "vp(E1) -> 'have' 'a' attr(E1, E2)", "sem": lambda attr: attr},
         # passive transitive
         # { "syn": "vp_noobj_sub(E1) -> tv(E2, E1) 'by' np(E2)", "sem": lambda tv, np: apply(np, tv) },
         {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: Atom(verb, E1, E2).mod(np)},
@@ -152,7 +153,7 @@ def get_read_grammar():
         {"syn": "verb(E1, E2) -> 'exceeds'", "sem": lambda: "exceeds"},
         {"syn": "verb_continuous(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
         # {"syn": "verb(E1, E2) -> 'bordering'", "sem": lambda: "borders"},
-        # { "syn": "tv_continuous(E1, E2) -> 'exceeding'", "sem": lambda: [('greater_than', E1, E2)] },
+        {"syn": "verb_continuous(E1, E2) -> 'exceeding'", "sem": lambda: "exceeds"},
         # ditransitive verbs
         {"syn": "verb(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: "flows_from_to"},
         # np
@@ -224,7 +225,10 @@ def get_read_grammar():
         },
         # attribute
         {"syn": "attr(E1, E2) -> 'population'", "sem": lambda: Atom("has_population", E1, E2)},
-        # { "syn": "attr(E1, E2) -> attr(E1, E2) relative_clause(E2)", "sem": lambda attr, relative_clause: attr + relative_clause },
+        {
+            "syn": "attr(E1, E2) -> attr(E1, E2) relative_clause(E2)",
+            "sem": lambda attr, relative_clause: attr.mod(relative_clause),
+        },
         # number
         {"syn": "number(E1) -> 'one'", "sem": lambda: 1},
         {"syn": "number(E1) -> 'two'", "sem": lambda: 2},
