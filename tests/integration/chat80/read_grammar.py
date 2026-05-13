@@ -12,8 +12,8 @@ def get_read_grammar():
         # sentence
         {
             # Does Afghanistan border China?
-            "syn": "s(E1) -> 'does' np(E2) verb(E2, E3) np(E3) + '?'",
-            "sem": lambda np1, verb, np2: Atom("intent_yn", [verb.mod(np1).mod(np2)]),
+            "syn": "s(E1) -> 'does' np(E1) vp(E1) + '?'",
+            "sem": lambda np, vp: Atom("intent_yn", [vp.mod(np)]),
         },
         {
             # Is there some ocean that does not border any country?
