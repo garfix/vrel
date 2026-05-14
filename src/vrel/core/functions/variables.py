@@ -7,16 +7,8 @@ def generate_variables(term: any, variable_generator: VariableGenerator, variabl
     # list
     if isinstance(term, list):
         return [generate_variables(arg, variable_generator, variable_map) for arg in term]
-    # tuple
-    elif isinstance(term, tuple):
-        raise Exception(f"tuple found!: {term}")
-        return tuple([generate_variables(arg, variable_generator, variable_map) for arg in term])
     # atom
     elif isinstance(term, Atom):
-        # return Atom(
-        #     term.predicate,
-        #     *[generate_variables(arg, variable_generator, variable_map) for arg in term.arguments],
-        # ).mod([generate_variables(mod, variable_generator, variable_map) for mod in term.modifiers])
         return term.apply_to_each_atom(lambda arg: generate_variables(arg, variable_generator, variable_map))
     # variable
     elif isinstance(term, Variable):

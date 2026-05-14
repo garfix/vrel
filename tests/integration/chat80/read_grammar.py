@@ -23,7 +23,7 @@ def get_read_grammar():
         {
             # Is there more than one country in each continent?
             "syn": "s(E2) -> 'is' 'there' np(E1) preposition(E1, E2) 'each' nbar(E2) + '?'",
-            "sem": lambda np, preposition, nbar: Atom("intent_yn", [Atom("det_all", E2, nbar, [np, preposition])]),
+            "sem": lambda np, preposition, nbar: Atom("intent_yn", [Atom("det_all", E2, nbar, [preposition.mod(np)])]),
         },
         {
             # What rivers are there?
@@ -146,10 +146,10 @@ def get_read_grammar():
         {"syn": "verb(E1, E2) -> 'bordered'", "sem": lambda: Atom("borders", E1, E2)},
         {"syn": "verb(E1, E2) -> 'contains'", "sem": lambda: Atom("contains", E1, E2)},
         {"syn": "verb(E1, E2) -> 'flow' 'through'", "sem": lambda: Atom("flows_through", E1, E2)},
-        {"syn": "verb(E1, E2) -> 'exceeds'", "sem": lambda: Atom("exceeds", E1, E2)},
+        {"syn": "verb(E1, E2) -> 'exceeds'", "sem": lambda: Atom("greater_than", E1, E2)},
         # continuous verb
         {"syn": "verb_continuous(E1, E2) -> 'bordering'", "sem": lambda: Atom("borders", E1, E2)},
-        {"syn": "verb_continuous(E1, E2) -> 'exceeding'", "sem": lambda: Atom("exceeds", E1, E2)},
+        {"syn": "verb_continuous(E1, E2) -> 'exceeding'", "sem": lambda: Atom("greater_than", E1, E2)},
         # ditransitive verb
         {"syn": "verb(E1, E2, E3) -> 'flows' 'into'", "sem": lambda: Atom("flows_from_to", E1, E2, E3)},
         # np
