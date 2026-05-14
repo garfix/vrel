@@ -44,7 +44,6 @@ def get_write_grammar():
 
 def format_list(elements):
     elements.sort()
-    print(elements)
     return ", ".join(map(lambda e: str(e), elements))
 
 

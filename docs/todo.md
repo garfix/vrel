@@ -1,11 +1,5 @@
 ## todo
 
-- create a special `group_by` function to handle group by sentences
-
-- de optimizer kan echt nog beter, door
-  - de relaties te sorteren op snelheid, in acht neming van de positions
-  - de argumenten van de batches die niet geoptimized kunnen worden te optimizen
-
 - api: bv tk.keras.layers.Dense
 
 - neem in de Relation op welke parameter de unieke id bevat

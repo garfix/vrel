@@ -3,9 +3,7 @@ import unittest
 import cProfile
 import time
 
-from vrel.core.Logger import Logger
 from vrel.entity.SentenceRequest import SentenceRequest
-from vrel.interface.SomeLogger import ALL, LAST
 from vrel.interface.SomeSystem import SomeSystem
 
 
@@ -31,15 +29,15 @@ class DialogTester:
         self.system = system
         self.profile = profile
 
-    # def run(
-    #     self,
-    # ):
-    #     if self.profile:
-    #         cProfile.runctx("self.do_run()", globals(), locals(), None, "cumulative")
-    #     else:
-    #         self.do_run()
+    def run(
+        self,
+    ):
+        if self.profile == True:
+            cProfile.runctx("self.do_run()", globals(), locals(), None, "cumulative")
+        else:
+            self.do_run()
 
-    def run(self):
+    def do_run(self):
 
         logger = self.system.logger
 

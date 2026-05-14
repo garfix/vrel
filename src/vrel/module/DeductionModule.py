@@ -68,15 +68,6 @@ class DeductionModule(SomeModule):
         else:
             bindings = solver.solve(bind_variables(body, rule_binding))
 
-        # print("body", body)
-        # print("head", head)
-        # print("binding", binding)
-        # print("arguments", arguments)
-        # print("rule_binding", rule_binding)
-        # print("bound", bind_variables(body, rule_binding))
-        # print("result", bindings)
-        # print()
-
         results = [bind_variables(bind_variables(head, rule_binding), binding) for binding in bindings]
 
         return results
