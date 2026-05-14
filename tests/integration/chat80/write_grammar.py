@@ -44,7 +44,8 @@ def get_write_grammar():
 
 def format_list(elements):
     elements.sort()
-    return ", ".join(elements)
+    print(elements)
+    return ", ".join(map(lambda e: str(e), elements))
 
 
 def format_table(table, units):

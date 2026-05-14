@@ -62,10 +62,11 @@ def get_read_grammar():
             # What is the total area of countries south of the Equator and not in Australasia?
             "syn": "s(E1) -> 'what' 'is' aggregate(E1) + '?'",
             "sem": lambda aggregate: Atom("intent_value_with_unit", E1, "ksqmiles", [aggregate]),
+            "boost": 1,
         },
         {
             # What is the average area of the countries in each continent?
-            "syn": "s(E1, E3) -> 'what' 'is' group_by(E1, E3) 'each' nbar(E3) + '?'",
+            "syn": "s(E1, E3) -> 'what' 'is' aggregate(E1, E3) 'each' nbar(E3) + '?'",
             "sem": lambda group_by, nbar: Atom(
                 "intent_table",
                 [E3, E1],
@@ -75,7 +76,7 @@ def get_read_grammar():
         },
         {
             # What percentage of countries border each ocean?
-            "syn": "s(E2, E1) -> 'what' group_by(E1, E2) 'each' nbar(E2) + '?'",
+            "syn": "s(E2, E1) -> 'what' aggregate(E1, E2) 'each' nbar(E2) + '?'",
             "sem": lambda group_by, nbar: Atom("intent_table", [E2, E1], ["", ""], [nbar, group_by]),
         },
         {
@@ -127,6 +128,27 @@ def get_read_grammar():
                 "intent_close_conversation",
             ),
         },
+        # aggregates
+        {
+            "syn": "aggregate(E1) -> 'the' 'largest' nbar(E1)",
+            "sem": lambda nbar: Atom("arg_max", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
+        },
+        {
+            "syn": "aggregate(E1) -> 'the' 'smallest' nbar(E1)",
+            "sem": lambda nbar: Atom("arg_min", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
+        },
+        {
+            "syn": "aggregate(E1) -> 'the' 'total' 'area' 'of' np(E2)",
+            "sem": lambda np: Atom("sum", E1, E3, [np, Atom("size_of", E2, E3)]),
+        },
+        {
+            "syn": "aggregate(E1, E3) -> 'the' 'average' 'area' 'of' np(E2) preposition(E2, E3)",
+            "sem": lambda np, preposition: Atom("avg", E1, E4, [np, preposition, Atom("size_of", E2, E4)]),
+        },
+        {
+            "syn": "aggregate(E3, E2) -> 'percentage' 'of' np(E1) verb(E1, E2)",
+            "sem": lambda np, verb: Atom("percentage", E3, [verb.mod(np)], np),
+        },
         # verb phrase
         {"syn": "vp(E1) -> verb(E1, E2) np(E2)", "sem": lambda verb, np: verb.mod(np)},
         {"syn": "vp(E1) -> verb(E2, E1) 'by' np(E2)", "sem": lambda verb, np: verb.mod(np)},
@@ -159,12 +181,8 @@ def get_read_grammar():
             "sem": lambda det, nbar: nbar.with_determiner(det),
         },
         {
-            "syn": "np(E1) -> 'the' 'largest' nbar(E1)",
-            "sem": lambda nbar: Atom("arg_max", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
-        },
-        {
-            "syn": "np(E1) -> 'the' 'smallest' nbar(E1)",
-            "sem": lambda nbar: Atom("arg_min", E1, Size, [nbar], [Atom("size_of", E1, Size)]),
+            "syn": "np(E1) -> aggregate(E1)",
+            "sem": lambda aggregate: aggregate,
         },
         {
             "syn": "np(E1) -> np(E1) relative_clause(E1)",
@@ -270,18 +288,5 @@ def get_read_grammar():
         {
             "syn": "proper_noun(E1) -> /\\w+/",
             "sem": lambda token: Atom("name", E1, token),
-        },
-        # aggregates
-        {
-            "syn": "aggregate(E1) -> 'the' 'total' 'area' 'of' np(E2)",
-            "sem": lambda np: Atom("sum", E1, E3, [np, Atom("size_of", E2, E3)]),
-        },
-        {
-            "syn": "group_by(E1, E3) -> 'the' 'average' 'area' 'of' np(E2) preposition(E2, E3)",
-            "sem": lambda np, preposition: Atom("avg", E1, E4, [np, preposition, Atom("size_of", E2, E4)]),
-        },
-        {
-            "syn": "group_by(E3, E2) -> 'percentage' 'of' np(E1) verb(E1, E2)",
-            "sem": lambda np, verb: Atom("percentage", E3, [verb.mod(np)], np),
         },
     ]
