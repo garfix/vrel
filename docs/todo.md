@@ -1,40 +1,15 @@
 ## todo
 
+- create a special `group_by` function to handle group by sentences
+
 - de optimizer kan echt nog beter, door
   - de relaties te sorteren op snelheid, in acht neming van de positions
   - de argumenten van de batches die niet geoptimized kunnen worden te optimizen
-- kijk naar de continuous en beschrijf de uitzonderinspositie
-  - waarom de np niet onder de vp_continuous?
 
 - api: bv tk.keras.layers.Dense
 
 - neem in de Relation op welke parameter de unieke id bevat
   - check op deze parameter in extract_determiner_arguments (`arguments[0]`)
-
-- answer the question
-  - wat vinden we in de literatuur over het beantwoorden van vragen in de CD context?
-
-- what is a good hierarchical semantic structure?
-  - specs
-    - should allow accessing relational database just as easy as current
-    - should allow storing facts and rules in the database (some of whom relational)
-    - should make encode quantification manually easier than the current system
-    - should allow quantification in questions, statements and commands
-    - should represent nested structures
-    - should allow flattening of nested structures for database query purposes
-    - should allow passing an atom as a unit (why abc(A, B, C))
-  - options
-    - AMR - https://github.com/amrisi/amr-guidelines/blob/master/amr.md
-    - create a class instance for an atom for easier atom modification, like adding an argument; also much better for portability
-  - consequences
-    - add an in-between step between parsing and semantic analysis: quantification
-    - add an extra action that flattens the data structure for database query purposes
-
-- make $2 = $4. How? that depends on how it's going to be used.
-  - mark relation columns as `mention` (discourse variable, skolem constant)
-  - for every bound mention, use it in subsequent atoms by querying the alternative mentions as well
-    - foreach (E1 = alternate mention) query, or
-    - query with E1 in (alternate mentions)
 
 - I added `sentence` as an extra data source for `match`. This works for now, but I'm not confident it's the final solution
 

@@ -1,7 +1,7 @@
 What kind of knowledge structures allow for second order sentences
 
-* John wants [that Jane does her homework]
-* Pick up at least three boxes if there's a green block behind a red pyramid
+- John wants [that Jane does her homework]
+- Pick up at least three boxes if there's a green block behind a red pyramid
 
 Results from Claude
 
@@ -20,7 +20,7 @@ John wants [that Jane does her homework]:
 
     [x: John | WANT(x, [y: Jane | DO-HOMEWORK(y)])]
 
-Pick up at least three boxes if there's a green block behind a red pyramid    
+Pick up at least three boxes if there's a green block behind a red pyramid
 
     ┌─────────────────────────────────────────────────────┐
     │                                                     │
@@ -52,7 +52,7 @@ Pick up at least three boxes if there's a green block behind a red pyramid
     │  ║  └──────────────────┘    ║                       │
     │  ╚══════════════════════════╝                       │
     │                                                     │
-    └─────────────────────────────────────────────────────┘    
+    └─────────────────────────────────────────────────────┘
 
 ## AMR
 
@@ -66,7 +66,7 @@ John wants [that Jane does her homework]:
                 :ARG0 (n / person :name "Jane")
                 :ARG1 (h / homework)))
 
-Pick up at least three boxes if there's a green block behind a red pyramid                
+Pick up at least three boxes if there's a green block behind a red pyramid
 
     (c / conditional
     :condition (e / exist-01
@@ -80,7 +80,7 @@ Pick up at least three boxes if there's a green block behind a red pyramid
                         :ARG0 (s / system)
                         :ARG1 (b3 / box
                                 :quant (a / at-least
-                                            :op1 3))))                
+                                            :op1 3))))
 
 ## DRT meets AMR
 
@@ -175,3 +175,21 @@ Originating with Kripke and Montague, propositional attitudes are modeled as rel
     wants(John, W)
 
 where W = {worlds in which Jane does her homework} Used in DRT, HPSG, and LFG formalisms at the semantic interface
+
+## Thoughts
+
+- what is a good hierarchical semantic structure?
+  - specs
+    - should allow accessing relational database just as easy as current
+    - should allow storing facts and rules in the database (some of whom relational)
+    - should make encode quantification manually easier than the current system
+    - should allow quantification in questions, statements and commands
+    - should represent nested structures
+    - should allow flattening of nested structures for database query purposes
+    - should allow passing an atom as a unit (why abc(A, B, C))
+  - options
+    - AMR - https://github.com/amrisi/amr-guidelines/blob/master/amr.md
+    - create a class instance for an atom for easier atom modification, like adding an argument; also much better for portability
+  - consequences
+    - add an in-between step between parsing and semantic analysis: quantification
+    - add an extra action that flattens the data structure for database query purposes

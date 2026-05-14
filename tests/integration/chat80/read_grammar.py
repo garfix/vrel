@@ -89,7 +89,7 @@ def get_read_grammar():
             "sem": lambda np: Atom("intent_value_with_unit", E2, "ksqmiles", [np, Atom("size_of", E1, E2)]),
         },
         {
-            # Which countries are bordered by two seas?
+            # Which countries are European?
             "syn": "s(E1) -> 'which' nbar(E1) 'are' adjp(E1) + '?'",
             "sem": lambda nbar, adjp: Atom("intent_list", E1, [nbar, adjp]),
         },
