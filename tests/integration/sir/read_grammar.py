@@ -25,9 +25,9 @@ def get_read_grammar():
         # any X is an example of a Y
         {
             "syn": "statement() -> 'any' common_noun_name() 'is' 'an' 'example' 'of' a() common_noun_name()",
-            "sem": lambda common_noun_name1, a, common_noun_name2: [
-                ("intent_claim", [("isa", common_noun_name1, common_noun_name2)])
-            ],
+            "sem": lambda common_noun_name1, a, common_noun_name2: Atom(
+                "intent_claim", [Atom("isa", common_noun_name1, common_noun_name2)]
+            ),
         },
         # An IBM-7094 is a computer
         {
@@ -147,9 +147,9 @@ def get_read_grammar():
         # Is a X a Y?
         {
             "syn": "s() -> 'is' a() common_noun_name() a() common_noun_name()~'?'",
-            "sem": lambda a1, common_noun_name1, a2, common_noun_name2: [
-                ("intent_isa", common_noun_name1, common_noun_name2)
-            ],
+            "sem": lambda a1, common_noun_name1, a2, common_noun_name2: Atom(
+                "intent_isa", common_noun_name1, common_noun_name2
+            ),
         },
         # Is a nostril part of a professor?
         # Is a nostril part of a living-creature?

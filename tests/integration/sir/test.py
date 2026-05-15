@@ -94,11 +94,11 @@ class TestSIR(unittest.TestCase):
         tests = [
             # set-inclusion
             ["Every keypunch-operator is a girl", "I understand"],
-            # ["Any girl is an example of a person", "I understand"],
-            # ["Is a keypunch-operator a person?", "Yes"],
-            # ["Is a person a person?", "Yes"],
-            # ["Is a person a girl?", "Sometimes"],
-            # ["Is a monkey a keypunch-operator?", "Insufficient information"],
+            ["Any girl is an example of a person", "I understand"],
+            ["Is a keypunch-operator a person?", "Yes"],
+            ["Is a person a person?", "Yes"],
+            ["Is a person a girl?", "Sometimes"],
+            ["Is a monkey a keypunch-operator?", "Insufficient information"],
             # # set-membership
             # ["Max is an IBM-7094", "I understand"],
             # ["An IBM-7094 is a computer", "I understand"],
