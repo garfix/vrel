@@ -1,4 +1,4 @@
-from vrel.core.constants import E1, E2, E3, E4, E5
+from vrel.core.constants import E1
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 

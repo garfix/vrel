@@ -1,4 +1,5 @@
-from vrel.core.constants import E1, E2, E3, e1, e2, e3
+from vrel.core.constants import E1, E2
+from vrel.entity.Atom import Atom
 
 
 def get_read_grammar():
@@ -17,9 +18,9 @@ def get_read_grammar():
         # this is uncommon, is defines a new concept in terms of an another unknown concept
         {
             "syn": "statement() -> 'every' common_noun_name() 'is' a() common_noun_name()",
-            "sem": lambda common_noun_name1, a, common_noun_name2: [
-                ("intent_claim", [("isa", common_noun_name1, common_noun_name2)])
-            ],
+            "sem": lambda common_noun_name1, a, common_noun_name2: Atom(
+                "intent_claim", [Atom("isa", common_noun_name1, common_noun_name2)]
+            ),
         },
         # any X is an example of a Y
         {
@@ -162,22 +163,19 @@ def get_read_grammar():
         # Is a beard part of Ferren?
         {
             "syn": "s() -> 'is' a() common_noun_name() 'a'? 'part' 'of' proper_noun(E2)~'?'",
-            "sem": lambda a1, common_noun_name, proper_noun: proper_noun
-            + [("intent_part_of", common_noun_name, E2)],
+            "sem": lambda a1, common_noun_name, proper_noun: proper_noun + [("intent_part_of", common_noun_name, E2)],
         },
         # Yes/no questions
         # Is Max a computer?
         # Is John a dope?
         {
             "syn": "s() -> 'is' proper_noun(E1) a() common_noun_name()~'?'",
-            "sem": lambda proper_noun, a, common_noun_name: proper_noun
-            + [("intent_isa", E1, common_noun_name)],
+            "sem": lambda proper_noun, a, common_noun_name: proper_noun + [("intent_isa", E1, common_noun_name)],
         },
         # Does Alfred own a slide-rule?
         {
             "syn": "yes_no() -> 'does' proper_noun(E1) own() a() common_noun_name()~'?'",
-            "sem": lambda proper_noun, own, a, common_noun_name: proper_noun
-            + [("intent_own", E1, common_noun_name)],
+            "sem": lambda proper_noun, own, a, common_noun_name: proper_noun + [("intent_own", E1, common_noun_name)],
         },
         # Does a doctor own a pair-of-red-suspenders?
         # Does a firechief own a pair-of-red-suspenders?
@@ -255,5 +253,5 @@ def get_read_grammar():
             "sem": lambda common_noun_name: common_noun_name,
             "boost": 1,
         },
-        {"syn": "name() -> /\w[\w\d]+(-[\w\d]+)*/", "sem": lambda token: token},
+        {"syn": "name() -> /\\w[\\w\\d]+(-[\\w\\d]+)*/", "sem": lambda token: token},
     ]
