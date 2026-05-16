@@ -40,36 +40,35 @@ def get_read_grammar():
         # a statement about classes as entities
         {
             "syn": "statement() -> a() common_noun_name() 'is' 'a'? 'part' 'of' a() common_noun_name()",
-            "sem": lambda a1, common_noun_name1, a2, common_noun_name2: [
-                ("intent_teach", [("part_of", common_noun_name1, common_noun_name2)])
-            ],
+            "sem": lambda a1, common_noun_name1, a2, common_noun_name2: Atom(
+                "intent_teach", [Atom("part_of", common_noun_name1, common_noun_name2)]
+            ),
         },
         # A screen is part of every display-device
         {
             "syn": "statement() -> a() common_noun_name() 'is' 'a'? 'part' 'of' 'every' common_noun_name()",
-            "sem": lambda a1, common_noun_name1, common_noun_name2: [
-                ("intent_teach", [("part_of", common_noun_name1, common_noun_name2)])
-            ],
+            "sem": lambda a1, common_noun_name1, common_noun_name2: Atom(
+                "intent_teach", [Atom("part_of", common_noun_name1, common_noun_name2)]
+            ),
         },
         # A van-dyke is part of Ferren
         {
             "syn": "statement() -> a() common_noun_name() 'is' 'a'? 'part' 'of' proper_noun(E1)",
-            "sem": lambda a1, common_noun_name, proper_noun: proper_noun
-            + [("intent_teach", [("part_of", common_noun_name, E1)])],
+            "sem": lambda a1, common_noun_name, proper_noun: Atom(
+                "intent_teach", [Atom("part_of", common_noun_name, proper_noun)]
+            ),
         },
         # There are two hands on each person
         # a statement about classes as quantified entities
         {
             "syn": "statement() -> 'there' 'are' number(E1) common_noun_name() 'on' 'each' common_noun_name()",
-            "sem": lambda number, common_noun_name1, common_noun_name2: [
-                (
-                    "intent_teach",
-                    [
-                        ("part_of", common_noun_name1, common_noun_name2),
-                        ("part_of_n", common_noun_name1, common_noun_name2, number),
-                    ],
-                )
-            ],
+            "sem": lambda number, common_noun_name1, common_noun_name2: Atom(
+                "intent_teach",
+                [
+                    Atom("part_of", common_noun_name1, common_noun_name2),
+                    Atom("part_of_n", common_noun_name1, common_noun_name2, number),
+                ],
+            ),
         },
         # John is a boy
         # Max is an IBM-7094
@@ -158,14 +157,14 @@ def get_read_grammar():
         # Is a living-creature part of a nose?
         {
             "syn": "s() -> 'is' a() common_noun_name() 'a'? 'part' 'of' a() common_noun_name()~'?'",
-            "sem": lambda a1, common_noun_name1, a2, common_noun_name2: [
-                ("intent_part_of", common_noun_name1, common_noun_name2)
-            ],
+            "sem": lambda a1, common_noun_name1, a2, common_noun_name2: Atom(
+                "intent_part_of", common_noun_name1, common_noun_name2
+            ),
         },
         # Is a beard part of Ferren?
         {
             "syn": "s() -> 'is' a() common_noun_name() 'a'? 'part' 'of' proper_noun(E2)~'?'",
-            "sem": lambda a1, common_noun_name, proper_noun: proper_noun + [("intent_part_of", common_noun_name, E2)],
+            "sem": lambda a1, common_noun_name, proper_noun: Atom("intent_part_of", common_noun_name, proper_noun),
         },
         # Yes/no questions
         # Is Max a computer?
