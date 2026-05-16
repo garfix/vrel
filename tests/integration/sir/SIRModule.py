@@ -83,15 +83,11 @@ class SIRModule(SomeModule):
         ),
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        results = self.ds.select(
-            context.relation.predicate, context.relation.formal_parameters, arguments
-        )
+        results = self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)
         return results
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.ds.insert(
-            context.relation.predicate, context.relation.formal_parameters, arguments
-        )
+        self.ds.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
 
     def part_of_n(self, arguments: list, context: ExecutionContext) -> list[list]:
         part_variable = arguments[0]
@@ -100,9 +96,7 @@ class SIRModule(SomeModule):
         whole_type = whole_variable
         part_type = self.get_type(context, part_variable, part_variable)
 
-        results = self.ds.select(
-            context.relation.predicate, context.relation.formal_parameters, arguments
-        )
+        results = self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)
 
         if len(results) == 0:
             if part_type is not None and whole_type is not None:
@@ -138,11 +132,11 @@ class SIRModule(SomeModule):
 
         return [[None, None]]
 
-    # resolve(name, id)
+    # resolve(id, name)
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
         name = arguments[0]
 
-        return [[None, name]]
+        return [[name, name]]
 
     # finger(id)
     def finger(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -161,9 +155,7 @@ class SIRModule(SomeModule):
 
         whole_type = whole_variable
         part_type = self.get_type(context, part_variable, part_variable)
-        results = context.solver.solve(
-            [("part_of_number", part_type, whole_type, Variable("N"))]
-        )
+        results = context.solver.solve([("part_of_number", part_type, whole_type, Variable("N"))])
 
         if len(results) == 0:
             # produce output
@@ -191,8 +183,6 @@ class SIRModule(SomeModule):
         return value
 
     # used in write_grammar.py to create complex output
-    def position_description(
-        self, arguments: list, context: ExecutionContext
-    ) -> list[list]:
+    def position_description(self, arguments: list, context: ExecutionContext) -> list[list]:
         # working out the algorithm described in the article is left to the interested reader
         return [["<the ordered list>"]]

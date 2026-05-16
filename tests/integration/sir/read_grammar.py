@@ -32,9 +32,9 @@ def get_read_grammar():
         # An IBM-7094 is a computer
         {
             "syn": "statement() -> a() common_noun_name() 'is' a() common_noun_name()",
-            "sem": lambda a1, common_noun_name1, a2, common_noun_name2: [
-                ("intent_teach", [("isa", common_noun_name1, common_noun_name2)])
-            ],
+            "sem": lambda a1, common_noun_name1, a2, common_noun_name2: Atom(
+                "intent_teach", [Atom("isa", common_noun_name1, common_noun_name2)]
+            ),
         },
         # A finger is a part of a hand
         # a statement about classes as entities
@@ -76,8 +76,9 @@ def get_read_grammar():
         # Jack is a dope
         {
             "syn": "statement() -> proper_noun(E1) 'is' a() common_noun_name()",
-            "sem": lambda proper_noun, a2, common_noun_name: proper_noun
-            + [("intent_teach", [("isa", E1, common_noun_name)])],
+            "sem": lambda proper_noun, a2, common_noun_name: Atom(
+                "intent_teach", [Atom("isa", proper_noun, common_noun_name)]
+            ),
         },
         # Every hand has 5 fingers
         {
@@ -170,7 +171,7 @@ def get_read_grammar():
         # Is John a dope?
         {
             "syn": "s() -> 'is' proper_noun(E1) a() common_noun_name()~'?'",
-            "sem": lambda proper_noun, a, common_noun_name: proper_noun + [("intent_isa", E1, common_noun_name)],
+            "sem": lambda proper_noun, a, common_noun_name: Atom("intent_isa", proper_noun, common_noun_name),
         },
         # Does Alfred own a slide-rule?
         {
@@ -244,7 +245,7 @@ def get_read_grammar():
         # proper noun
         {
             "syn": "proper_noun(E1) -> 'the'? name()",
-            "sem": lambda name: [("resolve_name", name, E1)],
+            "sem": lambda name: Atom("name", E1, name),
         },
         # introduction of a new common noun
         {"syn": "common_noun_name() -> name()", "sem": lambda name: name},
