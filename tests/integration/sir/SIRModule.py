@@ -1,3 +1,4 @@
+from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
@@ -104,11 +105,11 @@ class SIRModule(SomeModule):
                 # produce output
                 context.solver.solve(
                     [
-                        (
+                        Atom(
                             "store",
                             [
-                                ("output_type", "how_many"),
-                                ("output_how_many", part_type, whole_type),
+                                Atom("output_type", "how_many"),
+                                Atom("output_how_many", part_type, whole_type),
                             ],
                         )
                     ]
@@ -155,17 +156,17 @@ class SIRModule(SomeModule):
 
         whole_type = whole_variable
         part_type = self.get_type(context, part_variable, part_variable)
-        results = context.solver.solve([("part_of_number", part_type, whole_type, Variable("N"))])
+        results = context.solver.solve([Atom("part_of_number", part_type, whole_type, Variable("N"))])
 
         if len(results) == 0:
             # produce output
             context.solver.solve(
                 [
-                    (
+                    Atom(
                         "store",
                         [
-                            ("output_type", "dont_know_part_of"),
-                            ("output_dont_know_part_of", part_type, whole_type),
+                            Atom("output_type", "dont_know_part_of"),
+                            Atom("output_dont_know_part_of", part_type, whole_type),
                         ],
                     )
                 ]

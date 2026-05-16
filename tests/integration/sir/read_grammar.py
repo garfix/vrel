@@ -82,15 +82,13 @@ def get_read_grammar():
         # Every hand has 5 fingers
         {
             "syn": "statement() -> 'every' common_noun_name() 'has' number(E1) common_noun_name()",
-            "sem": lambda common_noun_name1, number, common_noun_name2: [
-                (
-                    "intent_teach",
-                    [
-                        ("part_of", common_noun_name2, common_noun_name1),
-                        ("part_of_n", common_noun_name2, common_noun_name1, number),
-                    ],
-                )
-            ],
+            "sem": lambda common_noun_name1, number, common_noun_name2: Atom(
+                "intent_teach",
+                [
+                    Atom("part_of", common_noun_name2, common_noun_name1),
+                    Atom("part_of_n", common_noun_name2, common_noun_name1, number),
+                ],
+            ),
         },
         # Tom has nine fingers
         # Dick has one hand
@@ -101,8 +99,8 @@ def get_read_grammar():
                 (
                     "intent_teach",
                     [
-                        ("part_of", common_noun_name, E1),
-                        ("part_of_n", common_noun_name, E1, number),
+                        Atom("part_of", common_noun_name, E1),
+                        Atom("part_of_n", common_noun_name, E1, number),
                     ],
                 )
             ],
@@ -141,9 +139,9 @@ def get_read_grammar():
         # determine 'how many' not by counting but by calculating
         {
             "syn": "s() -> 'how' 'many' common_noun(E1) 'does' proper_noun(E2) 'have'+'?'",
-            "sem": lambda common_noun1, proper_noun: common_noun1
-            + proper_noun
-            + [("intent_count", [("have", E2, E1)])],
+            "sem": lambda common_noun1, proper_noun: Atom(
+                "intent_count", [common_noun1, Atom("have", proper_noun, E1)]
+            ),
         },
         # Is a X a Y?
         {
@@ -223,7 +221,7 @@ def get_read_grammar():
         # common noun
         {
             "syn": "common_noun(E1) -> common_noun_name()",
-            "sem": lambda common_noun_name: [(common_noun_name, E1)],
+            "sem": lambda common_noun_name: Atom(common_noun_name, E1),
         },
         # preposition
         {

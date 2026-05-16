@@ -173,14 +173,14 @@ class TestSIR(unittest.TestCase):
             ["Every boy is a person", "I understand"],
             ["A finger is a part of a hand", "I understand"],
             ["There are two hands on each person", "I understand"],
-            # [
-            #     "How many fingers does John have?",
-            #     "Don't know whether finger is part of John",
-            # ],
-            # ["John is a boy", "I understand"],
-            # ["How many fingers does John have?", "How many finger per hand?"],
-            # ["Every hand has 5 fingers", "I understand"],
-            # ["How many fingers does John have?", "The answer is 10"],
+            [
+                "How many fingers does John have?",
+                "Don't know whether finger is part of John",
+            ],
+            ["John is a boy", "I understand"],
+            ["How many fingers does John have?", "How many finger per hand?"],
+            ["Every hand has 5 fingers", "I understand"],
+            ["How many fingers does John have?", "The answer is 10"],
             # # left-to-right position
             # # book-telephone-pad
             # ["The telephone is just to the right of the book", "I understand"],
