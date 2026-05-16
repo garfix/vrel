@@ -181,21 +181,21 @@ class TestSIR(unittest.TestCase):
             ["How many fingers does John have?", "How many finger per hand?"],
             ["Every hand has 5 fingers", "I understand"],
             ["How many fingers does John have?", "The answer is 10"],
-            # # left-to-right position
-            # # book-telephone-pad
-            # ["The telephone is just to the right of the book", "I understand"],
-            # ["The telephone is just to the left of the pad", "I understand"],
-            # ["Is the pad just to the right of the book?", "No"],
-            # ["Is the book to the left of the pad?", "Yes"],
-            # ["The pad is to the right of the telephone", "I understand"],
-            # [
-            #     "The pad is to the left of the telephone",
-            #     "The above statement is impossible",
-            # ],
-            # ["The ash-tray is to the left of the book", "I understand"],
-            # ["The pencil is to the left of the pad", "I understand"],
-            # ["The paper is to the right of the telephone", "I understand"],
-            # # note: extra space
+            # left-to-right position
+            # book-telephone-pad
+            ["The telephone is just to the right of the book", "I understand"],
+            ["The telephone is just to the left of the pad", "I understand"],
+            ["Is the pad just to the right of the book?", "No"],
+            ["Is the book to the left of the pad?", "Yes"],
+            ["The pad is to the right of the telephone", "I understand"],
+            [
+                "The pad is to the left of the telephone",
+                "The above statement is impossible",
+            ],
+            ["The ash-tray is to the left of the book", "I understand"],
+            ["The pencil is to the left of the pad", "I understand"],
+            ["The paper is to the right of the telephone", "I understand"],
+            # note: extra space
             # [
             #     "Where is the pad?",
             #     "Just to the right of the telephone.  Somewhere to the right of the following .. (pencil)",
