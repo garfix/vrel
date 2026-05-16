@@ -1,6 +1,7 @@
 ## todo
 
 - improve exec_code, resolve_constants and resolve_names
+- inject solver in BasicGenerator
 
 - api: bv tk.keras.layers.Dense
 

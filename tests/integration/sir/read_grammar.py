@@ -111,9 +111,9 @@ def get_read_grammar():
         # John is Jack
         {
             "syn": "statement() -> proper_noun(E1) 'is' proper_noun(E2)",
-            "sem": lambda proper_noun1, proper_noun2: proper_noun1
-            + proper_noun2
-            + [("intent_teach", [("identical", E1, E2)])],
+            "sem": lambda proper_noun1, proper_noun2: Atom(
+                "intent_teach", [Atom("identical", proper_noun1, proper_noun2)]
+            ),
         },
         # Every fireman owns a pair-of-red-suspenders
         {

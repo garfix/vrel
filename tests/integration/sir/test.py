@@ -113,8 +113,8 @@ class TestSIR(unittest.TestCase):
             # commented out sentences are semantically questionable (missing referent)
             # ['The man is a jerk', 'I understand'], # G02840 is the man
             ["Jack is a dope", "I understand"],
-            # ["John is Jack", "I understand"],
-            # ["Is John a dope?", "Yes"],
+            ["John is Jack", "I understand"],
+            ["Is John a dope?", "Yes"],
             # # ['Is the man a dope?', 'Insufficient information'],
             # # ['John is the man', 'I understand'],
             # # ['Is the man a dope?', 'Yes'],
