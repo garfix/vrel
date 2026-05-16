@@ -1,8 +1,7 @@
 # intent predicates
 
 optimize(SemIn, SemOut) :-
-    resolve_names(SemIn, R),
-    create_query(R, Q),
+    create_query(SemIn, Q),
     optimize_cost_sort(Q, S),
     optimize_isolate(S, SemOut).
 

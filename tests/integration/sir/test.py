@@ -100,19 +100,19 @@ class TestSIR(unittest.TestCase):
             ["Is a person a girl?", "Sometimes"],
             ["Is a monkey a keypunch-operator?", "Insufficient information"],
             # # set-membership
-            # ["Max is an IBM-7094", "I understand"],
-            # ["An IBM-7094 is a computer", "I understand"],
-            # ["Is Max a computer?", "Yes"],
-            # # the rest of the section is semantically questionable (missing referent)
-            # # ['The boy is an MIT-student', 'I understand'], # G02840 is a boy
-            # # ['Every MIT-student is a bright-person', 'I understand'],
-            # # ['Is the boy a bright-person', 'Yes'],
-            # # ['John is a boy', 'I understand'],
-            # # ['Is the boy a bright-person', 'Which boy?'], # G02840 John
-            # # equivalence
-            # # commented out sentences are semantically questionable (missing referent)
-            # # ['The man is a jerk', 'I understand'], # G02840 is the man
-            # ["Jack is a dope", "I understand"],
+            ["Max is an IBM-7094", "I understand"],
+            ["An IBM-7094 is a computer", "I understand"],
+            ["Is Max a computer?", "Yes"],
+            # the rest of the section is semantically questionable (missing referent)
+            # ['The boy is an MIT-student', 'I understand'], # G02840 is a boy
+            # ['Every MIT-student is a bright-person', 'I understand'],
+            # ['Is the boy a bright-person', 'Yes'],
+            # ['John is a boy', 'I understand'],
+            # ['Is the boy a bright-person', 'Which boy?'], # G02840 John
+            # equivalence
+            # commented out sentences are semantically questionable (missing referent)
+            # ['The man is a jerk', 'I understand'], # G02840 is the man
+            ["Jack is a dope", "I understand"],
             # ["John is Jack", "I understand"],
             # ["Is John a dope?", "Yes"],
             # # ['Is the man a dope?', 'Insufficient information'],

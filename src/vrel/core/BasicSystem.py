@@ -45,13 +45,15 @@ class BasicSystem(SomeSystem):
         if not self.parser:
             return None
 
-        return self.parse(request)
+        solver = Solver(self.model, request, self.logger)
 
-    def parse(self, request: SentenceRequest):
+        return self.parse(request, solver)
+
+    def parse(self, request: SentenceRequest, solver: SomeSolver):
 
         parse_result = self.parser.process(request)
         if parse_result.error_type != "":
-            return self.log_error(parse_result)
+            return self.log_error(parse_result, solver)
 
         if self.logger:
             self.logger.add_process_result(self.parser, parse_result)
@@ -60,13 +62,13 @@ class BasicSystem(SomeSystem):
             return parse_result
 
         for parse_product in parse_result.products:
-            result = self.compose(parse_product)
+            result = self.compose(parse_product, request, solver)
             if result is not None:
                 return result
 
         return None
 
-    def compose(self, parse_product: BasicParserProduct):
+    def compose(self, parse_product: BasicParserProduct, request: SentenceRequest, solver: SomeSolver):
 
         composer_result = self.composer.process(parse_product)
         if composer_result.error_type != "":
@@ -79,22 +81,24 @@ class BasicSystem(SomeSystem):
             return composer_result
 
         for composer_product in composer_result.products:
-            result = self.execute(composer_product)
+            result = self.execute(composer_product, request, solver)
             if result is not None:
                 return result
 
         return None
 
-    def execute(self, composer_product: SemanticComposerProduct):
+    def execute(self, composer_product: SemanticComposerProduct, request: SentenceRequest, solver: SomeSolver):
 
-        executor_result = self.executor.process(composer_product, self.logger)
+        executor_result = self.executor.process(composer_product, solver, request)
         if executor_result.error_type != "":
-            return self.log_error(executor_result)
+            return self.log_error(executor_result, solver)
+
+        if self.logger:
+            self.logger.add_process_result(self.executor, executor_result)
 
         return executor_result
 
-    def log_error(self, result: ProcessResult):
-        solver = Solver(self.model)
+    def log_error(self, result: ProcessResult, solver: SomeSolver):
         solver.write_atom(Atom("output_type", result.error_type))
         solver.write_atom(Atom("output_" + result.error_type, *result.error_args))
         return result

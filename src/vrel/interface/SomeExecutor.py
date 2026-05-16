@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 
 from vrel.entity.ProcessResult import ProcessResult
-from vrel.interface.SomeLogger import SomeLogger
+from vrel.entity.SentenceRequest import SentenceRequest
+from vrel.interface.SomeSolver import SomeSolver
 
 
 class SomeExecutor(ABC):
@@ -11,5 +12,5 @@ class SomeExecutor(ABC):
         pass
 
     @abstractmethod
-    def process(self, request, logger: SomeLogger) -> ProcessResult:
+    def process(self, product, solver: SomeSolver, request: SentenceRequest) -> ProcessResult:
         pass

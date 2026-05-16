@@ -16,7 +16,7 @@ class OptimizerModule(SomeModule):
     # performs David H.D. Warren's optimization
     def optimize_isolate(self, arguments: list, context: ExecutionContext) -> list[list]:
         sem_in = arguments[0]
-        sem_out = IsolateIndependentParts().isolate(sem_in, context.sentence.root_variables)
+        sem_out = IsolateIndependentParts().isolate(sem_in, context.request.semantic_sentence.root_variables)
         return [[None, sem_out]]
 
     # ('optimize_cost_sort', SemIn, SemOut)

@@ -2,16 +2,15 @@
 
 # tell a fact
 intent_tell(Fact, Truth) :-
-    resolve_names(Fact, Resolved),
     (
         # check if the fact is known
-        exec(Resolved),
+        exec(Fact),
         not_equals(Truth, "unknown"),
         store(output_type(Truth))
     ;
         # add the fact as a truth
         let(Truth, "true"),
-        create_records_3v(Resolved, Records),
+        create_records_3v(Fact, Records),
         store(Records),
         store(output_type('ok'))
     ).
@@ -43,6 +42,5 @@ intent_mutual_exclusive(CommonNoun1, CommonNoun2, T1, T2) :-
     scope(intent_learn(not_3v(CommonNoun2, T2, T4), CommonNoun1, T4, T1)).
 
 intent_check(Fact, Truth) :-
-    resolve_names(Fact, Resolved),
-    exec(Resolved),
+    exec(Fact),
     store(output_type(Truth)).

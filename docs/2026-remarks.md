@@ -1,3 +1,10 @@
+## 2026-05-16
+
+I will extend the sentence request with a solver, so that it becomes available even before the first sentence is executed (to write error tuples, for example).
+The executor will be responsible for resolving names and constants, and for executing attached code.
+
+Or I can add the solver to the system, and make changes to the SentenceRequest. Everytime the SentenceSemantics changes the request is updated.
+
 ## 2026-05-13
 
 I'm trying to use the simple `vp` as much as possible, but making an exception for the continuous, that marks a relative clause. Without it its hard to create the proper sentence structure.

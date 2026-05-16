@@ -1,5 +1,7 @@
 ## todo
 
+- improve exec_code, resolve_constants and resolve_names
+
 - api: bv tk.keras.layers.Dense
 
 - neem in de Relation op welke parameter de unieke id bevat

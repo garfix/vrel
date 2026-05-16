@@ -47,8 +47,6 @@ class CoreModule(SomeModule):
         self.add_relation(Relation("create_records", query_function=self.create_records)),
         self.add_relation(Relation("print", query_function=self.print)),
         self.add_relation(Relation("log", query_function=self.log)),
-        self.add_relation(Relation("resolve_names", query_function=self.resolve_names)),
-        self.add_relation(Relation("exec_code", query_function=self.exec_code)),
 
     # ('equals', E1, E2)
     def equals(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -515,22 +513,3 @@ class CoreModule(SomeModule):
             print(", ".join(comment))
 
         return [[None] * len(arguments)]
-
-    # ('resolve_names', body-atoms, result-variable)
-    # Replaces named atoms with their id's
-    def resolve_names(self, arguments: list, context: ExecutionContext) -> list[list]:
-        body = arguments[0]
-
-        result1 = resolve_constants(body)
-        result2 = resolve_names(result1, context.solver)
-
-        return [[None, result2]]
-
-    # ('exec-code', body-atoms)
-    # Executes the exec part of the body-atoms
-    def exec_code(self, arguments: list, context: ExecutionContext) -> list[list]:
-        body = arguments[0]
-
-        exec_code(body, context.solver)
-
-        return [[None]]

@@ -4,6 +4,7 @@ from vrel.core.constants import DISJUNCTION, SAME_AS
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Relation
+from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSolver import SomeSolver
@@ -15,11 +16,11 @@ class Solver(SomeSolver):
 
     model: SomeModel
     logger: SomeLogger
-    sentence: SemanticSentence
+    request: SentenceRequest
 
-    def __init__(self, model: SomeModel, sentence: SemanticSentence = None, logger: SomeLogger = None) -> None:
+    def __init__(self, model: SomeModel, request: SentenceRequest = None, logger: SomeLogger = None) -> None:
         self.model = model
-        self.sentence = sentence
+        self.request = request
         self.logger = logger
 
     def solve(self, atoms: Atom | list[Atom]) -> list[dict]:
@@ -96,7 +97,7 @@ class Solver(SomeSolver):
     def find_relation_values(self, relation: Relation, bound_arguments: list, binding: dict) -> list[dict]:
 
         predicate = relation.predicate
-        context = ExecutionContext(relation, self, self.sentence, self.model, self.logger)
+        context = ExecutionContext(relation, self, self.request, self.model, self.logger)
 
         # call the relation's query function
         out_values = relation.query_function(bound_arguments, context)

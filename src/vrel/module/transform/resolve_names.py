@@ -22,7 +22,7 @@ def resolve_names(atoms: list[Atom], solver: SomeSolver):
     exec_code(atoms1, solver)
 
     # remove the names
-    atoms2 = remove_names_from_atoms(atoms1)
+    atoms2 = remove_names_from_list(atoms1)
 
     return atoms2
 
@@ -53,13 +53,16 @@ def resolve_name(name: str, solver: SomeSolver):
         raise Exception(f"More than 1 entity found for name: {name}")
 
 
-def remove_names_from_atoms(atoms: list[Atom]) -> list[Atom]:
-    new_atoms = []
-    for atom in atoms:
-        if atom.predicate != PRED_NAME:
-            new_atoms.append(remove_names_from_atom(atom))
+def remove_names_from_list(terms: list) -> list[Atom]:
+    new_terms = []
+    for term in terms:
+        if isinstance(term, Atom):
+            if term.predicate != PRED_NAME:
+                new_terms.append(remove_names_from_atom(term))
+        else:
+            new_terms.append(term)
 
-    return new_atoms
+    return new_terms
 
 
 def remove_names_from_modifiers(modifiers: list[Modifier]) -> list[Atom]:
@@ -75,7 +78,7 @@ def remove_names_from_arguments(args: list[any]) -> list[any]:
     new_atoms = []
     for arg in args:
         if isinstance(arg, list):
-            new_atoms.append(remove_names_from_atoms(arg))
+            new_atoms.append(remove_names_from_list(arg))
         elif isinstance(arg, Atom):
             if arg.predicate == PRED_NAME:
                 new_atoms.append(arg.arguments[0])

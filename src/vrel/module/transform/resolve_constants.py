@@ -1,11 +1,6 @@
-import copy
-
-from vrel.core.constants import CONSTANT, PRED_NAME
+from vrel.core.constants import CONSTANT
 from vrel.core.functions.terms import bind_variables
 from vrel.entity.Atom import Atom, Modifier
-from vrel.entity.Variable import Variable
-from vrel.interface.SomeSolver import SomeSolver
-from vrel.module.transform.exec_code import exec_code
 
 
 def resolve_constants(atoms: list[Atom]):
@@ -17,7 +12,7 @@ def resolve_constants(atoms: list[Atom]):
     atoms1 = bind_variables(atoms, variable_to_id)
 
     # remove the constants
-    atoms2 = remove_constants_from_atoms(atoms1)
+    atoms2 = remove_constants_from_list(atoms1)
 
     return atoms2
 
@@ -38,13 +33,16 @@ def find_constants(term: any) -> dict:
     return variables
 
 
-def remove_constants_from_atoms(atoms: list[Atom]) -> list[Atom]:
-    new_atoms = []
-    for atom in atoms:
-        if atom.predicate != CONSTANT:
-            new_atoms.append(remove_constants_from_atom(atom))
+def remove_constants_from_list(terms: list) -> list[Atom]:
+    new_terms = []
+    for term in terms:
+        if isinstance(term, Atom):
+            if term.predicate != CONSTANT:
+                new_terms.append(remove_constants_from_atom(term))
+        else:
+            new_terms.append(term)
 
-    return new_atoms
+    return new_terms
 
 
 def remove_constants_from_modifiers(modifiers: list[Modifier]) -> list[Atom]:
@@ -60,7 +58,7 @@ def remove_constants_from_arguments(args: list[any]) -> list[any]:
     new_atoms = []
     for arg in args:
         if isinstance(arg, list):
-            new_atoms.append(remove_constants_from_atoms(arg))
+            new_atoms.append(remove_constants_from_list(arg))
         elif isinstance(arg, Atom):
             if arg.predicate == CONSTANT:
                 new_atoms.append(arg.arguments[0])

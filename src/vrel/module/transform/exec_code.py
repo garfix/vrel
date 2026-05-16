@@ -3,9 +3,10 @@ from vrel.entity.Atom import Atom
 from vrel.interface.SomeSolver import SomeSolver
 
 
-def exec_code(atoms: list[Atom], solver: SomeSolver):
-    for atom in atoms:
-        exec_atom(atom, solver)
+def exec_code(terms: list, solver: SomeSolver):
+    for term in terms:
+        if isinstance(term, Atom):
+            exec_atom(term, solver)
 
 
 def exec_atom(atom: Atom, solver: SomeSolver):
@@ -18,6 +19,8 @@ def exec_atom(atom: Atom, solver: SomeSolver):
     for arg in atom.arguments:
         if isinstance(arg, Atom):
             exec_atom(arg, solver)
+        elif isinstance(arg, list):
+            exec_code(arg, solver)
 
     for mod in atom.get_modifier_atoms():
         exec_atom(mod, solver)
