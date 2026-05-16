@@ -196,10 +196,10 @@ class TestSIR(unittest.TestCase):
             ["The pencil is to the left of the pad", "I understand"],
             ["The paper is to the right of the telephone", "I understand"],
             # note: extra space
-            # [
-            #     "Where is the pad?",
-            #     "Just to the right of the telephone.  Somewhere to the right of the following .. (pencil)",
-            # ],
+            [
+                "Where is the pad?",
+                "Just to the right of the telephone.  Somewhere to the right of the following .. (pencil)",
+            ],
             # # The result of the following sentence should be
             # # 'The left-to-right order is as follows: ash-tray (book telephone pad) paper.'
             # # 'To further specify the positions you must indicate where the pencil is with respect to the ash-tray'

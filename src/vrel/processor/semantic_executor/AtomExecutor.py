@@ -41,6 +41,8 @@ class AtomExecutor(SomeProcessor):
             sem2 = resolve_constants(sem1)
             sem3 = resolve_names(sem2, solver)
 
+            # print(sem3)
+
             bindings = solver.solve(sem3)
 
             product = AtomExecutorProduct(bindings, sem3)

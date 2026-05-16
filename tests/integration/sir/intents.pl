@@ -64,9 +64,8 @@ intent_claim(Atom) :- checkable(Atom), (
 intent_claim(Atom) :- not(checkable(Atom)), store(Atom), store(output_type('understand')).
 
 # where
-intent_where(Variable, Body) :-
-    find_one(Variable, Body, Object),
-    store(output_type('location'), output_location(Object)).
+intent_where(Id) :-
+    store(output_type('location'), output_location(Id)).
 
 # position
 intent_position() :-

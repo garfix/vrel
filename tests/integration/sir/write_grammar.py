@@ -76,7 +76,7 @@ def get_write_grammar():
         {
             "syn": "right_of(E1) -> 'Somewhere to the right of the following ..' format(List)",
             "if": [
-                Atom("find_all", "E2", [Atom("somewhere_left_of", E2, E1)], List1),
+                Atom("find_all", E2, [Atom("somewhere_left_of", E2, E1)], List1),
                 Atom("not", [Atom("equals", List1, [])]),
             ],
             "format": lambda elements: format_list(elements),
@@ -84,7 +84,7 @@ def get_write_grammar():
         {
             "syn": "left_of(E1) -> 'Somewhere to the left of the following ..' format(List)",
             "if": [
-                Atom("find_all", "E2", [Atom("somewhere_left_of", E1, E2)], List1),
+                Atom("find_all", E2, [Atom("somewhere_left_of", E1, E2)], List1),
                 Atom("not", [Atom("equals", List1, [])]),
             ],
             "format": lambda elements: format_list(elements),

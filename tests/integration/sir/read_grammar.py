@@ -198,7 +198,7 @@ def get_read_grammar():
         # Where is the pad?
         {
             "syn": "s() -> 'where' 'is' proper_noun(E1)~'?'",
-            "sem": lambda proper_noun: [("intent_where", e1, proper_noun)],
+            "sem": lambda proper_noun: Atom("intent_where", proper_noun),
         },
         # What is the position of the pad?
         {

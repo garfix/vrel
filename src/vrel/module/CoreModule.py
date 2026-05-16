@@ -435,12 +435,14 @@ class CoreModule(SomeModule):
     def find_all(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         variable = arguments[0]
+
         body = arguments[1]
         is_list = isinstance(variable, list)
 
         result = []
 
-        for binding in context.solver.solve(body):
+        bindings = context.solver.solve(body)
+        for binding in bindings:
             if is_list:
                 item = []
                 for v in variable:
