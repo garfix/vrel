@@ -94,16 +94,13 @@ def get_read_grammar():
         # Dick has one hand
         {
             "syn": "statement() -> proper_noun(E1) 'has' number(E1) common_noun_name()",
-            "sem": lambda proper_noun, number, common_noun_name: proper_noun
-            + [
-                (
-                    "intent_teach",
-                    [
-                        Atom("part_of", common_noun_name, E1),
-                        Atom("part_of_n", common_noun_name, E1, number),
-                    ],
-                )
-            ],
+            "sem": lambda proper_noun, number, common_noun_name: Atom(
+                "intent_teach",
+                [
+                    Atom("part_of", common_noun_name, proper_noun),
+                    Atom("part_of_n", common_noun_name, proper_noun, number),
+                ],
+            ),
         },
         # John is Jack
         {
@@ -203,7 +200,9 @@ def get_read_grammar():
         # What is the position of the pad?
         {
             "syn": "s() -> 'what' 'is' 'the' 'position' 'of' proper_noun(E1)~'?'",
-            "sem": lambda proper_noun: [("intent_position",)],
+            "sem": lambda proper_noun: Atom(
+                "intent_position",
+            ),
         },
         # number
         {"syn": "number(E1) -> 'one'", "sem": lambda: 1},

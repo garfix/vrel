@@ -99,7 +99,7 @@ class TestSIR(unittest.TestCase):
             ["Is a person a person?", "Yes"],
             ["Is a person a girl?", "Sometimes"],
             ["Is a monkey a keypunch-operator?", "Insufficient information"],
-            # # set-membership
+            # set-membership
             ["Max is an IBM-7094", "I understand"],
             ["An IBM-7094 is a computer", "I understand"],
             ["Is Max a computer?", "Yes"],
@@ -129,7 +129,7 @@ class TestSIR(unittest.TestCase):
             ["Does a doctor own a pair-of-red-suspenders?", "Insufficient information"],
             ["A firechief is a fireman", "I understand"],
             ["Does a firechief own a pair-of-red-suspenders?", "Yes"],
-            # # ownership, specific
+            # ownership, specific
             ["Alfred owns a log-log-decitrig", "I understand"],
             ["A log-log-decitrig is a slide-rule", "I understand"],
             ["Does Alfred own a slide-rule?", "Yes"],
@@ -200,37 +200,37 @@ class TestSIR(unittest.TestCase):
                 "Where is the pad?",
                 "Just to the right of the telephone.  Somewhere to the right of the following .. (pencil)",
             ],
-            # # The result of the following sentence should be
-            # # 'The left-to-right order is as follows: ash-tray (book telephone pad) paper.'
-            # # 'To further specify the positions you must indicate where the pencil is with respect to the ash-tray'
-            # # The algorithm to generate the output that is described in the paper is not worked out, because it is a lot of work to implement it
-            # # However, the example here shows how it could be done
-            # [
-            #     "What is the position of the pad?",
-            #     "The left-to-right order is as follows: <the ordered list>",
-            # ],
-            # ["The book is just to the right of the ash-tray", "I understand"],
-            # # the result of the following sentence should be
-            # # 'The left-to-right order is as follows: pencil (ash-tray book telephone pad) paper)'
-            # [
-            #     "What is the position of the pad?",
-            #     "The left-to-right order is as follows: <the ordered list>",
-            # ],
-            # ["A telephone is an audio-transducer", "I understand"],
-            # ["A diaphragm is part of an audio-transducer", "I understand"],
-            # [
-            #     "Where is the diaphragm?",
-            #     "Just to the left of the pad. Just to the right of the book. Somewhere to the left of the following .. (paper)",
-            # ],
+            # The result of the following sentence should be
+            # 'The left-to-right order is as follows: ash-tray (book telephone pad) paper.'
+            # 'To further specify the positions you must indicate where the pencil is with respect to the ash-tray'
+            # The algorithm to generate the output that is described in the paper is not worked out, because it is a lot of work to implement it
+            # However, the example here shows how it could be done
+            [
+                "What is the position of the pad?",
+                "The left-to-right order is as follows: <the ordered list>",
+            ],
+            ["The book is just to the right of the ash-tray", "I understand"],
+            # the result of the following sentence should be
+            # 'The left-to-right order is as follows: pencil (ash-tray book telephone pad) paper)'
+            [
+                "What is the position of the pad?",
+                "The left-to-right order is as follows: <the ordered list>",
+            ],
+            ["A telephone is an audio-transducer", "I understand"],
+            ["A diaphragm is part of an audio-transducer", "I understand"],
+            [
+                "Where is the diaphragm?",
+                "Just to the left of the pad. Just to the right of the book. Somewhere to the left of the following .. (paper)",
+            ],
             # # exception principle
-            # ["Tom is a boy", "I understand"],
-            # ["Dick is a boy", "I understand"],
-            # ["Harry is a boy", "I understand"],
-            # ["Tom has nine fingers", "I understand"],
-            # ["Dick has one hand", "I understand"],
-            # ["How many fingers does Tom have?", "The answer is 9"],
-            # ["How many fingers does Dick have?", "The answer is 5"],
-            # ["How many fingers does Harry have?", "The answer is 10"],
+            ["Tom is a boy", "I understand"],
+            ["Dick is a boy", "I understand"],
+            ["Harry is a boy", "I understand"],
+            ["Tom has nine fingers", "I understand"],
+            ["Dick has one hand", "I understand"],
+            ["How many fingers does Tom have?", "The answer is 9"],
+            ["How many fingers does Dick have?", "The answer is 5"],
+            ["How many fingers does Harry have?", "The answer is 10"],
         ]
 
         tester = DialogTester(self, tests, system, logger)
