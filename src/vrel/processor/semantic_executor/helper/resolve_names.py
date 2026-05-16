@@ -5,7 +5,7 @@ from vrel.core.functions.terms import bind_variables
 from vrel.entity.Atom import Atom, Modifier
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeSolver import SomeSolver
-from vrel.module.transform.exec_code import exec_code
+from vrel.processor.semantic_executor.helper.exec_code import exec_code
 
 
 def resolve_names(atoms: list[Atom], solver: SomeSolver):

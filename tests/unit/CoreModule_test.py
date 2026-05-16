@@ -8,8 +8,8 @@ from vrel.core.constants import CONSTANT, E1, E2, E3, E4, E5
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 from vrel.module.CoreModule import CoreModule
-from vrel.module.transform.resolve_constants import resolve_constants
-from vrel.module.transform.resolve_names import resolve_names
+from vrel.processor.semantic_executor.helper.resolve_constants import resolve_constants
+from vrel.processor.semantic_executor.helper.resolve_names import resolve_names
 
 
 class TestCoreModule(unittest.TestCase):

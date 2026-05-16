@@ -5,8 +5,8 @@ from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeProcessor import SomeProcessor
 from vrel.core.Solver import Solver
 from vrel.interface.SomeSolver import SomeSolver
-from vrel.module.transform.resolve_constants import resolve_constants
-from vrel.module.transform.resolve_names import resolve_names
+from vrel.processor.semantic_executor.helper.resolve_constants import resolve_constants
+from vrel.processor.semantic_executor.helper.resolve_names import resolve_names
 from vrel.processor.semantic_composer.SemanticComposerProduct import (
     SemanticComposerProduct,
 )
@@ -37,17 +37,14 @@ class AtomExecutor(SomeProcessor):
 
             request.semantic_sentence = sentence
 
-            sem1 = [sentence.semantics]
-            sem2 = resolve_constants(sem1)
-            sem3 = resolve_names(sem2, solver)
+            semantics = [sentence.semantics]
+            resolved_constants = resolve_constants(semantics)
+            resolved_names = resolve_names(resolved_constants, solver)
 
-            # print(sem3)
+            bindings = solver.solve(resolved_names)
 
-            bindings = solver.solve(sem3)
-
-            product = AtomExecutorProduct(bindings, sem3)
-
-            # todo: is this right?
-            products = [product]
+            product = AtomExecutorProduct(bindings, resolved_names)
+            products.append(product)
+            break
 
         return ProcessResult(products, "")
