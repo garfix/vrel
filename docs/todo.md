@@ -2,6 +2,7 @@
 
 - improve exec_code, resolve_constants and resolve_names
 - inject solver in BasicGenerator
+- John is Jack => use is_same
 
 - api: bv tk.keras.layers.Dense
 

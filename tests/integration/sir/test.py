@@ -115,35 +115,35 @@ class TestSIR(unittest.TestCase):
             ["Jack is a dope", "I understand"],
             ["John is Jack", "I understand"],
             ["Is John a dope?", "Yes"],
-            # # ['Is the man a dope?', 'Insufficient information'],
-            # # ['John is the man', 'I understand'],
-            # # ['Is the man a dope?', 'Yes'],
-            # # ['Jim is a man', 'I understand'],
-            # # ['Is the man a dope?', 'Which man?'], # G02840 Jim
-            # # ownership, general
-            # ["Every fireman owns a pair-of-red-suspenders", "I understand"],
-            # [
-            #     "Does a pair-of-red-suspenders own a pair-of-red-suspenders?",
-            #     "No, they are the same",
-            # ],
-            # ["Does a doctor own a pair-of-red-suspenders?", "Insufficient information"],
-            # ["A firechief is a fireman", "I understand"],
-            # ["Does a firechief own a pair-of-red-suspenders?", "Yes"],
+            # ['Is the man a dope?', 'Insufficient information'],
+            # ['John is the man', 'I understand'],
+            # ['Is the man a dope?', 'Yes'],
+            # ['Jim is a man', 'I understand'],
+            # ['Is the man a dope?', 'Which man?'], # G02840 Jim
+            # ownership, general
+            ["Every fireman owns a pair-of-red-suspenders", "I understand"],
+            [
+                "Does a pair-of-red-suspenders own a pair-of-red-suspenders?",
+                "No, they are the same",
+            ],
+            ["Does a doctor own a pair-of-red-suspenders?", "Insufficient information"],
+            ["A firechief is a fireman", "I understand"],
+            ["Does a firechief own a pair-of-red-suspenders?", "Yes"],
             # # ownership, specific
-            # ["Alfred owns a log-log-decitrig", "I understand"],
-            # ["A log-log-decitrig is a slide-rule", "I understand"],
-            # ["Does Alfred own a slide-rule?", "Yes"],
-            # ["Every engineering-student owns a slide-rule", "I understand"],
-            # ["Vernon is a tech-man", "I understand"],
-            # ["A tech-man is an engineering-student", "I understand"],
-            # ["Does Vernon own a slide-rule?", "Yes"],
-            # [
-            #     "Does an engineering-student own a log-log-decitrig?",
-            #     "Insufficient information",
-            # ],
-            # ["Alfred is a tech-man", "I understand"],
-            # ["Does an engineering-student own a log-log-decitrig?", "Yes"],
-            # # part-whole, general
+            ["Alfred owns a log-log-decitrig", "I understand"],
+            ["A log-log-decitrig is a slide-rule", "I understand"],
+            ["Does Alfred own a slide-rule?", "Yes"],
+            ["Every engineering-student owns a slide-rule", "I understand"],
+            ["Vernon is a tech-man", "I understand"],
+            ["A tech-man is an engineering-student", "I understand"],
+            ["Does Vernon own a slide-rule?", "Yes"],
+            [
+                "Does an engineering-student own a log-log-decitrig?",
+                "Insufficient information",
+            ],
+            ["Alfred is a tech-man", "I understand"],
+            ["Does an engineering-student own a log-log-decitrig?", "Yes"],
+            # part-whole, general
             # ["A nose is part of a person", "I understand"],
             # ["A nostril is part of a nose", "I understand"],
             # ["A professor is a teacher", "I understand"],

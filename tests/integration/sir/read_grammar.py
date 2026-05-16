@@ -118,15 +118,16 @@ def get_read_grammar():
         # Every fireman owns a pair-of-red-suspenders
         {
             "syn": "statement() -> 'every' common_noun_name() own() a() common_noun_name()",
-            "sem": lambda common_noun_name1, own, a, common_noun_name2: [
-                ("intent_teach", [("own", common_noun_name1, common_noun_name2)])
-            ],
+            "sem": lambda common_noun_name1, own, a, common_noun_name2: Atom(
+                "intent_teach", [Atom("own", common_noun_name1, common_noun_name2)]
+            ),
         },
         # Alfred owns a log-log-decitrig
         {
             "syn": "statement() -> proper_noun(E1) own() a() common_noun_name()",
-            "sem": lambda proper_noun, own, a, common_noun_name: proper_noun
-            + [("intent_teach", [("own", E1, common_noun_name)])],
+            "sem": lambda proper_noun, own, a, common_noun_name: Atom(
+                "intent_teach", [Atom("own", proper_noun, common_noun_name)]
+            ),
         },
         # The telephone is just to the right of the book
         {
@@ -176,7 +177,7 @@ def get_read_grammar():
         # Does Alfred own a slide-rule?
         {
             "syn": "yes_no() -> 'does' proper_noun(E1) own() a() common_noun_name()~'?'",
-            "sem": lambda proper_noun, own, a, common_noun_name: proper_noun + [("intent_own", E1, common_noun_name)],
+            "sem": lambda proper_noun, own, a, common_noun_name: Atom("intent_own", proper_noun, common_noun_name),
         },
         # Does a doctor own a pair-of-red-suspenders?
         # Does a firechief own a pair-of-red-suspenders?
@@ -184,9 +185,9 @@ def get_read_grammar():
         # Does a pair-of-red-suspenders own a pair-of-red-suspenders?
         {
             "syn": "s() -> 'does' a() common_noun_name() own() a() common_noun_name()~'?'",
-            "sem": lambda a1, common_noun_name1, own, a2, common_noun_name2: [
-                ("intent_some_own", common_noun_name1, common_noun_name2)
-            ],
+            "sem": lambda a1, common_noun_name1, own, a2, common_noun_name2: Atom(
+                "intent_some_own", common_noun_name1, common_noun_name2
+            ),
         },
         # Is the pad just to the right of the book?
         {
