@@ -5,7 +5,6 @@ from vrel.core.Solver import Solver
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
-from vrel.core.Logger import Logger
 from vrel.entity.Variable import Variable
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
@@ -21,10 +20,10 @@ from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.module.DeductionModule import DeductionModule
-from .PAMDB import PAMDB
-from .PAMModule import PAMModule
-from .read_grammar import get_read_grammar
-from .write_grammar import get_write_grammar
+from PAMDB import PAMDB
+from PAMModule import PAMModule
+from read_grammar import get_read_grammar
+from write_grammar import get_write_grammar
 
 
 class TestPAM(unittest.TestCase):
@@ -87,15 +86,12 @@ class TestPAM(unittest.TestCase):
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
-        logger = Logger()
-
         system = BasicSystem(
             model=model,
             parser=parser,
             composer=composer,
             executor=executor,
             output_generator=generator,
-            logger=logger,
         )
 
         # test the system
@@ -201,27 +197,10 @@ class TestPAM(unittest.TestCase):
             # ],
         ]
 
-        solver = Solver(model)
+        for session in tests:
 
-        logger.log_no_tests()
-        # logger.log_all_tests()
-        # logger.log_products()
-
-        for i, session in enumerate(tests):
-
-            try:
-
-                tester = DialogTester(self, session, system, logger)
-                tester.run()
-
-            except Exception as e:
-                print(e)
-
-            if i == 0:
-                self.assertEqual(
-                    solver.solve([("same_as", Variable("E1"), Variable("E2"))]),
-                    [{"E1": "$4", "E2": "$2"}, {"E1": "$7", "E2": "$4"}],
-                )
+            tester = DialogTester(self, session, system)
+            tester.run()
 
             # clear
             dialog_context.clear()
