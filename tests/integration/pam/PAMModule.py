@@ -12,6 +12,8 @@ class PAMModule(SomeModule):
     def __init__(self, data_source: SomeDataSource) -> None:
         super().__init__()
         self.ds = data_source
+        self.add_relation(Relation("resolve_name", query_function=self.resolve_name))
+
         # self.add_relation(Relation("hungry", query_function=self.simple_entity))
         # self.add_relation(Relation("michelin_guide", query_function=self.simple_entity))
         # self.add_relation(Relation("pick_up", query_function=self.common_query, formal_parameters=['id1', 'id2', 'id3'], write_function=self.common_write))
@@ -54,7 +56,6 @@ class PAMModule(SomeModule):
         # self.add_relation(Relation("football_fan", query_function=self.simple_entity))
         # self.add_relation(Relation("take", query_function=self.simple_entity))
         # self.add_relation(Relation("drive_away", query_function=self.simple_entity))
-        # self.add_relation(Relation("resolve_name", query_function=self.resolve_name))
         # self.add_relation(Relation("name", query_function=self.simple_entity))
         # self.add_relation(Relation("lost", query_function=self.simple_entity))
         # self.add_relation(Relation("farmer", query_function=self.simple_entity))
@@ -70,37 +71,16 @@ class PAMModule(SomeModule):
         # self.add_relation(Relation("person", query_function=self.simple_entity))
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.ds.insert(
-            context.relation.predicate, context.relation.formal_parameters, arguments
-        )
+        self.ds.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select(
-            context.relation.predicate, context.relation.formal_parameters, arguments
-        )
+        return self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)
 
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
-        name = arguments[0].lower()
-        id = arguments[1]
+        print("pam", arguments)
+        _, name = arguments
 
-        out_values = self.ds.select("entity", ["name", "id"], [name, None])
-
-        if len(out_values) > 0:
-            return map(lambda row: [None, row[1]], out_values)
-        else:
-            # if id is given, a new name is linked to that id
-            if isinstance(id, Variable):
-                # otherwise a new id is created for the name
-                id = context.arguments[1].name
-            self.ds.insert(
-                "entity",
-                [
-                    "name",
-                    "id",
-                ],
-                [name, id],
-            )
-            return [[None, id]]
+        return [[name, None]]
 
     def simple_entity(self, arguments: list, context: ExecutionContext) -> list[list]:
         return self.ds.select(context.relation.predicate, ["id"], arguments)

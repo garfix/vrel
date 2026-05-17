@@ -30,16 +30,16 @@ def get_read_grammar():
         # question
         {
             "syn": "question() -> clause(C1)+'?'",
-            "sem": lambda clause: Atom("intent_question", clause),
+            "sem": lambda clause: Atom("intent_question", [clause]),
         },
         {
             "syn": "question() -> 'why' clause(C1)",
-            "sem": lambda clause: Atom("intent_explanation", clause, C1),
+            "sem": lambda clause: Atom("intent_explanation", [clause], C1),
         },
         # declarative
         {
             "syn": "decl(C1) -> np(E1) vp(C1, E1)+'.'",
-            "sem": lambda np, vp: Atom("intent_understand", vp.mod(np)),
+            "sem": lambda np, vp: Atom("intent_understand", [vp.mod(np)]),
         },
         # verb phrase
         {"syn": "vp(C1, E1) -> copula() adjp(E1)", "sem": lambda copula, adjp: adjp},
