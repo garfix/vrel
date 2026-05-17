@@ -39,14 +39,10 @@ class TestWikiData(unittest.TestCase):
     def test_wikidata(self):
 
         path = str(pathlib.Path(__file__).parent.resolve()) + "/"
-        result_cache_path = (
-            str(pathlib.Path(__file__).parent.resolve()) + "/result_cache/"
-        )
+        result_cache_path = str(pathlib.Path(__file__).parent.resolve()) + "/result_cache/"
 
         # define the data source
-        wikidata = WikidataModule(
-            WikidataDataSource(result_cache_path=result_cache_path)
-        )
+        wikidata = WikidataModule(WikidataDataSource(result_cache_path=result_cache_path))
 
         # define the intents
         # define predicate mapping from the domain to one or more Wikidata predicates
@@ -75,11 +71,9 @@ class TestWikiData(unittest.TestCase):
         parser = BasicParser(read_grammar)
 
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model)
+        executor = AtomExecutor()
 
-        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(
-            get_en_us_write_grammar() + get_write_grammar()
-        )
+        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
         logger = Logger()

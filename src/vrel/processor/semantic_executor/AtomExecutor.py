@@ -18,13 +18,8 @@ class AtomExecutor(SomeProcessor):
     Executes the function that forms the meaning of the sentence, and produces its result
     """
 
-    composer: SomeProcessor
-    model: SomeModel
-
-    def __init__(self, composer: SomeProcessor, model: SomeModel) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.composer = composer
-        self.model = model
 
     def get_name(self) -> str:
         return "Executor"

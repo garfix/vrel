@@ -1,5 +1,3 @@
-import copy
-
 from vrel.core.constants import PRED_NAME
 from vrel.core.functions.terms import bind_variables
 from vrel.entity.Atom import Atom, Modifier

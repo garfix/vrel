@@ -138,7 +138,7 @@ class Chat80Test(unittest.TestCase):
         parser = BasicParser(read_grammar)
 
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model)
+        executor = AtomExecutor()
 
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)

@@ -6,10 +6,7 @@ from vrel.entity.Variable import Variable
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.OrderedSet import OrderedSet
-from vrel.processor.semantic_executor.helper.resolve_constants import resolve_constants
-from vrel.processor.semantic_executor.helper.exec_code import exec_code
 from vrel.module.transform.query import create_query
-from vrel.processor.semantic_executor.helper.resolve_names import resolve_names
 from vrel.module.transform.storage import create_records
 
 

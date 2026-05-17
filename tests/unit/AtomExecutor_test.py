@@ -49,7 +49,7 @@ class TestAtomExecutor(unittest.TestCase):
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_write_grammar())
         parser = BasicParser(read_grammar)
         composer = SemanticComposer(parser)
-        executor = AtomExecutor(composer, model)
+        executor = AtomExecutor()
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
         system = BasicSystem(
@@ -88,7 +88,7 @@ class TestAtomExecutor(unittest.TestCase):
     #     grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
     #     parser = BasicParser(grammar)
     #     composer = SemanticComposer(parser)
-    #     executor = AtomExecutor(composer, model)
+    #     executor = AtomExecutor()
 
     #     system = BasicSystem(model=model, parser=parser, composer=composer, executor=executor)
 
