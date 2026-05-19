@@ -1,20 +1,16 @@
 import unittest
 import pathlib
 
-from vrel.core.Solver import Solver
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
-from vrel.entity.Variable import Variable
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.InductionModule import InductionModule
 from vrel.module.PlainReadWriteModule import PlainReadWriteModule
 from vrel.module.PlanAnalyzerDialogContext import PlanAnalyzerDialogContext
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
-    SimpleGrammarRulesParser,
-)
+from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model

@@ -1,6 +1,7 @@
 from vrel.core.Solver import Solver
 from vrel.core.Logger import Logger
 from vrel.entity.Atom import Atom
+from vrel.entity.ParseTreeNode import ParseTreeNode
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.interface.SomeComposer import SomeComposer
@@ -13,6 +14,7 @@ from vrel.interface.SomeSolver import SomeSolver
 from vrel.interface.SomeSystem import SomeSystem
 from vrel.processor.parser.BasicParserProduct import BasicParserProduct
 from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
+from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
 from .Model import Model
 
 
@@ -62,15 +64,19 @@ class BasicSystem(SomeSystem):
             return parse_result
 
         for parse_product in parse_result.products:
-            result = self.compose(parse_product, request, solver)
+            # each result is an ambiguous alternative
+            result = self.compose(parse_product.parse_trees, request, solver)
             if result is not None:
                 return result
 
         return None
 
-    def compose(self, parse_product: BasicParserProduct, request: SentenceRequest, solver: SomeSolver):
+    def compose(self, parse_trees: list[ParseTreeNode], request: SentenceRequest, solver: SomeSolver):
+        """
+        Note: these parse trees all belong to the same input; they're not alternative parses
+        """
 
-        composer_result = self.composer.process(parse_product.parse_trees, self.logger)
+        composer_result = self.composer.process(parse_trees, self.logger)
         if composer_result.error_type != "":
             return self.log_error(composer_result)
 
@@ -78,15 +84,18 @@ class BasicSystem(SomeSystem):
             return composer_result
 
         for composer_product in composer_result.products:
-            result = self.execute(composer_product, request, solver)
+            result = self.execute(composer_product.sentences, request, solver)
             if result is not None:
                 return result
 
         return None
 
-    def execute(self, composer_product: SemanticComposerProduct, request: SentenceRequest, solver: SomeSolver):
+    def execute(self, semantic_sentences: list[SemanticSentence], request: SentenceRequest, solver: SomeSolver):
+        """
+        Note: these sentences all belong to the same input; they're not alternative parses
+        """
 
-        executor_result = self.executor.process(composer_product.sentences, solver, request, self.logger)
+        executor_result = self.executor.process(semantic_sentences, solver, request, self.logger)
         if executor_result.error_type != "":
             return self.log_error(executor_result, solver)
 
