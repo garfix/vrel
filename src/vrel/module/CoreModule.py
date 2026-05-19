@@ -504,11 +504,8 @@ class CoreModule(SomeModule):
     # writes `term` to the logger
     def log(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        comment = map(lambda a: str(a), arguments)
+        name, value = arguments
 
-        if context.logger:
-            context.logger.add_comment(", ".join(comment))
-        else:
-            print(", ".join(comment))
+        context.logger.add_value(name, value)
 
         return [[None] * len(arguments)]

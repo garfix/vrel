@@ -1,12 +1,11 @@
-from vrel.entity.ProcessResult import ProcessResult
-from vrel.interface.SomeLogger import ALL, LAST, NONE, SomeLogger
-from vrel.interface.SomeProcessor import SomeProcessor
-import shutil
+from dataclasses import dataclass
 
+from vrel.interface.SomeLogger import SomeLogger
+import shutil
 
 NO_COLOR = "\033[0m"
 HEADER_COLOR = "\033[33m"
-SUBHEADER_COLOR = "\033[36m"
+SECTION_COLOR = "\033[36m"
 VALUE_COLOR = "\033[37m"
 SEPARATOR_COLOR = "\033[33m"
 KEY_COLOR = "\033[34m"
@@ -14,83 +13,60 @@ ERROR_COLOR = "\033[31m"
 COMMENT_COLOR = "\033[90m"
 
 
+@dataclass(frozen=True)
+class Entry:
+    type: str
+    name: str
+    value: any
+
+
 class Logger(SomeLogger):
 
+    entries: list[Entry]
+
     def __init__(self):
-        self.which_tests = LAST
-        self.is_last_test = False
-        self.show_products = NONE
-        self.show_stats = False
         self.entries = []
 
     def clear(self):
         self.entries = []
 
-    def log_all_tests(self):
-        """Create logs for all tests"""
-        self.which_tests = ALL
-
-    def log_only_last_test(self):
-        """Create logs only for the last test in the suite"""
-        self.which_tests = LAST
-
-    def log_no_tests(self):
-        """Create no log for any test"""
-        self.which_tests = NONE
-
-    def log_products(self, *processors):
-        """
-        Create a log entry for all alternative products of a processor (for instance: all parse trees)
-        processors: the products of these processors are logged (default = all)
-        """
-        self.show_products = ALL
-
-    def is_active(self):
-        """
-        Should the current test be logged?
-        """
-        return (self.which_tests == ALL) or (self.which_tests == LAST and self.is_last_test)
-
     def add(self, entry):
         self.entries.append(entry + "\n")
 
-    def add_test_separator(self, test_number: int):
-        terminal_width = shutil.get_terminal_size().columns
-        sep = "~" * terminal_width
-        line = "{}~~[{} {} {}]{}".format(SEPARATOR_COLOR, VALUE_COLOR, test_number, SEPARATOR_COLOR, sep)
-        truncated = line[: terminal_width + len(SEPARATOR_COLOR) + len(VALUE_COLOR) + len(SEPARATOR_COLOR)]
-        self.entries.append(truncated + NO_COLOR + "\n")
+    def add_test_number(self, test_number: int):
+        self.entries.append(Entry("test-number", "", test_number))
 
-    def add_key_value(self, key: str, value: str):
-        self.entries.append(("{}[{}]{} {}\n").format(KEY_COLOR, key, NO_COLOR, value))
+    def add_value(self, key: str, value: str):
+        self.entries.append(Entry("value", key, value))
 
-    def add_header(self, header):
-        self.entries.append(HEADER_COLOR + header + NO_COLOR + "\n")
+    def add_section(self, head, section):
+        self.entries.append(Entry("section", head, section))
 
-    def add_subheader(self, subheader):
-        self.entries.append(SUBHEADER_COLOR + subheader + NO_COLOR + "\n")
-
-    def add_comment(self, comment):
-        self.entries.append(COMMENT_COLOR + comment + NO_COLOR + "\n")
+    def add_comment(self, comment: str):
+        self.entries.append(Entry("comment", None, comment))
 
     def add_error(self, error):
-        self.entries.append(ERROR_COLOR + error + NO_COLOR + "\n")
-
-    def add_process_result(self, processor: SomeProcessor, result: ProcessResult):
-        if self.is_active() and self.show_products == ALL:
-            self.add_header(processor.get_name())
-            if result.error_type != "":
-                self.add_error(result.error_type)
-
-            for product in result.products:
-                product.log(self)
+        self.entries.append(Entry("error", None, error))
 
     def __str__(self) -> str:
         s = ""
         for entry in self.entries:
-            s += str(entry) + "\n"
+            if entry.type == "section":
+                s += SECTION_COLOR + entry.name + NO_COLOR + "\n"
+                s += str(entry.value) + "\n\n"
+            elif entry.type == "test-number":
+                terminal_width = shutil.get_terminal_size().columns
+                sep = "~" * terminal_width
+                line = "{}~~[{} {} {}]{}".format(SEPARATOR_COLOR, VALUE_COLOR, entry.value, SEPARATOR_COLOR, sep)
+                truncated = line[: terminal_width + len(SEPARATOR_COLOR) + len(VALUE_COLOR) + len(SEPARATOR_COLOR)]
+                s += truncated + NO_COLOR + "\n\n"
+
+            elif entry.type == "value":
+                s += ("{}[{}]{} {}\n").format(KEY_COLOR, entry.name, NO_COLOR, entry.value) + "\n\n"
+            elif entry.type == "comment":
+                s += str(entry.value) + "\n\n"
+            elif entry.type == "error":
+                s += ERROR_COLOR + entry.value + NO_COLOR + "\n\n"
+            else:
+                raise Exception(f"Unknown log type: {entry.type}")
         return s
-
-
-nullLogger = Logger()
-nullLogger.log_no_tests()

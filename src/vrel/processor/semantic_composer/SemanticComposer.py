@@ -4,6 +4,7 @@ from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.ParseTreeNode import ParseTreeNode
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.Variable import Variable
+from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeProcessor import SomeProcessor
 from vrel.processor.parser.BasicParserProduct import BasicParserProduct
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
@@ -29,7 +30,7 @@ class SemanticComposer(SomeProcessor):
     def get_name(self) -> str:
         return "Composer"
 
-    def process(self, incoming: BasicParserProduct) -> ProcessResult:
+    def process(self, incoming: BasicParserProduct, logger: SomeLogger) -> ProcessResult:
 
         parse_trees = incoming.parse_trees
         sentences = []
@@ -42,6 +43,9 @@ class SemanticComposer(SomeProcessor):
             semantics = self.compose(parse_tree, root_variables)
 
             sentences.append(SemanticSentence(semantics, root_variables))
+
+            logger.add_section("Semantics", semantics)
+            logger.add_section("Root variables", ", ".join(root_variables))
 
         product = SemanticComposerProduct(sentences)
 

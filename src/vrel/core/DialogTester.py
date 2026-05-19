@@ -39,13 +39,11 @@ class DialogTester:
 
     def do_run(self):
 
-        logger = self.system.logger
+        logger = self.system.get_logger()
 
         for i, test in enumerate(self.tests):
 
             logger.clear()
-            logger.log_all_tests()
-            logger.log_products()
 
             if len(test) != 2:
                 raise Exception("A test item must have two elements: a sentence and an expected response")
@@ -55,8 +53,8 @@ class DialogTester:
             request = SentenceRequest(question)
 
             # if log_this:
-            logger.add_test_separator(i + 1)
-            logger.add_key_value("Human", question)
+            logger.add_test_number(i + 1)
+            logger.add_value("Human", question)
 
             try:
                 # send the request through the pipeline
@@ -68,7 +66,7 @@ class DialogTester:
                 if self.system.output_generator:
                     output = self.system.read_output()
 
-                logger.add_key_value("Computer", output)
+                logger.add_value("Computer", output)
                 logger.add_comment(str(ceil((end_time - start_time) * 1000)) + " msecs")
 
                 if output != expected:

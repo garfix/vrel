@@ -88,14 +88,8 @@ class TestHelloWorld(unittest.TestCase):
 
         # comment in the following rules to see intermediate results
 
-        logger.log_no_tests()
-        # logger.log_all_tests()
-        # logger.log_products()
-
         tester = DialogTester(self, tests, system, logger)
         tester.run()
-
-        print(logger)
 
         # how to actually use the system
 

@@ -11,3 +11,6 @@ class SomeSystem(ABC):
     @abstractmethod
     def read_output(self):
         pass
+
+    def get_logger(self) -> SomeLogger:
+        pass

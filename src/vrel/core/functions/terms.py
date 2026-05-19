@@ -134,17 +134,13 @@ def reify_variables(term: any) -> any:
     # list
     if isinstance(term, list):
         return [reify_variables(arg) for arg in term]
-    # tuple
-    elif isinstance(term, tuple):
-        raise Exception("tuple found")
-        return tuple([reify_variables(arg) for arg in term])
     # atom
     elif isinstance(term, Atom):
-        raise Exception("Todo1")
-        return Atom(
-            term.predicate,
-            {k: reify_variables(v) for k, v in term.arguments.items()},
-        )
+        a = term.copy()
+        a.arguments = [reify_variables(arg) for arg in term.arguments]
+        a.modifiers = [reify_variables(mod) for mod in term.modifiers]
+        a.exec = [reify_variables(atom) for atom in term.exec]
+        return a
     # variable
     elif isinstance(term, Variable):
         # return the name of the variable as an id

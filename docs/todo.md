@@ -1,6 +1,8 @@
 ## todo
 
-- improve exec_code, resolve_constants and resolve_names
+- laat AtomExecutor de tussentijdse atoms loggen
+- reify is good for PAM?
+
 - inject solver in BasicGenerator
 - with_context
 
@@ -134,6 +136,10 @@ optimize isolate independent parts:
 - is it possible to place the independent parts directly after the head atom? faster?
 - isolate the list arguments of an atom (this is not done yet)
 - but: don't use isolate independent parts for predicates like "store"
+
+## MCP
+
+Write an MCP server to make Vrel interact with an LLM.
 
 ## done
 

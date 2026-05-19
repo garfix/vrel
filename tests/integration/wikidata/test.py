@@ -93,10 +93,5 @@ class TestWikiData(unittest.TestCase):
             ["Where was madonna born?", "Bay City"],
         ]
 
-        logger.log_no_tests()
-        # logger.log_products()
-
         tester = DialogTester(self, tests, system, logger)
         tester.run()
-
-        print(logger)

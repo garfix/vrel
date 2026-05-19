@@ -10,8 +10,6 @@ class SomeParser(SomeProcessor):
     def get_name(self) -> str:
         pass
 
-
     @abstractmethod
-    def process(self, request) -> ProcessResult:
+    def process(self, request, logger) -> ProcessResult:
         pass
-

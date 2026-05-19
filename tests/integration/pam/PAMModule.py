@@ -77,7 +77,6 @@ class PAMModule(SomeModule):
         return self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)
 
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
-        print("pam", arguments)
         _, name = arguments
 
         return [[name, None]]

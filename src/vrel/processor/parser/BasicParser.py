@@ -2,6 +2,7 @@ import re
 from vrel.entity.GrammarRules import GrammarRules
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.SentenceRequest import SentenceRequest
+from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeParseTreeSortHeuristics import SomeParseTreeSortHeuristics
 from vrel.interface.SomeProcessor import SomeProcessor
 from vrel.processor.parser.BasicParserProduct import BasicParserProduct
@@ -26,7 +27,7 @@ class BasicParser(SomeProcessor):
     def get_name(self) -> str:
         return "Parser"
 
-    def process(self, request: SentenceRequest) -> ProcessResult:
+    def process(self, request: SentenceRequest, logger: SomeLogger) -> ProcessResult:
         # replace whitespace sequences by single space
         source_text = re.sub("\s+", " ", request.text)
 
@@ -39,5 +40,8 @@ class BasicParser(SomeProcessor):
             sentence_trees = extract_sentences(tree, self.sentence_categories)
             if len(sentence_trees) > 0:
                 products.append(BasicParserProduct(sentence_trees))
+
+                for tree in sentence_trees:
+                    logger.add_section("Syntax tree", tree)
 
         return ProcessResult(products, result.error_type, result.error_args)

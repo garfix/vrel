@@ -41,6 +41,9 @@ class BasicSystem(SomeSystem):
         self.executor = executor
         self.output_generator = output_generator
 
+    def get_logger(self) -> SomeLogger:
+        return self.logger
+
     def enter(self, request: SentenceRequest) -> ProcessResult | None:
         if not self.parser:
             return None
@@ -51,12 +54,9 @@ class BasicSystem(SomeSystem):
 
     def parse(self, request: SentenceRequest, solver: SomeSolver):
 
-        parse_result = self.parser.process(request)
+        parse_result = self.parser.process(request, self.logger)
         if parse_result.error_type != "":
             return self.log_error(parse_result, solver)
-
-        if self.logger:
-            self.logger.add_process_result(self.parser, parse_result)
 
         if not self.composer:
             return parse_result
@@ -70,12 +70,9 @@ class BasicSystem(SomeSystem):
 
     def compose(self, parse_product: BasicParserProduct, request: SentenceRequest, solver: SomeSolver):
 
-        composer_result = self.composer.process(parse_product)
+        composer_result = self.composer.process(parse_product, self.logger)
         if composer_result.error_type != "":
             return self.log_error(composer_result)
-
-        if self.logger:
-            self.logger.add_process_result(self.composer, composer_result)
 
         if not self.executor:
             return composer_result
@@ -89,12 +86,9 @@ class BasicSystem(SomeSystem):
 
     def execute(self, composer_product: SemanticComposerProduct, request: SentenceRequest, solver: SomeSolver):
 
-        executor_result = self.executor.process(composer_product, solver, request)
+        executor_result = self.executor.process(composer_product, solver, request, self.logger)
         if executor_result.error_type != "":
             return self.log_error(executor_result, solver)
-
-        if self.logger:
-            self.logger.add_process_result(self.executor, executor_result)
 
         return executor_result
 
