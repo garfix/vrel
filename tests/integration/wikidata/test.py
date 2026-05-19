@@ -8,18 +8,16 @@ from vrel.core.DialogTester import DialogTester
 from vrel.core.Logger import Logger
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.DeductionModule import DeductionModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
-    SimpleGrammarRulesParser,
-)
+from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.data_source.WikidataDataSource import WikidataDataSource
-from .WikidataOutputBuffer import WikidataOutputBuffer
-from .WikidataModule import WikidataModule
-from .write_grammar import get_write_grammar
-from .read_grammar import get_read_grammar
+from WikidataOutputBuffer import WikidataOutputBuffer
+from WikidataModule import WikidataModule
+from write_grammar import get_write_grammar
+from read_grammar import get_read_grammar
 
 
 class TestWikiData(unittest.TestCase):

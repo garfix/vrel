@@ -9,18 +9,16 @@ from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
-    SimpleGrammarRulesParser,
-)
+from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.module.DeductionModule import DeductionModule
-from .HelloWorldDB import HellowWorldDB
-from .HelloWorldModule import HelloWorldModule
-from .read_grammar import get_read_grammar
-from .write_grammar import get_write_grammar
+from HelloWorldDB import HellowWorldDB
+from HelloWorldModule import HelloWorldModule
+from read_grammar import get_read_grammar
+from write_grammar import get_write_grammar
 
 
 class TestHelloWorld(unittest.TestCase):
@@ -57,7 +55,7 @@ class TestHelloWorld(unittest.TestCase):
         read_grammar = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
         parser = BasicParser(read_grammar)
 
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
         executor = AtomExecutor()
 
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
