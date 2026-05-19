@@ -29,7 +29,7 @@ class TestComposer(unittest.TestCase):
         model = Model([])
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
         executor = AtomExecutor()
 
         system = BasicSystem(model=model, parser=parser, composer=composer, executor=executor)
@@ -64,7 +64,7 @@ class TestComposer(unittest.TestCase):
         model = Model([])
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
 
         system = BasicSystem(
             model=model,
@@ -93,7 +93,7 @@ class TestComposer(unittest.TestCase):
         model = Model([])
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
 
         system = BasicSystem(model=model, parser=parser)
 
@@ -116,7 +116,7 @@ class TestComposer(unittest.TestCase):
         model = Model([])
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
 
         system = BasicSystem(
             model=model,
@@ -141,7 +141,7 @@ class TestComposer(unittest.TestCase):
 
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
 
         system = BasicSystem(
             model=Model([]),

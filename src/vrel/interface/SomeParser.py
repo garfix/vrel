@@ -1,15 +1,11 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 from vrel.entity.ProcessResult import ProcessResult
-from vrel.interface.SomeProcessor import SomeProcessor
+from vrel.interface.SomeLogger import SomeLogger
 
 
-class SomeParser(SomeProcessor):
-
-    @abstractmethod
-    def get_name(self) -> str:
-        pass
+class SomeParser:
 
     @abstractmethod
-    def process(self, request, logger) -> ProcessResult:
+    def process(self, input: str, logger: SomeLogger) -> ProcessResult:
         pass

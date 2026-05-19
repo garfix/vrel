@@ -9,9 +9,5 @@ from vrel.interface.SomeSolver import SomeSolver
 class SomeExecutor(ABC):
 
     @abstractmethod
-    def get_name(self) -> str:
-        pass
-
-    @abstractmethod
     def process(self, product, solver: SomeSolver, request: SentenceRequest, logger: SomeLogger) -> ProcessResult:
         pass

@@ -1,5 +1,8 @@
 ## todo
 
+- wikidata test
+- helloworld test
+- remove sentence_categories
 - laat AtomExecutor de tussentijdse atoms loggen
 - reify is good for PAM?
 

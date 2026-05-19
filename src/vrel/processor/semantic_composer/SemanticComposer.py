@@ -1,38 +1,30 @@
-from vrel.core.functions.terms import format_term
 from vrel.entity.Atom import Atom
 from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.ParseTreeNode import ParseTreeNode
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.Variable import Variable
+from vrel.interface.SomeComposer import SomeComposer
 from vrel.interface.SomeLogger import SomeLogger
-from vrel.interface.SomeProcessor import SomeProcessor
-from vrel.processor.parser.BasicParserProduct import BasicParserProduct
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
 from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 from vrel.entity.SemanticFunction import SemanticFunction
 
 
-class SemanticComposer(SomeProcessor):
+class SemanticComposer(SomeComposer):
     """
     Performs semantic composition on the product of the parser
     Opimizes the composition for speed of execution
     """
 
-    parser: SomeProcessor
     variable_generator: VariableGenerator
 
-    def __init__(self, parser: SomeProcessor) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.parser = parser
         self.variable_generator = VariableGenerator("$")
 
-    def get_name(self) -> str:
-        return "Composer"
+    def process(self, parse_trees: list[ParseTreeNode], logger: SomeLogger) -> ProcessResult:
 
-    def process(self, incoming: BasicParserProduct, logger: SomeLogger) -> ProcessResult:
-
-        parse_trees = incoming.parse_trees
         sentences = []
 
         for parse_tree in parse_trees:

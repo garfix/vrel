@@ -111,7 +111,7 @@ class TestQuantification(unittest.TestCase):
 
         grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
         parser = BasicParser(grammar)
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
         executor = AtomExecutor()
 
         system = BasicSystem(

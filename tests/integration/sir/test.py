@@ -74,7 +74,7 @@ class TestSIR(unittest.TestCase):
         read_grammar = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
         parser = BasicParser(read_grammar)
 
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
         executor = AtomExecutor()
 
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())

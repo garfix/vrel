@@ -13,7 +13,6 @@ from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarR
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from atom_executor.write_grammar import get_write_grammar
-from atom_executor.AtomExecutorDialogContext import AtomExecutorDialogContext
 from atom_executor.SimpleModule import SimpleModule
 
 
@@ -48,7 +47,7 @@ class TestAtomExecutor(unittest.TestCase):
         read_grammar = SimpleGrammarRulesParser().parse_read_grammar(read_grammar)
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_write_grammar())
         parser = BasicParser(read_grammar)
-        composer = SemanticComposer(parser)
+        composer = SemanticComposer()
         executor = AtomExecutor()
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
@@ -87,7 +86,7 @@ class TestAtomExecutor(unittest.TestCase):
 
     #     grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
     #     parser = BasicParser(grammar)
-    #     composer = SemanticComposer(parser)
+    #     composer = SemanticComposer()
     #     executor = AtomExecutor()
 
     #     system = BasicSystem(model=model, parser=parser, composer=composer, executor=executor)

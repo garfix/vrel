@@ -54,7 +54,7 @@ class BasicSystem(SomeSystem):
 
     def parse(self, request: SentenceRequest, solver: SomeSolver):
 
-        parse_result = self.parser.process(request, self.logger)
+        parse_result = self.parser.process(request.text, self.logger)
         if parse_result.error_type != "":
             return self.log_error(parse_result, solver)
 
@@ -70,7 +70,7 @@ class BasicSystem(SomeSystem):
 
     def compose(self, parse_product: BasicParserProduct, request: SentenceRequest, solver: SomeSolver):
 
-        composer_result = self.composer.process(parse_product, self.logger)
+        composer_result = self.composer.process(parse_product.parse_trees, self.logger)
         if composer_result.error_type != "":
             return self.log_error(composer_result)
 
@@ -86,7 +86,7 @@ class BasicSystem(SomeSystem):
 
     def execute(self, composer_product: SemanticComposerProduct, request: SentenceRequest, solver: SomeSolver):
 
-        executor_result = self.executor.process(composer_product, solver, request, self.logger)
+        executor_result = self.executor.process(composer_product.sentences, solver, request, self.logger)
         if executor_result.error_type != "":
             return self.log_error(executor_result, solver)
 
