@@ -33,7 +33,10 @@ def variablize(term):
         return tuple([variablize(arg) for arg in term])
     # atom
     elif isinstance(term, Atom):
-        raise Exception("Todo4")
+        a = term.copy()
+        a.arguments = variablize(a.arguments)
+        a.modifiers = variablize(a.modifiers)
+        return a
     # variable
     elif isinstance(term, str) and term[0:1] == "$":
         return Variable(term)

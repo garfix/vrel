@@ -17,14 +17,17 @@ def match(
             DeductionModule(deduction_rules),
         ]
     )
+    # print("----------------------------")
     # print()
-    # print('sentence', sentence)
-    # print('current_subject', current_subject)
+    # print("pattern", pattern)
+    # print("sentence", sentence)
+    # print("current_subject", current_subject)
     solver = Solver(model)
 
     bound = bind_variables(pattern, binding)
 
     results = solver.solve(bound)
+    # print("results", results)
     # results = context.solver.solve(pattern)
 
     return results[0] if len(results) > 0 else None

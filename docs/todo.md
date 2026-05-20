@@ -1,9 +1,5 @@
 ## todo
 
-- wikidata test
-- helloworld test
-- remove sentence_categories
-- laat AtomExecutor de tussentijdse atoms loggen
 - reify is good for PAM?
 
 - inject solver in BasicGenerator
@@ -34,6 +30,10 @@ Make a distinction between dialog constants (short term) and database ids (long 
 ## booleans
 
 Create constants for true / false.
+
+## remove sentence_categories
+
+Is there an easier way?
 
 ## Infinite loop detection
 

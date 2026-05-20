@@ -1,5 +1,6 @@
 from vrel.core.functions.terms import has_variables
 from vrel.core.functions.unification import unification
+from vrel.entity.Atom import Atom
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
@@ -20,17 +21,19 @@ class PlainReadWriteModule(SomeModule):
         for atom in atoms:
             self.add_atom(atom)
 
-
-    def add_atom(self, atom: tuple):
+    def add_atom(self, atom: Atom):
 
         self.atoms.append(atom)
 
-        predicate = atom[0]
+        predicate = atom.predicate
         if predicate not in self.relations:
-            arguments = atom[1:]
+            arguments = atom.arguments
             formal_parameters = [Variable(f"E{i}") for i, _ in enumerate(arguments)]
-            self.add_relation(Relation(predicate, formal_parameters=formal_parameters, query_function=self.query, write_function=self.write))
-
+            self.add_relation(
+                Relation(
+                    predicate, formal_parameters=formal_parameters, query_function=self.query, write_function=self.write
+                )
+            )
 
     def query(self, arguments: list, context: ExecutionContext) -> list[list]:
         predicate = context.relation.predicate
@@ -38,30 +41,25 @@ class PlainReadWriteModule(SomeModule):
 
         results = []
         for atom in self.atoms:
-            if atom[0] == predicate:
+            if atom.predicate == predicate:
                 if unification(formal_parameters, list(arguments), {}) is not None:
-                    results.append(atom[1:])
+                    results.append(atom.arguments)
 
         return results
-
 
     def write(self, arguments: list, context: ExecutionContext):
         if has_variables(arguments):
             raise Exception(f"Atom should be bound: {arguments}")
 
-        # print('write', tuple([context.relation.predicate] + list(arguments)))
+        # print("write", tuple([context.relation.predicate] + list(arguments)))
 
-        self.atoms.append(tuple([context.relation.predicate] + list(arguments)))
+        # self.atoms.append(tuple([context.relation.predicate] + list(arguments)))
 
-
-    def get_relation(self, predicate: str) -> Relation|None:
+    def get_relation(self, predicate: str) -> Relation | None:
         if not predicate in self.relations:
-             self.add_relation(Relation(predicate, query_function=self.query, write_function=self.write))
+            self.add_relation(Relation(predicate, query_function=self.query, write_function=self.write))
 
         return self.relations[predicate]
 
-
     def clear(self):
         self.atoms = []
-
-

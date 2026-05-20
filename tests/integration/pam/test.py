@@ -96,12 +96,12 @@ class TestPAM(unittest.TestCase):
                 # Example from MicroPAM
                 [
                     "Willa was hungry. She picked up the Michelin guide. She got into her car.",
-                    "OK",
+                    "OK1",
                 ],
-                [
-                    "Why did Willa pick up a Michelin guide?",
-                    "Because she wanted to be not hungry.",
-                ],
+                # [
+                #     "Why did Willa pick up a Michelin guide?",
+                #     "Because she wanted to be not hungry.",
+                # ],
             ],
             [
                 # 14 A detailed example

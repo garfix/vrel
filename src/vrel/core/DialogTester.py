@@ -75,5 +75,5 @@ class DialogTester:
                 self.test_case.assertEqual(output, expected)
 
             except Exception as e:
-                print(logger)
+                # print(logger)
                 raise e

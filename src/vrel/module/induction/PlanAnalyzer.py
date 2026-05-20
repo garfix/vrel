@@ -8,6 +8,7 @@ from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.Variable import Variable
 from vrel.module.induction.Link import Link
 from vrel.module.induction.functions import match
+from vrel.module.transform.query import create_query
 
 
 # Based on MicroPAM (see https://github.com/garfix/micropam)
@@ -59,9 +60,7 @@ class PlanAnalyzer:
             log.append("Does not confirm prediction")
             chain.append(Link(current_subject, induction_rules[:]))
 
-            current_subject = self.try_inference(
-                chain, deduction_rules, context, log, sentence
-            )
+            current_subject = self.try_inference(chain, deduction_rules, context, log, sentence)
             if not current_subject:
                 break
 
@@ -74,8 +73,8 @@ class PlanAnalyzer:
             log.append("No inference chain found - adding")
             self.update_db(sentence, context, log)
 
-        # for line in log:
-        #     print(line)
+        for line in log:
+            print(line)
 
     def predicted(
         self,
@@ -148,6 +147,12 @@ class PlanAnalyzer:
         # the function tries the match the current_subject (via the antecedent) with the known theme, goal, or plan (via the consequent)
         for item in item_list:
             for rule in induction_rules:
+                # print("RELATE")
+                # print("----------------------------")
+                # print()
+                # print("current_subject", current_subject)
+                # print("antecedent", rule.antecedent)
+
                 subject_binding = match(
                     rule.antecedent,
                     current_subject,
@@ -161,9 +166,7 @@ class PlanAnalyzer:
                     x = bind_variables(rule.consequent, subject_binding)
                     x = variablize(x)
 
-                    item_binding = match(
-                        x, item, {}, deduction_rules, context, current_subject
-                    )
+                    item_binding = match(x, item, {}, deduction_rules, context, current_subject)
                     # item_binding = match(rule.consequent, item, subject_binding, deduction_rules, context, current_subject)
 
                     if item_binding is not None:
@@ -197,12 +200,9 @@ class PlanAnalyzer:
         log: list,
     ):
         for variable in item_binding:
-            if (
-                isinstance(item_binding[variable], str)
-                and item_binding[variable][0:1] == "$"
-            ):
+            if isinstance(item_binding[variable], str) and item_binding[variable][0:1] == "$":
                 log.append(f"SAME AS {variable}, {item_binding[variable]}")
-                context.solver.write_atom(("same_as", variable, item_binding[variable]))
+                context.solver.write_atom(Atom("same_as", variable, item_binding[variable]))
 
         # for variable in rule_binding:
         #     if variable in item_binding:
@@ -263,9 +263,11 @@ class PlanAnalyzer:
         binding = None
         while len(rules) > 0:
             last_rule = rules.pop()
+            print("TRY RULES")
+            cs = create_query(current_subject)
             binding = match(
                 last_rule.antecedent,
-                current_subject,
+                cs,
                 {},
                 deduction_rules,
                 context,
@@ -318,5 +320,5 @@ class PlanAnalyzer:
             self.known_themes.append(sentence)
 
     def isa(self, type: str, current_subject: any):
-        predicate = current_subject[0][0]
+        predicate = current_subject[0].predicate
         return predicate == type
