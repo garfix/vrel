@@ -26,6 +26,7 @@ class InductionModule(SomeModule):
         super().__init__()
         self.add_relation(Relation("induce_facts", query_function=self.induce_facts))
         self.add_relation(Relation("analyze_plans", query_function=self.analyze_plans))
+        self.add_relation(Relation("explain", query_function=self.explain))
         self.rules = {}
         self.variable_generator = VariableGenerator("ID")
 
@@ -94,8 +95,10 @@ class InductionModule(SomeModule):
         return [[None]]
 
     def explain(self, arguments: list, context: ExecutionContext) -> list[list]:
-        atoms = arguments[0]
+        question, var, _ = arguments
 
-        self.plan_analyzer.justify(atoms, self.plan_analyzer_rules, self.deduction_rules, context)
+        # self.plan_analyzer.justify(atoms, self.plan_analyzer_rules, self.deduction_rules, context)
 
-        return [[None]]
+        explanation = None
+
+        return [[None, None, explanation]]

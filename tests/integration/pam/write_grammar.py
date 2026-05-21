@@ -11,6 +11,6 @@ def get_write_grammar():
         },
         {
             "syn": "s() -> 'Dunno'",
-            "if": [Atom("output_type", "question")],
+            "if": [Atom("output_type", "explanation")],
         },
     ]

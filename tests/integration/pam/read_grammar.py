@@ -29,12 +29,8 @@ def get_read_grammar():
         },
         # question
         {
-            "syn": "question() -> clause(C1)+'?'",
-            "sem": lambda clause: Atom("intent_question", [clause]),
-        },
-        {
-            "syn": "question() -> 'why' clause(C1)",
-            "sem": lambda clause: Atom("intent_explanation", [clause], C1),
+            "syn": "question() -> 'why' 'did' np(E1) vp(C1, E1)",
+            "sem": lambda np, vp: Atom("intent_explanation", [vp.mod(np)], C1),
         },
         # declarative
         {
@@ -47,6 +43,7 @@ def get_read_grammar():
         {"syn": "vp(C1, E1, E2) -> verb(C1, E1, E2)", "sem": lambda verb: verb},
         # verb
         {"syn": "verb(C1, E1, E2) -> 'picked' 'up'", "sem": lambda: Atom("pick_up", C1, E1, E2)},
+        {"syn": "verb(C1, E1, E2) -> 'pick' 'up'", "sem": lambda: Atom("pick_up", C1, E1, E2)},
         {"syn": "verb(C1, E1, E2) -> 'got' 'into'", "sem": lambda: Atom("get_into", C1, E1, E2)},
         # adjective phrase
         {"syn": "adjp(E1) -> adj(E1)", "sem": lambda adj: adj},
@@ -62,6 +59,8 @@ def get_read_grammar():
         {"syn": "nbar(E1) -> pronoun(E1)", "sem": lambda pronoun: pronoun},
         # determiner
         {"syn": "det(E1) -> 'the'", "sem": lambda: None},
+        {"syn": "det(E1) -> 'a'", "sem": lambda: None},
+        {"syn": "det(E1) -> 'an'", "sem": lambda: None},
         # noun
         {"syn": "noun(E1) -> proper_noun(E1)", "sem": lambda proper_noun: proper_noun},
         {"syn": "noun(E1) -> 'michelin' 'guide'", "sem": lambda: Atom("michelin_guide", E1)},

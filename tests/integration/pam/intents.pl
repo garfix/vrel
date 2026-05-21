@@ -6,6 +6,8 @@ intent_understand(Story) :-
     analyze_plans(Reified).
 
 intent_explanation(Question, C1) :-
+    # log('question', Question),
     explain(Question, C1, Explanation),
-    store(output_type('question', Explanation)).
+    log('explanation', Explanation),
+    store(output_type('explanation', Explanation)).
 

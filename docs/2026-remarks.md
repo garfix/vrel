@@ -1,3 +1,42 @@
+## 2026-05-21
+
+So why do we need sentence molecules for PAM? (Atom based sentences)
+
+PAM has a predict phase and an inference phase.
+
+In the inference phase the current subject is simply matched against the antecedent and the consequent, bound to values, is added to the known goals. Here in fact the molecule is counterproductive and needs to be flattened before it can be matched, because a match condition may be a modifier of the main verb.
+
+The predict phase tries to link the current subject with a known item, by matching the subject with the antedent and the item with the consequent.
+Here the current subject is also matched against the antecedent of a rule, so this needs flattening as well. The consequent is always a single atom to there's no need to flatten atoms.
+
+Yet, even though the hierarchical structure of PAM's sentences was one of the reason to start looking for a hierarchical sentence structure, to ease the matching process, there is as yet no convincing reason to do so. I will put this in my todo list to come back to, as I suspect it to be important at some point. But that point has not yet arrived.
+
+## 2026-05-20
+
+Resuming PAM.
+
+Why did Willa pick up a Michelin Guide?
+
+```
+pick_up(C1, Willa, M1)
+    michelin_guide(M1)
+```
+
+I have not stored the deduction relations. How can I do that?
+
+```
+reason(
+    pick_up(C1, Willa, M1),
+    plan(take(C2, Willa, M1))
+)
+```
+
+or
+
+```
+reason(C1, C2)
+```
+
 ## 2026-05-16
 
 I will extend the sentence request with a solver, so that it becomes available even before the first sentence is executed (to write error tuples, for example).

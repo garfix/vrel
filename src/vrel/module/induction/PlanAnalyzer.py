@@ -145,6 +145,9 @@ class PlanAnalyzer:
         # rule_list contains all rules that belong to the themes, goals or plans
         # each rule has an antecedent (rhs) and a consequent (lhs)
         # the function tries the match the current_subject (via the antecedent) with the known theme, goal, or plan (via the consequent)
+
+        # The predict phase tries to link the current subject with a known item,
+        # by matching the current subject with the antedent and the item with the consequent of an induction rule
         for item in item_list:
             for rule in induction_rules:
                 # print("RELATE")
@@ -153,9 +156,11 @@ class PlanAnalyzer:
                 # print("current_subject", current_subject)
                 # print("antecedent", rule.antecedent)
 
+                cs = create_query(current_subject)
+
                 subject_binding = match(
                     rule.antecedent,
-                    current_subject,
+                    cs,
                     {},
                     deduction_rules,
                     context,
@@ -163,11 +168,10 @@ class PlanAnalyzer:
                 )
                 if subject_binding is not None:
 
-                    x = bind_variables(rule.consequent, subject_binding)
-                    x = variablize(x)
+                    consequent = bind_variables(rule.consequent, subject_binding)
+                    consequent = variablize(consequent)
 
-                    item_binding = match(x, item, {}, deduction_rules, context, current_subject)
-                    # item_binding = match(rule.consequent, item, subject_binding, deduction_rules, context, current_subject)
+                    item_binding = match(consequent, item, {}, deduction_rules, context, current_subject)
 
                     if item_binding is not None:
                         # the equality between dialog variables that connect two sentences can now be stored
@@ -263,7 +267,7 @@ class PlanAnalyzer:
         binding = None
         while len(rules) > 0:
             last_rule = rules.pop()
-            print("TRY RULES")
+            # print("TRY RULES")
             cs = create_query(current_subject)
             binding = match(
                 last_rule.antecedent,
