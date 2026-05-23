@@ -1,5 +1,7 @@
 ## todo
 
+- create links between goals in both the predict and the inference phase
+
 - reify is good for PAM?
 
 - inject solver in BasicGenerator

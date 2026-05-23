@@ -11,6 +11,26 @@ Here the current subject is also matched against the antecedent of a rule, so th
 
 Yet, even though the hierarchical structure of PAM's sentences was one of the reason to start looking for a hierarchical sentence structure, to ease the matching process, there is as yet no convincing reason to do so. I will put this in my todo list to come back to, as I suspect it to be important at some point. But that point has not yet arrived.
 
+---
+
+Reminder:
+
+"PAM flags those requests that provide explanations as being WHY requests". Inside ... (p.172) While this is about deciding when to stop making inferences, it can also tell an answerer when a fact can be used as an answer to a **why** question.
+
+---
+
+Put all known actions, plans, goals and themes in a list and use their index as an identifier. Then use this identifier to create causal links.
+
+- 0: goal A
+- 1: theme A
+- 2: plan B
+- 3: goal C
+
+- cause(1, 3)
+- cause(3, 0)
+
+Then, when someone asks "why X", find X by matching it with the known goals list, and use the causal links to find an answer.
+
 ## 2026-05-20
 
 Resuming PAM.

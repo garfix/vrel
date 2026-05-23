@@ -18,6 +18,9 @@ class PlanAnalyzer:
     known_goals: list[Atom]
     known_plans: list[Atom]
 
+    known_events = list[Atom]
+    known_links = list
+
     try_check: dict
 
     def __init__(self):
@@ -25,6 +28,19 @@ class PlanAnalyzer:
         self.known_goals = []
         self.known_plans = []
         self.try_check = {}
+
+        self.known_events = []
+        self.known_links = []
+
+    def add_known_event(self, atom: Atom):
+        for index, a in enumerate(self.known_events):
+            if a == atom:
+                return index
+        self.known_events.append(atom)
+        return len(self.known_events) - 1
+
+    def add_link(self, id1, id2):
+        self.known_links.append([id1, id2])
 
     def justify(
         self,
@@ -41,6 +57,8 @@ class PlanAnalyzer:
         log.append("")
         log.append("Trying to explain")
         log.append(sentence)
+
+        print("#")
 
         chain: list[Link] = []
 
@@ -59,6 +77,7 @@ class PlanAnalyzer:
 
             log.append("Does not confirm prediction")
             chain.append(Link(current_subject, induction_rules[:]))
+            # print("push A", len(chain))
 
             current_subject = self.try_inference(chain, deduction_rules, context, log, sentence)
             if not current_subject:
@@ -66,15 +85,35 @@ class PlanAnalyzer:
 
         if current_subject:
             log.append("Adding inference chain to data base")
+            # print("---")
             for link in reversed(chain):
+                # print("---1")
+                # print(link.atoms)
                 self.update_db(link.atoms, context, log)
+            # print("--2")
+            # print(current_subject)
             self.update_db(current_subject, context, log)
+
+            prev = current_subject
+            for link in reversed(chain):
+                current = link.atoms
+                id1 = self.add_known_event(prev)
+                id2 = self.add_known_event(current)
+                self.add_link(id2, id1)
+                prev = current
+
         else:
             log.append("No inference chain found - adding")
             self.update_db(sentence, context, log)
 
-        for line in log:
-            print(line)
+        # for line in log:
+        #     print(line)
+
+        for i, a in enumerate(self.known_events):
+            print(i, a)
+
+        for i, a in enumerate(self.known_links):
+            print(i, a)
 
     def predicted(
         self,
@@ -190,6 +229,14 @@ class PlanAnalyzer:
 
                         self.store_identity(subject_binding, item_binding, context, log)
 
+                        # print("---")
+                        # print(cs)
+                        # print(item)
+
+                        id1 = self.add_known_event(current_subject)
+                        id2 = self.add_known_event(item)
+                        self.add_link(id1, id2)
+
                         log.append("Confirms prediction from")
                         log.append(item)
                         return True
@@ -226,6 +273,7 @@ class PlanAnalyzer:
         current_subject = None
         while len(chain) > 0:
             last_link = chain.pop()
+            # print("pop", len(chain))
             # try all inference rules in the cd
             # if the cd matches a rule, add it to the chain
             # and return the bound lhs of the rule
@@ -243,6 +291,8 @@ class PlanAnalyzer:
                 log.append(last_link.atoms)
             else:
                 break
+
+        # print("end")
 
         if current_subject:
             log.append("Possible explanation assuming")
@@ -295,12 +345,25 @@ class PlanAnalyzer:
             # print('binding', binding)
 
             if binding is not None:
+
+                # print("!!!")
+                # print(last_rule.consequent)
+
+                # c = bind_variables(last_rule.consequent, binding)
+
                 break
 
         if binding is not None:
             # append the fact to the chain
             chain.append(Link(current_subject, rules))
-            return bind_variables(last_rule.consequent, binding)
+            # print("push B", len(chain))
+
+            c = bind_variables(last_rule.consequent, binding)
+            # print(c)
+
+            return c
+
+        # print("failed", current_subject)
 
         return None
 
