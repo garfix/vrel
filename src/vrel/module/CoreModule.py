@@ -6,7 +6,7 @@ from vrel.entity.Variable import Variable
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.OrderedSet import OrderedSet
-from vrel.module.transform.query import create_query
+from vrel.module.transform.query import make_query
 from vrel.module.transform.storage import create_records
 
 
@@ -478,7 +478,7 @@ class CoreModule(SomeModule):
     def create_query(self, arguments: list, context: ExecutionContext) -> list[list]:
         body = arguments[0]
 
-        result = create_query(body)
+        result = make_query(body)
 
         return [[None, result]]
 

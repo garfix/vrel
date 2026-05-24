@@ -7,8 +7,9 @@ from vrel.entity.InductionRule import InductionRule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.Variable import Variable
 from vrel.module.induction.Link import Link
-from vrel.module.induction.functions import match
-from vrel.module.transform.query import create_query
+from vrel.module.induction.explain import explain
+from vrel.module.induction.match import match
+from vrel.module.transform.query import make_query
 
 
 # Based on MicroPAM (see https://github.com/garfix/micropam)
@@ -58,7 +59,7 @@ class PlanAnalyzer:
         log.append("Trying to explain")
         log.append(sentence)
 
-        print("#")
+        # print("#")
 
         chain: list[Link] = []
 
@@ -109,11 +110,20 @@ class PlanAnalyzer:
         # for line in log:
         #     print(line)
 
-        for i, a in enumerate(self.known_events):
-            print(i, a)
+        # for i, a in enumerate(self.known_events):
+        #     print(i, a)
 
-        for i, a in enumerate(self.known_links):
-            print(i, a)
+        # for i, a in enumerate(self.known_links):
+        #     print(i, a)
+
+    def explain(
+        self,
+        question: list[Atom],
+        induction_rules: list[InductionRule],
+        deduction_rules: list[InferenceRule],
+        context: ExecutionContext,
+    ):
+        return explain(question, induction_rules, deduction_rules, context, self.known_events, self.known_links)
 
     def predicted(
         self,
@@ -195,7 +205,7 @@ class PlanAnalyzer:
                 # print("current_subject", current_subject)
                 # print("antecedent", rule.antecedent)
 
-                cs = create_query(current_subject)
+                cs = make_query(current_subject)
 
                 subject_binding = match(
                     rule.antecedent,
@@ -250,15 +260,14 @@ class PlanAnalyzer:
         context: ExecutionContext,
         log: list,
     ):
+        print(rule_binding)
+        print(item_binding)
+
         for variable in item_binding:
             if isinstance(item_binding[variable], str) and item_binding[variable][0:1] == "$":
                 log.append(f"SAME AS {variable}, {item_binding[variable]}")
+                print(f"SAME AS {variable}, {item_binding[variable]}")
                 context.solver.write_atom(Atom("same_as", variable, item_binding[variable]))
-
-        # for variable in rule_binding:
-        #     if variable in item_binding:
-        #         log.append(f'SAME AS {rule_binding[variable]}, {item_binding[variable]}')
-        #         context.solver.write_atom(('same_as', rule_binding[variable], item_binding[variable]))
 
     def try_inference(
         self,
@@ -318,7 +327,7 @@ class PlanAnalyzer:
         while len(rules) > 0:
             last_rule = rules.pop()
             # print("TRY RULES")
-            cs = create_query(current_subject)
+            cs = make_query(current_subject)
             binding = match(
                 last_rule.antecedent,
                 cs,

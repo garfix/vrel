@@ -51,12 +51,12 @@ Turns a list of sentence molecules into a queryable list of atoms.
 """
 
 
-def create_query(term: any) -> list[Atom]:
+def make_query(term: any) -> list[Atom]:
 
     if isinstance(term, list):
         result = []
         for element in term:
-            result.extend(create_query(element))
+            result.extend(make_query(element))
         return result
 
     elif isinstance(term, Atom):
@@ -64,7 +64,7 @@ def create_query(term: any) -> list[Atom]:
         atom = term
 
         new_atom = atom.copy()
-        new_atom.arguments = [create_query(arg) for arg in atom.arguments]
+        new_atom.arguments = [make_query(arg) for arg in atom.arguments]
         new_atom.modifiers = []
         new_atom.determiner = None
 
@@ -81,7 +81,7 @@ def create_query(term: any) -> list[Atom]:
                 if np_with_determiner is not None:
                     new_atom = create_quantification(new_atom, np_with_determiner)
 
-        return [new_atom] + create_query(extracted_atoms)
+        return [new_atom] + make_query(extracted_atoms)
 
     else:
         return term
@@ -106,7 +106,7 @@ def create_quantification(atom: Atom, np_with_determiner: Atom):
     det = np_with_determiner.determiner
 
     # the scoping argument may itself contain scoping, so recurse into it
-    range = create_query(np_with_determiner)
+    range = make_query(np_with_determiner)
     body = [atom]
 
     # bind the range and body
