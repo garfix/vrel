@@ -1,3 +1,75 @@
+## 2026-05-24
+
+Storyline: She picked up the Michelin guide.
+
+```
+ [(pick_up
+    1. $3
+    2. $4
+    3. $5
+    1. modifier
+         (michelin_guide
+            1. $5)
+    2. modifier
+         (she
+            1. $4))]
+```
+
+question: Why did Willa pick up a Michelin guide?
+
+```
+[(pick_up
+    1. $11
+    2. 'Willa'
+    3. $12
+    1. modifier
+         (michelin_guide
+            1. $12))]
+
+```
+
+Problems in matching these:
+
+- pronoun resolution: she => Willa
+
+===
+
+I installed Claude Code on my machine, and asked it to analyze the Vrel codebase. Then I asked it to create a basic MCP server for CHAT-80.
+
+It's in the `examples` directory.
+
+The interesting thing about this is that it enables an LLM to use Vrel as a tool to answer questions. The added benefit of Claude is that it has a much wider scope of the human language possible, and can convert it into an expression that Vrel (CHAT-80) can understand. The added benefit of Vrel is that it can query a database expressively and efficiently.
+
+For example: I asked Claude:
+
+❯ What is the size of the smallest asian country?
+
+Claude:
+
+```
+● vrel-chat80 - ask_geography (MCP)(question: "What is the size of the smallest Asian country?")
+
+● vrel-chat80 - ask_geography (MCP)(question: "What is the area of the smallest Asian country?")
+
+● vrel-chat80 - ask_geography (MCP)(question: "Which is the smallest Asian country?")
+  ⎿  {
+       "result": "bahrain"
+     }
+
+● vrel-chat80 - ask_geography (MCP)(question: "What is the area of Bahrain?")
+
+● vrel-chat80 - ask_geography (MCP)(question: "How large is Bahrain?")
+  ⎿  {
+       "result": "0 ksqmiles"
+     }
+
+10:53 AM claude-opus-4-7
+● The smallest Asian country in Chat-80's data is Bahrain, with an area of 0 thousand square miles (i.e. it rounds to zero at that resolution — under ~500 sq mi).
+
+```
+
+Interestingly, CHAT-80's test sentence "How large is the smallest american country?" doesn't report the name of the country, just the size. Claude split the question in two subquestions: "Which is the smallest Asian country?" and "How large is Bahrain?"
+
 ## 2026-05-21
 
 So why do we need sentence molecules for PAM? (Atom based sentences)
