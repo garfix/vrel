@@ -264,7 +264,7 @@ class PlanAnalyzer:
         print(item_binding)
 
         for variable in item_binding:
-            if isinstance(item_binding[variable], str) and item_binding[variable][0:1] == "$":
+            if isinstance(item_binding[variable], str) and item_binding[variable][0:3] == "DLG":
                 log.append(f"SAME AS {variable}, {item_binding[variable]}")
                 print(f"SAME AS {variable}, {item_binding[variable]}")
                 context.solver.write_atom(Atom("same_as", variable, item_binding[variable]))

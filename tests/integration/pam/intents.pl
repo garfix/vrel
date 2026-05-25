@@ -2,7 +2,7 @@ intent_understand(Story) :-
     log('story', Story),
     store(output_type('understood')),
     reify(Story, Reified),
-    store(Reified),
+    # store(Reified),
     induce_facts(Reified),
     analyze_plans(Reified).
 

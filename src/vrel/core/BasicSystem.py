@@ -12,8 +12,6 @@ from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeParser import SomeParser
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.interface.SomeSystem import SomeSystem
-from vrel.processor.parser.BasicParserProduct import BasicParserProduct
-from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
 from .Model import Model
 

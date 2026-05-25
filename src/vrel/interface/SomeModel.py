@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 from vrel.interface.SomeStackOverflowHandler import SomeStackOverflowHandler
+from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
 
 class SomeModel(ABC):
@@ -20,4 +21,8 @@ class SomeModel(ABC):
 
     @abstractmethod
     def get_stack_overflow_handler(self) -> SomeStackOverflowHandler | None:
+        pass
+
+    @abstractmethod
+    def get_dialog_constant_generator(self) -> VariableGenerator:
         pass

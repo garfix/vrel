@@ -10,6 +10,8 @@ Main rule:
 
 Argument structures are not serialized, so for the sake of fast queries, structures are kept out of arguments as much as possible. Only if the structure is part of the function's execution plan should it be included as argument.
 
+Another way of saying: the order of the atoms should not matter for the result of the outcome (in terms of data, disregarding speed of execution). If an atom depends on another atom's execution, that atom should be used as an argument.
+
 Effects:
 
 - Verbs use variables for arguments. Position: ususally `any`.

@@ -1,5 +1,6 @@
-from vrel.core.functions.terms import bind_variables, reify_variables
+from vrel.core.functions.terms import bind_variables
 from vrel.core.functions.unification import unification
+from vrel.core.functions.variables import generate_constants
 from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
@@ -392,14 +393,17 @@ class CoreModule(SomeModule):
     # ('reify', variable-atoms, constant-atoms)
     def reify(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        unbound_atoms = arguments[0]
+        atoms = arguments[0]
 
-        if not isinstance(unbound_atoms, list):
-            raise Exception(f"'store' expects a list of atoms; given: {unbound_atoms}")
+        if not isinstance(atoms, list):
+            raise Exception(f"'store' expects a list of atoms; given: {atoms}")
 
-        atoms = reify_variables(unbound_atoms)
+        variable_map = {}
+        reified_atoms = generate_constants(atoms, context.model.dialog_constant_generator, variable_map)
 
-        return [[None, atoms]]
+        print(reified_atoms)
+
+        return [[None, reified_atoms]]
 
     # ('store', [body-atoms])
     def store(self, arguments: list, context: ExecutionContext) -> list[list]:

@@ -5,6 +5,7 @@ from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 from vrel.interface.SomeStackOverflowHandler import SomeStackOverflowHandler
 from vrel.core.handlers.NoStackOverflowHandler import NoStackOverflowHandler
 from vrel.module.CoreModule import CoreModule
+from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
 
 class Model(SomeModel):
@@ -13,6 +14,7 @@ class Model(SomeModel):
     """
 
     modules: list[SomeModule]
+    dialog_constant_generator: VariableGenerator
     same_as_handler: SomeSameAsHandler | None
     stack_overflow_handler: SomeStackOverflowHandler | None
 
@@ -35,6 +37,11 @@ class Model(SomeModel):
             self.stack_overflow_handler = stack_overflow_handler
         else:
             self.stack_overflow_handler = NoStackOverflowHandler()
+
+        self.dialog_constant_generator = VariableGenerator("DLG")
+
+    def get_dialog_constant_generator(self) -> VariableGenerator:
+        return self.dialog_constant_generator
 
     def get_same_as_handler(self) -> SomeSameAsHandler | None:
         return self.same_as_handler

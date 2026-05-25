@@ -1,5 +1,8 @@
 ## todo
 
+- make sure the reified constructs are stored in a dialog-specific store (how? is an open question)
+- constructs with dialog variables should not be stored (and even be storable) in a permanent store (db) but only in a dialog store (how?)
+
 - create links between goals in both the predict and the inference phase
 
 - reify is good for PAM?

@@ -127,29 +127,6 @@ def bind_variables(term: any, binding: dict) -> any:
         return term
 
 
-def reify_variables(term: any) -> any:
-    """
-    Returns a copy of construct with all variables it contains replaced by their names
-    """
-    # list
-    if isinstance(term, list):
-        return [reify_variables(arg) for arg in term]
-    # atom
-    elif isinstance(term, Atom):
-        a = term.copy()
-        a.arguments = [reify_variables(arg) for arg in term.arguments]
-        a.modifiers = [reify_variables(mod) for mod in term.modifiers]
-        a.exec = [reify_variables(atom) for atom in term.exec]
-        return a
-    # variable
-    elif isinstance(term, Variable):
-        # return the name of the variable as an id
-        return term.name
-    else:
-        # just the value
-        return term
-
-
 def flatten(term: any):
     if isinstance(term, Atom):
         flattened = [flatten(e) for e in term.arguments]
