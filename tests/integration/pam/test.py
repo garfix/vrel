@@ -4,6 +4,7 @@ import pathlib
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
+from vrel.core.handlers.SameAsHandler import SameAsHandler
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
@@ -59,6 +60,9 @@ class TestPAM(unittest.TestCase):
 
         # define the model
 
+        # database for same_as
+        dialog_context = BasicDialogContext()
+
         model = Model(
             [
                 facts,
@@ -66,9 +70,11 @@ class TestPAM(unittest.TestCase):
                 inductions,
                 output_buffer,
                 dialog_context,
+                dialog_context,
                 plan_analyzer_dialog_content,
                 read_write_module,
-            ]
+            ],
+            same_as_handler=SameAsHandler(),
         )
 
         # define the system

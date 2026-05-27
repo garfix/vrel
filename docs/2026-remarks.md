@@ -1,3 +1,18 @@
+## 2026-05-27
+
+Applying same-as id variants requires that the system knows which parameters are id's. If not, and the id's are numeric, even non-ids will get variants. For instance if id 50 is same as id 69, and some person has age 69, the same as will apply to this age as well. Obviously unacceptable. For non-numeric id's this could perhaps be avoided by requiring them to have a special prefix. Also for numeric identifiers we really need a prefix, because the id of a person is in a different namespace as the id of a building.
+
+So basically there are two paths in solving the issue:
+
+- demand that each relation specify the types of its parameters (currently this is not done); this doesn't solve the namespace problem yet
+- namespace all identifiers and prefix with an unlikely term: `@#$person-1` for example. The prefix can easily be made configurable. namespacing can include databases as well: `@#$administration/person-1`. The problem here is how apply the modified id's in the working code. It seems user unfriendly.
+
+===
+
+I will give each parameter a type, and the type is an entity type (i.e., person, company, etc). These types typically match the tables in which the entities are stored.
+
+Then I will add an `entity_type` column to the `same_as` table, so that I can check which `same_as` ids I can use.
+
 ## 2026-05-24
 
 Storyline: She picked up the Michelin guide.

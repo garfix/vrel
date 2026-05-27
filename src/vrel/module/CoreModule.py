@@ -401,8 +401,6 @@ class CoreModule(SomeModule):
         variable_map = {}
         reified_atoms = generate_constants(atoms, context.model.dialog_constant_generator, variable_map)
 
-        print(reified_atoms)
-
         return [[None, reified_atoms]]
 
     # ('store', [body-atoms])

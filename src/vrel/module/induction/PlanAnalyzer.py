@@ -217,27 +217,22 @@ class PlanAnalyzer:
                 )
                 if subject_binding is not None:
 
-                    consequent = bind_variables(rule.consequent, subject_binding)
-                    consequent = variablize(consequent)
+                    consequent1 = bind_variables(rule.consequent, subject_binding)
+                    consequent2 = variablize(consequent1)
 
-                    item_binding = match(consequent, item, {}, deduction_rules, context, current_subject)
+                    item_binding = match(consequent2, item, {}, deduction_rules, context, current_subject)
 
                     if item_binding is not None:
                         # the equality between dialog variables that connect two sentences can now be stored
 
-                        # bound = bind_variables(rule.consequent, subject_binding)
-                        # log.append('')
-                        # log.append(f' XX antecedent: {rule.antecedent}')
-                        # log.append(f' XX current_subject: {current_subject}')
-                        # log.append(f' XX subject_binding: {subject_binding}')
-                        # log.append('')
-                        # log.append(f' XX consequent: {rule.consequent}')
-                        # log.append(f' XX bound consequent: {bound}')
-                        # log.append(f' XX item: {item}')
-                        # log.append(f' XX item_binding: {item_binding}')
-                        # log.append('')
+                        # print(f" XX subject binding: {subject_binding}")
+                        # print(f" XX rule antecedent: {rule.antecedent}")
+                        # print(f" XX rule consequent: {rule.consequent}")
+                        # print(f" XX consequent1: {consequent1}")
+                        # print(f" XX consequent2: {consequent2}")
+                        # print(f" XX item: {item}")
 
-                        self.store_identity(subject_binding, item_binding, context, log)
+                        self.store_identity(item_binding, context, log)
 
                         # print("---")
                         # print(cs)
@@ -255,16 +250,15 @@ class PlanAnalyzer:
 
     def store_identity(
         self,
-        rule_binding: dict,
         item_binding: dict,
         context: ExecutionContext,
         log: list,
     ):
-        print(rule_binding)
-        print(item_binding)
+        # print(item_binding)
 
         for variable in item_binding:
-            if isinstance(item_binding[variable], str) and item_binding[variable][0:3] == "DLG":
+            # todo: this excludes rule variables like E1, but they might need to be included
+            if isinstance(item_binding[variable], str) and variable[0:3] == "DLG":
                 log.append(f"SAME AS {variable}, {item_binding[variable]}")
                 print(f"SAME AS {variable}, {item_binding[variable]}")
                 context.solver.write_atom(Atom("same_as", variable, item_binding[variable]))

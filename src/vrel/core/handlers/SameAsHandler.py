@@ -4,6 +4,7 @@ from vrel.core.Logger import Logger
 from vrel.core.constants import E1, E2, SAME_AS
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.Relation import Relation
+from vrel.entity.Variable import Variable
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 
@@ -31,9 +32,11 @@ class SameAsHandler(SomeSameAsHandler):
             return [bound_arguments]
 
         group = []
+        print(relation.formal_parameters)
         for i, formal in enumerate(relation.formal_parameters):
             # todo: generalize
-            if formal == "id":
+            # if formal == "id" or relation.predicate == "pick_up":
+            if not isinstance(bound_arguments[i], list):
                 group.append(self.get_same_as(bound_arguments[i]))
             else:
                 group.append([bound_arguments[i]])
@@ -46,17 +49,17 @@ class SameAsHandler(SomeSameAsHandler):
     def clear_cache(self):
         self.id_variants = None
 
-    def get_same_as(self, id: int) -> list[int]:
+    def get_same_as(self, id: int | str) -> list[int | str]:
         if self.id_variants is None:
             self.build_cache()
 
-        if id in self.id_variants:
-            return self.id_variants[id]
+        if str(id) in self.id_variants:
+            return self.id_variants[str(id)]
         else:
             return [id]
 
-    def same_as(self, id1: int, id2: int):
-        return id2 in self.get_same_as(id1)
+    def same_as(self, id1: int | str, id2: int | str):
+        return str(id2) in self.get_same_as(str(id1))
 
     def build_cache(self):
         relations = self.model.find_relations(SAME_AS)
@@ -72,8 +75,8 @@ class SameAsHandler(SomeSameAsHandler):
         for result in results:
             id1, id2 = result
             if id1 not in self.id_variants:
-                self.id_variants[int(id1)] = [int(id1)]
+                self.id_variants[id1] = [id1]
             if id2 not in self.id_variants:
-                self.id_variants[int(id2)] = [int(id2)]
-            self.id_variants[int(id1)].append(int(id2))
-            self.id_variants[int(id2)].append(int(id1))
+                self.id_variants[id2] = [id2]
+            self.id_variants[id1].append(id2)
+            self.id_variants[id2].append(id1)

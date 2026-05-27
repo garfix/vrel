@@ -1,5 +1,8 @@
+import copy
+
 from vrel.core.Model import Model
 from vrel.core.Solver import Solver
+from vrel.core.handlers.SameAsHandler import SameAsHandler
 from vrel.entity.Atom import Atom
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.InductionRule import InductionRule
@@ -27,12 +30,16 @@ def explain(
 
             event1 = make_query(event)
 
-            model = Model(
-                [
-                    PlainReadWriteModule(event1),
-                    DeductionModule(deduction_rules),
-                ]
-            )
+            # model = Model(
+            #     [
+            #         PlainReadWriteModule(event1),
+            #         DeductionModule(deduction_rules),
+            #     ],
+            #     same_as_handler=context.model.get_same_as_handler(),
+            # )
+
+            model = copy.copy(context.model)
+            model.modules.append(PlainReadWriteModule(event1))
 
             solver = Solver(model)
 

@@ -25,6 +25,9 @@ class PlainReadWriteModule(SomeModule):
 
         self.atoms.append(atom)
 
+        if has_variables(atom.arguments):
+            raise Exception(f"Atom should be bound: {atom.arguments}")
+
         predicate = atom.predicate
         if predicate not in self.relations:
             arguments = atom.arguments

@@ -1,5 +1,11 @@
 ## todo
 
+- matching van geneste structuren zal nog niet werken omdat same_as niet aan nesting doet
+- same as handler has hard-coded "pick_up"
+- same_as is stored in BasicDialogContext and this is not available from the model in explain.
+- the same_as handler currently only works with parameters called 'id'
+- fix the same_as tuples produced by PlanAnalyzer
+
 - make sure the reified constructs are stored in a dialog-specific store (how? is an open question)
 - constructs with dialog variables should not be stored (and even be storable) in a permanent store (db) but only in a dialog store (how?)
 

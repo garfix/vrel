@@ -1,5 +1,5 @@
 intent_understand(Story) :-
-    log('story', Story),
+    # log('story', Story),
     store(output_type('understood')),
     reify(Story, Reified),
     # store(Reified),
