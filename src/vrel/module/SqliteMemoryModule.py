@@ -13,11 +13,9 @@ class SqliteMemoryModule(SomeModule):
         super().__init__()
         self.clear()
 
-
     def clear(self):
-        connection = sqlite3.connect(':memory:')
+        connection = sqlite3.connect(":memory:")
         self.data_source = Sqlite3DataSource(connection)
-
 
     def add_relation(self, relation: Relation):
         self.relations[relation.predicate] = relation
@@ -26,10 +24,8 @@ class SqliteMemoryModule(SomeModule):
         if not relation.write_function:
             relation.write_function = self.write
 
-
     def query(self, values: list, context: ExecutionContext) -> list[list]:
-        return self.data_source.select(context.relation.predicate, context.relation.formal_parameters, values)
-
+        return self.data_source.select(context.relation.predicate, context.relation.get_parameter_names(), values)
 
     def write(self, values: list, context: ExecutionContext):
-        self.data_source.insert(context.relation.predicate, context.relation.formal_parameters, values)
+        self.data_source.insert(context.relation.predicate, context.relation.get_parameter_names(), values)

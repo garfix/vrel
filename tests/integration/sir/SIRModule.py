@@ -1,6 +1,6 @@
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
@@ -22,7 +22,7 @@ class SIRModule(SomeModule):
                 "part_of",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["part", "whole"],
+                parameters=[Parameter("part"), Parameter("whole")],
             )
         ),
         self.add_relation(
@@ -30,7 +30,7 @@ class SIRModule(SomeModule):
                 "part_of_n",
                 query_function=self.part_of_n,
                 write_function=self.common_write,
-                formal_parameters=["part", "whole", "number"],
+                parameters=[Parameter("part"), Parameter("whole"), Parameter("number")],
             )
         ),
         self.add_relation(
@@ -38,7 +38,7 @@ class SIRModule(SomeModule):
                 "isa",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity", "type"],
+                parameters=[Parameter("entity"), Parameter("type")],
             )
         ),
         self.add_relation(
@@ -46,7 +46,7 @@ class SIRModule(SomeModule):
                 "identical",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["entity1", "entity2"],
+                parameters=[Parameter("entity1"), Parameter("entity2")],
             )
         ),
         self.add_relation(
@@ -54,7 +54,7 @@ class SIRModule(SomeModule):
                 "own",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["person", "thing"],
+                parameters=[Parameter("person"), Parameter("thing")],
             )
         ),
         self.add_relation(
@@ -62,7 +62,7 @@ class SIRModule(SomeModule):
                 "just_left_of",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["thing1", "thing2"],
+                parameters=[Parameter("thing1"), Parameter("thing2")],
             )
         ),
         self.add_relation(
@@ -70,7 +70,7 @@ class SIRModule(SomeModule):
                 "left_of",
                 query_function=self.common_query,
                 write_function=self.common_write,
-                formal_parameters=["thing1", "thing2"],
+                parameters=[Parameter("thing1"), Parameter("thing2")],
             )
         ),
 
@@ -79,16 +79,16 @@ class SIRModule(SomeModule):
             Relation(
                 "position_description",
                 query_function=self.position_description,
-                formal_parameters=["description"],
+                parameters=[Parameter("description")],
             )
         ),
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        results = self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)
+        results = self.ds.select(context.relation.predicate, context.relation.get_parameter_names(), arguments)
         return results
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.ds.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
+        self.ds.insert(context.relation.predicate, context.relation.get_parameter_names(), arguments)
 
     def part_of_n(self, arguments: list, context: ExecutionContext) -> list[list]:
         part_variable = arguments[0]
@@ -97,7 +97,7 @@ class SIRModule(SomeModule):
         whole_type = whole_variable
         part_type = self.get_type(context, part_variable, part_variable)
 
-        results = self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)
+        results = self.ds.select(context.relation.predicate, context.relation.get_parameter_names(), arguments)
 
         if len(results) == 0:
             if part_type is not None and whole_type is not None:
@@ -117,21 +117,21 @@ class SIRModule(SomeModule):
 
         return results
 
-    # ('create_relation', predicate, arguments)
-    def create_relation(self, arguments: list, context: ExecutionContext) -> list[list]:
+    # # ('create_relation', predicate, arguments)
+    # def create_relation(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        predicate, arguments = arguments
+    #     predicate, arguments = arguments
 
-        self.add_relation(
-            Relation(
-                predicate,
-                formal_parameters=arguments,
-                query_function=self.common_query,
-                write_function=self.common_write,
-            )
-        )
+    #     self.add_relation(
+    #         Relation(
+    #             predicate,
+    #             formal_parameters=arguments,
+    #             query_function=self.common_query,
+    #             write_function=self.common_write,
+    #         )
+    #     )
 
-        return [[None, None]]
+    #     return [[None, None]]
 
     # resolve(id, name)
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:

@@ -1,6 +1,6 @@
 from vrel.core.constants import IGNORED, E1, LARGE, MEDIUM, SMALL
 from vrel.entity.Atom import Atom
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
@@ -15,78 +15,196 @@ class Chat80Module(SomeModule):
         super().__init__()
         self.ds = data_source
         self.add_relation(
-            Relation("river", query_function=self.simple_entity, relation_size=SMALL, argument_sizes=[SMALL])
-        )
-        self.add_relation(
-            Relation("country", query_function=self.simple_entity, relation_size=MEDIUM, argument_sizes=[MEDIUM])
-        )
-        self.add_relation(
-            Relation("ocean", query_function=self.simple_entity, relation_size=SMALL, argument_sizes=[SMALL])
-        )
-        self.add_relation(
-            Relation("sea", query_function=self.simple_entity, relation_size=SMALL, argument_sizes=[SMALL])
-        )
-        self.add_relation(
-            Relation("city", query_function=self.simple_entity, relation_size=MEDIUM, argument_sizes=[MEDIUM])
-        )
-        self.add_relation(
-            Relation("continent", query_function=self.simple_entity, relation_size=SMALL, argument_sizes=[SMALL])
-        )
-        self.add_relation(
-            Relation("capital", query_function=self.capital, relation_size=MEDIUM, argument_sizes=[MEDIUM])
-        )
-        self.add_relation(
-            Relation("borders", query_function=self.borders, relation_size=LARGE, argument_sizes=[MEDIUM, MEDIUM])
-        )
-        self.add_relation(
             Relation(
-                "resolve_name", query_function=self.resolve_name, relation_size=LARGE, argument_sizes=[LARGE, LARGE]
-            )
-        )
-        self.add_relation(Relation("of", query_function=self.of, relation_size=LARGE, argument_sizes=[MEDIUM, MEDIUM]))
-        self.add_relation(
-            Relation("size_of", query_function=self.size_of, relation_size=IGNORED, argument_sizes=[MEDIUM, IGNORED])
-        )
-        self.add_relation(
-            Relation("where", query_function=self.where, relation_size=IGNORED, argument_sizes=[MEDIUM, MEDIUM])
-        )
-        self.add_relation(
-            Relation("european", query_function=self.some_continent, relation_size=MEDIUM, argument_sizes=[MEDIUM])
-        )
-        self.add_relation(
-            Relation("asian", query_function=self.some_continent, relation_size=MEDIUM, argument_sizes=[MEDIUM])
-        )
-        self.add_relation(
-            Relation("african", query_function=self.some_continent, relation_size=MEDIUM, argument_sizes=[MEDIUM])
-        )
-        self.add_relation(
-            Relation("american", query_function=self.some_continent, relation_size=MEDIUM, argument_sizes=[MEDIUM])
-        )
-        self.add_relation(
-            Relation(
-                "flows_through", query_function=self.flows_through, relation_size=MEDIUM, argument_sizes=[SMALL, MEDIUM]
+                "river",
+                query_function=self.simple_entity,
+                relation_size=SMALL,
+                #  argument_sizes=[SMALL],
+                parameters=[Parameter("id", argument_size=SMALL)],
             )
         )
         self.add_relation(
-            Relation("south_of", query_function=self.south_of, relation_size=IGNORED, argument_sizes=[MEDIUM, MEDIUM])
+            Relation(
+                "country",
+                query_function=self.simple_entity,
+                relation_size=MEDIUM,
+                #  argument_sizes=[MEDIUM],
+                parameters=[Parameter("id", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "ocean",
+                query_function=self.simple_entity,
+                relation_size=SMALL,
+                #  argument_sizes=[SMALL],
+                parameters=[Parameter("id", argument_size=SMALL)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "sea",
+                query_function=self.simple_entity,
+                relation_size=SMALL,
+                #  argument_sizes=[SMALL],
+                parameters=[Parameter("id", argument_size=SMALL)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "city",
+                query_function=self.simple_entity,
+                relation_size=MEDIUM,
+                #  argument_sizes=[MEDIUM],
+                parameters=[Parameter("id", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "continent",
+                query_function=self.simple_entity,
+                relation_size=SMALL,
+                #  argument_sizes=[SMALL],
+                parameters=[Parameter("id", argument_size=SMALL)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "capital",
+                query_function=self.capital,
+                relation_size=MEDIUM,
+                #  argument_sizes=[MEDIUM],
+                parameters=[Parameter("id", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "borders",
+                query_function=self.borders,
+                relation_size=LARGE,
+                #  argument_sizes=[MEDIUM, MEDIUM],
+                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "resolve_name",
+                query_function=self.resolve_name,
+                relation_size=LARGE,
+                # argument_sizes=[LARGE, LARGE],
+                parameters=[Parameter("id1", argument_size=LARGE), Parameter("id2", argument_size=LARGE)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "of",
+                query_function=self.of,
+                relation_size=LARGE,
+                #    argument_sizes=[MEDIUM, MEDIUM],
+                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "size_of",
+                query_function=self.size_of,
+                relation_size=IGNORED,
+                #  argument_sizes=[MEDIUM, IGNORED],
+                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=IGNORED)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "where",
+                query_function=self.where,
+                relation_size=IGNORED,
+                #  argument_sizes=[MEDIUM, MEDIUM],
+                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "european",
+                query_function=self.some_continent,
+                relation_size=MEDIUM,
+                #  argument_sizes=[MEDIUM],
+                parameters=[Parameter("id", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "asian",
+                query_function=self.some_continent,
+                relation_size=MEDIUM,
+                #  argument_sizes=[MEDIUM],
+                parameters=[Parameter("id", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "african",
+                query_function=self.some_continent,
+                relation_size=MEDIUM,
+                #  argument_sizes=[MEDIUM],
+                parameters=[Parameter("id", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "american",
+                query_function=self.some_continent,
+                relation_size=MEDIUM,
+                #  argument_sizes=[MEDIUM],
+                parameters=[Parameter("id", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "flows_through",
+                query_function=self.flows_through,
+                relation_size=MEDIUM,
+                # argument_sizes=[SMALL, MEDIUM],
+                parameters=[Parameter("id1", argument_size=SMALL), Parameter("id2", argument_size=MEDIUM)],
+            )
+        )
+        self.add_relation(
+            Relation(
+                "south_of",
+                query_function=self.south_of,
+                relation_size=IGNORED,
+                #  argument_sizes=[MEDIUM, MEDIUM],
+                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+            )
         )
         self.add_relation(
             Relation(
                 "flows_from_to",
                 query_function=self.flows_from_to,
                 relation_size=MEDIUM,
-                argument_sizes=[MEDIUM, MEDIUM, MEDIUM],
+                # argument_sizes=[MEDIUM, MEDIUM, MEDIUM]
+                parameters=[
+                    Parameter("id1", argument_size=MEDIUM),
+                    Parameter("id2", argument_size=MEDIUM),
+                    Parameter("id3", argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
-            Relation("contains", query_function=self.contains, relation_size=MEDIUM, argument_sizes=[MEDIUM, MEDIUM])
+            Relation(
+                "contains",
+                query_function=self.contains,
+                relation_size=MEDIUM,
+                #  argument_sizes=[MEDIUM, MEDIUM],
+                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+            )
         )
         self.add_relation(
             Relation(
                 "has_population",
                 query_function=self.has_population,
                 relation_size=MEDIUM,
-                argument_sizes=[MEDIUM, IGNORED],
+                # argument_sizes=[MEDIUM, IGNORED],
+                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=IGNORED)],
             )
         )
 

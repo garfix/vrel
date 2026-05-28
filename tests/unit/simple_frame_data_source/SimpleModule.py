@@ -15,7 +15,7 @@ class SimpleModule(SomeModule):
         self.add_relation(Relation("goal", query_function=self.query, write_function=self.write))
 
     def query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.data_source.select(context.relation.predicate, context.relation.formal_parameters, arguments)
+        return self.data_source.select(context.relation.predicate, context.relation.get_parameter_names(), arguments)
 
     def write(self, arguments: list, context: ExecutionContext):
-        self.data_source.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
+        self.data_source.insert(context.relation.predicate, context.relation.get_parameter_names(), arguments)

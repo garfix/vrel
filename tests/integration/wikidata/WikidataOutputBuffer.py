@@ -1,4 +1,4 @@
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.SqliteMemoryModule import SqliteMemoryModule
 
@@ -10,4 +10,4 @@ class WikidataOutputBuffer(BasicOutputBuffer):
 
         self.clear()
 
-        self.add_relation(Relation("output_report", formal_parameters=["report"]))
+        self.add_relation(Relation("output_report", parameters=[Parameter("report")]))

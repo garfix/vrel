@@ -2,7 +2,7 @@ from vrel.core.functions.terms import has_variables
 from vrel.core.functions.unification import unification
 from vrel.entity.Atom import Atom
 from vrel.entity.ExecutionContext import ExecutionContext
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeModule import SomeModule
 
@@ -31,16 +31,15 @@ class PlainReadWriteModule(SomeModule):
         predicate = atom.predicate
         if predicate not in self.relations:
             arguments = atom.arguments
-            formal_parameters = [Variable(f"E{i}") for i, _ in enumerate(arguments)]
+            # formal_parameters = [Variable(f"E{i}") for i, _ in enumerate(arguments)]
+            formal_parameters = [Parameter(f"E{i}") for i, _ in enumerate(arguments)]
             self.add_relation(
-                Relation(
-                    predicate, formal_parameters=formal_parameters, query_function=self.query, write_function=self.write
-                )
+                Relation(predicate, parameters=formal_parameters, query_function=self.query, write_function=self.write)
             )
 
     def query(self, arguments: list, context: ExecutionContext) -> list[list]:
         predicate = context.relation.predicate
-        formal_parameters = context.relation.formal_parameters
+        formal_parameters = context.relation.get_parameter_names()
 
         results = []
         for atom in self.atoms:

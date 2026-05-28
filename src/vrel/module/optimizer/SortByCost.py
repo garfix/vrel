@@ -67,22 +67,19 @@ class SortByCost:
                 cost = INFINITE
             else:
 
-                if len(arguments) != len(relation.argument_sizes):
-                    raise Exception("Number of argument sizes doesn't match that of relation: " + predicate)
+                for argument, parameter in zip(arguments, relation.parameters):
 
-                for argument, argument_size in zip(arguments, relation.argument_sizes):
-
-                    if argument_size == IGNORED:
+                    if parameter.argument_size == IGNORED:
                         pass
                     elif isinstance(argument, Variable):
                         if argument.name in bound_variables:
-                            unbound_argument_size_product *= argument_size
+                            unbound_argument_size_product *= parameter.argument_size
                     elif isinstance(argument, list):
                         pass
                     elif isinstance(argument, Atom):
                         pass
                     else:
-                        unbound_argument_size_product *= argument_size
+                        unbound_argument_size_product *= parameter.argument_size
 
                 cost = relation.relation_size / unbound_argument_size_product
 

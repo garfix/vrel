@@ -1,4 +1,4 @@
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 
 
@@ -9,6 +9,6 @@ class SimpleOutputBuffer(BasicOutputBuffer):
 
         self.clear()
 
-        self.add_relation(Relation("output_predicate", formal_parameters=["predication", "predicate"]))
-        self.add_relation(Relation("output_subject", formal_parameters=["predication", "subject"]))
-        self.add_relation(Relation("output_object", formal_parameters=["predication", "object"]))
+        self.add_relation(Relation("output_predicate", parameters=[Parameter("predication"), Parameter("predicate")]))
+        self.add_relation(Relation("output_subject", parameters=[Parameter("predication"), Parameter("subject")]))
+        self.add_relation(Relation("output_object", parameters=[Parameter("predication"), Parameter("object")]))

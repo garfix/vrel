@@ -13,6 +13,31 @@ I will give each parameter a type, and the type is an entity type (i.e., person,
 
 Then I will add an `entity_type` column to the `same_as` table, so that I can check which `same_as` ids I can use.
 
+===
+
+This is a problem, because we don't know the enitity type here (from Cooper):
+
+```
+    # salt is natrium chloride
+    # magnesium is magnesium
+    {
+        "syn": "s() -> proper_noun(E1) 'is' proper_noun(E2)",
+        "sem": lambda proper_noun1, proper_noun2: Atom(
+            "intent_tell",
+            [Atom("same_as", proper_noun1, proper_noun2), Atom("let", T1, "true")],
+            T1,
+        ),
+    },
+```
+
+The moment that names are resolved you know their entity type. These are currently not stored, but they could be stored somewhere. Perhaps we could replace the names by dialog constants, in stead of database ids. Then we could add the entity type as information to the dialog context.
+
+"John pats the dog"
+pats(E1, E2) name(E1, "John")
+pats(DLG25, E2) name("DLG25", "John") type("DLG25", "person") id("DLG25", 114)
+or
+pats(DLG25, E2) same_as("person", "DLG25", 114)
+
 ## 2026-05-24
 
 Storyline: She picked up the Michelin guide.

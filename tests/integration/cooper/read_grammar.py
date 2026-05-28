@@ -41,7 +41,7 @@ def get_read_grammar():
                 "intent_tell",
                 # on query, use `same_as` query function: provide nonempty resultset on success
                 # on write, simply write to the table `same_as`
-                [Atom("same_as", proper_noun1, proper_noun2), Atom("let", T1, "true")],
+                [Atom("same_as", "entity", proper_noun1, proper_noun2), Atom("let", T1, "true")],
                 T1,
             ),
         },

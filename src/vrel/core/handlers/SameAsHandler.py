@@ -8,6 +8,8 @@ from vrel.entity.Variable import Variable
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 
+ET = Variable("ET")
+
 
 class SameAsHandler(SomeSameAsHandler):
     """
@@ -28,16 +30,16 @@ class SameAsHandler(SomeSameAsHandler):
         self.id_variants = None
 
     def get_same_as_variants(self, bound_arguments: list, relation: Relation):
-        if relation.formal_parameters is None:
+        if relation.parameters is None:
             return [bound_arguments]
 
         group = []
-        print(relation.formal_parameters)
-        for i, formal in enumerate(relation.formal_parameters):
+        for i, formal in enumerate(relation.parameters):
             # todo: generalize
-            # if formal == "id" or relation.predicate == "pick_up":
-            if not isinstance(bound_arguments[i], list):
-                group.append(self.get_same_as(bound_arguments[i]))
+            if formal.entity_type is not None:
+                # if formal == "id" or relation.predicate == "pick_up":
+                # if not isinstance(bound_arguments[i], list):
+                group.append(self.get_same_as(formal.entity_type, bound_arguments[i]))
             else:
                 group.append([bound_arguments[i]])
 
@@ -49,17 +51,17 @@ class SameAsHandler(SomeSameAsHandler):
     def clear_cache(self):
         self.id_variants = None
 
-    def get_same_as(self, id: int | str) -> list[int | str]:
+    def get_same_as(self, entity_type: str, id: int | str) -> list[int | str]:
         if self.id_variants is None:
             self.build_cache()
 
-        if str(id) in self.id_variants:
-            return self.id_variants[str(id)]
+        if entity_type in self.id_variants and str(id) in self.id_variants[entity_type]:
+            return self.id_variants[entity_type][str(id)]
         else:
             return [id]
 
-    def same_as(self, id1: int | str, id2: int | str):
-        return str(id2) in self.get_same_as(str(id1))
+    def same_as(self, entity_type: str, id1: int | str, id2: int | str):
+        return str(id2) in self.get_same_as(entity_type, str(id1))
 
     def build_cache(self):
         relations = self.model.find_relations(SAME_AS)
@@ -70,13 +72,15 @@ class SameAsHandler(SomeSameAsHandler):
 
         relation = relations[0]
         context = ExecutionContext(relation, None, None, self.model, Logger())
-        results = relation.query_function([E1, E2], context)
+        results = relation.query_function([ET, E1, E2], context)
 
         for result in results:
-            id1, id2 = result
-            if id1 not in self.id_variants:
-                self.id_variants[id1] = [id1]
-            if id2 not in self.id_variants:
-                self.id_variants[id2] = [id2]
-            self.id_variants[id1].append(id2)
-            self.id_variants[id2].append(id1)
+            entity_type, id1, id2 = result
+            if not entity_type in self.id_variants:
+                self.id_variants[entity_type] = {}
+            if id1 not in self.id_variants[entity_type]:
+                self.id_variants[entity_type][id1] = [id1]
+            if id2 not in self.id_variants[entity_type]:
+                self.id_variants[entity_type][id2] = [id2]
+            self.id_variants[entity_type][id1].append(id2)
+            self.id_variants[entity_type][id2].append(id1)

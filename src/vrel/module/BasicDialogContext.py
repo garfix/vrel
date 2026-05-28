@@ -1,5 +1,5 @@
 from vrel.core.constants import SAME_AS
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.module.SqliteMemoryModule import SqliteMemoryModule
 from vrel.entity.ExecutionContext import ExecutionContext
@@ -12,16 +12,21 @@ class BasicDialogContext(SqliteMemoryModule):
 
         self.clear()
 
-        self.add_relation(Relation("context", formal_parameters=["name"]))
+        self.add_relation(Relation("context", parameters=[Parameter("name")]))
 
         self.add_relation(
-            Relation("with_context", formal_parameters=["name", "body"], query_function=self.with_context)
+            Relation(
+                "with_context", parameters=[Parameter("name"), Parameter("body")], query_function=self.with_context
+            )
         )
-        self.add_relation(Relation("start_context", formal_parameters=["name"], query_function=self.start_context))
-        self.add_relation(Relation("end_context", formal_parameters=["name"], query_function=self.end_context))
+        self.add_relation(Relation("start_context", parameters=[Parameter("name")], query_function=self.start_context))
+        self.add_relation(Relation("end_context", parameters=[Parameter("name")], query_function=self.end_context))
         self.add_relation(
             Relation(
-                "same_as", formal_parameters=["id1", "id2"], query_function=self.same_as, write_function=self.write
+                "same_as",
+                parameters=[Parameter("entity_type"), Parameter("id1"), Parameter("id2")],
+                query_function=self.same_as,
+                write_function=self.write,
             )
         )
 
@@ -44,14 +49,14 @@ class BasicDialogContext(SqliteMemoryModule):
         return [[None]]
 
     def same_as(self, arguments: list, context: ExecutionContext) -> list[list]:
-        term1, term2 = arguments
+        entity_type, term1, term2 = arguments
 
         if isinstance(term1, Variable) and isinstance(term2, Variable):
-            return self.data_source.select(SAME_AS, ["id1", "id2"], [term1, term2])
+            return self.data_source.select(SAME_AS, ["entity_type", "id1", "id2"], [entity_type, term1, term2])
 
         handler = context.model.get_same_as_handler()
-        if handler and handler.same_as(term1, term2):
-            return [[None, None]]
+        if handler and handler.same_as(entity_type, term1, term2):
+            return [[None, None, None]]
         else:
             return []
 
@@ -61,4 +66,4 @@ class BasicDialogContext(SqliteMemoryModule):
         cursor = self.data_source.connection.cursor()
 
         cursor.execute("CREATE TABLE context (name TEXT)")
-        cursor.execute("CREATE TABLE same_as (id1 TEXT, id2 TEXT)")
+        cursor.execute("CREATE TABLE same_as (entity_type TEXT, id1 TEXT, id2 TEXT)")

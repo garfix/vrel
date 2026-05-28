@@ -30,14 +30,6 @@ def explain(
 
             event1 = make_query(event)
 
-            # model = Model(
-            #     [
-            #         PlainReadWriteModule(event1),
-            #         DeductionModule(deduction_rules),
-            #     ],
-            #     same_as_handler=context.model.get_same_as_handler(),
-            # )
-
             model = copy.copy(context.model)
             model.modules.append(PlainReadWriteModule(event1))
 

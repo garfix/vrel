@@ -21,24 +21,18 @@ class WikidataModule(SomeModule):
             Relation(
                 "wikidata_label",
                 query_function=self.wikidata_label,
-                relation_size=INFINITE,
-                argument_sizes=[INFINITE, INFINITE],
             )
         )
         self.add_relation(
             Relation(
                 "wikidata_place_of_birth",
                 query_function=self.wikidata_place_of_birth,
-                relation_size=INFINITE,
-                argument_sizes=[INFINITE, INFINITE],
             )
         )
         self.add_relation(
             Relation(
                 "wikidata_person",
                 query_function=self.wikidata_person,
-                relation_size=INFINITE,
-                argument_sizes=[INFINITE, INFINITE],
             )
         )
 
@@ -57,18 +51,14 @@ class WikidataModule(SomeModule):
         out_values = self.ds.select("rdfs:label", [ID, TEXT], [person, name])
         if len(out_values) == 0 and name != name.title():
             # try with first letters capitalized
-            out_values = self.ds.select(
-                "rdfs:label", [ID, TEXT], [person, name.title()]
-            )
+            out_values = self.ds.select("rdfs:label", [ID, TEXT], [person, name.title()])
 
         if len(out_values) > 0:
             return out_values
 
         raise Exception("Name not found: " + name)
 
-    def wikidata_place_of_birth(
-        self, arguments: list, context: ExecutionContext
-    ) -> list[list]:
+    def wikidata_place_of_birth(self, arguments: list, context: ExecutionContext) -> list[list]:
         person = arguments[0]
         place = arguments[1]
 
