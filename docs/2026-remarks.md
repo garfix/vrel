@@ -1,3 +1,25 @@
+## 2026-05-28
+
+Looking for a way to fix
+
+salt is natrium chloride
+
+remarks:
+
+- by resolving the names before everything else, only the id's are given in the sentence, so the meaning effectively becomes `same_as(11, 24)`. the types of the entities are lost, and we can only enter `same_as('entity', 11, 24)`, while we want to enter the more specific `same_as('person', 11, 24)`.
+- maybe I can give all entities in the sentence a dialog id, and store information about these entities in the dialog context
+  - resolving the name: `name("DLG25", "John") type("DLG25", "person") id("DLG25", 114)`
+  - resolving the name (2): `name("DLG25", "John") same_as("person", "DLG25", 114)`
+  - same as: `same_as("person", "DLG25", "DLG22")`. I can look up the type of the id's in the dialog context
+  - same as (2): `same_as("person", 114, 13)`. I can look up the type of the id's in the dialog context
+  - but why give some entities an id and not others?
+  - i can add other dialog information as well, like `plural("DLG24")`, but that wouldn't help much, except for named entities
+- maybe I can store the entities of the names in the sentence context, especially for these kinds of sentences with same-as: `{$25: 'person'}`.
+- i can replace the names by objects while resolving: `pats(Id(114, 'person'), $8)`, but the deduction rules don't like that (is that so?)
+- Is it possible to link dialog variables to information? `type($25, 'person')`? Maybe, but the variables disappear on name resolution.
+
+What if I replace a variable (`E1`) with an id (`ID(114, 'person')`). It's possible. It would solve the same-as thingy. `same_as` could have 2 pairs of arguments: `same_as(id1, type1, id2, type2)`. The Id-objects can be replaced with their id's on query time. You can pass them around like scalars. You would know their type.
+
 ## 2026-05-27
 
 Applying same-as id variants requires that the system knows which parameters are id's. If not, and the id's are numeric, even non-ids will get variants. For instance if id 50 is same as id 69, and some person has age 69, the same as will apply to this age as well. Obviously unacceptable. For non-numeric id's this could perhaps be avoided by requiring them to have a special prefix. Also for numeric identifiers we really need a prefix, because the id of a person is in a different namespace as the id of a building.
