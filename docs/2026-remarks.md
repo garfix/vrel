@@ -1,3 +1,9 @@
+## 2026-05-30
+
+Introducing Id(id, type).
+
+Interesting issue: how to handle `same_as()`, with 2 Id arguments? When stored in the database, the default action is to hydrate the Id's into their `id`, but this would defy the purpose of the Ids in the same-as relation. So same_as needs a custom storage/retieve function that turns the id's into strings (json).
+
 ## 2026-05-28
 
 Looking for a way to fix

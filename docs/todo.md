@@ -1,5 +1,7 @@
 ## todo
 
+- check alle DataSources: hydration / dehydration
+
 - matching van geneste structuren zal nog niet werken omdat same_as niet aan nesting doet
 - same as handler has hard-coded "pick_up"
 - same_as is stored in BasicDialogContext and this is not available from the model in explain.

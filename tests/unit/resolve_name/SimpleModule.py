@@ -1,4 +1,4 @@
-from vrel.core.constants import AUTO
+from vrel.core.constants import AUTO, TYPE_ENTITY
 from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource

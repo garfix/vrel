@@ -1,3 +1,4 @@
+from vrel.entity.Relation import Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 
@@ -10,13 +11,14 @@ class SimpleDataSource(SomeDataSource):
 
     store: dict[str, list[dict]]
 
-
     def __init__(self) -> None:
         self.clear()
 
-
     # def insert(self, record: Record):
-    def insert(self, table: str, columns: list[str], values: list):
+    def insert(self, relation: Relation, values: list):
+
+        table = relation.predicate
+        columns = relation.get_parameter_names()
 
         values = self.create_dict(columns, values)
 
@@ -25,9 +27,11 @@ class SimpleDataSource(SomeDataSource):
 
         self.store[table].append(values)
 
-
     # def select(self, table, values: dict) -> list:
-    def select(self, table: str, columns: list[str], list_values: list) -> list[list]:
+    def select(self, relation: Relation, list_values: list) -> list[list]:
+
+        table = relation.predicate
+        columns = relation.get_parameter_names()
 
         values = self.create_dict(columns, list_values)
 
@@ -48,10 +52,8 @@ class SimpleDataSource(SomeDataSource):
 
         return results
 
-
     def clear(self):
         self.store = {}
-
 
     def create_dict(self, columns: list, values: list):
         d = {}

@@ -1,6 +1,7 @@
 from vrel.core.constants import PRED_NAME
 from vrel.core.functions.terms import bind_variables
 from vrel.entity.Atom import Atom, Modifier
+from vrel.entity.Id import Id
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.processor.semantic_executor.helper.exec_code import exec_code
@@ -44,7 +45,8 @@ def find_named_variables(term: any) -> dict:
 def resolve_name(name: str, solver: SomeSolver):
     result = solver.solve([Atom("resolve_name", Variable("Id"), name)])
     if len(result) == 1:
-        return result[0]["Id"]
+        id = result[0]["Id"]
+        return id
     elif len(result) == 0:
         return None
     else:

@@ -2,7 +2,7 @@ from vrel.core.functions.terms import bind_variables
 from vrel.core.functions.unification import unification
 from vrel.core.functions.variables import generate_variables
 from vrel.entity.Atom import Atom
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface import SomeSolver
 from vrel.interface.SomeModule import SomeModule
@@ -22,7 +22,13 @@ class DeductionModule(SomeModule):
 
     def __init__(self, rules: list = []) -> None:
         super().__init__()
-        self.add_relation(Relation("learn_rule", query_function=self.learn_rule))
+        self.add_relation(
+            Relation(
+                "learn_rule",
+                parameters=[Parameter("head", list[Atom]), Parameter("body", list[Atom])],
+                query_function=self.learn_rule,
+            )
+        )
         self.variable_generator = VariableGenerator("IM")
         self.rules = {}
         for rule in rules:
@@ -30,7 +36,8 @@ class DeductionModule(SomeModule):
 
     def insert_rule(self, rule: InferenceRule):
         predicate = rule.head.predicate
-        self.add_relation(Relation(predicate, query_function=self.handle_rule))
+        parameters = [Parameter(f"E{i+1}", None) for i, _ in enumerate(rule.head.arguments)]
+        self.add_relation(Relation(predicate, parameters, query_function=self.handle_rule))
         if not predicate in self.rules:
             self.rules[predicate] = []
         self.rules[predicate].append(rule)
@@ -59,6 +66,8 @@ class DeductionModule(SomeModule):
         head = generate_variables(rule.head.arguments, self.variable_generator, variable_map)
         body = [generate_variables(atom, self.variable_generator, variable_map) for atom in rule.body]
 
+        if isinstance(arguments, tuple):
+            exit()
         rule_binding = unification(head, arguments, binding)
         if rule_binding is None:
             return []

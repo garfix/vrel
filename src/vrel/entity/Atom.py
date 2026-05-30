@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from vrel.entity.Id import Id
 from vrel.entity.Sentinel import Sentinel
 from vrel.entity.Variable import Variable
 
@@ -36,7 +37,7 @@ class Atom:
             raise Exception(f"Arg 1 must hold the predicate: {args}")
 
         for arg in args[1:]:
-            if isinstance(arg, (Atom, float, int, str, Variable, list, Sentinel)):
+            if isinstance(arg, (Atom, Id, float, int, str, Variable, list, Sentinel)):
                 self.arguments.append(arg)
             else:
                 raise Exception(f"Unknown argument type: {arg}")

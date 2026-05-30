@@ -1,8 +1,9 @@
 from vrel.core.functions.terms import bind_variables
 from vrel.core.functions.unification import unification
 from vrel.core.functions.variables import generate_constants
+from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
@@ -15,36 +16,276 @@ class CoreModule(SomeModule):
 
     def __init__(self) -> None:
         super().__init__()
-        self.add_relation(Relation("equals", query_function=self.equals)),
-        self.add_relation(Relation("not_equals", query_function=self.not_equals)),
-        self.add_relation(Relation("greater_than", query_function=self.greater_than)),
-        self.add_relation(Relation("less_than", query_function=self.less_than)),
-        self.add_relation(Relation("multiply", query_function=self.multiply)),
-        self.add_relation(Relation("arg_min", query_function=self.arg_min)),
-        self.add_relation(Relation("arg_max", query_function=self.arg_max)),
-        self.add_relation(Relation("sum", query_function=self.sum)),
-        self.add_relation(Relation("avg", query_function=self.avg)),
-        self.add_relation(Relation("percentage", query_function=self.percentage)),
-        self.add_relation(Relation("count", query_function=self.count)),
-        self.add_relation(Relation("not", query_function=self.not_function)),
-        self.add_relation(Relation("let", query_function=self.let)),
-        self.add_relation(Relation("det_equals", query_function=self.determiner_equals)),
-        self.add_relation(Relation("det_greater_than", query_function=self.determiner_greater_than)),
-        self.add_relation(Relation("det_less_than", query_function=self.determiner_less_than)),
-        self.add_relation(Relation("det_all", query_function=self.determiner_all)),
-        self.add_relation(Relation("det_none", query_function=self.determiner_none)),
-        self.add_relation(Relation("exec", query_function=self.exec)),
-        self.add_relation(Relation("and", query_function=self.and_func)),
-        self.add_relation(Relation("scope", query_function=self.scope)),
-        self.add_relation(Relation("reify", query_function=self.reify)),
-        self.add_relation(Relation("store", query_function=self.store)),
-        self.add_relation(Relation("$unification", query_function=self.unification)),
-        self.add_relation(Relation("find_all", query_function=self.find_all)),
-        self.add_relation(Relation("find_one", query_function=self.find_one)),
-        self.add_relation(Relation("create_query", query_function=self.create_query)),
-        self.add_relation(Relation("create_records", query_function=self.create_records)),
-        self.add_relation(Relation("print", query_function=self.print)),
-        self.add_relation(Relation("log", query_function=self.log)),
+        self.add_relation(
+            Relation("equals", parameters=[Parameter("op1", any), Parameter("op1", any)], query_function=self.equals)
+        ),
+        self.add_relation(
+            Relation(
+                "not_equals",
+                parameters=[Parameter("op1", any), Parameter("op1", any)],
+                query_function=self.not_equals,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "greater_than",
+                parameters=[Parameter("op1", any), Parameter("op2", any)],
+                query_function=self.greater_than,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "less_than",
+                parameters=[Parameter("term1", any), Parameter("term2", any)],
+                query_function=self.less_than,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "multiply",
+                parameters=[Parameter("op1", float), Parameter("op2", float), Parameter("result", float)],
+                query_function=self.multiply,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "arg_min",
+                parameters=[
+                    Parameter("result_entity", Variable),
+                    Parameter("result_min", float),
+                    Parameter("body", list[Atom]),
+                    Parameter("function", list[Atom]),
+                ],
+                query_function=self.arg_min,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "arg_max",
+                parameters=[
+                    Parameter("result_entity", Variable),
+                    Parameter("result_max", float),
+                    Parameter("body", list[Atom]),
+                    Parameter("function", list[Atom]),
+                ],
+                query_function=self.arg_max,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "sum",
+                parameters=[Parameter("result", Variable), Parameter("var", Variable), Parameter("body", list[Atom])],
+                query_function=self.sum,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "avg",
+                parameters=[Parameter("result", Variable), Parameter("var", Variable), Parameter("body", list[Atom])],
+                query_function=self.avg,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "percentage",
+                parameters=[
+                    Parameter("result", Variable),
+                    Parameter("nominator", list[Atom]),
+                    Parameter("denonimator", list[Atom]),
+                ],
+                query_function=self.percentage,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "count",
+                parameters=[Parameter("result", Variable), Parameter("body", list[Atom])],
+                query_function=self.count,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "not",
+                parameters=[Parameter("body", list[Atom])],
+                query_function=self.not_function,
+            )
+        ),
+        self.add_relation(
+            Relation("let", parameters=[Parameter("var", Variable), Parameter("term", any)], query_function=self.let)
+        ),
+        self.add_relation(
+            Relation(
+                "det_equals",
+                parameters=[
+                    Parameter("", None),
+                    Parameter("combined", list[Atom]),
+                    Parameter("number", int),
+                ],
+                query_function=self.determiner_equals,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "det_greater_than",
+                parameters=[
+                    Parameter("", None),
+                    Parameter("combined", list[Atom]),
+                    Parameter("number", int),
+                ],
+                query_function=self.determiner_greater_than,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "det_less_than",
+                parameters=[
+                    Parameter("", None),
+                    Parameter("combined", list[Atom]),
+                    Parameter("number", int),
+                ],
+                query_function=self.determiner_less_than,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "det_all",
+                parameters=[
+                    Parameter("quantVar", Variable),
+                    Parameter("range", list[Atom]),
+                    Parameter("body", list[Atom]),
+                ],
+                query_function=self.determiner_all,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "det_none",
+                parameters=[
+                    Parameter("", None),
+                    Parameter("combined", list[Atom]),
+                    Parameter("number", int),
+                ],
+                query_function=self.determiner_none,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "exec",
+                # NB: can have multiple bodies
+                parameters=[
+                    Parameter("body", list[Atom]),
+                ],
+                query_function=self.exec,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "and",
+                # NB: can have multiple bodies
+                parameters=[
+                    Parameter("body", list[Atom]),
+                ],
+                query_function=self.and_func,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "scope",
+                # NB: can have multiple bodies
+                parameters=[
+                    Parameter("body", list[Atom]),
+                ],
+                query_function=self.scope,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "reify",
+                parameters=[
+                    Parameter("in", list[Atom]),
+                    Parameter("out", list[Atom]),
+                ],
+                query_function=self.reify,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "store",
+                parameters=[
+                    Parameter("body", list[Atom]),
+                ],
+                query_function=self.store,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "$unification",
+                parameters=[
+                    Parameter("op1", any),
+                    Parameter("op2", any),
+                ],
+                query_function=self.unification,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "find_all",
+                parameters=[
+                    Parameter("body", list[Atom]),
+                    Parameter("var", Variable),
+                    Parameter("result", list),
+                ],
+                query_function=self.find_all,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "find_one",
+                parameters=[
+                    Parameter("body", list[Atom]),
+                    Parameter("var", Variable),
+                    Parameter("result", any),
+                ],
+                query_function=self.find_one,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "create_query",
+                parameters=[
+                    Parameter("in", list[Atom]),
+                    Parameter("out", list[Atom]),
+                ],
+                query_function=self.create_query,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "create_records",
+                parameters=[
+                    Parameter("in", list[Atom]),
+                    Parameter("out", list[Atom]),
+                ],
+                query_function=self.create_records,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "print",
+                parameters=[Parameter("term", any)],
+                query_function=self.print,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "log",
+                parameters=[
+                    Parameter("name", str),
+                    Parameter("value", any),
+                ],
+                query_function=self.log,
+            )
+        ),
 
     # ('equals', E1, E2)
     def equals(self, arguments: list, context: ExecutionContext) -> list[list]:

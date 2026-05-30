@@ -321,10 +321,10 @@ class Chat80Module(SomeModule):
         for type in ["country", "city", "sea", "river", "ocean", "continent"]:
             out_values = self.ds.select(type, ["id", "id"], [name, Variable("E1")])
             if len(out_values) > 0:
-                return [[value[1], None] for value in out_values]
+                return [[value[1], None, type] for value in out_values]
 
         if name == "equator":
-            return [["equator", None]]
+            return [["equator", None, "equator"]]
 
         context.solver.solve(
             [Atom("store", [Atom("output_type", "name_not_found"), Atom("output_name_not_found", name)])]

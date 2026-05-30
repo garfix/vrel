@@ -1,4 +1,8 @@
+import json
+
 from vrel.core.constants import SAME_AS
+from vrel.entity.Atom import Atom
+from vrel.entity.Id import Id
 from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.module.SqliteMemoryModule import SqliteMemoryModule
@@ -12,21 +16,25 @@ class BasicDialogContext(SqliteMemoryModule):
 
         self.clear()
 
-        self.add_relation(Relation("context", parameters=[Parameter("name")]))
+        self.add_relation(Relation("context", parameters=[Parameter("name", str)]))
 
         self.add_relation(
             Relation(
-                "with_context", parameters=[Parameter("name"), Parameter("body")], query_function=self.with_context
+                "with_context",
+                parameters=[Parameter("name", str), Parameter("body", list[Atom])],
+                query_function=self.with_context,
             )
         )
-        self.add_relation(Relation("start_context", parameters=[Parameter("name")], query_function=self.start_context))
-        self.add_relation(Relation("end_context", parameters=[Parameter("name")], query_function=self.end_context))
+        self.add_relation(
+            Relation("start_context", parameters=[Parameter("name", str)], query_function=self.start_context)
+        )
+        self.add_relation(Relation("end_context", parameters=[Parameter("name", str)], query_function=self.end_context))
         self.add_relation(
             Relation(
-                "same_as",
-                parameters=[Parameter("entity_type"), Parameter("id1"), Parameter("id2")],
-                query_function=self.same_as,
-                write_function=self.write,
+                SAME_AS,
+                parameters=[Parameter("id1", None), Parameter("id2", None)],
+                query_function=self.same_as_read,
+                write_function=self.same_as_write,
             )
         )
 
@@ -48,17 +56,34 @@ class BasicDialogContext(SqliteMemoryModule):
         self.data_source.delete("context", ["name"], [name])
         return [[None]]
 
-    def same_as(self, arguments: list, context: ExecutionContext) -> list[list]:
-        entity_type, term1, term2 = arguments
+    def same_as_read(self, arguments: list, context: ExecutionContext) -> list[list]:
+        term1, term2 = arguments
 
         if isinstance(term1, Variable) and isinstance(term2, Variable):
-            return self.data_source.select(SAME_AS, ["entity_type", "id1", "id2"], [entity_type, term1, term2])
+            same_as = self.get_relation(SAME_AS)
+            results = self.data_source.select(same_as, [term1, term2])
+
+            # hydrated = [[json.loads(e) for e in result] for result in results]
+            hydrated = []
+            for result in results:
+                row = []
+                for e in result:
+                    data = json.loads(e)
+                    row.append(Id(data["id"], data["type"]))
+                hydrated.append(row)
+
+            return hydrated
 
         handler = context.model.get_same_as_handler()
-        if handler and handler.same_as(entity_type, term1, term2):
-            return [[None, None, None]]
+        if handler and handler.same_as(term1, term2):
+            return [[None, None]]
         else:
             return []
+
+    def same_as_write(self, arguments: list, context: ExecutionContext) -> list[list]:
+
+        dehydrated = [json.dumps({"id": id.id, "type": id.type}) for id in arguments]
+        return self.write(dehydrated, context)
 
     def clear(self):
         super().clear()

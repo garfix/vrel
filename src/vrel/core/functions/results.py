@@ -3,9 +3,7 @@ from vrel.core.functions.unification import unification
 from vrel.entity.Variable import Variable
 
 
-def tuple_results_to_bindings(
-    predicate: str, arguments: list, results: list, binding: dict
-) -> list[dict]:
+def tuple_results_to_bindings(predicate: str, arguments: list, results: list, binding: dict) -> list[dict]:
     """
     Converts results into a list of bindings
     If a result has some variable in different positions, make sure the values at the positions do not conflict
@@ -49,9 +47,7 @@ def tuple_results_to_bindings(
     return checked_results
 
 
-def bindings_to_tuple_results(
-    formal_parameters: list, arguments: list, bindings: dict
-) -> list[list]:
+def bindings_to_tuple_results(formal_parameters: list, arguments: list, bindings: dict) -> list[list]:
     results = []
 
     for solution in bindings:
