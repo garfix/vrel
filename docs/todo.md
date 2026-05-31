@@ -1,5 +1,6 @@
 ## todo
 
+- denk na over onderscheid tabel / Relation / columns; note: borders (id1, id2) en (id2, id1)
 - check alle DataSources: hydration / dehydration
 
 - matching van geneste structuren zal nog niet werken omdat same_as niet aan nesting doet

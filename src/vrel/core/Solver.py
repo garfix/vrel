@@ -9,7 +9,6 @@ from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.entity.ExecutionContext import ExecutionContext
-from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
 
 
 class Solver(SomeSolver):

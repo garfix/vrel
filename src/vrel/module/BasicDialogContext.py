@@ -61,7 +61,7 @@ class BasicDialogContext(SqliteMemoryModule):
 
         if isinstance(term1, Variable) and isinstance(term2, Variable):
             same_as = self.get_relation(SAME_AS)
-            results = self.data_source.select(same_as, [term1, term2])
+            results = self.data_source.select(same_as, ["id1", "id2"], [term1, term2])
 
             # hydrated = [[json.loads(e) for e in result] for result in results]
             hydrated = []

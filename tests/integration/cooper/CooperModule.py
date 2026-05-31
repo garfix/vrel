@@ -1,5 +1,5 @@
 from create_records_3v import create_records_3v
-from vrel.core.constants import AUTO, TYPE_ENTITY
+from vrel.core.constants import AUTO
 from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
@@ -214,7 +214,7 @@ class CooperModule(SomeModule):
         name = arguments[1].lower()
         entity = self.get_relation("entity")
 
-        out_values = self.ds.select(entity, [id, name])
+        out_values = self.ds.select(entity, ["id", "name"], [id, name])
         if len(out_values) > 0:
             return out_values
         else:
@@ -224,9 +224,10 @@ class CooperModule(SomeModule):
                 id = AUTO
             self.ds.insert(
                 entity,
+                ["id", "name"],
                 [id, name],
             )
-            out_values = self.ds.select(entity, [Variable("Id"), name])
+            out_values = self.ds.select(entity, ["id", "name"], [Variable("Id"), name])
             id = out_values[0][0]
 
             return [[id, None]]
@@ -312,11 +313,11 @@ class CooperModule(SomeModule):
         return [[None, result]]
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        results = self.ds.select(context.relation, arguments)
+        results = self.ds.select(context.relation, context.relation.get_parameter_names(), arguments)
         if len(results) > 0:
             return results
         else:
             return []
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.ds.insert(context.relation, arguments)
+        self.ds.insert(context.relation, context.relation.get_parameter_names(), arguments)

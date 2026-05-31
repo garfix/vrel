@@ -1,6 +1,3 @@
-from vrel.core.constants import TYPE_ENTITY
-
-
 class Id:
 
     id: str
@@ -15,3 +12,6 @@ class Id:
 
     def __eq__(self, value):
         return isinstance(value, Id) and self.id == value.id and self.type == value.type
+
+    def __hash__(self) -> int:
+        return hash((self.id, self.type))

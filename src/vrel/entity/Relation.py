@@ -41,3 +41,6 @@ class Relation:
         if self.parameters is None:
             return None
         return list(map(lambda e: e.name, self.parameters))
+
+    def get_parameter_by_name(self, name: str) -> Parameter | None:
+        return next(filter(lambda p: p.name == name, self.parameters), None)

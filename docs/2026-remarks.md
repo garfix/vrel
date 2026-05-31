@@ -1,3 +1,21 @@
+## 2026-05-31
+
+In CHAT-80 I stumble over the difference between a Relation and the used columns within the relation. Often not all columns are used.
+
+===
+
+In CHAT-80 I have a case where two id's don't match, because their type is different, and the types have a subordinate relationship (ocean < area).
+
+select from border where:
+
+    [ocean:southern_ocean, $2]
+
+result:
+
+    [area:southern_ocean, area:atlantic]
+
+This is because `borders` has areas as types.
+
 ## 2026-05-30
 
 Introducing Id(id, type).

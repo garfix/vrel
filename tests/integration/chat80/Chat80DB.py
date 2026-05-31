@@ -10,7 +10,7 @@ class Chat80DB(Sqlite3DataSource):
 
         path = str(pathlib.Path(__file__).parent.resolve()) + "/"
 
-        connection = sqlite3.connect(':memory:')
+        connection = sqlite3.connect(":memory:")
         cursor = connection.cursor()
         cursor.execute("CREATE TABLE continent (id TEXT PRIMARY KEY)")
         cursor.execute("CREATE TABLE ocean (id TEXT PRIMARY KEY)")
@@ -36,11 +36,11 @@ class Chat80DB(Sqlite3DataSource):
         super().__init__(connection)
 
         csv_importer = CsvImporter()
-        csv_importer.import_table_from_file('continent', path + "resources/continent.csv", self)
-        csv_importer.import_table_from_file('ocean', path + "resources/ocean.csv", self)
-        csv_importer.import_table_from_file('sea', path + "resources/sea.csv", self)
-        csv_importer.import_table_from_file('river', path + "resources/river.csv", self)
-        csv_importer.import_table_from_file('city', path + "resources/city.csv", self)
-        csv_importer.import_table_from_file('country', path + "resources/country.csv", self)
-        csv_importer.import_table_from_file('contains', path + "resources/contains.csv", self)
-        csv_importer.import_table_from_file('borders', path + "resources/borders.csv", self)
+        csv_importer.import_table_from_file("continent", path + "resources/continent.csv", self)
+        csv_importer.import_table_from_file("ocean", path + "resources/ocean.csv", self)
+        csv_importer.import_table_from_file("sea", path + "resources/sea.csv", self)
+        csv_importer.import_table_from_file("river", path + "resources/river.csv", self)
+        csv_importer.import_table_from_file("city", path + "resources/city.csv", self)
+        csv_importer.import_table_from_file("country", path + "resources/country.csv", self)
+        csv_importer.import_table_from_file("contains", path + "resources/contains.csv", self)
+        csv_importer.import_table_from_file("borders", path + "resources/borders.csv", self)

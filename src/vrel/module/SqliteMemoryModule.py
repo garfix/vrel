@@ -25,7 +25,7 @@ class SqliteMemoryModule(SomeModule):
             relation.write_function = self.write
 
     def query(self, values: list, context: ExecutionContext) -> list[list]:
-        return self.data_source.select(context.relation, values)
+        return self.data_source.select(context.relation, context.relation.get_parameter_names(), values)
 
     def write(self, values: list, context: ExecutionContext):
-        self.data_source.insert(context.relation, values)
+        self.data_source.insert(context.relation, context.relation.get_parameter_names(), values)

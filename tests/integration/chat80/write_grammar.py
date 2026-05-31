@@ -1,5 +1,6 @@
 from vrel.core.constants import E1, E2
 from vrel.entity.Atom import Atom
+from vrel.entity.Id import Id
 
 
 def get_write_grammar():
@@ -43,12 +44,11 @@ def get_write_grammar():
 
 
 def format_list(elements):
-    elements.sort()
-    return ", ".join(map(lambda e: str(e), elements))
+    return ", ".join(map(lambda id: str(id.id), sorted(elements, key=lambda id: id.id)))
 
 
 def format_table(table, units):
-    sorted_table = sorted(table, key=lambda row: row[0])
+    sorted_table = sorted(table, key=lambda row: row[0].id)
     response = []
     for row in sorted_table:
         item = []
@@ -61,6 +61,8 @@ def format_table(table, units):
 def format_cell(value, unit):
     if isinstance(value, float):
         formatted = str(int(value))
+    elif isinstance(value, Id):
+        formatted = str(value.id)
     else:
         formatted = value
 

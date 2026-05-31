@@ -1,5 +1,6 @@
 from vrel.core.constants import IGNORED, E1, LARGE, MEDIUM, SMALL
 from vrel.entity.Atom import Atom
+from vrel.entity.Id import Id
 from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
@@ -19,8 +20,10 @@ class Chat80Module(SomeModule):
                 "river",
                 query_function=self.simple_entity,
                 relation_size=SMALL,
-                #  argument_sizes=[SMALL],
-                parameters=[Parameter("id", argument_size=SMALL)],
+                parameters=[
+                    Parameter("id", "river", argument_size=SMALL),
+                    Parameter("flows_through", str, argument_size=SMALL),
+                ],
             )
         )
         self.add_relation(
@@ -28,8 +31,14 @@ class Chat80Module(SomeModule):
                 "country",
                 query_function=self.simple_entity,
                 relation_size=MEDIUM,
-                #  argument_sizes=[MEDIUM],
-                parameters=[Parameter("id", argument_size=MEDIUM)],
+                parameters=[
+                    Parameter("id", "country", argument_size=MEDIUM),
+                    Parameter("capital", "city", argument_size=MEDIUM),
+                    Parameter("area_div_1000", int, argument_size=MEDIUM),
+                    Parameter("region", "area", argument_size=MEDIUM),
+                    Parameter("lat", int, argument_size=MEDIUM),
+                    Parameter("population", int, argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
@@ -37,8 +46,7 @@ class Chat80Module(SomeModule):
                 "ocean",
                 query_function=self.simple_entity,
                 relation_size=SMALL,
-                #  argument_sizes=[SMALL],
-                parameters=[Parameter("id", argument_size=SMALL)],
+                parameters=[Parameter("id", "ocean", argument_size=SMALL)],
             )
         )
         self.add_relation(
@@ -46,8 +54,7 @@ class Chat80Module(SomeModule):
                 "sea",
                 query_function=self.simple_entity,
                 relation_size=SMALL,
-                #  argument_sizes=[SMALL],
-                parameters=[Parameter("id", argument_size=SMALL)],
+                parameters=[Parameter("id", "sea", argument_size=SMALL)],
             )
         )
         self.add_relation(
@@ -55,8 +62,10 @@ class Chat80Module(SomeModule):
                 "city",
                 query_function=self.simple_entity,
                 relation_size=MEDIUM,
-                #  argument_sizes=[MEDIUM],
-                parameters=[Parameter("id", argument_size=MEDIUM)],
+                parameters=[
+                    Parameter("id", "city", argument_size=MEDIUM),
+                    Parameter("population", int, argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
@@ -64,8 +73,7 @@ class Chat80Module(SomeModule):
                 "continent",
                 query_function=self.simple_entity,
                 relation_size=SMALL,
-                #  argument_sizes=[SMALL],
-                parameters=[Parameter("id", argument_size=SMALL)],
+                parameters=[Parameter("id", "continent", argument_size=SMALL)],
             )
         )
         self.add_relation(
@@ -73,8 +81,7 @@ class Chat80Module(SomeModule):
                 "capital",
                 query_function=self.capital,
                 relation_size=MEDIUM,
-                #  argument_sizes=[MEDIUM],
-                parameters=[Parameter("id", argument_size=MEDIUM)],
+                parameters=[Parameter("id", "capital", argument_size=MEDIUM)],
             )
         )
         self.add_relation(
@@ -82,17 +89,17 @@ class Chat80Module(SomeModule):
                 "borders",
                 query_function=self.borders,
                 relation_size=LARGE,
-                #  argument_sizes=[MEDIUM, MEDIUM],
-                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+                parameters=[
+                    Parameter("country_id1", "area", argument_size=MEDIUM),
+                    Parameter("country_id2", "area", argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
             Relation(
                 "resolve_name",
                 query_function=self.resolve_name,
-                relation_size=LARGE,
-                # argument_sizes=[LARGE, LARGE],
-                parameters=[Parameter("id1", argument_size=LARGE), Parameter("id2", argument_size=LARGE)],
+                parameters=[Parameter("id", str), Parameter("name", str)],
             )
         )
         self.add_relation(
@@ -100,8 +107,10 @@ class Chat80Module(SomeModule):
                 "of",
                 query_function=self.of,
                 relation_size=LARGE,
-                #    argument_sizes=[MEDIUM, MEDIUM],
-                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+                parameters=[
+                    Parameter("id1", "capital", argument_size=MEDIUM),
+                    Parameter("id2", "country", argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
@@ -109,8 +118,10 @@ class Chat80Module(SomeModule):
                 "size_of",
                 query_function=self.size_of,
                 relation_size=IGNORED,
-                #  argument_sizes=[MEDIUM, IGNORED],
-                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=IGNORED)],
+                parameters=[
+                    Parameter("id1", "country", argument_size=MEDIUM),
+                    Parameter("id2", int, argument_size=IGNORED),
+                ],
             )
         )
         self.add_relation(
@@ -118,8 +129,10 @@ class Chat80Module(SomeModule):
                 "where",
                 query_function=self.where,
                 relation_size=IGNORED,
-                #  argument_sizes=[MEDIUM, MEDIUM],
-                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+                parameters=[
+                    Parameter("id1", "country", argument_size=MEDIUM),
+                    Parameter("id2", "region", argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
@@ -127,8 +140,7 @@ class Chat80Module(SomeModule):
                 "european",
                 query_function=self.some_continent,
                 relation_size=MEDIUM,
-                #  argument_sizes=[MEDIUM],
-                parameters=[Parameter("id", argument_size=MEDIUM)],
+                parameters=[Parameter("id", "country", argument_size=MEDIUM)],
             )
         )
         self.add_relation(
@@ -136,8 +148,7 @@ class Chat80Module(SomeModule):
                 "asian",
                 query_function=self.some_continent,
                 relation_size=MEDIUM,
-                #  argument_sizes=[MEDIUM],
-                parameters=[Parameter("id", argument_size=MEDIUM)],
+                parameters=[Parameter("id", "country", argument_size=MEDIUM)],
             )
         )
         self.add_relation(
@@ -145,8 +156,7 @@ class Chat80Module(SomeModule):
                 "african",
                 query_function=self.some_continent,
                 relation_size=MEDIUM,
-                #  argument_sizes=[MEDIUM],
-                parameters=[Parameter("id", argument_size=MEDIUM)],
+                parameters=[Parameter("id", "country", argument_size=MEDIUM)],
             )
         )
         self.add_relation(
@@ -154,8 +164,7 @@ class Chat80Module(SomeModule):
                 "american",
                 query_function=self.some_continent,
                 relation_size=MEDIUM,
-                #  argument_sizes=[MEDIUM],
-                parameters=[Parameter("id", argument_size=MEDIUM)],
+                parameters=[Parameter("id", "country", argument_size=MEDIUM)],
             )
         )
         self.add_relation(
@@ -163,8 +172,10 @@ class Chat80Module(SomeModule):
                 "flows_through",
                 query_function=self.flows_through,
                 relation_size=MEDIUM,
-                # argument_sizes=[SMALL, MEDIUM],
-                parameters=[Parameter("id1", argument_size=SMALL), Parameter("id2", argument_size=MEDIUM)],
+                parameters=[
+                    Parameter("id1", "place", argument_size=SMALL),
+                    Parameter("id2", "place", argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
@@ -172,8 +183,10 @@ class Chat80Module(SomeModule):
                 "south_of",
                 query_function=self.south_of,
                 relation_size=IGNORED,
-                #  argument_sizes=[MEDIUM, MEDIUM],
-                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+                parameters=[
+                    Parameter("id1", "country", argument_size=MEDIUM),
+                    Parameter("id2", "country", argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
@@ -181,11 +194,10 @@ class Chat80Module(SomeModule):
                 "flows_from_to",
                 query_function=self.flows_from_to,
                 relation_size=MEDIUM,
-                # argument_sizes=[MEDIUM, MEDIUM, MEDIUM]
                 parameters=[
-                    Parameter("id1", argument_size=MEDIUM),
-                    Parameter("id2", argument_size=MEDIUM),
-                    Parameter("id3", argument_size=MEDIUM),
+                    Parameter("id1", "river", argument_size=MEDIUM),
+                    Parameter("id2", "country", argument_size=MEDIUM),
+                    Parameter("id3", "ocean", argument_size=MEDIUM),
                 ],
             )
         )
@@ -194,8 +206,10 @@ class Chat80Module(SomeModule):
                 "contains",
                 query_function=self.contains,
                 relation_size=MEDIUM,
-                #  argument_sizes=[MEDIUM, MEDIUM],
-                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=MEDIUM)],
+                parameters=[
+                    Parameter("part", "area", argument_size=MEDIUM),
+                    Parameter("whole", "area", argument_size=MEDIUM),
+                ],
             )
         )
         self.add_relation(
@@ -203,30 +217,38 @@ class Chat80Module(SomeModule):
                 "has_population",
                 query_function=self.has_population,
                 relation_size=MEDIUM,
-                # argument_sizes=[MEDIUM, IGNORED],
-                parameters=[Parameter("id1", argument_size=MEDIUM), Parameter("id2", argument_size=IGNORED)],
+                parameters=[
+                    Parameter("id1", "country", argument_size=MEDIUM),
+                    Parameter("id2", int, argument_size=IGNORED),
+                ],
             )
         )
 
     def simple_entity(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select(context.relation.predicate, ["id"], arguments)
+        a = self.ds.select(context.relation, ["id"], arguments)
+        return a
 
     def capital(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select("country", ["capital"], arguments)
+        country = self.get_relation("country")
+        return self.ds.select(country, ["capital"], arguments)
 
     def borders(self, arguments: list, context: ExecutionContext) -> list[list]:
-        out_values = self.ds.select("borders", ["country_id1", "country_id2"], arguments)
-        out_values.extend(self.ds.select("borders", ["country_id2", "country_id1"], arguments))
+        borders = self.get_relation("borders")
+        out_values = self.ds.select(borders, ["country_id1", "country_id2"], arguments)
+        out_values.extend(self.ds.select(borders, ["country_id2", "country_id1"], arguments))
         return out_values
 
     def of(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select("country", ["capital", "id"], arguments)
+        country = self.get_relation("country")
+        return self.ds.select(country, ["capital", "id"], arguments)
 
     def size_of(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select("country", ["id", "area_div_1000"], arguments)
+        country = self.get_relation("country")
+        return self.ds.select(country, ["id", "area_div_1000"], arguments)
 
     def where(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select("country", ["id", "region"], arguments)
+        country = self.get_relation("country")
+        return self.ds.select(country, ["id", "region"], arguments)
 
     def some_continent(self, arguments: list, context: ExecutionContext) -> list[list]:
         country_id = arguments[0]
@@ -241,14 +263,16 @@ class Chat80Module(SomeModule):
 
         out_values = []
         for region in regions[context.relation.predicate]:
-            ids = self.ds.select_column(table, columns, [country_id, region])
+            relation = self.get_relation(table)
+            ids = self.ds.select_column(relation, columns, [country_id, region])
             for id in ids:
                 out_values.append([id])
 
         return out_values
 
     def flows_through(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select("contains", ["part", "whole"], arguments)
+        contains = self.get_relation("contains")
+        return self.ds.select(contains, ["part", "whole"], arguments)
 
     def south_of(self, arguments: list, context: ExecutionContext) -> list[list]:
         # this implementation could be done in SQL like "SELECT id FROM country WHERE lat < (SELECT lat FROM country WHERE id = %s)"
@@ -256,8 +280,9 @@ class Chat80Module(SomeModule):
         id2 = arguments[1]
         lat1 = None
         lat2 = None
-        latitudes = self.ds.select("country", ["id", "lat"], [Variable("E1"), Variable("E2")])
-        latitudes.append(["equator", 0])
+        country = self.get_relation("country")
+        latitudes = self.ds.select(country, ["id", "lat"], [Variable("E1"), Variable("E2")])
+        latitudes.append([Id("equator", "equator"), 0])
         for id, lat in latitudes:
             if id == id1:
                 lat1 = lat
@@ -275,42 +300,39 @@ class Chat80Module(SomeModule):
 
         return out_values
 
-    def in_function(self, arguments: list, context: ExecutionContext) -> list[list]:
-        out_values = self.ds.select("contains", ["part", "whole"], arguments)
-
-        part = arguments[0]
-        whole = arguments[1]
-        recurse = context.solver.solve([("contains", whole, E1), ("in", part, E1)])
-        out_values.extend(recurse)
-        return out_values
-
     def flows_from_to(self, arguments: list, context: ExecutionContext) -> list[list]:
         query_river = arguments[0]
         query_from = arguments[1]
         query_to = arguments[2]
-        flows = self.ds.select("river", ["id", "flows_through"], [Variable("E1"), Variable("E2")])
+        river = self.get_relation("river")
+        flows = self.ds.select(river, ["id", "flows_through"], [Variable("E1"), Variable("E2")])
         out_values = []
         for id, flows_through in flows:
             flows_through_elements = flows_through.split("|")
             db_to = flows_through_elements[0]
             db_from = flows_through_elements[1:2]
-            if isinstance(query_river, Variable) or id == query_river:
-                if isinstance(query_to, Variable) or query_to == db_to:
-                    if isinstance(query_from, Variable) or query_from in db_from:
+            if isinstance(query_river, Variable) or id == query_river.id:
+                if isinstance(query_to, Variable) or query_to.id == db_to:
+                    if isinstance(query_from, Variable) or query_from.id in db_from:
                         for f in db_from:
-                            out_values.append([id, f, db_to])
+                            out_values.append([id, Id(f, "country"), Id(db_to, "ocean")])
+
+        print(out_values)
 
         return out_values
 
     def contains(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select("contains", ["whole", "part"], arguments)
+        contains = self.get_relation("contains")
+        return self.ds.select(contains, ["whole", "part"], arguments)
 
     def has_population(self, arguments: list, context: ExecutionContext) -> list[list]:
 
-        out_values = self.ds.select("city", ["id", "population"], arguments)
+        city = self.get_relation("city")
+        out_values = self.ds.select(city, ["id", "population"], arguments)
         pops1 = [[row[0], row[1] * 1000] for row in out_values]
 
-        out_values = self.ds.select("country", ["id", "population"], arguments)
+        country = self.get_relation("country")
+        out_values = self.ds.select(country, ["id", "population"], arguments)
         pops2 = [[row[0], row[1] * 1000000] for row in out_values]
 
         return pops1 + pops2
@@ -319,12 +341,13 @@ class Chat80Module(SomeModule):
         name = arguments[1].lower()
 
         for type in ["country", "city", "sea", "river", "ocean", "continent"]:
-            out_values = self.ds.select(type, ["id", "id"], [name, Variable("E1")])
+            relation = self.get_relation(type)
+            out_values = self.ds.select(relation, ["id"], [name])
             if len(out_values) > 0:
-                return [[value[1], None, type] for value in out_values]
+                return [[value[0], None] for value in out_values]
 
         if name == "equator":
-            return [["equator", None, "equator"]]
+            return [[Id("equator", "equator"), None]]
 
         context.solver.solve(
             [Atom("store", [Atom("output_type", "name_not_found"), Atom("output_name_not_found", name)])]

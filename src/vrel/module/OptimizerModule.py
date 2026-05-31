@@ -1,4 +1,5 @@
-from vrel.entity.Relation import Relation
+from vrel.entity.Atom import Atom
+from vrel.entity.Relation import Parameter, Relation
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.module.optimizer.IsolateIndependentParts import IsolateIndependentParts
@@ -9,8 +10,20 @@ class OptimizerModule(SomeModule):
 
     def __init__(self) -> None:
         super().__init__()
-        self.add_relation(Relation("optimize_isolate", query_function=self.optimize_isolate)),
-        self.add_relation(Relation("optimize_cost_sort", query_function=self.optimize_cost_sort)),
+        self.add_relation(
+            Relation(
+                "optimize_isolate",
+                parameters=[Parameter("sem_in", list[Atom]), Parameter("sem_out", list[Atom])],
+                query_function=self.optimize_isolate,
+            )
+        ),
+        self.add_relation(
+            Relation(
+                "optimize_cost_sort",
+                parameters=[Parameter("sem_in", list[Atom]), Parameter("sem_out", list[Atom])],
+                query_function=self.optimize_cost_sort,
+            )
+        ),
 
     # ('optimize_isolate', SemIn, SemOut)
     # performs David H.D. Warren's optimization

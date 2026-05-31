@@ -25,21 +25,16 @@ def tuple_results_to_bindings(predicate: str, arguments: list, results: list, bi
             if result_arg is None:
                 continue
 
-            # todo: maybe declare properly
-            #
-            # if isinstance(result_arg, Variable):
-            #     raise Exception(
-            #         f"Result of '{predicate}' contains a variable: {result}"
-            #     )
+            if isinstance(arg, Variable):
 
-            u = unification(arg, result_arg, checked_result)
-            if u is None:
-                conflict = True
-            else:
-                # not sure why this is a problem, but it causes tests to fail when left out
-                for k, v in u.items():
-                    if not isinstance(v, Variable):
-                        checked_result[k] = v
+                u = unification(arg, result_arg, checked_result)
+                if u is None:
+                    conflict = True
+                else:
+                    # not sure why this is a problem, but it causes tests to fail when left out
+                    for k, v in u.items():
+                        if not isinstance(v, Variable):
+                            checked_result[k] = v
 
         if not conflict:
             checked_results.append(checked_result)

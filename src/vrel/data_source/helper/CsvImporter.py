@@ -1,4 +1,5 @@
 import csv
+from vrel.entity.Relation import Parameter, Relation
 from vrel.interface.SomeDataSource import SomeDataSource
 
 
@@ -19,4 +20,5 @@ class CsvImporter:
                     for header, element in zip(headers, row):
                         values.append(element)
 
-                    data_source.insert(table_name, headers, values)
+                    relation = Relation(table_name, [Parameter(header, header) for i, header in enumerate(headers)])
+                    data_source.insert(relation, headers, values)
