@@ -1,6 +1,6 @@
 from vrel.core.constants import INFINITE
 from vrel.data_source.SparqlDataSource import CONSTANT, ID, TEXT
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
@@ -20,18 +20,21 @@ class WikidataModule(SomeModule):
         self.add_relation(
             Relation(
                 "wikidata_label",
+                parameters=[Parameter("id", "thing"), Parameter("name", str)],
                 query_function=self.wikidata_label,
             )
         )
         self.add_relation(
             Relation(
                 "wikidata_place_of_birth",
+                parameters=[Parameter("id", "thing"), Parameter("place", str)],
                 query_function=self.wikidata_place_of_birth,
             )
         )
         self.add_relation(
             Relation(
                 "wikidata_person",
+                parameters=[Parameter("id", "thing")],
                 query_function=self.wikidata_person,
             )
         )

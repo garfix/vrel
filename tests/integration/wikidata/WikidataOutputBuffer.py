@@ -10,4 +10,4 @@ class WikidataOutputBuffer(BasicOutputBuffer):
 
         self.clear()
 
-        self.add_relation(Relation("output_report", parameters=[Parameter("report")]))
+        self.add_relation(Relation("output_report", parameters=[Parameter("report", str)]))
