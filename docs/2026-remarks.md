@@ -16,6 +16,8 @@ result:
 
 This is because `borders` has areas as types.
 
+Have not solved it yet, because it could be avoided by less checking result values.
+
 ## 2026-05-30
 
 Introducing Id(id, type).

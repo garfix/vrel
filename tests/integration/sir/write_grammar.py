@@ -66,13 +66,14 @@ def get_write_grammar():
             "if": [Atom("output_type", "location"), Atom("output_location", E1)],
         },
         {
-            "syn": "just_left_of(E1) -> 'Just to the left of the' text(E2)+'.'",
+            "syn": "just_left_of(E1) -> 'Just to the left of the' thing(E2)+'.'",
             "if": [Atom("just_left_of", E1, E2)],
         },
         {
-            "syn": "just_right_of(E1) -> 'Just to the right of the' text(E2)+'.'",
+            "syn": "just_right_of(E1) -> 'Just to the right of the' thing(E2)+'.'",
             "if": [Atom("just_left_of", E2, E1)],
         },
+        {"syn": "thing(E1) -> format(E1)", "format": lambda thing: thing.id},
         {
             "syn": "right_of(E1) -> 'Somewhere to the right of the following ..' format(List)",
             "if": [
@@ -99,4 +100,5 @@ def get_write_grammar():
 
 
 def format_list(elements):
-    return "(" + ", ".join(elements) + ")"
+    flattened = [element.id for element in elements]
+    return "(" + ", ".join(flattened) + ")"

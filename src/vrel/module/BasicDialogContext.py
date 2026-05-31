@@ -41,19 +41,22 @@ class BasicDialogContext(SqliteMemoryModule):
     def with_context(self, arguments: list, context: ExecutionContext) -> list[list]:
         name = arguments[0]
         body = arguments[1]
-        self.data_source.insert("context", ["name"], [name])
+        relation = self.get_relation("context")
+        self.data_source.insert(relation, ["name"], [name])
         context.solver.solve(body)
-        self.data_source.delete("context", ["name"], [name])
+        self.data_source.delete(relation, ["name"], [name])
         return [[None, None]]
 
     def start_context(self, arguments: list, context: ExecutionContext) -> list[list]:
         name = arguments[0]
-        self.data_source.insert("context", ["name"], [name])
+        context = self.get_relation("context")
+        self.data_source.insert(context, ["name"], [name])
         return [[None]]
 
     def end_context(self, arguments: list, context: ExecutionContext) -> list[list]:
         name = arguments[0]
-        self.data_source.delete("context", ["name"], [name])
+        context = self.get_relation("context")
+        self.data_source.delete(context, ["name"], [name])
         return [[None]]
 
     def same_as_read(self, arguments: list, context: ExecutionContext) -> list[list]:
