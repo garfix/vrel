@@ -9,6 +9,12 @@ class SimpleOutputBuffer(BasicOutputBuffer):
 
         self.clear()
 
-        self.add_relation(Relation("output_predicate", parameters=[Parameter("predication"), Parameter("predicate")]))
-        self.add_relation(Relation("output_subject", parameters=[Parameter("predication"), Parameter("subject")]))
-        self.add_relation(Relation("output_object", parameters=[Parameter("predication"), Parameter("object")]))
+        self.add_relation(
+            Relation("output_predicate", parameters=[Parameter("predication", None), Parameter("predicate", None)])
+        )
+        self.add_relation(
+            Relation("output_subject", parameters=[Parameter("predication", None), Parameter("subject", None)])
+        )
+        self.add_relation(
+            Relation("output_object", parameters=[Parameter("predication", None), Parameter("object", None)])
+        )

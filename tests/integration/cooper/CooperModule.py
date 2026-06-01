@@ -10,11 +10,9 @@ from vrel.entity.ExecutionContext import ExecutionContext
 
 class CooperModule(SomeModule):
 
-    ds: SomeDataSource
-
     def __init__(self, data_source: SomeDataSource) -> None:
         super().__init__()
-        self.ds = data_source
+        self.data_source = data_source
         self.add_relation(
             Relation(
                 "resolve_name",
@@ -214,7 +212,7 @@ class CooperModule(SomeModule):
         name = arguments[1].lower()
         entity = self.get_relation("entity")
 
-        out_values = self.ds.select(entity, ["id", "name"], [id, name])
+        out_values = self.select(entity, ["id", "name"], [id, name])
         if len(out_values) > 0:
             return out_values
         else:
@@ -222,12 +220,12 @@ class CooperModule(SomeModule):
             if isinstance(id, Variable):
                 # otherwise a new id is created for the name
                 id = AUTO
-            self.ds.insert(
+            self.insert(
                 entity,
                 ["id", "name"],
                 [id, name],
             )
-            out_values = self.ds.select(entity, ["id", "name"], [Variable("Id"), name])
+            out_values = self.select(entity, ["id", "name"], [Variable("Id"), name])
             id = out_values[0][0]
 
             return [[id, None]]
@@ -313,11 +311,11 @@ class CooperModule(SomeModule):
         return [[None, result]]
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        results = self.ds.select(context.relation, context.relation.get_parameter_names(), arguments)
+        results = self.select(context.relation, context.relation.get_parameter_names(), arguments)
         if len(results) > 0:
             return results
         else:
             return []
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.ds.insert(context.relation, context.relation.get_parameter_names(), arguments)
+        self.insert(context.relation, context.relation.get_parameter_names(), arguments)

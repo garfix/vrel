@@ -10,8 +10,6 @@ from vrel.interface.SomeModule import SomeModule
 
 class PlanAnalyzerDialogContext(SomeModule):
 
-    data_source: SimpleFrameDataSource
-
     def __init__(self) -> None:
         super().__init__()
         self.data_source = SimpleFrameDataSource()
@@ -30,7 +28,7 @@ class PlanAnalyzerDialogContext(SomeModule):
         term1, term2 = arguments
 
         if isinstance(term1, Variable) and isinstance(term2, Variable):
-            results = self.data_source.select(SAME_AS, ["id1", "id2"], [term1, term2])
+            results = self.select(SAME_AS, ["id1", "id2"], [term1, term2])
 
             hydrated = [[json.loads(e) for e in result] for result in results]
             return hydrated
@@ -47,10 +45,10 @@ class PlanAnalyzerDialogContext(SomeModule):
         return self.write(dehydrated, context)
 
     def query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.data_source.select(context.relation.predicate, context.relation.formal_parameters, arguments)
+        return self.select(context.relation.predicate, context.relation.formal_parameters, arguments)
 
     def write(self, arguments: list, context: ExecutionContext):
-        self.data_source.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
+        self.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
 
     def clear(self):
         self.data_source.clear()

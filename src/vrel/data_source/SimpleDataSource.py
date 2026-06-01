@@ -15,9 +15,8 @@ class SimpleDataSource(SomeDataSource):
         self.clear()
 
     # def insert(self, record: Record):
-    def insert(self, relation: Relation, columns: list[str], values: list):
+    def insert(self, table: str, columns: list[str], values: list):
 
-        table = relation.predicate
         values = self.create_dict(columns, values)
 
         if not table in self.store:
@@ -26,9 +25,8 @@ class SimpleDataSource(SomeDataSource):
         self.store[table].append(values)
 
     # def select(self, table, values: dict) -> list:
-    def select(self, relation: Relation, columns: list[str], list_values: list) -> list[list]:
+    def select(self, table: str, columns: list[str], list_values: list) -> list[list]:
 
-        table = relation.predicate
         values = self.create_dict(columns, list_values)
 
         if not table in self.store:

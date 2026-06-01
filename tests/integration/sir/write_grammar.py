@@ -49,11 +49,11 @@ def get_write_grammar():
             "if": [Atom("output_type", "count"), Atom("output_count", E1)],
         },
         {
-            "syn": "s() -> 'How many' text(E1) 'per' text(E2)+'?'",
+            "syn": "s() -> 'How many' thing(E1) 'per' thing(E2)+'?'",
             "if": [Atom("output_type", "how_many"), Atom("output_how_many", E1, E2)],
         },
         {
-            "syn": "s() -> 'Don\\'t know whether' text(E1) 'is part of' text(E2)",
+            "syn": "s() -> 'Don\\'t know whether' thing(E1) 'is part of' thing(E2)",
             "if": [
                 Atom("output_type", "dont_know_part_of"),
                 Atom("output_dont_know_part_of", E1, E2),

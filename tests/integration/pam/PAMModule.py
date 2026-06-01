@@ -71,10 +71,10 @@ class PAMModule(SomeModule):
         # self.add_relation(Relation("person", query_function=self.simple_entity))
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.ds.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
+        self.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select(context.relation.predicate, context.relation.formal_parameters, arguments)
+        return self.select(context.relation.predicate, context.relation.formal_parameters, arguments)
 
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
         _, name = arguments
@@ -82,4 +82,4 @@ class PAMModule(SomeModule):
         return [[name, None]]
 
     def simple_entity(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.ds.select(context.relation.predicate, ["id"], arguments)
+        return self.select(context.relation.predicate, ["id"], arguments)

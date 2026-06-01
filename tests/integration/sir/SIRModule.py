@@ -10,11 +10,9 @@ from vrel.entity.ExecutionContext import ExecutionContext
 
 class SIRModule(SomeModule):
 
-    ds: SomeDataSource
-
     def __init__(self, data_source: SomeDataSource) -> None:
         super().__init__()
-        self.ds = data_source
+        self.data_source = data_source
         self.add_relation(
             Relation(
                 "resolve_name",
@@ -95,11 +93,11 @@ class SIRModule(SomeModule):
         ),
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        results = self.ds.select(context.relation, context.relation.get_parameter_names(), arguments)
+        results = self.select(context.relation, context.relation.get_parameter_names(), arguments)
         return results
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.ds.insert(context.relation, context.relation.get_parameter_names(), arguments)
+        self.insert(context.relation, context.relation.get_parameter_names(), arguments)
 
     def part_of_n(self, arguments: list, context: ExecutionContext) -> list[list]:
         part_variable = arguments[0]
@@ -108,7 +106,7 @@ class SIRModule(SomeModule):
         whole_type = whole_variable
         part_type = self.get_type(context, part_variable, part_variable)
 
-        results = self.ds.select(context.relation, context.relation.get_parameter_names(), arguments)
+        results = self.select(context.relation, context.relation.get_parameter_names(), arguments)
 
         if len(results) == 0:
             if part_type is not None and whole_type is not None:

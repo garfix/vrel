@@ -14,7 +14,7 @@ class Chat80Module(SomeModule):
 
     def __init__(self, data_source: SomeDataSource) -> None:
         super().__init__()
-        self.ds = data_source
+        self.data_source = data_source
         self.add_relation(
             Relation(
                 "river",
@@ -225,30 +225,30 @@ class Chat80Module(SomeModule):
         )
 
     def simple_entity(self, arguments: list, context: ExecutionContext) -> list[list]:
-        a = self.ds.select(context.relation, ["id"], arguments)
+        a = self.select(context.relation, ["id"], arguments)
         return a
 
     def capital(self, arguments: list, context: ExecutionContext) -> list[list]:
         country = self.get_relation("country")
-        return self.ds.select(country, ["capital"], arguments)
+        return self.select(country, ["capital"], arguments)
 
     def borders(self, arguments: list, context: ExecutionContext) -> list[list]:
         borders = self.get_relation("borders")
-        out_values = self.ds.select(borders, ["country_id1", "country_id2"], arguments)
-        out_values.extend(self.ds.select(borders, ["country_id2", "country_id1"], arguments))
+        out_values = self.select(borders, ["country_id1", "country_id2"], arguments)
+        out_values.extend(self.select(borders, ["country_id2", "country_id1"], arguments))
         return out_values
 
     def of(self, arguments: list, context: ExecutionContext) -> list[list]:
         country = self.get_relation("country")
-        return self.ds.select(country, ["capital", "id"], arguments)
+        return self.select(country, ["capital", "id"], arguments)
 
     def size_of(self, arguments: list, context: ExecutionContext) -> list[list]:
         country = self.get_relation("country")
-        return self.ds.select(country, ["id", "area_div_1000"], arguments)
+        return self.select(country, ["id", "area_div_1000"], arguments)
 
     def where(self, arguments: list, context: ExecutionContext) -> list[list]:
         country = self.get_relation("country")
-        return self.ds.select(country, ["id", "region"], arguments)
+        return self.select(country, ["id", "region"], arguments)
 
     def some_continent(self, arguments: list, context: ExecutionContext) -> list[list]:
         country_id = arguments[0]
@@ -264,7 +264,7 @@ class Chat80Module(SomeModule):
         out_values = []
         for region in regions[context.relation.predicate]:
             relation = self.get_relation(table)
-            ids = self.ds.select_column(relation, columns, [country_id, region])
+            ids = self.select_column(relation, columns, [country_id, region])
             for id in ids:
                 out_values.append([id])
 
@@ -272,7 +272,7 @@ class Chat80Module(SomeModule):
 
     def flows_through(self, arguments: list, context: ExecutionContext) -> list[list]:
         contains = self.get_relation("contains")
-        return self.ds.select(contains, ["part", "whole"], arguments)
+        return self.select(contains, ["part", "whole"], arguments)
 
     def south_of(self, arguments: list, context: ExecutionContext) -> list[list]:
         # this implementation could be done in SQL like "SELECT id FROM country WHERE lat < (SELECT lat FROM country WHERE id = %s)"
@@ -281,7 +281,7 @@ class Chat80Module(SomeModule):
         lat1 = None
         lat2 = None
         country = self.get_relation("country")
-        latitudes = self.ds.select(country, ["id", "lat"], [Variable("E1"), Variable("E2")])
+        latitudes = self.select(country, ["id", "lat"], [Variable("E1"), Variable("E2")])
         latitudes.append([Id("equator", "equator"), 0])
         for id, lat in latitudes:
             if id == id1:
@@ -305,7 +305,7 @@ class Chat80Module(SomeModule):
         query_from = arguments[1]
         query_to = arguments[2]
         river = self.get_relation("river")
-        flows = self.ds.select(river, ["id", "flows_through"], [Variable("E1"), Variable("E2")])
+        flows = self.select(river, ["id", "flows_through"], [Variable("E1"), Variable("E2")])
         out_values = []
         for id, flows_through in flows:
             flows_through_elements = flows_through.split("|")
@@ -323,16 +323,16 @@ class Chat80Module(SomeModule):
 
     def contains(self, arguments: list, context: ExecutionContext) -> list[list]:
         contains = self.get_relation("contains")
-        return self.ds.select(contains, ["whole", "part"], arguments)
+        return self.select(contains, ["whole", "part"], arguments)
 
     def has_population(self, arguments: list, context: ExecutionContext) -> list[list]:
 
         city = self.get_relation("city")
-        out_values = self.ds.select(city, ["id", "population"], arguments)
+        out_values = self.select(city, ["id", "population"], arguments)
         pops1 = [[row[0], row[1] * 1000] for row in out_values]
 
         country = self.get_relation("country")
-        out_values = self.ds.select(country, ["id", "population"], arguments)
+        out_values = self.select(country, ["id", "population"], arguments)
         pops2 = [[row[0], row[1] * 1000000] for row in out_values]
 
         return pops1 + pops2
@@ -342,7 +342,7 @@ class Chat80Module(SomeModule):
 
         for type in ["country", "city", "sea", "river", "ocean", "continent"]:
             relation = self.get_relation(type)
-            out_values = self.ds.select(relation, ["id"], [name])
+            out_values = self.select(relation, ["id"], [name])
             if len(out_values) > 0:
                 return [[value[0], None] for value in out_values]
 

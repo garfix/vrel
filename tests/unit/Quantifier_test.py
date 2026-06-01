@@ -6,7 +6,7 @@ from vrel.core.Model import Model
 from vrel.core.constants import E1, E2, COMBINED, SEPARATE
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Atom import Atom
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
@@ -26,9 +26,15 @@ class SimpleModule(SomeModule):
     def __init__(self, data_source: SomeDataSource) -> None:
         super().__init__()
         self.ds = data_source
-        self.add_relation(Relation("parent", query_function=self.parent))
-        self.add_relation(Relation("child", query_function=self.child))
-        self.add_relation(Relation("have", query_function=self.have))
+        self.add_relation(
+            Relation(
+                "parent", parameters=[Parameter("parent", None), Parameter("child", None)], query_function=self.parent
+            )
+        )
+        self.add_relation(Relation("child", parameters=[Parameter("id", int)], query_function=self.child))
+        self.add_relation(
+            Relation("have", parameters=[Parameter("parent", None), Parameter("child", None)], query_function=self.have)
+        )
 
     def parent(self, arguments: list, context: ExecutionContext) -> list[list]:
         out_values = self.ds.select("has_child", ["parent"], arguments)

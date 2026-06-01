@@ -20,5 +20,4 @@ class CsvImporter:
                     for header, element in zip(headers, row):
                         values.append(element)
 
-                    relation = Relation(table_name, [Parameter(header, header) for i, header in enumerate(headers)])
-                    data_source.insert(relation, headers, values)
+                    data_source.insert(table_name, headers, values)

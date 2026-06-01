@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from vrel.entity.Id import Id
-from vrel.entity.Relation import Relation
 
 
 class SomeDataSource(ABC):
@@ -10,7 +9,7 @@ class SomeDataSource(ABC):
     """
 
     @abstractmethod
-    def select(self, relation: Relation, columns: list[str], values: list) -> list[list]:
+    def select(self, table: str, columns: list[str], values: list) -> list[list]:
         """
         This method treats datasource access as were it a simple SQL SELECT statement:
         SELECT <columns>+ FROM <table> WHERE <column>=<value>*
@@ -20,28 +19,17 @@ class SomeDataSource(ABC):
         """
         raise Exception("select not implemented")
 
-    def select_column(self, relation: Relation, columns: list[str], values: list) -> list:
-        return [row[0] for row in self.select(relation, columns, values)]
+    def select_column(self, table: str, columns: list[str], values: list) -> list:
+        return [row[0] for row in self.select(table, columns, values)]
 
-    def insert(self, relation: Relation, columns: list[str], values: list):
+    def insert(self, table: str, columns: list[str], values: list):
         raise Exception("insert not implemented")
+
+    def insert(self, table: str, columns: list[str], values: list):
+        raise Exception("insert not implemented")
+
+    def delete(self, table: str, columns: list[str], values: list):
+        raise Exception("delete not implemented")
 
     def clear(self):
         raise Exception("clear not implemented")
-
-    def hydrate(self, relation: Relation, columns: list[str], values: list):
-        if relation.parameters is None:
-            raise Exception(f"{relation.predicate} has no parameters")
-
-        new_values = []
-        for value, column in zip(values, columns):
-            parameter = relation.get_parameter_by_name(column)
-            if not parameter:
-                raise Exception(f"Parameter not found in relation {relation.predicate}: {column}")
-            if isinstance(parameter.type, str):
-                new_value = Id(value, parameter.type)
-            else:
-                new_value = value
-            new_values.append(new_value)
-
-        return new_values

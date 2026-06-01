@@ -7,8 +7,6 @@ from vrel.entity.ExecutionContext import ExecutionContext
 
 class SqliteMemoryModule(SomeModule):
 
-    data_source: Sqlite3DataSource
-
     def __init__(self) -> None:
         super().__init__()
         self.clear()
@@ -25,7 +23,7 @@ class SqliteMemoryModule(SomeModule):
             relation.write_function = self.write
 
     def query(self, values: list, context: ExecutionContext) -> list[list]:
-        return self.data_source.select(context.relation, context.relation.get_parameter_names(), values)
+        return self.select(context.relation, context.relation.get_parameter_names(), values)
 
     def write(self, values: list, context: ExecutionContext):
-        self.data_source.insert(context.relation, context.relation.get_parameter_names(), values)
+        self.insert(context.relation, context.relation.get_parameter_names(), values)

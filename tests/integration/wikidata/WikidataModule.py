@@ -12,11 +12,9 @@ class WikidataModule(SomeModule):
     This module wraps several Wikidata predicates
     """
 
-    ds: SomeDataSource
-
     def __init__(self, data_source: SomeDataSource) -> None:
         super().__init__()
-        self.ds = data_source
+        self.data_source = data_source
         self.add_relation(
             Relation(
                 "wikidata_label",
@@ -43,7 +41,7 @@ class WikidataModule(SomeModule):
         person = arguments[0]
 
         # person isa human
-        out_values = self.ds.select("wdt:P31", [ID, CONSTANT], [person, "wd:Q5"])
+        out_values = self.data_source.select("wdt:P31", [ID, CONSTANT], [person, "wd:Q5"])
         return [[None] for value in out_values]
 
     def wikidata_label(self, arguments: list, context: ExecutionContext) -> list[list]:
@@ -51,10 +49,10 @@ class WikidataModule(SomeModule):
         name = arguments[1]
 
         # try with given case
-        out_values = self.ds.select("rdfs:label", [ID, TEXT], [person, name])
+        out_values = self.data_source.select("rdfs:label", [ID, TEXT], [person, name])
         if len(out_values) == 0 and name != name.title():
             # try with first letters capitalized
-            out_values = self.ds.select("rdfs:label", [ID, TEXT], [person, name.title()])
+            out_values = self.data_source.select("rdfs:label", [ID, TEXT], [person, name.title()])
 
         if len(out_values) > 0:
             return out_values
@@ -70,5 +68,5 @@ class WikidataModule(SomeModule):
         if not isinstance(place, Variable):
             raise Exception("Place should be None: " + str(arguments))
 
-        out_values = self.ds.select("wdt:P19", [ID, ID], [person, place])
+        out_values = self.data_source.select("wdt:P19", [ID, ID], [person, place])
         return out_values

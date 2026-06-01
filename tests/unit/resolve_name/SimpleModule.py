@@ -1,5 +1,5 @@
-from vrel.core.constants import AUTO, TYPE_ENTITY
-from vrel.entity.Relation import Relation
+from vrel.core.constants import AUTO
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
@@ -13,7 +13,13 @@ class SimpleModule(SomeModule):
     def __init__(self, data_source: SomeDataSource) -> None:
         super().__init__()
         self.ds = data_source
-        self.add_relation(Relation("resolve_name", query_function=self.resolve_name))
+        self.add_relation(
+            Relation(
+                "resolve_name",
+                parameters=[Parameter("id", int), Parameter("name", str)],
+                query_function=self.resolve_name,
+            )
+        )
 
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
         id = arguments[0]

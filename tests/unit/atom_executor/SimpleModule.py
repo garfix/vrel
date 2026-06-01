@@ -1,5 +1,5 @@
 from vrel.entity.Atom import Atom
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 
@@ -8,7 +8,13 @@ class SimpleModule(SomeModule):
 
     def __init__(self) -> None:
         super().__init__()
-        self.add_relation(Relation("resolve_name", query_function=self.resolve_name))
+        self.add_relation(
+            Relation(
+                "resolve_name",
+                parameters=[Parameter("id", int), Parameter("name", str)],
+                query_function=self.resolve_name,
+            )
+        )
 
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
         name = arguments[0].lower()
