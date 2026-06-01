@@ -13,10 +13,6 @@ class Sqlite3DataSource(SomeDataSource):
 
     def select(self, table: str, columns: list[str], values: list) -> list[list]:
 
-        print(table)
-        print(columns)
-        print(values)
-
         where = "TRUE"
         variables = []
         for column, term in zip(columns, values):

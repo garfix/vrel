@@ -95,5 +95,3 @@ class SameAsHandler(SomeSameAsHandler):
                 self.id_variants[id2.type][str(id2.id)] = [id2]
             self.id_variants[id1.type][str(id1.id)].append(id2)
             self.id_variants[id2.type][str(id2.id)].append(id1)
-
-        print(self.id_variants)

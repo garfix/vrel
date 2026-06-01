@@ -317,8 +317,6 @@ class Chat80Module(SomeModule):
                         for f in db_from:
                             out_values.append([id, Id(f, "country"), Id(db_to, "ocean")])
 
-        print(out_values)
-
         return out_values
 
     def contains(self, arguments: list, context: ExecutionContext) -> list[list]:
