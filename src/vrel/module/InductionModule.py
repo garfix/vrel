@@ -1,8 +1,10 @@
 from vrel.core.functions.terms import bind_variables, has_variables
 from vrel.core.functions.unification import unification
 from vrel.core.functions.variables import generate_variables
+from vrel.entity.Atom import Atom
 from vrel.entity.InductionRule import InductionRule
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
+from vrel.interface import SomeModel
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
@@ -21,17 +23,35 @@ class InductionModule(SomeModule):
     plan_analyzer_rules: list[InductionRule]
     deduction_rules: list[InductionRule]
     variable_generator: VariableGenerator
+    induction_model: SomeModel
 
-    def __init__(self) -> None:
+    def __init__(self, induction_model: SomeModel) -> None:
         super().__init__()
-        self.add_relation(Relation("induce_facts", query_function=self.induce_facts))
-        self.add_relation(Relation("analyze_plans", query_function=self.analyze_plans))
-        self.add_relation(Relation("explain", query_function=self.explain))
+
+        self.induction_model = induction_model
+
+        self.add_relation(
+            Relation("induce_facts", parameters=[Parameter("body", list[Atom])], query_function=self.induce_facts)
+        )
+        self.add_relation(
+            Relation("analyze_plans", parameters=[Parameter("body", list[Atom])], query_function=self.analyze_plans)
+        )
+        self.add_relation(
+            Relation(
+                "explain",
+                parameters=[
+                    Parameter("body", list[Atom]),
+                    Parameter("variable", None),
+                    Parameter("explanation", list[Atom]),
+                ],
+                query_function=self.explain,
+            )
+        )
         self.rules = {}
         self.variable_generator = VariableGenerator("ID")
 
         # the analyzer contains data that need to persist between sentences
-        self.plan_analyzer = PlanAnalyzer()
+        self.plan_analyzer = PlanAnalyzer(induction_model)
         self.fact_induction_rules = []
         self.plan_analyzer_rules = []
         self.deduction_rules = []

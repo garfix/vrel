@@ -14,6 +14,8 @@ class PAMDB(Sqlite3DataSource):
         cursor.execute("CREATE TABLE female (id TEXT)")
         cursor.execute("CREATE TABLE person (id TEXT)")
         cursor.execute("CREATE TABLE her (id TEXT)")
-        cursor.execute("CREATE TABLE pick_up (id1 TEXT, id2 TEXT, id3 TEXT)")
+        # cursor.execute("CREATE TABLE pick_up (id1 TEXT, id2 TEXT, id3 TEXT)")
+        cursor.execute("CREATE TABLE get_into (id TEXT, subject TEXT, object TEXT)")
+        cursor.execute("CREATE TABLE plan (id TEXT, subject TEXT, object TEXT)")
 
         super().__init__(connection)

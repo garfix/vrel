@@ -1,33 +1,35 @@
+import copy
+
 from vrel.core.Model import Model
 from vrel.core.Solver import Solver
 from vrel.core.functions.terms import bind_variables
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.InferenceRule import InferenceRule
+from vrel.interface.SomeModel import SomeModel
+from vrel.interface.SomeModule import SomeModule
 from vrel.module.PlainReadWriteModule import PlainReadWriteModule
 from vrel.module.DeductionModule import DeductionModule
 
 
 def match(
-    pattern, current_subject, binding: dict, deduction_rules: list[InferenceRule], context: ExecutionContext, sentence
+    pattern,
+    current_subject,
+    binding: dict,
+    deduction_rules: list[InferenceRule],
+    context: ExecutionContext,
+    sentence,
+    induction_model: SomeModel,
 ):
-    model = Model(
-        [
-            # PlainReadWriteModule(sentence),
-            PlainReadWriteModule(current_subject),
-            DeductionModule(deduction_rules),
-        ]
-    )
-    # print("----------------------------")
-    # print()
-    # print("pattern", pattern)
-    # print("sentence", sentence)
-    # print("current_subject", current_subject)
-    solver = Solver(model)
+    module = induction_model.modules[1]
+    module.clear()
+
+    for atom in current_subject:
+        module.add_atom(atom)
+
+    solver = Solver(induction_model)
 
     bound = bind_variables(pattern, binding)
 
     results = solver.solve(bound)
-    # print("results", results)
-    # results = context.solver.solve(pattern)
 
     return results[0] if len(results) > 0 else None

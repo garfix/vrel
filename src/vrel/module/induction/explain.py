@@ -31,7 +31,7 @@ def explain(
             event1 = make_query(event)
 
             model = copy.copy(context.model)
-            model.modules.append(PlainReadWriteModule(event1))
+            # model.modules.append(PlainReadWriteModule(event1))
 
             solver = Solver(model)
 

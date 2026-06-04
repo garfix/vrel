@@ -1,4 +1,5 @@
 from vrel.entity.Atom import Atom
+from vrel.entity.Id import Id
 from vrel.entity.Variable import Variable
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
@@ -35,7 +36,7 @@ def generate_constants(term: any, variable_generator: VariableGenerator, variabl
         if term.name in variable_map:
             return variable_map[term.name]
         else:
-            v = variable_generator.next()
+            v = Id(variable_generator.next(), "entity")
             variable_map[term.name] = v
             return v
     else:
@@ -56,6 +57,9 @@ def variablize(term):
     # variable
     elif isinstance(term, str) and term[0:3] == "DLG":
         return Variable(term)
+    # id
+    elif isinstance(term, Id):
+        return Variable(term.id)
     else:
         # just the value
         return term

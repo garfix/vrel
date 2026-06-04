@@ -1,3 +1,31 @@
+## 2026-06-03
+
+I want to add a `match` function next to `solve`, that will try to match two atom lists.
+
+    match(Needle, Haystack)
+
+Where Needle may be
+
+    [
+    (grasp
+    1. S1
+    2. E1
+    3. E2)]
+
+and Haystack
+
+    [
+    (pick_up
+        1. 'DLG1'
+        2. 'DLG2'
+        3. 'DLG3'),
+    (michelin_guide
+        1. 'DLG3'),
+    (she
+        1. 'DLG2')]
+
+This is easiest to implement as a model with the haystack as contents, with some additional deduction rules.
+
 ## 2026-05-31
 
 In CHAT-80 I stumble over the difference between a Relation and the used columns within the relation. Often not all columns are used.

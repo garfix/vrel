@@ -1,23 +1,100 @@
-from vrel.entity.Relation import Relation
+from vrel.entity.Id import Id
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
+from vrel.module.PlainReadWriteModule import PlainReadWriteModule
 
 
-class PAMModule(SomeModule):
+class PAMModule(PlainReadWriteModule):
 
-    ds: SomeDataSource
-
-    def __init__(self, data_source: SomeDataSource) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.ds = data_source
-        self.add_relation(Relation("resolve_name", query_function=self.resolve_name))
+
+        self.add_relation(
+            Relation(
+                "resolve_name",
+                parameters=[Parameter("id", int), Parameter("name", str)],
+                query_function=self.resolve_name,
+            )
+        )
 
         # self.add_relation(Relation("hungry", query_function=self.simple_entity))
         # self.add_relation(Relation("michelin_guide", query_function=self.simple_entity))
         # self.add_relation(Relation("pick_up", query_function=self.common_query, formal_parameters=['id1', 'id2', 'id3'], write_function=self.common_write))
-        # self.add_relation(Relation("get_into", query_function=self.simple_entity))
+        self.add_relation(
+            Relation(
+                "get_into",
+                parameters=[Parameter("id", "event"), Parameter("subject", "person"), Parameter("object", "thing")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "pick_up",
+                parameters=[Parameter("id", "event"), Parameter("subject", "person"), Parameter("object", "thing")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "hungry",
+                parameters=[Parameter("id", "event"), Parameter("subject", "person")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "plan",
+                parameters=[Parameter("content", "event")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "goal",
+                parameters=[Parameter("content", "event")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "car",
+                parameters=[Parameter("id", "car")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "she",
+                parameters=[Parameter("id", "person")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "her",
+                parameters=[Parameter("id", "person")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "michelin_guide",
+                parameters=[Parameter("id", "book")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
         # self.add_relation(Relation("car", query_function=self.simple_entity))
         # self.add_relation(Relation("name", query_function=self.simple_entity))
         # self.add_relation(Relation("female", query_function=self.simple_entity))
@@ -71,15 +148,12 @@ class PAMModule(SomeModule):
         # self.add_relation(Relation("person", query_function=self.simple_entity))
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        self.insert(context.relation.predicate, context.relation.formal_parameters, arguments)
+        self.insert(context.relation, context.relation.get_parameter_names(), arguments)
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.select(context.relation.predicate, context.relation.formal_parameters, arguments)
+        return self.select(context.relation, context.relation.get_parameter_names(), arguments)
 
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
-        _, name = arguments
+        name = arguments[1]
 
-        return [[name, None]]
-
-    def simple_entity(self, arguments: list, context: ExecutionContext) -> list[list]:
-        return self.select(context.relation.predicate, ["id"], arguments)
+        return [[Id(name, "person"), name]]

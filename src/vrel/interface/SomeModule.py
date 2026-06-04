@@ -19,14 +19,13 @@ class SomeModule(ABC):
     def get_relation(self, predicate: str) -> Relation | None:
         return self.relations[predicate] if predicate in self.relations else None
 
-    def select(self, relation: Relation, columns: list[str], rows: list[str]):
-        rows = self.data_source.select(relation.predicate, columns, rows)
-        return [self.hydrate(relation, columns, row) for row in rows]
+    def select(self, relation: Relation, columns: list[str], values: list[str]):
+        values = self.data_source.select(relation.predicate, columns, values)
+        return [self.hydrate(relation, columns, row) for row in values]
 
-    def select_column(self, relation: Relation, columns: list[str], rows: list[str]):
-        rows = self.data_source.select(relation.predicate, columns, rows)
-        hydrated = [self.hydrate(relation, columns, row) for row in rows]
-        return [row[0] for row in hydrated]
+    def select_column(self, relation: Relation, columns: list[str], values: list[str]):
+        values = self.select(relation, columns, values)
+        return [row[0] for row in values]
 
     def insert(self, relation: Relation, columns: list[str], values: list[str]):
         self.data_source.insert(relation.predicate, columns, values)

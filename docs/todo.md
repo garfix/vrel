@@ -1,6 +1,6 @@
 ## todo
 
-- sir nog 1 probleem
+- same-as handler wordt een zelfstandige module met een eigen data source
 - wikidata demo gebruikt nog tabellen en geen ids
 - denk na over onderscheid tabel / Relation / columns; note: borders (id1, id2) en (id2, id1)
 - check alle DataSources: hydration / dehydration

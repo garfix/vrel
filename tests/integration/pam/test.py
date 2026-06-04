@@ -34,14 +34,14 @@ class TestPAM(unittest.TestCase):
 
         # define the database
 
-        db = PAMDB()
-        facts = PAMModule(db)
+        # db = PAMDB()
+        facts = PAMModule()
 
         # define the intents and other inferences
 
         inferences = DeductionModule()
         inferences.import_rules(path + "intents.pl")
-        # inferences.import_rules(path + "deductions.pl")
+        inferences.import_rules(path + "deductions.pl")
 
         # a data source to store information for output
 
@@ -50,13 +50,14 @@ class TestPAM(unittest.TestCase):
 
         # add the plan analyzer
 
-        inductions = InductionModule()
+        induction_model = Model([PAMModule(), inferences])
+
+        inductions = InductionModule(induction_model)
         inductions.import_fact_induction_rules(path + "fact_induction.pl")
         inductions.import_plan_analyzer_rules(path + "plan_analysis.pl")
-        inductions.import_deduction_rules(path + "deductions.pl")
+        # inductions.import_deduction_rules(path + "deductions.pl")
 
         plan_analyzer_dialog_content = PlanAnalyzerDialogContext()
-        read_write_module = PlainReadWriteModule()
 
         # define the model
 
@@ -71,8 +72,7 @@ class TestPAM(unittest.TestCase):
                 output_buffer,
                 dialog_context,
                 dialog_context,
-                plan_analyzer_dialog_content,
-                read_write_module,
+                # plan_analyzer_dialog_content,
             ],
             same_as_handler=SameAsHandler(),
         )
@@ -102,12 +102,12 @@ class TestPAM(unittest.TestCase):
                 # Example from MicroPAM
                 [
                     "Willa was hungry. She picked up the Michelin guide. She got into her car.",
-                    "OK",
+                    "OK1",
                 ],
-                [
-                    "Why did Willa pick up a Michelin guide?",
-                    "Because she wanted to be not hungry.",
-                ],
+                # [
+                #     "Why did Willa pick up a Michelin guide?",
+                #     "Because she wanted to be not hungry.",
+                # ],
             ],
             [
                 # 14 A detailed example
@@ -207,5 +207,5 @@ class TestPAM(unittest.TestCase):
             # clear
             dialog_context.clear()
             plan_analyzer_dialog_content.clear()
-            db = PAMDB()
-            facts.ds = db
+            # db = PAMDB()
+            # facts.data_source = db

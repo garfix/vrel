@@ -1,10 +1,11 @@
 intent_understand(Story) :-
     # log('story', Story),
-    store(output_type('understood')),
     reify(Story, Reified),
-    # store(Reified),
+    log('reified', Reified),
     induce_facts(Reified),
-    analyze_plans(Reified).
+    analyze_plans(Reified),
+    store(output_type('understood')).
+
 
 intent_explanation(Question, C1) :-
     # log('question', Question),

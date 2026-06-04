@@ -2,10 +2,13 @@ from vrel.core.functions.helper import hash_it
 from vrel.core.functions.terms import bind_variables
 from vrel.core.functions.variables import variablize
 from vrel.entity.Atom import Atom
+from vrel.entity.Id import Id
 from vrel.entity.InferenceRule import InferenceRule
 from vrel.entity.InductionRule import InductionRule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.Variable import Variable
+from vrel.interface.SomeModel import SomeModel
+from vrel.interface.SomeModule import SomeModule
 from vrel.module.induction.Link import Link
 from vrel.module.induction.explain import explain
 from vrel.module.induction.match import match
@@ -14,6 +17,8 @@ from vrel.module.transform.query import make_query
 
 # Based on MicroPAM (see https://github.com/garfix/micropam)
 class PlanAnalyzer:
+
+    induction_model: SomeModule
 
     known_themes: list[Atom]
     known_goals: list[Atom]
@@ -24,7 +29,8 @@ class PlanAnalyzer:
 
     try_check: dict
 
-    def __init__(self):
+    def __init__(self, induction_model: SomeModel):
+        self.induction_model = induction_model
         self.known_themes = []
         self.known_goals = []
         self.known_plans = []
@@ -208,19 +214,16 @@ class PlanAnalyzer:
                 cs = make_query(current_subject)
 
                 subject_binding = match(
-                    rule.antecedent,
-                    cs,
-                    {},
-                    deduction_rules,
-                    context,
-                    sentence,
+                    rule.antecedent, cs, {}, deduction_rules, context, sentence, self.induction_model
                 )
                 if subject_binding is not None:
 
                     consequent1 = bind_variables(rule.consequent, subject_binding)
                     consequent2 = variablize(consequent1)
 
-                    item_binding = match(consequent2, item, {}, deduction_rules, context, current_subject)
+                    item_binding = match(
+                        consequent2, item, {}, deduction_rules, context, current_subject, self.induction_model
+                    )
 
                     if item_binding is not None:
                         # the equality between dialog variables that connect two sentences can now be stored
@@ -255,13 +258,13 @@ class PlanAnalyzer:
         log: list,
     ):
         # print(item_binding)
+        # exit()
 
         for variable in item_binding:
-            # todo: this excludes rule variables like E1, but they might need to be included
-            if isinstance(item_binding[variable], str) and variable[0:3] == "DLG":
+            if isinstance(item_binding[variable], Id):
                 log.append(f"SAME AS {variable}, {item_binding[variable]}")
                 print(f"SAME AS {variable}, {item_binding[variable]}")
-                context.solver.write_atom(Atom("same_as", variable, item_binding[variable]))
+                context.solver.write_atom(Atom("same_as", Id(variable, "entity"), item_binding[variable]))
 
     def try_inference(
         self,
@@ -322,14 +325,7 @@ class PlanAnalyzer:
             last_rule = rules.pop()
             # print("TRY RULES")
             cs = make_query(current_subject)
-            binding = match(
-                last_rule.antecedent,
-                cs,
-                {},
-                deduction_rules,
-                context,
-                sentence,
-            )
+            binding = match(last_rule.antecedent, cs, {}, deduction_rules, context, sentence, self.induction_model)
 
             # log.append('')
             # log.append(f' XX antecedent: {last_rule.antecedent}')
@@ -362,6 +358,11 @@ class PlanAnalyzer:
             # print("push B", len(chain))
 
             c = bind_variables(last_rule.consequent, binding)
+            # print("===")
+            # print(last_rule.antecedent)
+            # print(last_rule.consequent)
+            # print(cs)
+            # print(binding)
             # print(c)
 
             return c
