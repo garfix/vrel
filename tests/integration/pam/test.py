@@ -32,6 +32,10 @@ class TestPAM(unittest.TestCase):
 
         facts = PAMModule()
 
+        # create a store for same_as relations
+
+        same_as = SameAsModule()
+
         # define the intents and other inferences
 
         inferences = DeductionModule()
@@ -44,13 +48,11 @@ class TestPAM(unittest.TestCase):
 
         # add the plan analyzer
 
-        induction_model = Model([PAMModule(), inferences])
+        induction_model = Model([PAMModule(), inferences, same_as])
 
         inductions = InductionModule(induction_model)
         inductions.import_fact_induction_rules(path + "fact_induction.pl")
         inductions.import_plan_analyzer_rules(path + "plan_analysis.pl")
-
-        same_as = SameAsModule()
 
         # define the model
 
@@ -89,12 +91,12 @@ class TestPAM(unittest.TestCase):
                 # Example from MicroPAM
                 [
                     "Willa was hungry. She picked up the Michelin guide. She got into her car.",
-                    "OK1",
+                    "OK",
                 ],
-                # [
-                #     "Why did Willa pick up a Michelin guide?",
-                #     "Because she wanted to be not hungry.",
-                # ],
+                [
+                    "Why did Willa pick up a Michelin guide?",
+                    "Because she wanted to be not hungry.",
+                ],
             ],
             [
                 # 14 A detailed example

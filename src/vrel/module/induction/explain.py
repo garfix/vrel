@@ -1,13 +1,8 @@
-import copy
-
-from vrel.core.Model import Model
 from vrel.core.Solver import Solver
 from vrel.entity.Atom import Atom
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.InductionRule import InductionRule
 from vrel.entity.InferenceRule import InferenceRule
-from vrel.module.DeductionModule import DeductionModule
-from vrel.module.PlainReadWriteModule import PlainReadWriteModule
 from vrel.module.transform.query import make_query
 
 
@@ -18,10 +13,9 @@ def explain(
     context: ExecutionContext,
     known_events: list[Atom],
     known_links: list,
+    induction_model,
 ):
     query = make_query(question)
-
-    context.logger.add_value("query", query)
 
     for event in known_events:
 
@@ -29,14 +23,21 @@ def explain(
 
             event1 = make_query(event)
 
-            model = copy.copy(context.model)
+            module = induction_model.modules[1]
+            module.clear()
+
+            for atom in event1:
+                module.add_atom(atom)
+
+            # model = copy.copy(context.model)
             # model.modules.append(PlainReadWriteModule(event1))
 
-            solver = Solver(model)
+            solver = Solver(induction_model)
 
             result = solver.solve(query)
 
-            context.logger.add_value("event", event1)
+            context.logger.add_value("query", query)
+            context.logger.add_value("event1", event1)
             context.logger.add_value("result", result)
 
     return question

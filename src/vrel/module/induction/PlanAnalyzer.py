@@ -129,7 +129,15 @@ class PlanAnalyzer:
         deduction_rules: list[InferenceRule],
         context: ExecutionContext,
     ):
-        return explain(question, induction_rules, deduction_rules, context, self.known_events, self.known_links)
+        return explain(
+            question,
+            induction_rules,
+            deduction_rules,
+            context,
+            self.known_events,
+            self.known_links,
+            self.induction_model,
+        )
 
     def predicted(
         self,

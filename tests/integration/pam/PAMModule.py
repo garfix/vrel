@@ -42,7 +42,7 @@ class PAMModule(PlainReadWriteModule):
         self.add_relation(
             Relation(
                 "hungry",
-                parameters=[Parameter("id", "event"), Parameter("subject", "person")],
+                parameters=[Parameter("subject", "person")],
                 query_function=self.common_query,
                 write_function=self.common_write,
             )
