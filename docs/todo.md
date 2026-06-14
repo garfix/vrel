@@ -1,34 +1,40 @@
 ## todo
 
-- same-as handler wordt een zelfstandige module met een eigen data source
-- wikidata demo gebruikt nog tabellen en geen ids
-- denk na over onderscheid tabel / Relation / columns; note: borders (id1, id2) en (id2, id1)
 - check alle DataSources: hydration / dehydration
-
-- matching van geneste structuren zal nog niet werken omdat same_as niet aan nesting doet
-- same as handler has hard-coded "pick_up"
-- same_as is stored in BasicDialogContext and this is not available from the model in explain.
-- the same_as handler currently only works with parameters called 'id'
-- fix the same_as tuples produced by PlanAnalyzer
-
+  - wikidata demo gebruikt nog tabellen en geen ids
+- research: denk na over onderscheid tabel / Relation / columns; note: borders (id1, id2) en (id2, id1)
 - make sure the reified constructs are stored in a dialog-specific store (how? is an open question)
 - constructs with dialog variables should not be stored (and even be storable) in a permanent store (db) but only in a dialog store (how?)
-
-- create links between goals in both the predict and the inference phase
-
-- reify is good for PAM?
 
 - inject solver in BasicGenerator
 - with_context
 
-- api: bv tk.keras.layers.Dense
-
 - neem in de Relation op welke parameter de unieke id bevat
   - check op deze parameter in extract_determiner_arguments (`arguments[0]`)
 
-- I added `sentence` as an extra data source for `match`. This works for now, but I'm not confident it's the final solution
+## PAM
 
 - the `match` in `relate` matches perhaps by accident: I thought I had to bind the consequent, then replace the constants by variables. But omitting both seems to have the same effect. check this
+- create links between goals in both the predict and the inference phase
+
+## Same as
+
+- same-as handler wordt een zelfstandige module met een eigen data source
+- matching van geneste structuren zal nog niet werken omdat same_as niet aan nesting doet
+- same_as is stored in BasicDialogContext and this is not available from the model in explain.
+- the same_as handler currently only works with parameters called 'id'
+- fix the same_as tuples produced by PlanAnalyzer
+
+## API
+
+- api: bv tk.keras.layers.Dense
+
+## Context
+
+- A word like "short" has no meaning by itself, only in the context of some other word.
+- How to implement contexts? As some sort of a hierarchy?
+- How to implement the current context? As a list, the last item of which is the recent context, and the others the fallback-context?
+- Should there be enter-context / leave-context conditions? Have other systems done this?
 
 ## New relation function: command
 
