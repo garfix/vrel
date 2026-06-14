@@ -4,20 +4,16 @@ import pathlib
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
-from vrel.core.handlers.SameAsHandler import SameAsHandler
 from vrel.grammar.en_us_write import get_en_us_write_grammar
-from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.InductionModule import InductionModule
-from vrel.module.PlainReadWriteModule import PlainReadWriteModule
-from vrel.module.PlanAnalyzerDialogContext import PlanAnalyzerDialogContext
+from vrel.module.SameAsModule import SameAsModule
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.module.DeductionModule import DeductionModule
-from PAMDB import PAMDB
 from PAMModule import PAMModule
 from read_grammar import get_read_grammar
 from write_grammar import get_write_grammar
@@ -34,7 +30,6 @@ class TestPAM(unittest.TestCase):
 
         # define the database
 
-        # db = PAMDB()
         facts = PAMModule()
 
         # define the intents and other inferences
@@ -46,7 +41,6 @@ class TestPAM(unittest.TestCase):
         # a data source to store information for output
 
         output_buffer = BasicOutputBuffer()
-        dialog_context = BasicDialogContext()
 
         # add the plan analyzer
 
@@ -55,14 +49,10 @@ class TestPAM(unittest.TestCase):
         inductions = InductionModule(induction_model)
         inductions.import_fact_induction_rules(path + "fact_induction.pl")
         inductions.import_plan_analyzer_rules(path + "plan_analysis.pl")
-        # inductions.import_deduction_rules(path + "deductions.pl")
 
-        plan_analyzer_dialog_content = PlanAnalyzerDialogContext()
+        same_as = SameAsModule()
 
         # define the model
-
-        # database for same_as
-        dialog_context = BasicDialogContext()
 
         model = Model(
             [
@@ -70,11 +60,8 @@ class TestPAM(unittest.TestCase):
                 inferences,
                 inductions,
                 output_buffer,
-                dialog_context,
-                dialog_context,
-                # plan_analyzer_dialog_content,
-            ],
-            same_as_handler=SameAsHandler(),
+                same_as,
+            ]
         )
 
         # define the system
@@ -203,9 +190,3 @@ class TestPAM(unittest.TestCase):
 
             tester = DialogTester(self, session, system)
             tester.run()
-
-            # clear
-            dialog_context.clear()
-            plan_analyzer_dialog_content.clear()
-            # db = PAMDB()
-            # facts.data_source = db

@@ -13,7 +13,6 @@ from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Logger import Logger
 from vrel.core.Model import Model
 from vrel.grammar.en_us_write import get_en_us_write_grammar
-from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
 from vrel.module.OptimizerModule import OptimizerModule
@@ -22,10 +21,7 @@ from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarR
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 
-CHAT80_DIR = (
-    pathlib.Path(__file__).resolve().parent.parent.parent
-    / "tests" / "integration" / "chat80"
-)
+CHAT80_DIR = pathlib.Path(__file__).resolve().parent.parent.parent / "tests" / "integration" / "chat80"
 
 # The Chat-80 app modules use local imports (`from Chat80DB import Chat80DB`),
 # so its directory must be on sys.path before importing them.
@@ -49,10 +45,9 @@ def build_chat80_system() -> BasicSystem:
     inferences.import_rules(path + "intents.pl")
 
     output_buffer = BasicOutputBuffer()
-    dialog_context = BasicDialogContext()
     optimizer = OptimizerModule()
 
-    model = Model([facts, inferences, optimizer, output_buffer, dialog_context])
+    model = Model([facts, inferences, optimizer, output_buffer])
 
     read_grammar = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
     parser = BasicParser(read_grammar)
@@ -60,9 +55,7 @@ def build_chat80_system() -> BasicSystem:
     composer = SemanticComposer()
     executor = AtomExecutor()
 
-    write_grammar = SimpleGrammarRulesParser().parse_write_grammar(
-        get_en_us_write_grammar() + get_write_grammar()
-    )
+    write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
     generator = BasicGenerator(write_grammar, model, output_buffer)
 
     return BasicSystem(

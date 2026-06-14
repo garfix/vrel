@@ -5,6 +5,7 @@ from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 from vrel.interface.SomeStackOverflowHandler import SomeStackOverflowHandler
 from vrel.core.handlers.NoStackOverflowHandler import NoStackOverflowHandler
 from vrel.module.CoreModule import CoreModule
+from vrel.module.SameAsModule import DummySameAsHandler
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
 
@@ -15,23 +16,26 @@ class Model(SomeModel):
 
     modules: list[SomeModule]
     dialog_constant_generator: VariableGenerator
-    same_as_handler: SomeSameAsHandler | None
+    same_as_handler: SomeSameAsHandler
     stack_overflow_handler: SomeStackOverflowHandler | None
 
     def __init__(
         self,
         modules: list[SomeModule],
-        same_as_handler: SomeSameAsHandler = None,
         stack_overflow_handler: SomeStackOverflowHandler = None,
     ) -> None:
         self.modules = [
             CoreModule(),
         ]
-        self.modules.extend(modules)
 
-        self.same_as_handler = same_as_handler
-        if self.same_as_handler:
-            self.same_as_handler.model = self
+        self.same_as_handler = DummySameAsHandler()
+
+        for module in modules:
+            self.modules.append(module)
+            if isinstance(module, SomeSameAsHandler):
+                self.same_as_handler = module
+                # todo: fix this hack
+                module.model = self
 
         if stack_overflow_handler:
             self.stack_overflow_handler = stack_overflow_handler

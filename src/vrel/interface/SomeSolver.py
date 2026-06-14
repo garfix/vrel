@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from vrel.entity.Atom import Atom
-from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 
 
 class SomeSolver(ABC):

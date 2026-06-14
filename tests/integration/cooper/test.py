@@ -1,15 +1,14 @@
 import pathlib
 import unittest
 
-from vrel.core.handlers.SameAsHandler import SameAsHandler
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.handlers.StackOverflowHandler import StackOverflowHandler
 from vrel.grammar.en_us_write import get_en_us_write_grammar
-from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
+from vrel.module.SameAsModule import SameAsModule
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
     SimpleGrammarRulesParser,
 )
@@ -64,20 +63,13 @@ class TestCooper(unittest.TestCase):
 
         # define the model
 
-        # database for same_as
-        dialog_context = BasicDialogContext()
-
         # a data source to store information for output
         output_buffer = BasicOutputBuffer()
 
+        same_as = SameAsModule()
+
         model = Model(
-            [
-                dialog_context,
-                facts,
-                inferences,
-                output_buffer,
-            ],
-            same_as_handler=SameAsHandler(),
+            [facts, inferences, output_buffer, same_as],
             stack_overflow_handler=StackOverflowHandler(),
         )
 

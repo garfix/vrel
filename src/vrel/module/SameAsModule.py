@@ -1,47 +1,68 @@
 from itertools import product
+import json
 
 from vrel.core.Logger import Logger
 from vrel.core.constants import E1, E2, SAME_AS
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.Id import Id
-from vrel.entity.Relation import Relation
+from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
+from vrel.module.SqliteMemoryModule import SqliteMemoryModule
 
-ET = Variable("ET")
 
-
-class SameAsHandler(SomeSameAsHandler):
-    """
-    This plugin implements the query part of the same_as relation.
-    The same_as relation declares that some id1 should be treated the same as some id2 everywhere in the database.
-    This handler does that by creating alternatives for queries.
-    If a query is `parent(13, E1)` and id 13 is the same as id 20 and 44 in the database, it returns
-    * parent(13, E1)
-    * parent(20, E1)
-    * parent(44, E1)
-    The solver then executes all three queries.
-    """
+class SameAsModule(SomeSameAsHandler, SqliteMemoryModule):
 
     model: SomeModel
     id_variants: dict
 
     def __init__(self) -> None:
+        super().__init__()
+
         self.id_variants = None
+
+        self.add_relation(
+            Relation(
+                SAME_AS,
+                parameters=[Parameter("id1", None), Parameter("id2", None)],
+                query_function=self.same_as_read,
+                write_function=self.same_as_write,
+            )
+        )
+
+    def same_as_read(self, arguments: list, context: ExecutionContext) -> list[list]:
+        term1, term2 = arguments
+
+        if isinstance(term1, Variable) and isinstance(term2, Variable):
+            same_as = self.get_relation(SAME_AS)
+            results = self.select(same_as, ["id1", "id2"], [term1, term2])
+
+            hydrated = []
+            for result in results:
+                row = []
+                for e in result:
+                    data = json.loads(e)
+                    row.append(Id(data["id"], data["type"]))
+                hydrated.append(row)
+
+            return hydrated
+
+        handler = context.model.get_same_as_handler()
+        if handler and handler.same_as(term1, term2):
+            return [[None, None]]
+        else:
+            return []
+
+    def same_as_write(self, arguments: list, context: ExecutionContext) -> list[list]:
+
+        dehydrated = [json.dumps({"id": id.id, "type": id.type}) for id in arguments]
+        return self.write(dehydrated, context)
 
     def get_same_as_variants(self, bound_arguments: list, relation: Relation):
 
-        # if relation.parameters is None:
-        #     return [bound_arguments]
-
-        # print("---")
-        # print(relation.predicate)
-        # print(bound_arguments)
-
         group = []
         for i, formal in enumerate(relation.parameters):
-            # if formal == "id" or relation.predicate == "pick_up":
             if isinstance(bound_arguments[i], Id):
                 group.append(self.get_same_as(bound_arguments[i]))
             else:
@@ -49,8 +70,6 @@ class SameAsHandler(SomeSameAsHandler):
 
         # Carthesian product to produce all combinations that the lists in group allow
         result = [list(t) for t in product(*group)]
-
-        # print(result)
 
         return result
 
@@ -61,9 +80,7 @@ class SameAsHandler(SomeSameAsHandler):
         if self.id_variants is None:
             self.build_cache()
 
-        # print("a", id.type, id.id)
         if id.type in self.id_variants and str(id.id) in self.id_variants[id.type]:
-            # print("b", id.type, id.id)
             return self.id_variants[id.type][str(id.id)]
         else:
             return [id]
@@ -95,3 +112,18 @@ class SameAsHandler(SomeSameAsHandler):
                 self.id_variants[id2.type][str(id2.id)] = [id2]
             self.id_variants[id1.type][str(id1.id)].append(id2)
             self.id_variants[id2.type][str(id2.id)].append(id1)
+
+    def clear(self):
+        super().clear()
+
+        cursor = self.data_source.connection.cursor()
+
+        cursor.execute("CREATE TABLE same_as (entity_type TEXT, id1 TEXT, id2 TEXT)")
+
+
+class DummySameAsHandler(SomeSameAsHandler):
+    def get_same_as_variants(self, bound_arguments: list, relation: Relation) -> list[list]:
+        return [bound_arguments]
+
+    def clear_cache(self):
+        return

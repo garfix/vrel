@@ -77,21 +77,15 @@ class Solver(SomeSolver):
         deduplicated_bindings = {}
 
         for relation in relations:
-            for bound_argument_variant in self.get_same_as_variants(bound_arguments, relation):
-                out_bindings = self.find_relation_values(relation, bound_argument_variant, binding)
+            # create variants of bound arguments with same (same_as) id's
+            for same_as_variant in self.model.same_as_handler.get_same_as_variants(bound_arguments, relation):
+                out_bindings = self.find_relation_values(relation, same_as_variant, binding)
 
                 # deduplicate results
                 for out_binding in out_bindings:
                     deduplicated_bindings[str(out_binding)] = out_binding
 
         return list(deduplicated_bindings.values())
-
-    def get_same_as_variants(self, bound_arguments: list, relation: Relation):
-        same_as_handler = self.model.get_same_as_handler()
-        if same_as_handler:
-            return same_as_handler.get_same_as_variants(bound_arguments, relation)
-        else:
-            return [bound_arguments]
 
     def find_relation_values(self, relation: Relation, bound_arguments: list, binding: dict) -> list[dict]:
 
@@ -133,9 +127,8 @@ class Solver(SomeSolver):
             raise Exception(f"Solver only writes atoms, and this is not an atom: {atom}")
 
         # when a new same_as record is added, clear the same_as handler's cache
-        same_as_handler = self.model.get_same_as_handler()
-        if same_as_handler and predicate == SAME_AS:
-            same_as_handler.clear_cache()
+        if predicate == SAME_AS:
+            self.model.get_same_as_handler().clear_cache()
 
         relations = self.model.find_relations(predicate)
         if len(relations) == 0:

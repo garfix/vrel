@@ -2,7 +2,6 @@ import copy
 
 from vrel.core.Model import Model
 from vrel.core.Solver import Solver
-from vrel.core.handlers.SameAsHandler import SameAsHandler
 from vrel.entity.Atom import Atom
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.InductionRule import InductionRule

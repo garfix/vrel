@@ -6,7 +6,6 @@ from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.Logger import Logger
 from vrel.grammar.en_us_write import get_en_us_write_grammar
-from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.OptimizerModule import OptimizerModule
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
@@ -123,14 +122,13 @@ class Chat80Test(unittest.TestCase):
         # a data source to store information for output
 
         output_buffer = BasicOutputBuffer()
-        dialog_context = BasicDialogContext()
 
         # optimizer
         optimizer = OptimizerModule()
 
         # define the model
 
-        model = Model([facts, inferences, optimizer, output_buffer, dialog_context])
+        model = Model([facts, inferences, optimizer, output_buffer])
 
         # define the pipeline
 
