@@ -19,25 +19,19 @@ def explain(
 
     for event in known_events:
 
-        if event[0].predicate == "pick_up":
+        event1 = make_query(event)
 
-            event1 = make_query(event)
+        module = induction_model.modules[1]
+        module.clear()
 
-            module = induction_model.modules[1]
-            module.clear()
+        for atom in event1:
+            module.add_atom(atom)
 
-            for atom in event1:
-                module.add_atom(atom)
+        solver = Solver(induction_model)
 
-            # model = copy.copy(context.model)
-            # model.modules.append(PlainReadWriteModule(event1))
+        result = solver.solve(query)
 
-            solver = Solver(induction_model)
+        if len(result) > 0:
+            return event
 
-            result = solver.solve(query)
-
-            context.logger.add_value("query", query)
-            context.logger.add_value("event1", event1)
-            context.logger.add_value("result", result)
-
-    return question
+    return None

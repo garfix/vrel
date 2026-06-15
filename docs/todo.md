@@ -1,5 +1,8 @@
 ## todo
 
+- found the event; now follow the trail to find the cause
+- then generate a response from the cause
+
 - check alle DataSources: hydration / dehydration
   - wikidata demo gebruikt nog tabellen en geen ids
 - research: denk na over onderscheid tabel / Relation / columns; note: borders (id1, id2) en (id2, id1)

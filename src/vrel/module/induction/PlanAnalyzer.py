@@ -39,6 +39,18 @@ class PlanAnalyzer:
         self.known_events = []
         self.known_links = []
 
+    def get_event_id(self, atom: Atom):
+        for index, a in enumerate(self.known_events):
+            if a == atom:
+                return index
+        return None
+
+    def get_parent_event_id(self, event_id: int):
+        for link in self.known_links:
+            if link[0] == event_id:
+                return link[1]
+        return None
+
     def add_known_event(self, atom: Atom):
         for index, a in enumerate(self.known_events):
             if a == atom:
@@ -129,7 +141,7 @@ class PlanAnalyzer:
         deduction_rules: list[InferenceRule],
         context: ExecutionContext,
     ):
-        return explain(
+        event = explain(
             question,
             induction_rules,
             deduction_rules,
@@ -138,6 +150,29 @@ class PlanAnalyzer:
             self.known_links,
             self.induction_model,
         )
+
+        if event is None:
+            return None
+
+        event_id = self.get_event_id(event)
+        if event_id is None:
+            raise Exception("Event not found")
+
+        parent_event_id = self.get_parent_event_id(event_id)
+        cause = None
+        while True:
+            if parent_event_id is None:
+                break
+            event_id = parent_event_id
+            event = self.known_events[event_id][0]
+
+            if event.predicate == "goal":
+                cause = event
+
+            parent_event_id = self.get_parent_event_id(event_id)
+
+        print("cause", cause)
+        return cause
 
     def predicted(
         self,
