@@ -1,7 +1,8 @@
 ## todo
 
-- found the event; now follow the trail to find the cause
-- then generate a response from the cause
+- generate a response from the cause
+  - the explanation is stored flattened in the output buffer; unusable
+- TestSimpleFrameDataSource failes because solve(single) ?
 
 - check alle DataSources: hydration / dehydration
   - wikidata demo gebruikt nog tabellen en geen ids

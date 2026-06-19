@@ -129,7 +129,7 @@ def bind_variables(term: any, binding: dict) -> any:
 
 def flatten(term: any):
     if isinstance(term, Atom):
-        flattened = [flatten(e) for e in term.arguments]
+        flattened = term.arguments
         return tuple([*flattened])
     elif isinstance(term, list):
         return [flatten(e) for e in term]

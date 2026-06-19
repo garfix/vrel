@@ -11,5 +11,5 @@ intent_explanation(Question, C1) :-
     # log('question', Question),
     explain(Question, C1, Explanation),
     # log('explanation', Explanation),
-    store(output_type('explanation', Explanation)).
+    store(output_type('explanation'), output_explanation(Explanation)).
 

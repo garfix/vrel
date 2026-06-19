@@ -1,4 +1,5 @@
 from vrel.data_source.SimpleDataSource import SimpleDataSource
+from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Parameter, Relation
 from vrel.module.SqliteMemoryModule import SqliteMemoryModule
 
@@ -17,6 +18,7 @@ class BasicOutputBuffer(SqliteMemoryModule):
             Relation("output_table", parameters=[Parameter("results", list[any]), Parameter("units", list[str])])
         )
         self.add_relation(Relation("output_list", parameters=[Parameter("elements", list[any])]))
+        self.add_relation(Relation("output_explanation", parameters=[Parameter("explanation", Atom)]))
         self.add_relation(Relation("output_name_not_found", parameters=[Parameter("name", str)]))
         self.add_relation(Relation("output_unknown_word", parameters=[Parameter("word", str)]))
 

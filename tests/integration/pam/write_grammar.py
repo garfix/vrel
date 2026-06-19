@@ -1,5 +1,9 @@
-from vrel.core.constants import E1, E2
+from vrel.core.constants import E1, E2, UNIFICATION
 from vrel.entity.Atom import Atom
+from vrel.entity.Variable import Variable
+
+Explanation = Variable("Explanation")
+Goal = Variable("Goal")
 
 
 def get_write_grammar():
@@ -10,7 +14,16 @@ def get_write_grammar():
             "if": [Atom("output_type", "understood")],
         },
         {
-            "syn": "s() -> 'Dunno'",
-            "if": [Atom("output_type", "explanation")],
+            "syn": "s() -> 'Because' reason(Explanation)",
+            "if": [Atom("output_type", "explanation"), Atom("output_explanation", Explanation)],
         },
+        {
+            "syn": "reason(Explanation) -> goal(Goal)",
+            "if": [Atom(UNIFICATION, Explanation, Atom("goal", Goal))],
+        },
+        {
+            "syn": "goal(Goal) -> desc(E1) 'wanted' 'to' 'be' 'not' 'hungry'",
+            "if": [Atom(UNIFICATION, Goal, [Atom("not", [Atom("hungry", E1)])])],
+        },
+        {"syn": "desc(E1) -> 'she'"},
     ]
