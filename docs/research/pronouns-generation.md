@@ -1,4 +1,4 @@
-By Claud Sonnet 4.6
+By Claud Sonnet 4.6 ("When generating a natural language sentence from a semantic structure, how can i decide when to use a pronoun, and which pronoun, for each of the entities in the structure?")
 
 Use a pronoun when:
 

@@ -1,14 +1,8 @@
-import copy
-
-from vrel.core.Model import Model
 from vrel.core.Solver import Solver
 from vrel.core.functions.terms import bind_variables
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.InferenceRule import InferenceRule
 from vrel.interface.SomeModel import SomeModel
-from vrel.interface.SomeModule import SomeModule
-from vrel.module.PlainReadWriteModule import PlainReadWriteModule
-from vrel.module.DeductionModule import DeductionModule
 
 
 def match(

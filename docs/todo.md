@@ -44,6 +44,10 @@
 
 Just an idea: next to `query_function` and `write_function`, create a `command_function` that allows the predicate to be executed as a command. There would be no need to create a separate predicate (like in nli-go) for commands.
 
+## Plugin
+
+If elegantly possible, create a plugin structure for Solver.
+
 ## Documenteer
 
 De eerste argument van een atom moet zijn identifier variable zijn.

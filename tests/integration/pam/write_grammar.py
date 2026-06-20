@@ -25,5 +25,5 @@ def get_write_grammar():
             "syn": "goal(Goal) -> desc(E1) 'wanted' 'to' 'be' 'not' 'hungry'",
             "if": [Atom(UNIFICATION, Goal, [Atom("not", [Atom("hungry", E1)])])],
         },
-        {"syn": "desc(E1) -> 'she'"},
+        {"syn": "desc(E1) -> 'she'", "if": [Atom("unambiguous_pronoun", E1, "female")]},
     ]
