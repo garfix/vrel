@@ -15,15 +15,15 @@ class SimpleFrameDataSource(SomeDataSource):
         return tuple([table] + list(values))
 
     def select(self, table: str, columns: list[str], values: list) -> list[list]:
+
         atom = self.create_tuple(table, columns, values)
-        flat = flatten(atom)
 
         if not table in self.index:
             return []
 
         result = []
         for a in self.index[table]:
-            binding = unification(a, flat, {})
+            binding = unification(a, atom, {})
             if binding is not None:
                 result.append(binding)
 
