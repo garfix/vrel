@@ -23,25 +23,19 @@ class SemanticComposer(SomeComposer):
         super().__init__()
         self.variable_generator = VariableGenerator("$")
 
-    def process(self, parse_trees: list[ParseTreeNode], logger: SomeLogger) -> ProcessResult:
+    def process(self, parse_tree: ParseTreeNode, logger: SomeLogger) -> ProcessResult:
 
-        sentences = []
+        self.check_for_sem(parse_tree)
 
-        for parse_tree in parse_trees:
+        root_variables = [self.variable_generator.next() for _ in parse_tree.rule.antecedent.arguments]
+        semantics = self.compose(parse_tree, root_variables)
 
-            self.check_for_sem(parse_tree)
+        semantic_sentence = SemanticSentence(semantics, root_variables)
 
-            root_variables = [self.variable_generator.next() for _ in parse_tree.rule.antecedent.arguments]
-            semantics = self.compose(parse_tree, root_variables)
+        logger.add_section("Semantics", semantics)
+        logger.add_section("Root variables", ", ".join(root_variables))
 
-            sentences.append(SemanticSentence(semantics, root_variables))
-
-            logger.add_section("Semantics", semantics)
-            logger.add_section("Root variables", ", ".join(root_variables))
-
-        product = SemanticComposerProduct(sentences)
-
-        return ProcessResult([product], "")
+        return semantic_sentence
 
     def check_for_sem(self, node: ParseTreeNode):
         if node.form == "" and node.rule.sem is None:

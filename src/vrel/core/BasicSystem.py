@@ -12,6 +12,7 @@ from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeParser import SomeParser
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.interface.SomeSystem import SomeSystem
+from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
 from .Model import Model
 
@@ -74,17 +75,18 @@ class BasicSystem(SomeSystem):
         Note: these parse trees all belong to the same input; they're not alternative parses
         """
 
-        composer_result = self.composer.process(parse_trees, self.logger)
-        if composer_result.error_type != "":
-            return self.log_error(composer_result)
+        sentences = []
+        for parse_tree in parse_trees:
+            sentences.append(self.composer.process(parse_tree, self.logger))
+
+        product = SemanticComposerProduct(sentences)
 
         if not self.executor:
-            return composer_result
+            return ProcessResult([product], "")
 
-        for composer_product in composer_result.products:
-            result = self.execute(composer_product.sentences, request, solver)
-            if result is not None:
-                return result
+        result = self.execute(sentences, request, solver)
+        if result is not None:
+            return result
 
         return None
 

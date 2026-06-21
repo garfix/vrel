@@ -8,5 +8,5 @@ from vrel.interface.SomeLogger import SomeLogger
 class SomeComposer(ABC):
 
     @abstractmethod
-    def process(self, parse_trees: list[ParseTreeNode], logger: SomeLogger) -> ProcessResult:
+    def process(self, parse_tree: ParseTreeNode, logger: SomeLogger) -> ProcessResult:
         pass
