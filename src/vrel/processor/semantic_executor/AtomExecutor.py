@@ -19,28 +19,23 @@ class AtomExecutor(SomeExecutor):
 
     def process(
         self,
-        semantic_sentences: list[SemanticSentence],
+        semantic_sentence: SemanticSentence,
         solver: SomeSolver,
         request: SentenceRequest,
         logger: SomeLogger,
     ) -> ProcessResult:
 
-        products = []
-        for sentence in semantic_sentences:
+        request.semantic_sentence = semantic_sentence
 
-            request.semantic_sentence = sentence
+        semantics = [semantic_sentence.semantics]
+        resolved_constants = resolve_constants(semantics)
+        resolved_names = resolve_names(resolved_constants, solver)
 
-            semantics = [sentence.semantics]
-            resolved_constants = resolve_constants(semantics)
-            resolved_names = resolve_names(resolved_constants, solver)
+        logger.add_section("Names resolved", resolved_names)
 
-            logger.add_section("Names resolved", resolved_names)
+        bindings = solver.solve(resolved_names)
 
-            bindings = solver.solve(resolved_names)
+        logger.add_section("Result bindings", "\n".join(str(d) for d in bindings))
 
-            logger.add_section("Result bindings", "\n".join(str(d) for d in bindings))
-
-            product = AtomExecutorProduct(bindings)
-            products.append(product)
-
-        return ProcessResult(products, "")
+        product = AtomExecutorProduct(bindings)
+        return product

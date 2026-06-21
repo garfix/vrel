@@ -7,6 +7,7 @@ from vrel.core.DialogTester import DialogTester
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.InductionModule import InductionModule
+from vrel.module.PronounModule import PronounModule
 from vrel.module.SameAsModule import SameAsModule
 from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
@@ -36,6 +37,10 @@ class TestPAM(unittest.TestCase):
 
         same_as = SameAsModule()
 
+        # pronoun handling
+
+        pronouns = PronounModule()
+
         # define the intents and other inferences
 
         inferences = DeductionModule()
@@ -56,15 +61,7 @@ class TestPAM(unittest.TestCase):
 
         # define the model
 
-        model = Model(
-            [
-                facts,
-                inferences,
-                inductions,
-                output_buffer,
-                same_as,
-            ]
-        )
+        model = Model([facts, inferences, inductions, output_buffer, same_as, pronouns])
 
         # define the system
 

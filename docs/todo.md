@@ -1,8 +1,8 @@
 ## todo
 
-- generate a response from the cause
-  - the explanation is stored flattened in the output buffer; unusable
-- TestSimpleFrameDataSource failes because solve(single) ?
+- pronouns: update saliency when
+  - reading an utterance: subject, object iobj
+  - writing an utterance
 
 - check alle DataSources: hydration / dehydration
   - wikidata demo gebruikt nog tabellen en geen ids

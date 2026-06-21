@@ -93,11 +93,12 @@ class BasicSystem(SomeSystem):
         Note: these sentences all belong to the same input; they're not alternative parses
         """
 
-        executor_result = self.executor.process(semantic_sentences, solver, request, self.logger)
-        if executor_result.error_type != "":
-            return self.log_error(executor_result, solver)
+        products = []
+        for semantic_sentence in semantic_sentences:
+            product = self.executor.process(semantic_sentence, solver, request, self.logger)
+            products.append(product)
 
-        return executor_result
+        return ProcessResult(products, "")
 
     def log_error(self, result: ProcessResult, solver: SomeSolver):
         solver.write_atom(Atom("output_type", result.error_type))
