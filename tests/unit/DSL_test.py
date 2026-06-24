@@ -5,6 +5,7 @@ from vrel.core.Model import Model
 from vrel.core.constants import DISJUNCTION, E1, E2
 from vrel.core.Solver import Solver
 from vrel.entity.Atom import Atom
+from vrel.entity.Id import Id
 from vrel.entity.Variable import Variable
 from vrel.module.DeductionModule import DeductionModule
 from vrel.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
@@ -18,6 +19,11 @@ class TestDSL(unittest.TestCase):
 
         tests = [
             ["river('amazon').", [InferenceRule(Atom("river", "amazon"), [])]],
+            # id
+            [
+                "river(`river:amazon`).",
+                [InferenceRule(Atom("river", Id("amazon", "river")), [])],
+            ],
             # with comment
             [
                 "river('amazon')\n\t#remark\n.",

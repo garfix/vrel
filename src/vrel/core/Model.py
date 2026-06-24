@@ -1,6 +1,7 @@
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeModule import SomeModule
+from vrel.interface.SomePronounHandler import SomePronounHandler
 from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 from vrel.interface.SomeStackOverflowHandler import SomeStackOverflowHandler
 from vrel.core.handlers.NoStackOverflowHandler import NoStackOverflowHandler
@@ -17,7 +18,8 @@ class Model(SomeModel):
     modules: list[SomeModule]
     dialog_constant_generator: VariableGenerator
     same_as_handler: SomeSameAsHandler
-    stack_overflow_handler: SomeStackOverflowHandler | None
+    stack_overflow_handler: SomeStackOverflowHandler
+    # pronoun_handler: SomePronounHandler
 
     def __init__(
         self,
@@ -29,6 +31,7 @@ class Model(SomeModel):
         ]
 
         self.same_as_handler = DummySameAsHandler()
+        # self.pronoun_handler = DummyPronounHandler()
 
         for module in modules:
             self.modules.append(module)
@@ -36,6 +39,8 @@ class Model(SomeModel):
                 self.same_as_handler = module
                 # todo: fix this hack
                 module.model = self
+            # if isinstance(module, SomePronounHandler):
+            #     self.pronoun_handler = module
 
         if stack_overflow_handler:
             self.stack_overflow_handler = stack_overflow_handler
@@ -47,11 +52,14 @@ class Model(SomeModel):
     def get_dialog_constant_generator(self) -> VariableGenerator:
         return self.dialog_constant_generator
 
-    def get_same_as_handler(self) -> SomeSameAsHandler | None:
+    def get_same_as_handler(self) -> SomeSameAsHandler:
         return self.same_as_handler
 
-    def get_stack_overflow_handler(self) -> SomeStackOverflowHandler | None:
+    def get_stack_overflow_handler(self) -> SomeStackOverflowHandler:
         return self.stack_overflow_handler
+
+    def get_pronoun_handler(self) -> SomePronounHandler:
+        return self.pronoun_handler
 
     def find_relations(self, predicate: str) -> list[Relation]:
         result = []

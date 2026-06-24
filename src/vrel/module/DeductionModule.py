@@ -66,8 +66,6 @@ class DeductionModule(SomeModule):
         head = generate_variables(rule.head.arguments, self.variable_generator, variable_map)
         body = [generate_variables(atom, self.variable_generator, variable_map) for atom in rule.body]
 
-        if isinstance(arguments, tuple):
-            exit()
         rule_binding = unification(head, arguments, binding)
         if rule_binding is None:
             return []

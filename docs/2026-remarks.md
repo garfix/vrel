@@ -1,3 +1,42 @@
+## 2026-06-24
+
+I implemented a simple PronounModule and resolved Willa to "she".
+
+## 2026-06-23
+
+I'm introducing the predicate `feature` to hold syntactic/semantic features.
+
+## 2026-06-22
+
+I started a `PronounModule` to be able to test if a certain pronoun is suitable for an entity, in the generation of a sentence. See `pronouns-generation.md` and `pronouns-updating-saliency.md`.
+
+I thought about adding the update-saliency step in the execution processor, but as it turns out, this is not a good idea.
+
+When the semantics is
+
+    (intent_understand
+        1. [
+            (get_into
+                1. $6
+                2. $7
+                3. $8
+                1. modifier
+                    (car
+                        1. $8
+                        1. modifier
+                            (her
+                                1. $9))
+                2. modifier
+                    (she
+                        1. $7))
+        ])
+
+The subject that deserves most saliency is not `[get_into ...]`, which is the "subject" of `intent_understand`, but rather `$6`, the subject of `get_into`. This means that the current architecture pushes me in the direction to implement update-saliency as a function call.
+
+===
+
+As for `get_into($6, $7, $8)`, which argument is the subject? For eventless relations this is the first one, by convention. But for event-bearing relations, it is the second argument.
+
 ## 2026-06-03
 
 I want to add a `match` function next to `solve`, that will try to match two atom lists.

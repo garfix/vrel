@@ -1,5 +1,4 @@
 from vrel.entity.Sentinel import Sentinel
-from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.Variable import Variable
 
 # abstract word categories
@@ -32,6 +31,7 @@ E4 = Variable("E4")
 E5 = Variable("E5")
 
 
+# cardinalities (order of magnitude)
 ONE = 1
 SMALL = 10
 MEDIUM = 100
@@ -40,6 +40,11 @@ VERY_LARGE = 10000
 INFINITE = 1000000000000
 UNKNOWN = 500
 IGNORED = "ignored"
+
+# special predicates
+PRED_NAME = "name"
+SAME_AS = "same_as"
+FEATURE = "feature"
 
 # internal predicates
 DISJUNCTION = "$disjunction"
@@ -50,7 +55,3 @@ CONSTANT = "$constant"
 AUTO = Sentinel("<auto-generate>")
 COMBINED = Sentinel("combined")
 SEPARATE = Sentinel("separate")
-
-# predicates
-PRED_NAME = "name"
-SAME_AS = "same_as"

@@ -1,10 +1,13 @@
 ## todo
 
-- TestSimpleFrameDataSource failes because solve(single) ?
+- OK feature requires a database
+- the fact induction doesn't work
 
 - pronouns: update saliency when
   - reading an utterance: subject, object iobj
   - writing an utterance
+  - updating saliency should only done for entities in verbs
+  - also: use the syntactive subject, not the semantic subject
 
 - check alle DataSources: hydration / dehydration
   - wikidata demo gebruikt nog tabellen en geen ids
@@ -41,6 +44,14 @@
 - How to implement contexts? As some sort of a hierarchy?
 - How to implement the current context? As a list, the last item of which is the recent context, and the others the fallback-context?
 - Should there be enter-context / leave-context conditions? Have other systems done this?
+
+## Customize
+
+- PronounModule must have its data source as a parameter (which defaults to the current data source)
+
+## Resolve name / constant
+
+- Consider if resolve can (or should) be done as function, if so, or not, give a good reason.
 
 ## New relation function: command
 

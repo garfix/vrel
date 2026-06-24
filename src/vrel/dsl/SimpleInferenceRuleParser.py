@@ -2,6 +2,7 @@ import re
 
 from vrel.core.constants import DISJUNCTION, UNIFICATION
 from vrel.entity.Atom import Atom
+from vrel.entity.Id import Id
 from vrel.entity.InductionRule import InductionRule
 from vrel.entity.Variable import Variable
 from vrel.entity.InferenceRule import InferenceRule
@@ -28,6 +29,7 @@ class SimpleInferenceRuleParser:
                     "\\)",
                     "\\d+\\.\\d+",
                     "\\d+",
+                    "`\\w+:\\w+`",
                     "'(?:\\\\'|[^'])+'",
                     '"(?:\\\\"|[^"])+"',
                     "[A-Z]\\w*",
@@ -338,6 +340,11 @@ class SimpleInferenceRuleParser:
         if token[0] == '"':
             pos = new_pos
             return token[1:-1].replace('\\"', '"'), pos
+
+        if token[0] == "`":
+            pos = new_pos
+            type, id = token[1:-1].split(":")
+            return Id(id, type), pos
 
         if re.match(self.re_float, token):
             pos = new_pos

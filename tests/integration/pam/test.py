@@ -5,6 +5,7 @@ from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.grammar.en_us_write import get_en_us_write_grammar
+from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.InductionModule import InductionModule
 from vrel.module.PronounModule import PronounModule
@@ -40,6 +41,7 @@ class TestPAM(unittest.TestCase):
         # pronoun handling
 
         pronouns = PronounModule()
+        dialog = BasicDialogContext()
 
         # define the intents and other inferences
 
@@ -61,7 +63,7 @@ class TestPAM(unittest.TestCase):
 
         # define the model
 
-        model = Model([facts, inferences, inductions, output_buffer, same_as, pronouns])
+        model = Model([facts, inferences, inductions, output_buffer, same_as, pronouns, dialog])
 
         # define the system
 

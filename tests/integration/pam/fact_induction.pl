@@ -1,1 +1,1 @@
-name(E1, "Willa") => female(E1), person(E1).
+name(E1, "Willa") => feature(E1, 'gender', 'female'), feature(E1, 'type', 'person').

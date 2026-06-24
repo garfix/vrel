@@ -1,4 +1,6 @@
+from vrel.core.constants import FEATURE
 from vrel.entity.Atom import Atom
+from vrel.entity.Id import Id
 from vrel.entity.Relation import Parameter, Relation
 from vrel.module.SqliteMemoryModule import SqliteMemoryModule
 from vrel.entity.ExecutionContext import ExecutionContext
@@ -24,6 +26,10 @@ class BasicDialogContext(SqliteMemoryModule):
             Relation("start_context", parameters=[Parameter("name", str)], query_function=self.start_context)
         )
         self.add_relation(Relation("end_context", parameters=[Parameter("name", str)], query_function=self.end_context))
+
+        self.add_relation(
+            Relation(FEATURE, parameters=[Parameter("id", Id), Parameter("name", str), Parameter("value", str)])
+        )
 
     def with_context(self, arguments: list, context: ExecutionContext) -> list[list]:
         name = arguments[0]
@@ -52,3 +58,4 @@ class BasicDialogContext(SqliteMemoryModule):
         cursor = self.data_source.connection.cursor()
 
         cursor.execute("CREATE TABLE context (name TEXT)")
+        cursor.execute("CREATE TABLE feature (id TEXT, name TEXT, value TEXT)")
