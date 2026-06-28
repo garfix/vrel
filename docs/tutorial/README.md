@@ -2,5 +2,5 @@ Welcome to Vrel, the library that lets you interact with a machine using a natur
 
 Table of contents
 
-[The field](the-field.md)
-[The library](the-library.md)
+- [The field](the-field.md) - natural language processing concepts
+- [The library](the-library.md) - the building blocks of the library
