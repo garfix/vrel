@@ -25,6 +25,10 @@ All demos are in the form of automatic test suites.
 - A proof-of-concept of a dialog with Wikidata (using Sparql)
 - Work in progress: A replication of a dialog with PAM
 
+## Tutorial
+
+Read how to use the library in the [tutorial](docs/tutorial/README)
+
 ## Requires
 
 - Python 3.10 (or higher)

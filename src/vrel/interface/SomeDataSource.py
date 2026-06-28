@@ -25,9 +25,6 @@ class SomeDataSource(ABC):
     def insert(self, table: str, columns: list[str], values: list):
         raise Exception("insert not implemented")
 
-    def insert(self, table: str, columns: list[str], values: list):
-        raise Exception("insert not implemented")
-
     def delete(self, table: str, columns: list[str], values: list):
         raise Exception("delete not implemented")
 
