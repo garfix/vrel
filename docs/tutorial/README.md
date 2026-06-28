@@ -4,3 +4,4 @@ Table of contents
 
 - [The field](the-field.md) - natural language processing concepts
 - [The parts](the-parts.md) - the building blocks of the library
+- [The essence](the-essence.md) - the essential working of the system

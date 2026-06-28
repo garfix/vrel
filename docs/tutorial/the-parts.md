@@ -35,6 +35,8 @@ The basic function of a **parser** is to turn a sentence (string of characters) 
 
 The parser uses heuristics to rank the trees in decreasing fitness. The best tree is then used first.
 
+Th parser is also able to extract multiple (unambiguous) sentences from a single paragraph. The sentences do not need to be handled in separately. And it uses individual characters as tokens, rather than words, in order to serve as a morphological parser and syntactic parser in one.
+
 ## The semantic composer
 
 The **semantic composer** creates a logical structure by combining the semantic attachments of the syntax tree.
@@ -49,4 +51,4 @@ The **system** of the library brings together a model, and some "processors": a 
 
 ## The solver
 
-The **solver** is not a component you'ld interact with directly, but it's useful to know about it's central function. The solver takes a list of unbound atoms as input and returns a list of variable bindings.
+The **solver** is not a component you would interact with directly, but it's useful to know about it's central function. The solver takes a list of unbound atoms as input and returns a list of variable bindings.
