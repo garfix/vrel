@@ -2,7 +2,7 @@ You need to understand some concepts in the field in order to use the library.
 
 ## Entities and relations
 
-The common name for anything that can be instantiated is an **entity**. `Person`, `dog`, `employment`, `birthday`, etc. A **relation** is a meaningful, named group of entities: `owns`, `parent`, `caused_by`. "meaningful" here means that it has some function in the application.
+The common name for anything that can be instantiated is an **entity**. A `person`, `dog`, `employment`, `birthday`, etc. A **relation** is a meaningful, named group of entities: `owns`, `parent`, `caused_by`. "meaningful" here means that it has some function in the application.
 
 A relation is named by its **predicate** (`person`, `owns`, etc) and its **(formal) parameters**. An instance of a relation is a **tuple** and the instances of parameters are called **arguments**.
 
@@ -11,6 +11,14 @@ A relation is named by its **predicate** (`person`, `owns`, etc) and its **(form
 | entity    | instance |
 | relation  | tuple    |
 | parameter | argument |
+
+## Relations
+
+A relation, with its predicate and parameters is the building block of both logic and programming. It can be a piece of data, or it can be a function. In this library, the relation has a **query** function and a **write** function.
+
+The query function uses the relation as a filter, similar to SQL's `SELECT`. The output is a series of tuples that match the arguments. This is natural for database access, but less intuitive for custom functions. A function like `add` will have `op1`, `op1` and `sum` as parameters (and `2`, `2` and a variable as aguments), yet returns a list with a single tuple: `(2, 2, 4)`. A query function always returns a list of tuples.
+
+The write function writes the tuple to the database (a database and table of its own choosing).
 
 ## Atoms
 
@@ -45,3 +53,7 @@ The library is developed by replicating more and more historical natural languag
 ## Dialog entities
 
 **Dialog entities** are entities (or rather instances) that play a role in the dialog. Also named **discourse referents**.
+
+## Binary / 3-Valued logic
+
+The default logic of the library is binary, as you're used to. It deals with the values `true` and `false`. It assumes a **closed world** hypothesis: that which is not present in any data source, is assumed not true. While binary logic is much easier to use than trinary logic (with `true`, `false`, and `unknown`), there are cases in which the latter is needed. In the **Cooper** demo this scenario is worked out. It uses **open world** relations, that always succeed.

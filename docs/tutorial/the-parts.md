@@ -24,3 +24,29 @@ There are several standard modules that provide a variety of functionalities:
 - The **GrammarModule** lets you create new grammar rules in a dialog (a rare thing to do)
 - The **SameAsModule** lets you treat different id's as the same in queries
 - The **PronounModule** lets you keep track of the saliency of entities, as needed by pronoun resolution
+
+## The model
+
+A **model** represents a domain of knowledge. In this library the model is simply a container for all modules.
+
+## The parser
+
+The basic function of a **parser** is to turn a sentence (string of characters) into a syntax tree. We're using **Earley's algorithm** here. It produces not one tree, but a "forest" of **syntactically ambiguous** trees.
+
+The parser uses heuristics to rank the trees in decreasing fitness. The best tree is then used first.
+
+## The semantic composer
+
+The **semantic composer** creates a logical structure by combining the semantic attachments of the syntax tree.
+
+## The executor
+
+The **executor** just **executes** the logical structure.
+
+## The system
+
+The **system** of the library brings together a model, and some "processors": a parser, a semantic composer and an executor. Each of these has a standard class, but each of these may be overridden, or even replaced by another, if you like. When the system is complete, one can ask it to process a sentence.
+
+## The solver
+
+The **solver** is not a component you'ld interact with directly, but it's useful to know about it's central function. The solver takes a list of unbound atoms as input and returns a list of variable bindings.
