@@ -5,3 +5,10 @@ Table of contents
 - [The field](the-field.md) - natural language processing concepts
 - [The parts](the-parts.md) - the building blocks of the library
 - [The essence](the-essence.md) - the essential working of the system
+- [Parsing](parsing.md) - how a sentence is parsed into syntax trees
+
+- Demos
+  - [CHAT-80](demos/chat-80.md)
+  - [Cooper's system](demos/cooper.md)
+  - [SIR](demos/sir.md)
+  - [Wikidata](demos/wikidata.md)

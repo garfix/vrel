@@ -57,3 +57,7 @@ The library is developed by replicating more and more historical natural languag
 ## Binary / 3-Valued logic
 
 The default logic of the library is binary, as you're used to. It deals with the values `true` and `false`. It assumes a **closed world** hypothesis: that which is not present in any data source, is assumed not true. While binary logic is much easier to use than trinary logic (with `true`, `false`, and `unknown`), there are cases in which the latter is needed. In the **Cooper** demo this scenario is worked out. It uses **open world** relations, that always succeed.
+
+## Intents
+
+An **intent** is the relation that performs the main function of a sentence. Intents are often connected with specific keywords in sentence, like `what`, `why` and `how many`. The need to resolve specific entities from a sentence and return the results in some specific way.
