@@ -27,7 +27,7 @@ All demos are in the form of automatic test suites.
 
 ## Tutorial
 
-Read how to use the library in the [tutorial](docs/tutorial/README)
+Read how to use the library in the [tutorial](docs/tutorial/README.md)
 
 ## Requires
 
