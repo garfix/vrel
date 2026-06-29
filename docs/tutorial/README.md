@@ -9,6 +9,7 @@ Introduction
 Processors
 
 - [Parsing](parsing.md) - how a sentence is parsed into syntax trees
+- [Composition](composition.md) - how meaning is attached and composed
 - [Execution](execution.md) - how the semantic representation is executed
 
 Demos
