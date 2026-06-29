@@ -2,7 +2,7 @@
 
 Before we get into semantics, we need to learn about tokens and parse trees.
 
-A **tokenizer** breaks a sentence up into smaller parts, **tokens**, which form the input to the parser. As an example sentence let's take "John loves Mary". A tokenizer could cut up the sentence into the tokens `John`, `loves`, and `Mary`. However, this would limit the analysis to the word level, and would require another analyser to analyse the morphemes of a word. This system combines parsing and **morphological analysis** and to that end it splits the sentence into characters: `J` `o` `h` `n` ` ` `l` `o` `v` `e` `s` ` ` `M` `a` `r` `y` `. Technically, the character is the token, but since there's not much use in that, I call a token a sequence of characters: either a fixed character string or the match of a regular expression.
+A **tokenizer** breaks a sentence up into its smallest parts, **tokens**, which form the input to the parser. As an example sentence let's take the sentence "John loves Mary". A tokenizer could cut up the sentence into the tokens `John`, `loves`, and `Mary`. However, this would limit the analysis to the word level, and would require another analyser to analyse the morphemes of a word. This library combines parsing and **morphological analysis** and to that end it splits the sentence into characters: `J` `o` `h` `n` ` ` `l` `o` `v` `e` `s` ` ` `M` `a` `r` `y` `. Technically, the character is the token, but since there's not much use in that, I call a token a sequence of characters: either a fixed character string or the match of a regular expression.
 
 All whitespace sequences of space, tabs and newlines are replaced by a single space.
 

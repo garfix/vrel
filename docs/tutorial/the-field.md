@@ -1,5 +1,11 @@
 You need to understand some concepts in the field in order to use the library.
 
+## Logic and semantics
+
+A natural language processor such as this turns a sentence into a semantic representation. What do we mean by that? In this library We mean that it's an **executable logical representation** whose entities and relations are **meaningful concepts to the user**.
+
+Reasoning in this library follows the rules of **Prolog** for deduction, which is by itself based on predicate logic and Horn clauses.
+
 ## Entities and relations
 
 The common name for anything that can be instantiated is an **entity**. A `person`, `dog`, `employment`, `birthday`, etc. A **relation** is a meaningful, named group of entities: `owns`, `parent`, `caused_by`. "meaningful" here means that it has some function in the application.

@@ -1,4 +1,4 @@
-This page describes the basic principles of the system.
+This page describes the basic principles of the library.
 
 ## A basic system, extended by modules
 
