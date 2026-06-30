@@ -3,10 +3,9 @@ import pickle
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 
-
-ID = 'id'
-TEXT = 'text'
-CONSTANT = 'constant'
+ID = "id"
+TEXT = "text"
+CONSTANT = "constant"
 
 
 class SparqlDataSource(SomeDataSource):
@@ -16,13 +15,11 @@ class SparqlDataSource(SomeDataSource):
     headers: list
     lang: str
 
-
-    def __init__(self, url: str, result_cache_path: bool=None, headers: list={}, lang: str="en"):
+    def __init__(self, url: str, result_cache_path: bool = None, headers: list = {}, lang: str = "en"):
         self.url = url
         self.result_cache_path = result_cache_path
         self.headers = headers
         self.lang = lang
-
 
     def select(self, table: str, columns: list[str], values: list) -> list[list]:
 
@@ -31,9 +28,9 @@ class SparqlDataSource(SomeDataSource):
             nulled_values = list(map(lambda v: None if isinstance(v, Variable) else v, values))
             input_string = table + str(columns) + str(nulled_values)
             cache_key = hashlib.sha1(input_string.encode()).hexdigest()
-            file_name = self.result_cache_path + "/" + cache_key + ".pickle"
+            file_name = self.result_cache_path / (cache_key + ".pickle")
             try:
-                with open(file_name, 'rb') as file:
+                with open(file_name, "rb") as file:
                     result = pickle.load(file)
                     return result
             except OSError:
@@ -45,7 +42,7 @@ class SparqlDataSource(SomeDataSource):
         # write to the results cache
         if self.result_cache_path:
             try:
-                with open(file_name, 'wb') as file:
+                with open(file_name, "wb") as file:
                     pickle.dump(result, file)
                     return result
             except OSError:
@@ -53,15 +50,11 @@ class SparqlDataSource(SomeDataSource):
 
         return result
 
-
     def do_select(self, table: str, columns: list[str], values: list) -> list[list]:
 
         import requests
 
-        terms = [
-            self.prepare_term(values[0], 0, columns),
-            self.prepare_term(values[1], 1, columns)
-        ]
+        terms = [self.prepare_term(values[0], 0, columns), self.prepare_term(values[1], 1, columns)]
 
         variables = self.prepare_variables(values, terms)
         text_variables = self.prepare_text_variables(values, terms, columns)
@@ -70,10 +63,7 @@ class SparqlDataSource(SomeDataSource):
         query = self.create_query(variables, text_variables, terms, table)
 
         # Set the parameters for the request
-        params = {
-            'query': query,
-            'format': 'json'  # Get the results in JSON format
-        }
+        params = {"query": query, "format": "json"}  # Get the results in JSON format
 
         # Send the request to the Wikidata SPARQL endpoint
         response = requests.get(self.url, params=params, headers=self.headers)
@@ -93,7 +83,6 @@ class SparqlDataSource(SomeDataSource):
 
         return results
 
-
     def create_query(self, variables: list[str], text_variables: list[str], terms: list, table: str):
 
         locale_filter = ""
@@ -112,7 +101,6 @@ class SparqlDataSource(SomeDataSource):
 
         return query
 
-
     def prepare_term(self, term: any, index: int, columns: list[str]):
         if isinstance(term, Variable):
             prepared = "?term" + str(index)
@@ -128,7 +116,6 @@ class SparqlDataSource(SomeDataSource):
             prepared = str(term)
         return prepared
 
-
     def prepare_variables(self, values, terms):
         variables = []
         for i in range(2):
@@ -138,7 +125,6 @@ class SparqlDataSource(SomeDataSource):
             variables = ["*"]
         return variables
 
-
     def prepare_text_variables(self, values, terms, columns):
         variables = []
         for i in range(2):
@@ -146,17 +132,16 @@ class SparqlDataSource(SomeDataSource):
                 variables.append(terms[i])
         return variables
 
-
     def prepare_results(self, data: dict, values: list, terms: list):
         results = []
-        for item in data['results']['bindings']:
+        for item in data["results"]["bindings"]:
 
             result = []
             for i in range(2):
                 if isinstance(values[i], Variable):
                     # drop the preceding '?'
                     var = terms[i][1:]
-                    value = item[var]['value']
+                    value = item[var]["value"]
                     result.append(value)
                 else:
                     result.append(None)
