@@ -58,11 +58,4 @@ def build_chat80_system() -> BasicSystem:
     write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
     generator = BasicGenerator(write_grammar, model, output_buffer)
 
-    return BasicSystem(
-        model=model,
-        parser=parser,
-        composer=composer,
-        executor=executor,
-        output_generator=generator,
-        logger=Logger(),
-    )
+    return BasicSystem(model=model, parser=parser, composer=composer, executor=executor, output_generator=generator)

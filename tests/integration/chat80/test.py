@@ -141,8 +141,6 @@ class Chat80Test(unittest.TestCase):
         write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
         generator = BasicGenerator(write_grammar, model, output_buffer)
 
-        logger = Logger()
-
         # define the system
 
         system = BasicSystem(
@@ -151,8 +149,7 @@ class Chat80Test(unittest.TestCase):
             composer=composer,
             executor=executor,
             output_generator=generator,
-            logger=logger,
         )
 
-        tester = DialogTester(self, tests, system, logger)
+        tester = DialogTester(self, tests, system)
         tester.run()
