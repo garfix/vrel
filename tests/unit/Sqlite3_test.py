@@ -1,4 +1,5 @@
 import unittest
+from vrel.core.constants import E1, E2
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.Variable import Variable
 
@@ -17,14 +18,12 @@ class TestSqlite3(unittest.TestCase):
         cursor = connection.cursor()
 
         # create a table
-        cursor.execute(
-            """
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS customer (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT NOT NULL
             )
-        """
-        )
+        """)
 
         # insert some values
         try:
@@ -36,5 +35,5 @@ class TestSqlite3(unittest.TestCase):
 
         ds = Sqlite3DataSource(connection)
 
-        self.assertEqual(ds.select_column("customer", ["id", "name"], [Variable("E1"), Variable("E2")]), [1, 2])
-        self.assertEqual(ds.select("customer", ["id", "name"], [1, Variable("E1")]), [[1, "John"]])
+        self.assertEqual(ds.select_column("customer", ["id", "name"], [E1, E2]), [1, 2])
+        self.assertEqual(ds.select("customer", ["id", "name"], [1, E1]), [[1, "John"]])

@@ -1,5 +1,6 @@
 import unittest
 
+from vrel.core.constants import E1, E2
 from vrel.data_source.PsycoPg3DataSource import PsycoPg3DataSource
 
 
@@ -34,8 +35,8 @@ class TestPsycoPg3(unittest.TestCase):
 
                 ds = PsycoPg3DataSource(connection)
 
-                self.assertEqual(ds.select_column("customer", ["id", "name"], [None, None]), [1, 2])
-                self.assertEqual(ds.select("customer", ["id", "name"], [1, None]), [[1, "John"]])
+                self.assertEqual(ds.select_column("customer", ["id", "name"], [E1, E2]), [1, 2])
+                self.assertEqual(ds.select("customer", ["id", "name"], [1, E2]), [[1, "John"]])
 
         except ImportError:
             raise Exception("To run this test, import psycopg3")
