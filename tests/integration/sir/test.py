@@ -47,7 +47,7 @@ class TestSIR(unittest.TestCase):
 
     def test_sir(self):
 
-        path = str(pathlib.Path(__file__).parent.resolve()) + "/"
+        path = pathlib.Path(__file__).parent
 
         # create a database
 
@@ -57,8 +57,8 @@ class TestSIR(unittest.TestCase):
         # define some inference rules
 
         inferences = DeductionModule()
-        inferences.import_rules(path + "intents.pl")
-        inferences.import_rules(path + "inferences.pl")
+        inferences.import_rules(path / "intents.pl")
+        inferences.import_rules(path / "inferences.pl")
 
         # a data source to store information for output
 

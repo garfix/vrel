@@ -106,7 +106,7 @@ class Chat80Test(unittest.TestCase):
 
     def test_chat80(self):
 
-        path = str(pathlib.Path(__file__).parent.resolve()) + "/"
+        path = pathlib.Path(__file__).parent
 
         # define the database
 
@@ -116,8 +116,8 @@ class Chat80Test(unittest.TestCase):
         # define the intents and other inferences
 
         inferences = DeductionModule()
-        inferences.import_rules(path + "inferences.pl")
-        inferences.import_rules(path + "intents.pl")
+        inferences.import_rules(path / "inferences.pl")
+        inferences.import_rules(path / "intents.pl")
 
         # a data source to store information for output
 

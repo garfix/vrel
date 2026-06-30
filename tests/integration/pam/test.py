@@ -28,7 +28,7 @@ class TestPAM(unittest.TestCase):
 
     def test_pam(self):
 
-        path = str(pathlib.Path(__file__).parent.resolve()) + "/"
+        path = pathlib.Path(__file__).parent
 
         # define the database
 
@@ -46,8 +46,8 @@ class TestPAM(unittest.TestCase):
         # define the intents and other inferences
 
         inferences = DeductionModule()
-        inferences.import_rules(path + "intents.pl")
-        inferences.import_rules(path + "deductions.pl")
+        inferences.import_rules(path / "intents.pl")
+        inferences.import_rules(path / "deductions.pl")
 
         # a data source to store information for output
 
@@ -58,8 +58,8 @@ class TestPAM(unittest.TestCase):
         induction_model = Model([PAMModule(), inferences, same_as])
 
         inductions = InductionModule(induction_model)
-        inductions.import_fact_induction_rules(path + "fact_induction.pl")
-        inductions.import_plan_analyzer_rules(path + "plan_analysis.pl")
+        inductions.import_fact_induction_rules(path / "fact_induction.pl")
+        inductions.import_plan_analyzer_rules(path / "plan_analysis.pl")
 
         # define the model
 

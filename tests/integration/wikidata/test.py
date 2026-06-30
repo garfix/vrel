@@ -36,8 +36,8 @@ class TestWikiData(unittest.TestCase):
 
     def test_wikidata(self):
 
-        path = str(pathlib.Path(__file__).parent.resolve()) + "/"
-        result_cache_path = str(pathlib.Path(__file__).parent.resolve()) + "/result_cache/"
+        path = pathlib.Path(__file__).parent
+        result_cache_path = path / "result_cache"
 
         # define the data source
         wikidata = WikidataModule(WikidataDataSource(result_cache_path=result_cache_path))
@@ -46,8 +46,8 @@ class TestWikiData(unittest.TestCase):
         # define predicate mapping from the domain to one or more Wikidata predicates
 
         inferences = DeductionModule()
-        inferences.import_rules(path + "mapping.pl")
-        inferences.import_rules(path + "intents.pl")
+        inferences.import_rules(path / "mapping.pl")
+        inferences.import_rules(path / "intents.pl")
 
         # a data source to store information for output
 
