@@ -27,7 +27,11 @@ There are several standard modules that provide a variety of functionalities:
 
 ## The model
 
-A **model** represents a domain of knowledge. In this library the model is simply a container for all modules.
+We won’t use formal logic, but we will borrow its idea of a model. A **model** represents part of reality. It has a domain, some entities, relations and attributes, and an interpretation. The domain contains a number of instances (things). Relations and attributes specify how the instances in the domain interact. The interpretation is a function that maps the entities and relations to the domain.
+
+In this library, the domain is formed by the rows in a database, the files of a file system, or any other piece of data. The interpretation is formed by functions that map an entity or relation to the id’s in a database, to filenames, or any other identifier.
+
+The implementation of the model in the library is simply a container for all modules.
 
 ## The parser
 

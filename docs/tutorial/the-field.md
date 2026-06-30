@@ -67,3 +67,15 @@ The default logic of the library is binary, as you're used to. It deals with the
 ## Intents
 
 An **intent** is the relation that performs the main function of a sentence. Intents are often connected with specific keywords in sentence, like `what`, `why` and `how many`. The need to resolve specific entities from a sentence and return the results in some specific way.
+
+## Semantic grammar
+
+A semantic grammar is a grammar that contains the names of relations and entities in its syntactic rules. For example
+
+    s -> 'what' 'is' aggregate element 'in' material
+
+The categories `aggregate`, `element` and `material` are not syntactic, like `noun` and `verb`.
+
+The current library allows you to create a semantic grammar, and there are some good use cases for it. But you must be aware that the grammar you build is very domain-specific and there's a low chance of being able to reuse it in other projects.
+
+Adding some semantic grammar elements to any grammar is normal, however.
