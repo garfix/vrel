@@ -1,4 +1,4 @@
-from vrel.core.constants import IGNORED, E1, LARGE, MEDIUM, SMALL
+from vrel.core.constants import IGNORED, LARGE, MEDIUM, SMALL
 from vrel.entity.Atom import Atom
 from vrel.entity.Id import Id
 from vrel.entity.Relation import Parameter, Relation
@@ -9,8 +9,6 @@ from vrel.entity.ExecutionContext import ExecutionContext
 
 
 class Chat80Module(SomeModule):
-
-    ds: SomeDataSource
 
     def __init__(self, data_source: SomeDataSource) -> None:
         super().__init__()

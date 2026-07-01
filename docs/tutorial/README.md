@@ -12,6 +12,10 @@ Processors
 - [Composition](composition.md) - how meaning is attached and composed
 - [Execution](execution.md) - how the semantic representation is executed
 
+Getting started
+
+- [How to](get-started.md) - start a new application
+
 Demos
 
 - [CHAT-80](demos/chat-80.md)

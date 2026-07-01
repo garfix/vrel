@@ -1,9 +1,7 @@
-from vrel.core.constants import CONSTANT, E1, E2, E3, E4, COMBINED, SEPARATE
+from vrel.core.constants import CONSTANT, E1, E2, E3, E4, COMBINED
 from vrel.entity.Atom import Atom
 from vrel.entity.Variable import Variable
 
-Body = Variable("Body")
-Range = Variable("Range")
 Size = Variable("Size")
 
 
