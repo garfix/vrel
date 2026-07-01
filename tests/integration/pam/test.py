@@ -67,14 +67,15 @@ class TestPAM(unittest.TestCase):
 
         # define the system
 
-        read_grammar = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
-        parser = BasicParser(read_grammar, sentence_categories=["decl", "question"])
+        parser = BasicParser(sentence_categories=["decl", "question"])
+        parser.add_grammar_rules(get_read_grammar())
 
         composer = SemanticComposer()
         executor = AtomExecutor()
 
-        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
-        generator = BasicGenerator(write_grammar, model, output_buffer)
+        generator = BasicGenerator(model, output_buffer)
+        generator.add_grammar_rules(get_en_us_write_grammar())
+        generator.add_grammar_rules(get_write_grammar())
 
         system = BasicSystem(
             model=model,

@@ -1,7 +1,17 @@
 import re
-from vrel.core.constants import DELTA, POS_TYPE_REG_EXP, ROOT_CATEGORY, TERMINAL, NO_SENTENCE, NOT_UNDERSTOOD, POS_TYPE_RELATION, POS_TYPE_WORD_FORM, UNKNOWN_WORD
+from vrel.core.constants import (
+    DELTA,
+    POS_TYPE_REG_EXP,
+    ROOT_CATEGORY,
+    TERMINAL,
+    NO_SENTENCE,
+    NOT_UNDERSTOOD,
+    POS_TYPE_RELATION,
+    POS_TYPE_WORD_FORM,
+    UNKNOWN_WORD,
+)
 from vrel.entity.GrammarRule import GrammarRule
-from vrel.entity.GrammarRules import GrammarRules
+from vrel.entity.Grammar import Grammar
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.RuleConstituent import RuleConstituent
 from .entity.Chart import Chart
@@ -16,8 +26,7 @@ class EarleyParser:
     "Speech and Language Processing" (first edition) - Daniel Jurafsky & James H. Martin (Prentice Hall, 2000)
     """
 
-
-    def parse(self, grammar_rules: GrammarRules, text: str) -> ProcessResult:
+    def parse(self, grammar_rules: Grammar, text: str) -> ProcessResult:
 
         chart = self.buildChart(grammar_rules, text)
 
@@ -38,14 +47,9 @@ class EarleyParser:
             else:
                 error = NOT_UNDERSTOOD
 
-        return ProcessResult(
-            products=roots,
-            error_type=error,
-            error_args=args
-        )
+        return ProcessResult(products=roots, error_type=error, error_args=args)
 
-
-    def buildChart(self, grammar_rules: GrammarRules, text: str):
+    def buildChart(self, grammar_rules: Grammar, text: str):
         """
         The body of Earley's algorithm
         """
@@ -61,13 +65,14 @@ class EarleyParser:
         # delta(D) -> s(P1, P2, P3)
         # ...
         for c in grammar_rules.find_argument_counts(ROOT_CATEGORY):
-            variables = ["P" + str(j) for j in range(1, c+1)]
-            grammar_rules.add_rule(GrammarRule(
-                RuleConstituent(DELTA, ["D"], POS_TYPE_RELATION),
-                [RuleConstituent(ROOT_CATEGORY, variables, POS_TYPE_RELATION)],
-                sem=lambda s: s
-            ))
-
+            variables = ["P" + str(j) for j in range(1, c + 1)]
+            grammar_rules.add_rule(
+                GrammarRule(
+                    RuleConstituent(DELTA, ["D"], POS_TYPE_RELATION),
+                    [RuleConstituent(ROOT_CATEGORY, variables, POS_TYPE_RELATION)],
+                    sem=lambda s: s,
+                )
+            )
 
         for i in range(charCount + 1):
 
@@ -96,8 +101,7 @@ class EarleyParser:
 
         return chart
 
-
-    def predict(self, grammar_rules: GrammarRules, chart: Chart, state: ChartState):
+    def predict(self, grammar_rules: Grammar, chart: Chart, state: ChartState):
         """
         Adds all entries to the chart that have the current consequent of $state as their antecedent.
         """
@@ -107,11 +111,10 @@ class EarleyParser:
         next_consequent_variables = state.rule.consequents[consequentIndex].arguments
         end_char_index = state.end_char_index
 
-        for rule in grammar_rules.find_rules(nextConsequent.predicate, len(next_consequent_variables)) :
+        for rule in grammar_rules.find_rules(nextConsequent.predicate, len(next_consequent_variables)):
 
             predicted_state = ChartState(rule, 1, end_char_index, end_char_index)
             chart.enqueue(predicted_state, end_char_index)
-
 
     def scan(self, chart: Chart, state: ChartState):
         """
@@ -127,10 +130,10 @@ class EarleyParser:
         if next_consequent.position_type == POS_TYPE_REG_EXP:
             word = self.perform_regexp(chart.text, end_char_index, next_consequent.predicate)
             if word is not None:
-                for i in range(1, len(word)+1):
+                for i in range(1, len(word) + 1):
                     sub_word = word[0:i]
                     sem = self.create_semantic_function_for_scanned_state(sub_word)
-# todo check if match regexp
+                    # todo check if match regexp
                     self.add_scanned_state(chart, state, sub_word, sem)
 
         # match a string constant over multiple tokens
@@ -140,10 +143,8 @@ class EarleyParser:
                 word = next_consequent.predicate
                 self.add_scanned_state(chart, state, word, None)
 
-
     def create_semantic_function_for_scanned_state(self, word):
         return lambda: word
-
 
     def add_scanned_state(self, chart: Chart, state: ChartState, word: str, sem):
         next_consequent = state.rule.consequents[state.dot_position - 1]
@@ -156,9 +157,8 @@ class EarleyParser:
             sem,
         )
 
-        scanned_state = ChartState(rule, 2, end_char_index, end_char_index+length)
-        chart.enqueue(scanned_state, end_char_index+length)
-
+        scanned_state = ChartState(rule, 2, end_char_index, end_char_index + length)
+        chart.enqueue(scanned_state, end_char_index + length)
 
     def complete(self, chart: Chart, completed_state: ChartState):
         """
@@ -180,19 +180,25 @@ class EarleyParser:
             dot_position = charted_state.dot_position
             rule = charted_state.rule
 
-            if (dot_position > len(rule.consequents)) or (rule.consequents[dot_position-1].predicate != completed_antecedent):
+            if (dot_position > len(rule.consequents)) or (
+                rule.consequents[dot_position - 1].predicate != completed_antecedent
+            ):
                 continue
 
             # check if the types match
-            if charted_state.rule.consequents[dot_position-1].position_type != completed_state.rule.antecedent.position_type:
+            if (
+                charted_state.rule.consequents[dot_position - 1].position_type
+                != completed_state.rule.antecedent.position_type
+            ):
                 continue
 
             # create a new state that is a dot-advancement of an older state
-            advanced_state = ChartState(rule, dot_position+1, charted_state.start_char_index, completed_state.end_char_index)
+            advanced_state = ChartState(
+                rule, dot_position + 1, charted_state.start_char_index, completed_state.end_char_index
+            )
 
             # enqueue the new state
             chart.enqueue(advanced_state, completed_state.end_char_index)
-
 
     def perform_regexp(self, text: str, start_index: int, regexp: str):
         part = text[start_index:]
@@ -203,8 +209,6 @@ class EarleyParser:
 
         return word
 
-
     def read_word(self, text: str, start_index: int, word: str):
         part = text[start_index:].lower()
-        return part[:len(word)] == word
-
+        return part[: len(word)] == word

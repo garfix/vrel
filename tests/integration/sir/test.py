@@ -4,13 +4,9 @@ import unittest
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
-from vrel.core.Logger import Logger
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
 from vrel.module.DeductionModule import DeductionModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
-    SimpleGrammarRulesParser,
-)
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
@@ -71,14 +67,15 @@ class TestSIR(unittest.TestCase):
 
         # define the pipeline
 
-        read_grammar = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
-        parser = BasicParser(read_grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(get_read_grammar())
 
         composer = SemanticComposer()
         executor = AtomExecutor()
 
-        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
-        generator = BasicGenerator(write_grammar, model, output_buffer)
+        generator = BasicGenerator(model, output_buffer)
+        generator.add_grammar_rules(get_en_us_write_grammar())
+        generator.add_grammar_rules(get_write_grammar())
 
         system = BasicSystem(
             model=model,

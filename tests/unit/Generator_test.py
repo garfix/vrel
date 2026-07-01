@@ -7,9 +7,6 @@ from vrel.core.Solver import Solver
 from vrel.core.constants import E1, E2
 from vrel.entity.Atom import Atom
 from vrel.module.DeductionModule import DeductionModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
-    SimpleGrammarRulesParser,
-)
 from generator.SimpleModuleOutputBuffer import SimpleOutputBuffer
 
 
@@ -53,8 +50,8 @@ class TestGenerator(unittest.TestCase):
             {"syn": "named_number(E1) -> 'two'", "if": [Atom("equals", E1, 2)]},
         ]
 
-        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(raw_grammar)
-        generator = BasicGenerator(write_grammar, model, output_buffer)
+        generator = BasicGenerator(model, output_buffer)
+        generator.add_grammar_rules(raw_grammar)
 
         tests = [
             {"atoms": [Atom("output_type", "ok")], "output": "OK"},

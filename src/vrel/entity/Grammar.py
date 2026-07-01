@@ -2,16 +2,14 @@ import copy
 from vrel.entity.GrammarRule import GrammarRule
 
 
-class GrammarRules:
+class Grammar:
 
     index: dict[str, dict[int, list[GrammarRule]]]
-
 
     def __init__(self, grammar_rules: list[GrammarRule]):
         self.index = {}
         for rule in grammar_rules:
             self.add_rule(rule)
-
 
     def add_rule(self, rule: GrammarRule):
         antecedent = rule.antecedent.predicate
@@ -26,7 +24,6 @@ class GrammarRules:
         for variant in self.create_rule_variants(rule):
             self.index[antecedent][argument_count].append(variant)
 
-
     def find_rules(self, antecedent: str, argument_count: int) -> list[GrammarRule]:
         if antecedent in self.index and argument_count in self.index[antecedent]:
             return self.index[antecedent][argument_count]
@@ -39,7 +36,6 @@ class GrammarRules:
         else:
             return []
 
-
     def create_rule_variants(self, rule: GrammarRule) -> list[GrammarRule]:
         consequent_variants = self.create_rule_variants_rest(rule, 0, [[]])
 
@@ -51,23 +47,33 @@ class GrammarRules:
 
         return variants
 
-
     def create_rule_variants_rest(self, rule: GrammarRule, index: 0, variants: list[list]) -> list[GrammarRule]:
         if index == len(rule.consequents):
             return variants
 
         consequent = rule.consequents[index]
-        look_ahead_consequent = rule.consequents[index+1] if index+1 < len(rule.consequents) else None
+        look_ahead_consequent = rule.consequents[index + 1] if index + 1 < len(rule.consequents) else None
 
         skip = 1
 
         # 'the'?_...
-        if index == 0 and consequent.optional and not consequent.separator and look_ahead_consequent and look_ahead_consequent.separator:
+        if (
+            index == 0
+            and consequent.optional
+            and not consequent.separator
+            and look_ahead_consequent
+            and look_ahead_consequent.separator
+        ):
             new_variants = [v + [consequent, look_ahead_consequent] for v in variants]
             new_variants.extend(variants)
             skip = 2
         # ... _'the'? ...
-        elif consequent.separator and look_ahead_consequent and look_ahead_consequent.optional and not look_ahead_consequent.separator:
+        elif (
+            consequent.separator
+            and look_ahead_consequent
+            and look_ahead_consequent.optional
+            and not look_ahead_consequent.separator
+        ):
             new_variants = [v + [consequent, look_ahead_consequent] for v in variants]
             new_variants.extend(variants)
             skip = 2
@@ -78,4 +84,4 @@ class GrammarRules:
         else:
             new_variants = [v + [consequent] for v in variants]
 
-        return self.create_rule_variants_rest(rule, index+skip, new_variants)
+        return self.create_rule_variants_rest(rule, index + skip, new_variants)

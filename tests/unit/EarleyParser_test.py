@@ -2,7 +2,7 @@ import unittest
 
 from vrel.core.constants import POS_TYPE_RELATION, POS_TYPE_WORD_FORM
 from vrel.entity.GrammarRule import GrammarRule
-from vrel.entity.GrammarRules import GrammarRules
+from vrel.entity.Grammar import Grammar
 from vrel.entity.RuleConstituent import RuleConstituent
 from vrel.processor.parser.earley.EarleyParser import EarleyParser
 
@@ -11,7 +11,7 @@ class TestEarleyParser(unittest.TestCase):
 
     def test_ambiguity(self):
         # create a toy grammar to generates superfluous sentences (to test the parsing of ambiguity)
-        grammarRules = GrammarRules(
+        grammarRules = Grammar(
             [
                 # s(P1) -> np(E1) vp(P1, E2)
                 GrammarRule(

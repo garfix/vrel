@@ -1,26 +1,31 @@
 from vrel.core.constants import CATEGORY_FORMAT, CATEGORY_TEXT, CATEGORY_VALUE, POS_TYPE_WORD_FORM
 from vrel.core.functions.terms import bind_variables
 from vrel.entity.GrammarRule import GrammarRule
-from vrel.entity.GrammarRules import GrammarRules
+from vrel.entity.Grammar import Grammar
+from vrel.entity.SimpleGrammar import SimpleGrammar
 from vrel.interface import SomeModel
 from vrel.interface.SomeGenerator import SomeGenerator
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
+from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 
 
 class BasicGenerator(SomeGenerator):
 
-    grammar: GrammarRules
+    grammar: Grammar
     solver: SomeSolver
     output_buffer: BasicOutputBuffer
 
-    def __init__(self, grammar: GrammarRules, model: SomeModel, output_buffer: BasicOutputBuffer):
+    def __init__(self, model: SomeModel, output_buffer: BasicOutputBuffer):
 
         from vrel.core.Solver import Solver
 
-        self.grammar = grammar
+        self.grammar = Grammar([])
         self.solver = Solver(model, None, None)
         self.output_buffer = output_buffer
+
+    def add_grammar_rules(self, rules: SimpleGrammar):
+        SimpleGrammarRulesParser().parse_write_grammar(rules, self.grammar)
 
     def generate_output(self):
         output = self.generate_node([], "s", [], False)

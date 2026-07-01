@@ -2,14 +2,10 @@ import unittest
 
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
-from vrel.core.Solver import Solver
 from vrel.core.constants import E1
 from vrel.entity.Atom import Atom
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.processor.parser.BasicParser import BasicParser
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
-    SimpleGrammarRulesParser,
-)
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 
@@ -27,8 +23,8 @@ class TestComposer(unittest.TestCase):
         ]
 
         model = Model([])
-        grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-        parser = BasicParser(grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_grammar)
         composer = SemanticComposer()
         executor = AtomExecutor()
 
@@ -62,8 +58,8 @@ class TestComposer(unittest.TestCase):
         ]
 
         model = Model([])
-        grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-        parser = BasicParser(grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_grammar)
         composer = SemanticComposer()
 
         system = BasicSystem(
@@ -91,8 +87,8 @@ class TestComposer(unittest.TestCase):
         ]
 
         model = Model([])
-        grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-        parser = BasicParser(grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_grammar)
         composer = SemanticComposer()
 
         system = BasicSystem(model=model, parser=parser)
@@ -114,8 +110,8 @@ class TestComposer(unittest.TestCase):
         ]
 
         model = Model([])
-        grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-        parser = BasicParser(grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_grammar)
         composer = SemanticComposer()
 
         system = BasicSystem(
@@ -139,8 +135,8 @@ class TestComposer(unittest.TestCase):
             {"syn": "proper_noun(E1) -> /\\w+/", "sem": lambda token: token},
         ]
 
-        grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-        parser = BasicParser(grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_grammar)
         composer = SemanticComposer()
 
         system = BasicSystem(

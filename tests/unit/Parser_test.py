@@ -4,6 +4,7 @@ from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.Model import Model
 from vrel.core.constants import E1
+from vrel.entity.Grammar import Grammar
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
@@ -59,7 +60,8 @@ class TestParser(unittest.TestCase):
         ]
 
         for test in tests:
-            grammar = SimpleGrammarRulesParser().parse_read_grammar([test["rule"]])
+            grammar = Grammar([])
+            SimpleGrammarRulesParser().parse_read_grammar([test["rule"]], grammar)
             rules = [str(rule) for rule in grammar.index["s"][1]]
             self.assertEqual(rules, test["variants"])
 
@@ -75,8 +77,8 @@ class TestParser(unittest.TestCase):
             {"syn": "verb(V) -> 'loves'"},
         ]
 
-        grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-        parser = BasicParser(grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_grammar)
 
         system = BasicSystem(model=Model([]), parser=parser)
 
@@ -95,8 +97,8 @@ class TestParser(unittest.TestCase):
             {"syn": "np(E1) -> 'shoe'"},
         ]
 
-        grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-        parser = BasicParser(grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_grammar)
 
         system = BasicSystem(model=Model([]), parser=parser)
 
@@ -116,8 +118,8 @@ class TestParser(unittest.TestCase):
         ]
 
         try:
-            grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-            parser = BasicParser(grammar)
+            parser = BasicParser()
+            parser.add_grammar_rules(simple_grammar)
         except Exception as e:
             self.assertEqual(str(e), "Missing -> operator in 'syn' value: s(V) => proper_noun(E1) verb(V)")
 
@@ -132,10 +134,10 @@ class TestParser(unittest.TestCase):
 
         model = Model([output_buffer])
 
-        read_grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_read_grammar)
-        parser = BasicParser(read_grammar)
-        write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar())
-        generator = BasicGenerator(write_grammar, model, output_buffer)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_read_grammar)
+        generator = BasicGenerator(model, output_buffer)
+        generator.add_grammar_rules(get_en_us_write_grammar())
 
         system = BasicSystem(model=model, parser=parser, output_generator=generator)
 

@@ -2,7 +2,7 @@ import re
 
 from vrel.core.constants import POS_TYPE_REG_EXP, POS_TYPE_RELATION, POS_TYPE_WORD_FORM
 from vrel.entity.GrammarRule import GrammarRule
-from vrel.entity.GrammarRules import GrammarRules
+from vrel.entity.Grammar import Grammar
 from vrel.entity.RuleConstituent import RuleConstituent
 from vrel.entity.SimpleGrammarRule import SimpleGrammarRule
 from vrel.entity.SimpleGrammar import SimpleGrammar
@@ -13,78 +13,74 @@ class SimpleGrammarRulesParser:
     re_identifier: re.Pattern
     re_variable: re.Pattern
 
-
     def __init__(self) -> None:
-        self.re_tokens = re.compile("(" + "|".join([
-            '\\?',
-            ',',
-            '->',
-            '\\(',
-            '\\)',
-            "/(?:\\\\/|[^/])+/",
-            "'(?:\\\\'|[^'])+'",
-            '"(?:\\\\"|[^"])+"',
-            '[A-Z]\\w*',
-            '\\w+',
-            '\\+',
-            '~',
-        ]) + ")")
+        self.re_tokens = re.compile(
+            "("
+            + "|".join(
+                [
+                    "\\?",
+                    ",",
+                    "->",
+                    "\\(",
+                    "\\)",
+                    "/(?:\\\\/|[^/])+/",
+                    "'(?:\\\\'|[^'])+'",
+                    '"(?:\\\\"|[^"])+"',
+                    "[A-Z]\\w*",
+                    "\\w+",
+                    "\\+",
+                    "~",
+                ]
+            )
+            + ")"
+        )
         self.re_identifier = re.compile("^\\w+$")
         self.re_variable = re.compile("^[A-Z]\\w*$")
 
+    def parse_read_grammar(self, simple_grammar: SimpleGrammar, grammar: Grammar) -> Grammar:
+        return self.parse_grammar(simple_grammar, grammar, False)
 
-    def parse_read_grammar(self, simple_grammar: SimpleGrammar) -> GrammarRules:
-        return self.parse_grammar(simple_grammar, False)
+    def parse_write_grammar(self, simple_grammar: SimpleGrammar, grammar: Grammar) -> Grammar:
+        return self.parse_grammar(simple_grammar, grammar, True)
 
-
-    def parse_write_grammar(self, simple_grammar: SimpleGrammar) -> GrammarRules:
-        return self.parse_grammar(simple_grammar, True)
-
-
-    def parse_grammar(self, simple_grammar: SimpleGrammar, write_rules) -> GrammarRules:
-        rules = []
-
+    def parse_grammar(self, simple_grammar: SimpleGrammar, grammar: Grammar, write_rules: bool) -> Grammar:
         for simple_rule in simple_grammar:
             rule = self.parse_simple_rule(simple_rule, write_rules)
-            rules.append(rule)
-
-        return GrammarRules(rules)
-
+            grammar.add_rule(rule)
 
     def parse_simple_rule(self, simple_rule: SimpleGrammarRule, write_rules: bool) -> GrammarRule:
-        if not 'syn' in simple_rule:
+        if not "syn" in simple_rule:
             raise Exception("A rule must contain a 'syn' value")
 
-        antecedent, consequents = self.parse_syntax(simple_rule['syn'], write_rules)
+        antecedent, consequents = self.parse_syntax(simple_rule["syn"], write_rules)
 
         sem = None
         if write_rules:
-            if 'if' in simple_rule:
-                sem = simple_rule['if']
+            if "if" in simple_rule:
+                sem = simple_rule["if"]
         else:
-            if 'sem' in simple_rule:
-                sem = simple_rule['sem']
+            if "sem" in simple_rule:
+                sem = simple_rule["sem"]
 
         format = None
         if write_rules:
-            if 'format' in simple_rule:
-                format = simple_rule['format']
+            if "format" in simple_rule:
+                format = simple_rule["format"]
 
         post = None
         if write_rules:
-            if 'post' in simple_rule:
-                post = simple_rule['post']
+            if "post" in simple_rule:
+                post = simple_rule["post"]
 
         dialog = []
-        if 'dialog' in simple_rule:
-            dialog = simple_rule['dialog']
+        if "dialog" in simple_rule:
+            dialog = simple_rule["dialog"]
 
         boost = 0
-        if 'boost' in simple_rule:
-            boost = simple_rule['boost']
+        if "boost" in simple_rule:
+            boost = simple_rule["boost"]
 
         return GrammarRule(antecedent, consequents, sem=sem, format=format, post=post, dialog=dialog, boost=boost)
-
 
     def parse_syntax(self, syntax: str, write_rules: bool):
 
@@ -139,22 +135,21 @@ class SimpleGrammarRulesParser:
                     consequents.append(atom)
 
             token, new_pos = self.parse_token(tokens, pos)
-            if token == '+':
+            if token == "+":
                 pos = new_pos
-            elif token == '~':
-                atom = RuleConstituent(' ', [], POS_TYPE_WORD_FORM, optional=True, separator=True)
+            elif token == "~":
+                atom = RuleConstituent(" ", [], POS_TYPE_WORD_FORM, optional=True, separator=True)
                 consequents.append(atom)
                 pos = new_pos
             else:
                 if pos < len(tokens):
-                    atom = RuleConstituent(' ', [], POS_TYPE_WORD_FORM, separator=True)
+                    atom = RuleConstituent(" ", [], POS_TYPE_WORD_FORM, separator=True)
                     consequents.append(atom)
 
         if pos != len(tokens):
             raise Exception("Could not complete parsing the consequents: " + syntax)
 
         return antecedent, consequents
-
 
     def parse_variable(self, tokens: list[str], pos: int):
         token, new_pos = self.parse_token(tokens, pos)
@@ -167,18 +162,16 @@ class SimpleGrammarRulesParser:
 
         return None, 0
 
-
     def parse_regexp(self, tokens: list[str], pos: int):
         token, new_pos = self.parse_token(tokens, pos)
         if not token:
             return None, 0
 
-        if token[0] == '/':
+        if token[0] == "/":
             pos = new_pos
-            return token[1:-1].replace('\\/', '/'), pos
+            return token[1:-1].replace("\\/", "/"), pos
 
         return None, 0
-
 
     def parse_string(self, tokens: list[str], pos: int):
         token, new_pos = self.parse_token(tokens, pos)
@@ -194,7 +187,6 @@ class SimpleGrammarRulesParser:
             return token[1:-1].replace('\\"', '"'), pos
 
         return None, 0
-
 
     def parse_atom(self, tokens: list[str], pos: int):
         predicate, new_pos = self.parse_identifier(tokens, pos)
@@ -228,7 +220,6 @@ class SimpleGrammarRulesParser:
 
         return RuleConstituent(predicate, terms, POS_TYPE_RELATION), pos
 
-
     def parse_identifier(self, tokens: list[str], pos: int):
         token, new_pos = self.parse_token(tokens, pos)
         if not token:
@@ -240,18 +231,16 @@ class SimpleGrammarRulesParser:
 
         return None, 0
 
-
     def parse_optional_marker(self, tokens: list[str], pos: int):
         token, new_pos = self.parse_token(tokens, pos)
         if not token:
             return False, 0
 
-        if token == '?':
+        if token == "?":
             pos = new_pos
             return True, pos
 
         return False, 0
-
 
     def parse_token(self, tokens: list[str], pos: int):
         if pos >= len(tokens):

@@ -9,7 +9,6 @@ from vrel.core.DialogTester import DialogTester
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
@@ -50,33 +49,30 @@ class StartTest(unittest.TestCase):
 
         # define the module
 
-        module = StartModule(db)
+        facts = StartModule(db)
 
-        # define the intents and other inferences
+        # define the decution rules
 
         inferences = DeductionModule()
         inferences.import_rules(path / "intents.pl")
         # inferences.import_rules(path / "inferences.pl")
 
-        # # a data source to store information for output
+        # define the model
 
-        #
+        output_buffer = BasicOutputBuffer()
+        model = Model([facts, inferences, output_buffer])
 
-        # # define the model
+        # define the parser
 
-        # model = Model([facts, inferences, optimizer, output_buffer])
-
-        # # define the pipeline
-
-        # read_grammar = SimpleGrammarRulesParser().parse_read_grammar(get_read_grammar())
-        # parser = BasicParser(read_grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(get_read_grammar())
 
         # composer = SemanticComposer()
         # executor = AtomExecutor()
 
-        # write_grammar = SimpleGrammarRulesParser().parse_write_grammar(get_en_us_write_grammar() + get_write_grammar())
-        # output_buffer = BasicOutputBuffer()
-        # generator = BasicGenerator(write_grammar, model, output_buffer)
+        # generator = BasicGenerator(model, output_buffer)
+        # generator.add_grammar_rules(get_en_us_write_grammar())
+        # generator.add_grammar_rules(get_write_grammar())
 
         # # define the system
 

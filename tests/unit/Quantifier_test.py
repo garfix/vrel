@@ -10,9 +10,6 @@ from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeDataSource import SomeDataSource
 from vrel.interface.SomeModule import SomeModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import (
-    SimpleGrammarRulesParser,
-)
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
@@ -115,8 +112,8 @@ class TestQuantification(unittest.TestCase):
             {"syn": "noun(E1) -> 'children'", "sem": lambda: Atom("child", E1)},
         ]
 
-        grammar = SimpleGrammarRulesParser().parse_read_grammar(simple_grammar)
-        parser = BasicParser(grammar)
+        parser = BasicParser()
+        parser.add_grammar_rules(simple_grammar)
         composer = SemanticComposer()
         executor = AtomExecutor()
 

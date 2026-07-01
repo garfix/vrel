@@ -1,10 +1,12 @@
 import re
-from vrel.entity.GrammarRules import GrammarRules
+from vrel.entity.Grammar import Grammar
 from vrel.entity.ProcessResult import ProcessResult
+from vrel.entity.SimpleGrammar import SimpleGrammar
 from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeParseTreeSortHeuristics import SomeParseTreeSortHeuristics
 from vrel.interface.SomeParser import SomeParser
 from vrel.processor.parser.BasicParserProduct import BasicParserProduct
+from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.parser.helper.sentence_extractor import extract_sentences
 from .tree_sort_heuristics.BasicParseTreeSortHeuristics import BasicParseTreeSortHeuristics
 from .earley.EarleyParser import EarleyParser
@@ -12,20 +14,23 @@ from .earley.EarleyParser import EarleyParser
 
 class BasicParser(SomeParser):
 
-    grammar: GrammarRules
+    grammar: Grammar
     parser: EarleyParser
     tree_sorter: SomeParseTreeSortHeuristics
     sentence_categories: str
 
-    def __init__(self, grammar: GrammarRules, sentence_categories=["s"]) -> None:
-        self.grammar = grammar
+    def __init__(self, sentence_categories=["s"]) -> None:
         self.parser = EarleyParser()
         self.tree_sorter = BasicParseTreeSortHeuristics()
         self.sentence_categories = sentence_categories
+        self.grammar = Grammar([])
+
+    def add_grammar_rules(self, rules: SimpleGrammar):
+        SimpleGrammarRulesParser().parse_read_grammar(rules, self.grammar)
 
     def process(self, input: str, logger: SomeLogger) -> ProcessResult:
         # replace whitespace sequences by single space
-        source_text = re.sub("\s+", " ", input)
+        source_text = re.sub("\\s+", " ", input)
 
         result = self.parser.parse(self.grammar, source_text)
 
