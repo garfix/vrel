@@ -8,7 +8,7 @@ from vrel.core.Logger import Logger
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.OptimizerModule import OptimizerModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model

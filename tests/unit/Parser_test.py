@@ -9,7 +9,7 @@ from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.processor.parser.BasicParser import BasicParser
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 
 
 class TestParser(unittest.TestCase):

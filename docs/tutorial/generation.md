@@ -1,6 +1,8 @@
 ## The basics
 
-In **response generation** a response sentence is generated based on rewrite rules and data source data. The relation `output_type` that is filled by the intent handler provides the main input to generation. After that, any data may serve as condition for further rewrites.
+In **response generation** a response sentence is generated based on rewrite rules and data source data.
+
+The relation `output_type` that is filled by the intent handler provides the main input to generation. After that, any data may serve as condition for further rewrites.
 
 Generation takes place based on rewrite rules that take a category as a head, and one or more categories as body. In the following example the head is `s` and the body `np` and `vp`.
 
@@ -42,6 +44,31 @@ A value that is to be displayed as-is, can be produced using the category `liter
 },
 ```
 
+## Format
+
+You can use the category `format` to use a custom function to create a result.
+
+```python
+{
+    "syn": "things(E1) -> format(E1)",
+    "format": lambda things: format_list(things)
+},
+```
+
+## Handle lists of values
+
+When a variable contains a list of values, and each of the values needs to be rewritten separately, you can use the `list_element` and `list_combine` items.
+
+```python
+{
+    "syn": "s() -> np(E1)",
+    "if": [Atom("output_type", "list"), Atom("output_list", E1)],
+    "list_element": E1,
+    "list_combine": lambda nps: ", ".join(nps),
+},
+
+```
+
 ## Combine
 
 The `combine` function tells the generator how the results of the body nodes are to be combined. Without a `combine` function, the results are cast to strings, any `None` values removed, and concatenated. The `combine` function may change that:
@@ -57,31 +84,13 @@ The `combine` function tells the generator how the results of the body nodes are
 
 Here the consequents are not combined and turned into a string, but just passed on as an array.
 
-## Format
-
-You can use the category `format` to use a custom function to create a result.
-
-```python
-{
-    "syn": "things(E1) -> format(E1)",
-    "format": lambda things: format_list(things)
-},
-```
-
 ## Post
 
 `post` is executed last and adds simple string based processing, like `strip`.
 
-## Handle lists of values
-
-When a variable contains a list of values, and each of the values needs to be rewritten separately, you can use the `list_element` and `list_combine` items.
-
 ```python
 {
-    "syn": "s() -> np(E1)",
-    "if": [Atom("output_type", "list"), Atom("output_list", E1)],
-    "list_element": E1,
-    "list_combine": lambda nps: ", ".join(nps),
+    "syn": "s() -> custom()",
+    "post": lambda custom: custom.strip()
 },
-
 ```

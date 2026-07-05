@@ -10,7 +10,7 @@ from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.InductionModule import InductionModule
 from vrel.module.PronounModule import PronounModule
 from vrel.module.SameAsModule import SameAsModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model

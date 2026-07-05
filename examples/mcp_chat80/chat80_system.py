@@ -17,7 +17,7 @@ from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
 from vrel.module.OptimizerModule import OptimizerModule
 from vrel.processor.parser.BasicParser import BasicParser
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 

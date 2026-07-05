@@ -7,7 +7,7 @@ from vrel.interface import SomeModel
 from vrel.interface.SomeGenerator import SomeGenerator
 from vrel.interface.SomeSolver import SomeSolver
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 
 
 class BasicGenerator(SomeGenerator):

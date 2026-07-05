@@ -1,7 +1,7 @@
 from vrel.entity.Grammar import Grammar
 from vrel.entity.Relation import Relation
 from vrel.interface.SomeModule import SomeModule
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.entity.ExecutionContext import ExecutionContext
 
 

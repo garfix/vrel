@@ -6,7 +6,7 @@ from vrel.interface.SomeLogger import SomeLogger
 from vrel.interface.SomeParseTreeSortHeuristics import SomeParseTreeSortHeuristics
 from vrel.interface.SomeParser import SomeParser
 from vrel.processor.parser.BasicParserProduct import BasicParserProduct
-from vrel.processor.parser.helper.SimpleGrammarRulesParser import SimpleGrammarRulesParser
+from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.parser.helper.sentence_extractor import extract_sentences
 from .tree_sort_heuristics.BasicParseTreeSortHeuristics import BasicParseTreeSortHeuristics
 from .earley.EarleyParser import EarleyParser
