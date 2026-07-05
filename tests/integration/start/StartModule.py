@@ -36,6 +36,17 @@ class StartModule(SomeModule):
             )
         )
 
+        self.add_relation(
+            Relation(
+                "name",
+                query_function=self.name,
+                parameters=[
+                    Parameter("id", "person"),
+                    Parameter("name", str),
+                ],
+            )
+        )
+
     def simple_entity(self, arguments: list, context: ExecutionContext) -> list[list]:
         return self.select(context.relation, ["id"], arguments)
 
@@ -44,6 +55,9 @@ class StartModule(SomeModule):
 
         ages = [[result[0], calculate_age(result[1])] for result in results]
         return ages
+
+    def name(self, arguments: list, context: ExecutionContext) -> list[list]:
+        return self.select(self.get_relation("employee"), ["id", "name"], arguments)
 
 
 def calculate_age(birth_date: str) -> int:

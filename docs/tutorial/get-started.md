@@ -96,7 +96,7 @@ def get_read_grammar():
         {
             # Example: Who is the oldest employee?
             "syn": "s(E1) -> 'who' 'is' np(E1) + '?'",
-            "sem": lambda np: Atom("intent_single_name", [np]),
+            "sem": lambda np: Atom("intent_list", [np]),
         },
         {
             # Bye
@@ -126,23 +126,61 @@ def get_read_grammar():
 
 ```
 
-The grammar has two sentece-level rules (whose head is `s()`). Both create an **intent** atom. An intent is a function that implements what to do with this kind of sentence. Our sample sentence matches the first sentence rule, which contains the clause `np(E1)` that stands for any noun phrase. The `np` is **rewritten** by the rule whose head is `np(E1)`. The `np` rewrites to an aggregate, and the aggregate rewrites to "the oldest" `nbar`. An nbar is a noun phrase without a determiner, and it rewrites to a `noun`. The only noun in this grammar is "employee". The semantics of the noun is the atom `Atom("employee", E1)`.
+The grammar has two sentence-level rules (whose head is `s()`). Both create an **intent** atom. An intent is a function that implements what to do with this kind of sentence. Our sample sentence matches the first sentence rule, which contains the clause `np(E1)` that stands for any noun phrase. The `np` is **rewritten** by the rule whose head is `np(E1)`. The `np` rewrites to an aggregate, and the aggregate rewrites to "the oldest" `nbar`. An nbar is a noun phrase without a determiner, and it rewrites to a `noun`. The only noun in this grammar is "employee". The semantics of the noun is the atom `Atom("employee", E1)`.
 
 Note that each rule has both a syntactic component ("syn") and a semantic attachment ("sem"). The latter contains a piece of the executable meaning of the sentence.
+
+Create the parser and add these rules
+
+```python
+parser = BasicParser()
+parser.add_grammar_rules(get_read_grammar())
+```
 
 From this grammar the parser is able to construct the parse tree
 
 ```
-
-TODO
-
+s
++- who 'who'
++-   ' '
++- is 'is'
++-   ' '
++- np
+|  +- aggregate
+|     +- the 'the'
+|     +-   ' '
+|     +- oldest 'oldest'
+|     +-   ' '
+|     +- nbar
+|        +- noun
+|           +- employee 'employee'
++- ? '?'
 ```
 
 and the semantic composer combines the semantic attachments of this sentence to the representation
 
 ```
-TODO
+ (intent_list
+    1. [
+         (arg_max
+            1. $1
+            2. $2
+            3. [
+                 (employee
+                    1. $1)
+            ]
+            4. [
+                 (age
+                    1. $1
+                    2. $2)
+            ])
+    ])
+
 ```
+
+## The deductions
+
+TODO
 
 ## The model
 
@@ -152,6 +190,10 @@ All modules are combined in the model.
 output_buffer = BasicOutputBuffer()
 model = Model([facts, inferences, output_buffer])
 ```
+
+## Generation
+
+## System
 
 ## Last words
 

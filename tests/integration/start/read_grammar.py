@@ -11,7 +11,7 @@ def get_read_grammar():
         {
             # Example: Who is the oldest employee?
             "syn": "s(E1) -> 'who' 'is' np(E1) + '?'",
-            "sem": lambda np: Atom("intent_single_name", [np]),
+            "sem": lambda np: Atom("intent_list", E1, [np]),
         },
         {
             # Bye

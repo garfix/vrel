@@ -2,25 +2,25 @@ import pathlib
 import sqlite3
 import unittest
 
-from StartModule import StartModule
 from vrel.core.BasicGenerator import BasicGenerator
 from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
+from vrel.core.Model import Model
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
+from vrel.module.DeductionModule import DeductionModule
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
-from vrel.core.Model import Model
 from vrel.processor.parser.BasicParser import BasicParser
-from vrel.module.DeductionModule import DeductionModule
 from write_grammar import get_write_grammar
 from read_grammar import get_read_grammar
+from StartModule import StartModule
 
 tests = [
     [
-        "What rivers are there?",
-        "amazon, amu_darya, amur, brahmaputra, colorado, congo_river, cubango, danube, don, elbe, euphrates, ganges, hwang_ho, indus, irrawaddy, lena, limpopo, mackenzie, mekong, mississippi, murray, niger_river, nile, ob, oder, orange, orinoco, parana, rhine, rhone, rio_grande, salween, senegal_river, tagus, vistula, volga, volta, yangtze, yenisei, yukon, zambesi",
+        "Who is the oldest employee?",
+        "Barbara",
     ],
     [
         "Bye",
@@ -47,42 +47,47 @@ class StartTest(unittest.TestCase):
 
         db = Sqlite3DataSource(connection)
 
-        # define the module
+        # define the facts module
 
         facts = StartModule(db)
 
-        # define the decution rules
+        # define the deduction rules
 
         inferences = DeductionModule()
         inferences.import_rules(path / "intents.pl")
         # inferences.import_rules(path / "inferences.pl")
 
-        # define the model
+        # define an output buffer
 
         output_buffer = BasicOutputBuffer()
+
+        # define the model
+
         model = Model([facts, inferences, output_buffer])
 
-        # define the parser
+        # define the processors
 
         parser = BasicParser()
         parser.add_grammar_rules(get_read_grammar())
 
-        # composer = SemanticComposer()
-        # executor = AtomExecutor()
+        composer = SemanticComposer()
+        executor = AtomExecutor()
 
-        # generator = BasicGenerator(model, output_buffer)
-        # generator.add_grammar_rules(get_en_us_write_grammar())
-        # generator.add_grammar_rules(get_write_grammar())
+        # the output generator
 
-        # # define the system
+        generator = BasicGenerator(model, output_buffer)
+        generator.add_grammar_rules(get_en_us_write_grammar())
+        generator.add_grammar_rules(get_write_grammar())
 
-        # system = BasicSystem(
-        #     model=model,
-        #     parser=parser,
-        #     composer=composer,
-        #     executor=executor,
-        #     output_generator=generator,
-        # )
+        # define the system
 
-        # tester = DialogTester(self, tests, system)
-        # tester.run()
+        system = BasicSystem(
+            model=model,
+            parser=parser,
+            composer=composer,
+            executor=executor,
+            output_generator=generator,
+        )
+
+        tester = DialogTester(self, tests, system)
+        tester.run()
