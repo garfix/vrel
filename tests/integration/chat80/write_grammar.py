@@ -19,11 +19,12 @@ def get_write_grammar():
             "if": [Atom("output_type", "no")],
         },
         {
-            "syn": "s() -> value(E1)",
+            "syn": "s() -> literal(E1)",
             "if": [Atom("output_type", "value"), Atom("output_value", E1)],
+            "combine": lambda value: value,
         },
         {
-            "syn": "s() -> text(E1) text(E2)",
+            "syn": "s() -> literal(E1) literal(E2)",
             "if": [Atom("output_type", "value_with_unit"), Atom("output_value_with_unit", E1, E2)],
         },
         {
@@ -35,6 +36,7 @@ def get_write_grammar():
             "syn": "s() -> format(E1, E2)",
             "if": [Atom("output_type", "table"), Atom("output_table", E1, E2)],
             "format": lambda results, units: format_table(results, units),
+            "combine": lambda table: table,
         },
         {
             "syn": "s() -> 'Cheerio.'",

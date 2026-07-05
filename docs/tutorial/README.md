@@ -12,6 +12,10 @@ Processors
 - [Composition](composition.md) - how meaning is attached and composed
 - [Execution](execution.md) - how the semantic representation is executed
 
+Sentence generation
+
+- [Generation](generation.md) - how a response sentence is generated
+
 Getting started
 
 - [How to](get-started.md) - start a new application

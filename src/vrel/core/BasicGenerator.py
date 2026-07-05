@@ -1,4 +1,4 @@
-from vrel.core.constants import CATEGORY_FORMAT, CATEGORY_TEXT, CATEGORY_VALUE, POS_TYPE_WORD_FORM
+from vrel.core.constants import CATEGORY_FORMAT, CATEGORY_LITERAL, CATEGORY_VALUE, POS_TYPE_WORD_FORM
 from vrel.core.functions.terms import bind_variables
 from vrel.entity.GrammarRule import GrammarRule
 from vrel.entity.Grammar import Grammar
@@ -36,7 +36,6 @@ class BasicGenerator(SomeGenerator):
         self, used_rules: list[int], antecedent_cat: str, antecedent_arguments: list[any], optional: bool
     ) -> list[str]:
 
-        words = []
         rule, binding, found = self.find_rule(used_rules, antecedent_cat, antecedent_arguments)
 
         if found:
@@ -44,43 +43,58 @@ class BasicGenerator(SomeGenerator):
             hash = rule.hash
             used_rules.append(hash)
 
-            for i, consequent in enumerate(rule.consequents):
-                consequent_vals = self.get_consequent_values(rule, i, binding)
-                consequent_result = self.generate_single_consequent(
-                    rule,
-                    used_rules,
-                    consequent.predicate,
-                    consequent_vals,
-                    rule.consequents[i].position_type,
-                    consequent.optional,
-                )
-                words.append(consequent_result)
+            if rule.list_element == None:
+                result = self.rewrite(rule, used_rules, binding)
+            else:
+                result = []
+                elements = binding[rule.list_element.name]
+                for element in elements:
+                    element_binding = binding | {rule.list_element.name: element}
+                    result.append(self.rewrite(rule, used_rules, element_binding))
 
-                # todo?
-                # if consequentValue.IsId() && !consequentValue.Equals(antecedentValue) {
-                #     generator.state.MarkGenerated(consequentValue)
+                if rule.list_combine:
+                    result = rule.list_combine(result)
+
+            return result
 
         else:
             if not optional:
                 raise Exception(f"No rule found for {antecedent_cat}: {antecedent_arguments}")
 
-        # combine the child results
-        all_text = list(filter(lambda word: isinstance(word, str), words))
-        if len(all_text) == len(words):
-            # all strings: concatencate
-            result = "".join(words)
-        elif len(words) == 1:
-            # single value: pick it
-            result = words[0]
-        else:
-            # return a list of values (rare)
-            result = words
+    def rewrite(self, rule: GrammarRule, used_rules: list[int], binding: dict):
+        consequent_results = []
+        for i, consequent in enumerate(rule.consequents):
+            consequent_vals = self.get_consequent_values(rule, i, binding)
+            consequent_result = self.generate_single_consequent(
+                rule,
+                used_rules,
+                consequent.predicate,
+                consequent_vals,
+                rule.consequents[i].position_type,
+                consequent.optional,
+            )
+            consequent_results.append(consequent_result)
 
-        # postprocess (strip, capitalize first letter)
-        if rule and rule.post:
-            return rule.post(result)
+            # todo?
+            # if consequentValue.IsId() && !consequentValue.Equals(antecedentValue) {
+            #     generator.state.MarkGenerated(consequentValue)
+
+        # combine consequent results into a string (or other type)
+        if rule.combine:
+            # custom combination of consequents: a function that takes all consequent results as arguments
+            combined = rule.combine(*consequent_results)
         else:
-            return result
+            # default combination of consequents: convert to string and concatenate, filter out results that return None
+            real_results = filter(lambda r: r is not None, consequent_results)
+            strings = map(lambda r: str(r), real_results)
+            combined = "".join(strings)
+
+        # extra string processing
+        post_processed = combined
+        if rule.post:
+            post_processed = rule.post(combined)
+
+        return post_processed
 
     def get_consequent_values(self, rule: GrammarRule, i: int, binding: dict) -> any:
         consequent_values = []
@@ -160,8 +174,8 @@ class BasicGenerator(SomeGenerator):
             result = category
         elif category == CATEGORY_VALUE:
             result = arguments[0]
-        elif category == CATEGORY_TEXT:
-            result = str(arguments[0])
+        elif category == CATEGORY_LITERAL:
+            result = arguments[0]
         elif category == CATEGORY_FORMAT:
             result = rule.format(*arguments)
         else:

@@ -19,7 +19,7 @@ POS_TYPE_WORD_FORM = "word-form"
 POS_TYPE_REG_EXP = "reg-exp"
 
 # special syntactic categories
-CATEGORY_TEXT = "text"
+CATEGORY_LITERAL = "literal"
 CATEGORY_VALUE = "value"
 CATEGORY_FORMAT = "format"
 CATEGORY_PROPER_NOUN = "proper_noun"

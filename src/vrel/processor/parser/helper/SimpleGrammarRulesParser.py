@@ -62,6 +62,16 @@ class SimpleGrammarRulesParser:
             if "sem" in simple_rule:
                 sem = simple_rule["sem"]
 
+        list_element = None
+        if write_rules:
+            if "list_element" in simple_rule:
+                list_element = simple_rule["list_element"]
+
+        list_combine = None
+        if write_rules:
+            if "list_combine" in simple_rule:
+                list_combine = simple_rule["list_combine"]
+
         format = None
         if write_rules:
             if "format" in simple_rule:
@@ -72,6 +82,11 @@ class SimpleGrammarRulesParser:
             if "post" in simple_rule:
                 post = simple_rule["post"]
 
+        combine = None
+        if write_rules:
+            if "combine" in simple_rule:
+                combine = simple_rule["combine"]
+
         dialog = []
         if "dialog" in simple_rule:
             dialog = simple_rule["dialog"]
@@ -80,7 +95,18 @@ class SimpleGrammarRulesParser:
         if "boost" in simple_rule:
             boost = simple_rule["boost"]
 
-        return GrammarRule(antecedent, consequents, sem=sem, format=format, post=post, dialog=dialog, boost=boost)
+        return GrammarRule(
+            antecedent,
+            consequents,
+            sem=sem,
+            format=format,
+            post=post,
+            combine=combine,
+            list_element=list_element,
+            list_combine=list_combine,
+            dialog=dialog,
+            boost=boost,
+        )
 
     def parse_syntax(self, syntax: str, write_rules: bool):
 

@@ -41,7 +41,7 @@ class TestGenerator(unittest.TestCase):
                 "if": [Atom("output_type", "scalar"), Atom("output_value", E1)],
             },
             {"syn": "vp(E1) -> verb(E1) np(E2)", "if": [Atom("output_object", E1, E2)]},
-            {"syn": "np(E1) -> text(E2)", "if": [Atom("resolve_name", E2, E1)]},
+            {"syn": "np(E1) -> literal(E2)", "if": [Atom("resolve_name", E2, E1)]},
             {
                 "syn": "verb(E1) -> 'married'",
                 "if": [Atom("output_predicate", E1, "marry")],

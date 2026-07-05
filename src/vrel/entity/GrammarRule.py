@@ -2,17 +2,29 @@ from typing import Callable
 from vrel.core.constants import POS_TYPE_RELATION, POS_TYPE_WORD_FORM
 from vrel.entity.Atom import Atom
 from vrel.entity.RuleConstituent import RuleConstituent
+from vrel.entity.Variable import Variable
 
 
 class GrammarRule:
 
     antecedent: RuleConstituent
     consequents: list[RuleConstituent]
+    # sem: also used as "if" in generation
     sem: Callable
+    # combine consequent results using Python code
+    combine: Callable
+    # implement the format category of the rule using Python
     format: Callable
+    # postprocess the node result using Python code
     post: Callable
+    # rewrite the phrase per element of this list variable
+    list_element: Variable | None
+    # combination function for list elements
+    list_combine: Callable | None
+    # make this rule more important than similar rules
     dialog: list[tuple] | Callable
     boost: int
+
     hash: int
 
     def __init__(
@@ -21,16 +33,22 @@ class GrammarRule:
         consequents: list[RuleConstituent],
         sem: Callable = None,
         format: Callable = None,
+        combine: Callable = None,
         post: Callable = None,
         dialog: list[Atom] | Callable = [],
+        list_element: Variable | None = None,
+        list_combine: Callable | None = None,
         boost: int = 0,
     ) -> None:
         self.antecedent = antecedent
         self.consequents = consequents
         self.sem = sem
         self.format = format
+        self.combine = combine
         self.post = post
         self.dialog = dialog
+        self.list_element = list_element
+        self.list_combine = list_combine
         self.boost = boost
 
         h = [c.hash for c in self.consequents] + [self.antecedent.hash]

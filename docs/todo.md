@@ -1,5 +1,10 @@
 ## todo
 
+- format(custom(E1)) ?
+- chat-80: s() -> literal(E1) literal(E2) -> wat met de spatie?
+- documenteer de generatie-regels
+- maak van "if" een parsable string
+- verplaats SimpleGrammarRulesParser naar /dsl
 - OK feature requires a database
 - the fact induction doesn't work
 

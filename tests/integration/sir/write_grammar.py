@@ -45,7 +45,7 @@ def get_write_grammar():
             "if": [Atom("output_type", "impossible")],
         },
         {
-            "syn": "s() -> 'The answer is' text(E1)",
+            "syn": "s() -> 'The answer is' literal(E1)",
             "if": [Atom("output_type", "count"), Atom("output_count", E1)],
         },
         {
@@ -59,7 +59,7 @@ def get_write_grammar():
                 Atom("output_dont_know_part_of", E1, E2),
             ],
         },
-        {"syn": "s() -> custom()", "post": lambda out: out.strip()},
+        {"syn": "s() -> custom()", "post": lambda custom: custom.strip()},
         # location
         {
             "syn": "custom() -> just_left_of(E1)? just_right_of(E1)? left_of(E1)? right_of(E1)?",
@@ -73,27 +73,27 @@ def get_write_grammar():
             "syn": "just_right_of(E1) -> 'Just to the right of the' thing(E2)+'.'",
             "if": [Atom("just_left_of", E2, E1)],
         },
-        {"syn": "thing(E1) -> format(E1)", "format": lambda thing: thing.id},
         {
-            "syn": "right_of(E1) -> 'Somewhere to the right of the following ..' format(List)",
+            "syn": "right_of(E1) -> 'Somewhere to the right of the following ..' things(List)",
             "if": [
                 Atom("find_all", E2, [Atom("somewhere_left_of", E2, E1)], List1),
                 Atom("not", [Atom("equals", List1, [])]),
             ],
-            "format": lambda elements: format_list(elements),
         },
         {
-            "syn": "left_of(E1) -> 'Somewhere to the left of the following ..' format(List)",
+            "syn": "left_of(E1) -> 'Somewhere to the left of the following ..' things(List)",
             "if": [
                 Atom("find_all", E2, [Atom("somewhere_left_of", E1, E2)], List1),
                 Atom("not", [Atom("equals", List1, [])]),
             ],
-            "format": lambda elements: format_list(elements),
         },
+        # things
+        {"syn": "thing(E1) -> format(E1)", "format": lambda thing: thing.id},
+        {"syn": "things(E1) -> format(E1)", "format": lambda things: format_list(things)},
         # position
         # position_description is a predicate in SIRModule
         {
-            "syn": "custom() -> 'The left-to-right order is as follows:' text(E1)",
+            "syn": "custom() -> 'The left-to-right order is as follows:' literal(E1)",
             "if": [Atom("output_type", "position"), Atom("position_description", E1)],
         },
     ]

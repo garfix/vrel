@@ -6,7 +6,7 @@ def get_write_grammar():
     return [
         # sentences
         {
-            "syn": "s() -> text(E1)",
+            "syn": "s() -> literal(E1)",
             "if": [Atom("output_type", "report"), Atom("output_report", E1)],
         }
     ]
