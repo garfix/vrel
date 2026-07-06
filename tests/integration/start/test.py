@@ -7,6 +7,7 @@ from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.Model import Model
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
+from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
@@ -55,7 +56,6 @@ class StartTest(unittest.TestCase):
 
         inferences = DeductionModule()
         inferences.import_rules(path / "intents.pl")
-        # inferences.import_rules(path / "inferences.pl")
 
         # define an output buffer
 
@@ -88,6 +88,15 @@ class StartTest(unittest.TestCase):
             executor=executor,
             output_generator=generator,
         )
+
+        # ask the question
+
+        system.enter(SentenceRequest("Who is the oldest employee?"))
+        output = generator.generate_output()
+
+        self.assertEqual(output, "Barbara")
+
+        # run automated tests
 
         tester = DialogTester(self, tests, system)
         tester.run()

@@ -33,6 +33,18 @@ Note that the variables `E1` and `E2` that are bound during the condition matchi
 
 which produces the word `starts`.
 
+## Order of execution
+
+At some point you may want to know exactly what happens in what order. The generator processes a rule like this:
+
+- match the head along with its arguments
+- execute the `if` clause and keep the variable binding
+- if the rule contains a `list_element` variable, this variable is assumed to be a list, and the following steps are repeated for each element in the list. Together they will form a `list_result`. Otherwise, they are executed just once
+  - each of the consequent categories is processed in a recursive way, by this same process
+  - the result of these consequents are combined by the `combine` function, if available. Otherwise any `None` values are removed, they're converted to strings, and concatenated.
+  - the resulting string is postprocessed by a `post` function, if available
+- if the rule contains a `list_element` variable, and a `list_combine`, the `list_combine` takes the `list_result` as input and return the output.
+
 ## Literal
 
 A value that is to be displayed as-is, can be produced using the category `literal`.

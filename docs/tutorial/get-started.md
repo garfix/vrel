@@ -1,10 +1,8 @@
 # Getting started
 
-To appreciate how the library works, best have a look at one of the demo `test.py` files.
+On this page I'll guide you through the process of accessing a database through natural language with Vrel.
 
-On this page I'll show you the process of creating a single sentence to access a database.
-
-In this example we'll query the table `employee` from our database and ask it "Who is the oldest employee?"
+In this example we'll query the table `employee`, with columns `id`, `name`, and `birth_date`, from our database and ask it "Who is the oldest employee?"
 
 ## A data source
 
@@ -178,9 +176,24 @@ and the semantic composer combines the semantic attachments of this sentence to 
 
 ```
 
-## The deductions
+## Intents
 
-TODO
+Once the executable meaning of a sentence is known, execution can begin. The top-level of a sentence's meaning if formed by its **intent**. This intent determines what to do with the sentence. Commands are treated different than questions, and one question is treated differently from another. At the same time, multiple semantic structures can be handled by the same intent. The intent can be seen as the envelope of the semantics, and is implemented in Prolog-syntax. Here's one
+
+```
+intent_list(E1, Sem) :-
+    find_all(E1, Sem, Elements),
+    store(output_type('list'), output_list(Elements)).
+```
+
+The head of this rule matches the top-level semantics of our sentence, therefore the body is executed. The body finds all values of `E1` and places them in a list called `Elements`. This list is then stored for output.
+
+The intents are stored in a file called `intents.pl` and loaded like this
+
+```python
+inferences = DeductionModule()
+inferences.import_rules(path / "intents.pl")
+```
 
 ## The model
 
@@ -193,7 +206,41 @@ model = Model([facts, inferences, output_buffer])
 
 ## Generation
 
-## System
+## The system
+
+The system combines the objects we have built:
+
+```python
+system = BasicSystem(
+    model=model,
+    parser=parser,
+    composer=composer,
+    executor=executor,
+    output_generator=generator,
+)
+```
+
+## Asking the question
+
+Once the system is set up, we can use it to ask a question
+
+```python
+system.enter(SentenceRequest("Who is the oldest employee?"))
+output = generator.generate_output()
+```
+
+`output` gives us the answer ("Barbara")
+
+## Automates tests
+
+To continue working on the system, add another request and response to the test suite and run
+
+```python
+tester = DialogTester(self, tests, system)
+tester.run()
+```
+
+The tester enters all sentences automatically and checks if the answer of the library is still right.
 
 ## Last words
 
