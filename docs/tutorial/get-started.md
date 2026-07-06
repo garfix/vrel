@@ -4,6 +4,8 @@ On this page I'll guide you through the process of accessing a database through 
 
 In this example we'll query the table `employee`, with columns `id`, `name`, and `birth_date`, from our database and ask it "Who is the oldest employee?"
 
+Note: all code in this page can be found in the directory `tests/start`.
+
 ## A data source
 
 Perhaps you have a database and you can use it as a data source. Otherwise we'll create a SQLite database, create a table `employee` and here and populate it with some data:
@@ -206,6 +208,38 @@ model = Model([facts, inferences, output_buffer])
 
 ## Generation
 
+The answer, in the form of a semantic structure (`output_type('list'), output_list(Elements)`), needs to be converted into a sentence. This is the work of the generator. The generator is rule-based like the parser and reads its rules like this:
+
+```python
+generator = BasicGenerator(model, output_buffer)
+generator.add_grammar_rules(get_en_us_write_grammar())
+generator.add_grammar_rules(get_write_grammar())
+```
+
+The rules themselves look like this:
+
+```python
+# sentence
+{
+    "syn": "s() -> np(E1)",
+    "if": [Atom("output_type", "list"), Atom("output_list", E1)],
+    "list_element": E1,
+    "list_combine": lambda nps: ", ".join(nps),
+},
+
+# noun phrases
+{
+    "syn": "np(E1) -> literal(Name)",
+    "if": [Atom("name", E1, Name)]
+},
+```
+
+The generator starts the new sentence with the category `s()`. It then tries to find a rule to match this category, based on the head of the rule and the `if` condition. It then replaces the `s()` by the body categories; here: `np(E1)`. Next, a rule for the `np(E1)` is found and `np(E1)` is rewritten by `Name`, the name of the element `E1` used as-is. The result is the (literal) value `Barbara`.
+
+The question itself allows only a single answer, but as the solver creates lists of answers, answers are treated as lists here.
+
+The `list_element` and `list_combine` constructs take the list `E1` apart and handle its elements one by one. Each element is rewritten separately, and the results are combined using `list_combine`. In this case there's just one element.
+
 ## The system
 
 The system combines the objects we have built:
@@ -241,7 +275,3 @@ tester.run()
 ```
 
 The tester enters all sentences automatically and checks if the answer of the library is still right.
-
-## Last words
-
-All code in this page can be found in the directory `tests/start`.
