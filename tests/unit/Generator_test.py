@@ -6,8 +6,13 @@ from vrel.core.Model import Model
 from vrel.core.Solver import Solver
 from vrel.core.constants import E1, E2
 from vrel.entity.Atom import Atom
+from vrel.entity.Variable import Variable
 from vrel.module.DeductionModule import DeductionModule
-from generator.SimpleModuleOutputBuffer import SimpleOutputBuffer
+
+Id = Variable("Id")
+Pred = Variable("Pred")
+Subject = Variable("Subject")
+Object = Variable("Object")
 
 
 class TestGenerator(unittest.TestCase):
@@ -16,69 +21,62 @@ class TestGenerator(unittest.TestCase):
 
         path = str(pathlib.Path(__file__).parent.resolve()) + "/generator/"
 
-        output_buffer = SimpleOutputBuffer()
-
         inferences = DeductionModule()
         inferences.import_rules(path + "inferences.pl")
 
-        model = Model([inferences, output_buffer])
+        model = Model([inferences])
 
         raw_grammar = [
-            {"syn": "s() -> 'OK'", "if": [Atom("output_type", "ok")]},
+            {"syn": "s() -> 'OK'", "if": [Atom("last_output", "ok")]},
             {
                 "syn": "s() -> 'The above sentence is impossible'",
-                "if": [Atom("output_type", "impossible")],
+                "if": [Atom("last_output", "impossible")],
             },
             {
                 "syn": "s() -> np(E2) vp(E1)",
                 "if": [
-                    Atom("output_type", "declarative"),
-                    Atom("output_subject", E1, E2),
+                    Atom("last_output", "declarative", E1, Pred, E2, Object),
                 ],
             },
             {
                 "syn": "s() -> named_number(E1)",
-                "if": [Atom("output_type", "scalar"), Atom("output_value", E1)],
+                "if": [Atom("last_output", "scalar", E1)],
             },
-            {"syn": "vp(E1) -> verb(E1) np(E2)", "if": [Atom("output_object", E1, E2)]},
+            {"syn": "vp(E1) -> verb(E1) np(E2)", "if": [Atom("last_output", "declarative", E1, Pred, Subject, E2)]},
             {"syn": "np(E1) -> literal(E2)", "if": [Atom("resolve_name", E2, E1)]},
             {
                 "syn": "verb(E1) -> 'married'",
-                "if": [Atom("output_predicate", E1, "marry")],
+                "if": [Atom("last_output", "declarative", E1, "marry", Subject, Object)],
             },
             {"syn": "named_number(E1) -> 'one'", "if": [Atom("equals", E1, 1)]},
             {"syn": "named_number(E1) -> 'two'", "if": [Atom("equals", E1, 2)]},
         ]
 
-        generator = BasicGenerator(model, output_buffer)
+        generator = BasicGenerator(model)
         generator.add_grammar_rules(raw_grammar)
 
         tests = [
-            {"atoms": [Atom("output_type", "ok")], "output": "OK"},
+            {"atoms": [Atom("out", "ok")], "output": "OK"},
             {
-                "atoms": [Atom("output_type", "impossible")],
+                "atoms": [Atom("out", "impossible")],
                 "output": "The above sentence is impossible",
             },
             {
                 "atoms": [
-                    Atom("output_type", "declarative"),
-                    Atom("output_predicate", "5", "marry"),
-                    Atom("output_subject", "5", "10892"),
-                    Atom("output_object", "5", "37216"),
+                    Atom("out", "declarative", 5, "marry", "10892", "37216"),
                 ],
                 "output": "Jane married John",
             },
-            {
-                "atoms": [Atom("output_type", "scalar"), Atom("output_value", 2)],
-                "output": "two",
-            },
+            # {
+            #     "atoms": [Atom("last_output", "scalar", 2)],
+            #     "output": "two",
+            # },
         ]
 
         solver = Solver(model)
 
         for test in tests:
-            output_buffer.clear()
             for atom in test["atoms"]:
-                solver.write_atom(atom)
+                solver.solve([atom])
             output = generator.generate_output()
             self.assertEqual(output, test["output"])

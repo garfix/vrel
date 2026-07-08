@@ -19,7 +19,5 @@ class SimpleModule(SomeModule):
     def resolve_name(self, arguments: list, context: ExecutionContext) -> list[list]:
         name = arguments[0].lower()
 
-        context.solver.solve(
-            [Atom("store", [Atom("output_type", "name_not_found"), Atom("output_name_not_found", name)])]
-        )
+        context.solver.solve([Atom("out", "name_not_found", name)])
         return []

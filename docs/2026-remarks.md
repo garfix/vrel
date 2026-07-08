@@ -1,3 +1,11 @@
+## 2026-07-07
+
+For the sake of the start module, that shows the simplicity of the module, I'm redesigning the output function.
+
+- the BasicOuputBuffer stays but will be automatically loaded
+- new output will be added a list in the output buffer
+- last_output will be compared to the last output in the list using unification
+
 ## 2026-06-24
 
 I implemented a simple PronounModule and resolved Willa to "she".

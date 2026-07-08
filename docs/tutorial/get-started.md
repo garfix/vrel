@@ -185,7 +185,7 @@ Once the executable meaning of a sentence is known, execution can begin. The top
 ```
 intent_list(E1, Sem) :-
     find_all(E1, Sem, Elements),
-    store(output_type('list'), output_list(Elements)).
+    out('list', Elements).
 ```
 
 The head of this rule matches the top-level semantics of our sentence, therefore the body is executed. The body finds all values of `E1` and places them in a list called `Elements`. This list is then stored for output.
@@ -202,16 +202,15 @@ inferences.import_rules(path / "intents.pl")
 All modules are combined in the model.
 
 ```python
-output_buffer = BasicOutputBuffer()
-model = Model([facts, inferences, output_buffer])
+model = Model([facts, inferences])
 ```
 
 ## Generation
 
-The answer, in the form of a semantic structure (`output_type('list'), output_list(Elements)`), needs to be converted into a sentence. This is the work of the generator. The generator is rule-based like the parser and reads its rules like this:
+The answer, in the form of a semantic structure (`out('list', Elements)`), needs to be converted into a sentence. This is the work of the generator. The generator is rule-based like the parser and reads its rules like this:
 
 ```python
-generator = BasicGenerator(model, output_buffer)
+generator = BasicGenerator(model)
 generator.add_grammar_rules(get_en_us_write_grammar())
 generator.add_grammar_rules(get_write_grammar())
 ```
@@ -222,7 +221,7 @@ The rules themselves look like this:
 # sentence
 {
     "syn": "s() -> np(E1)",
-    "if": [Atom("output_type", "list"), Atom("output_list", E1)],
+    "if": [Atom("last_output", "list", E1)],
     "list_element": E1,
     "list_combine": lambda nps: ", ".join(nps),
 },

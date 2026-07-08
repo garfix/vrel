@@ -7,18 +7,18 @@ def get_write_grammar():
         # sentences
         {
             "syn": "s() -> 'OK'",
-            "if": [Atom("output_type", "ok")],
+            "if": [Atom("last_output", "ok")],
         },
         {
             "syn": "s() -> 'True'",
-            "if": [Atom("output_type", "true")],
+            "if": [Atom("last_output", "true")],
         },
         {
             "syn": "s() -> 'False'",
-            "if": [Atom("output_type", "false")],
+            "if": [Atom("last_output", "false")],
         },
         {
             "syn": "s() -> 'Unable to answer'",
-            "if": [Atom("output_type", "unknown")],
+            "if": [Atom("last_output", "unknown")],
         },
     ]

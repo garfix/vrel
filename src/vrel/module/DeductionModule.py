@@ -48,7 +48,7 @@ class DeductionModule(SomeModule):
             content = rule_file.read()
             rules, pos = parser.parse_rules(content)
             if pos is not None:
-                raise Exception("Unable to parse inference on token " + str(pos) + " in file " + path)
+                raise Exception("Unable to parse inference on token " + str(pos) + str(" in file " / path))
             for rule in rules:
                 self.insert_rule(rule)
 

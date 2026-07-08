@@ -7,6 +7,6 @@ def get_write_grammar():
         # sentences
         {
             "syn": "s() -> 'Name not found:' literal(E1)",
-            "if": [Atom("output_type", "name_not_found"), Atom("output_name_not_found", E1)],
+            "if": [Atom("last_output", "name_not_found", E1)],
         }
     ]

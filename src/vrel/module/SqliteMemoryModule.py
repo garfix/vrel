@@ -27,3 +27,6 @@ class SqliteMemoryModule(SomeModule):
 
     def write(self, values: list, context: ExecutionContext):
         self.insert(context.relation, context.relation.get_parameter_names(), values)
+
+    # def delete(self, values: list, context: ExecutionContext):
+    #     self.delete(context.relation, context.relation.get_parameter_names(), values)

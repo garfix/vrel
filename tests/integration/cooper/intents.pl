@@ -6,13 +6,13 @@ intent_tell(Fact, Truth) :-
         # check if the fact is known
         exec(Fact),
         not_equals(Truth, "unknown"),
-        store(output_type(Truth))
+        out(Truth)
     ;
         # add the fact as a truth
         let(Truth, "true"),
         create_records_3v(Fact, Records),
         store(Records),
-        store(output_type('ok'))
+        out('ok')
     ).
 
 # learn an induction rule
@@ -26,7 +26,7 @@ intent_learn(Head, Body, T1, T2) :-
             T4,
             T3),
         equals(T3, 'true'),
-        store(output_type('false'))
+        out('false')
     ;
         # add the rule
         let(T1, "true"),
@@ -34,7 +34,7 @@ intent_learn(Head, Body, T1, T2) :-
         create_records_3v(Head, Head_r),
         create_records_3v(Body, Body_r),
         learn_rule(Head_r, Body_r),
-        store(output_type('ok'))
+        out('ok')
     ).
 
 intent_mutual_exclusive(CommonNoun1, CommonNoun2, T1, T2) :-
@@ -43,4 +43,4 @@ intent_mutual_exclusive(CommonNoun1, CommonNoun2, T1, T2) :-
 
 intent_check(Fact, Truth) :-
     exec(Fact),
-    store(output_type(Truth)).
+    out(Truth).

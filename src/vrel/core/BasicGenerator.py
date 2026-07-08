@@ -1,12 +1,12 @@
 from vrel.core.constants import CATEGORY_FORMAT, CATEGORY_LITERAL, CATEGORY_VALUE, POS_TYPE_WORD_FORM
 from vrel.core.functions.terms import bind_variables
+from vrel.entity.Atom import Atom
 from vrel.entity.GrammarRule import GrammarRule
 from vrel.entity.Grammar import Grammar
 from vrel.entity.SimpleGrammar import SimpleGrammar
 from vrel.interface import SomeModel
 from vrel.interface.SomeGenerator import SomeGenerator
 from vrel.interface.SomeSolver import SomeSolver
-from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 
 
@@ -14,22 +14,23 @@ class BasicGenerator(SomeGenerator):
 
     grammar: Grammar
     solver: SomeSolver
-    output_buffer: BasicOutputBuffer
 
-    def __init__(self, model: SomeModel, output_buffer: BasicOutputBuffer):
+    def __init__(self, model: SomeModel):
 
         from vrel.core.Solver import Solver
 
         self.grammar = Grammar([])
         self.solver = Solver(model, None, None)
-        self.output_buffer = output_buffer
 
     def add_grammar_rules(self, rules: SimpleGrammar):
         SimpleGrammarRulesParser().parse_write_grammar(rules, self.grammar)
 
     def generate_output(self):
         output = self.generate_node([], "s", [], False)
-        self.output_buffer.clear()
+
+        # remove the last output
+        self.solver.solve([Atom("clear_output")])
+
         return output
 
     def generate_node(
@@ -126,7 +127,7 @@ class BasicGenerator(SomeGenerator):
 
             # example rule:
             # syn: s(E1) -> np(E2) vp(E1)
-            # if: [('output_type', 'declarative'), ('output_subject', E1, E2)]
+            # if: [('last_output', 'declarative', E1, E2)]
 
             # rule_antecedent_variable = rule.antecedent.arguments[0]
             binding = {}
@@ -145,7 +146,7 @@ class BasicGenerator(SomeGenerator):
             else:
 
                 # match the condition
-                # will bind the E2 in the example ([('output_type', 'declarative'), ('output_subject', E1, E2)])
+                # will bind the E2 in the example ([('last_output', 'declarative', E1, E2)])
                 match_bindings = self.solver.solve(bind_variables(rule.sem, binding))
 
                 if len(match_bindings) > 0:

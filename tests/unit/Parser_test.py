@@ -7,7 +7,6 @@ from vrel.core.constants import E1
 from vrel.entity.Grammar import Grammar
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.grammar.en_us_write import get_en_us_write_grammar
-from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 
@@ -130,13 +129,11 @@ class TestParser(unittest.TestCase):
             {"syn": "verb(V) -> 'walks'"},
         ]
 
-        output_buffer = BasicOutputBuffer()
-
-        model = Model([output_buffer])
+        model = Model([])
 
         parser = BasicParser()
         parser.add_grammar_rules(simple_read_grammar)
-        generator = BasicGenerator(model, output_buffer)
+        generator = BasicGenerator(model)
         generator.add_grammar_rules(get_en_us_write_grammar())
 
         system = BasicSystem(model=model, parser=parser, output_generator=generator)

@@ -6,7 +6,6 @@ from vrel.core.Model import Model
 from vrel.core.constants import E1
 from vrel.entity.Atom import Atom
 from vrel.entity.SentenceRequest import SentenceRequest
-from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
@@ -31,12 +30,10 @@ class TestAtomExecutor(unittest.TestCase):
         ]
 
         facts = SimpleModule()
-        output_buffer = BasicOutputBuffer()
 
         model = Model(
             [
                 facts,
-                output_buffer,
             ]
         )
 
@@ -44,7 +41,7 @@ class TestAtomExecutor(unittest.TestCase):
         parser.add_grammar_rules(read_grammar)
         composer = SemanticComposer()
         executor = AtomExecutor()
-        generator = BasicGenerator(model, output_buffer)
+        generator = BasicGenerator(model)
         generator.add_grammar_rules(get_write_grammar())
 
         system = BasicSystem(

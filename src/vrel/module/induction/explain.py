@@ -21,7 +21,8 @@ def explain(
 
         event1 = make_query(event)
 
-        module = induction_model.modules[1]
+        # todo should not be fixed
+        module = induction_model.modules[2]
         module.clear()
 
         for atom in event1:

@@ -6,7 +6,6 @@ from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.core.handlers.StackOverflowHandler import StackOverflowHandler
 from vrel.grammar.en_us_write import get_en_us_write_grammar
-from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
 from vrel.module.SameAsModule import SameAsModule
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
@@ -60,13 +59,10 @@ class TestCooper(unittest.TestCase):
 
         # define the model
 
-        # a data source to store information for output
-        output_buffer = BasicOutputBuffer()
-
         same_as = SameAsModule()
 
         model = Model(
-            [facts, inferences, output_buffer, same_as],
+            [facts, inferences, same_as],
             stack_overflow_handler=StackOverflowHandler(),
         )
 
@@ -78,7 +74,7 @@ class TestCooper(unittest.TestCase):
         composer = SemanticComposer()
         executor = AtomExecutor()
 
-        generator = BasicGenerator(model, output_buffer)
+        generator = BasicGenerator(model)
         generator.add_grammar_rules(get_en_us_write_grammar())
         generator.add_grammar_rules(get_write_grammar())
 

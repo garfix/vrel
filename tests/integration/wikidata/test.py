@@ -12,7 +12,6 @@ from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
 from vrel.processor.parser.BasicParser import BasicParser
 from vrel.data_source.WikidataDataSource import WikidataDataSource
-from WikidataOutputBuffer import WikidataOutputBuffer
 from WikidataModule import WikidataModule
 from write_grammar import get_write_grammar
 from read_grammar import get_read_grammar
@@ -47,16 +46,11 @@ class TestWikiData(unittest.TestCase):
         inferences.import_rules(path / "mapping.pl")
         inferences.import_rules(path / "intents.pl")
 
-        # a data source to store information for output
-
-        output_buffer = WikidataOutputBuffer()
-
         # define the model
 
         model = Model(
             [
                 inferences,
-                output_buffer,
                 wikidata,
             ]
         )
@@ -69,7 +63,7 @@ class TestWikiData(unittest.TestCase):
         composer = SemanticComposer()
         executor = AtomExecutor()
 
-        generator = BasicGenerator(model, output_buffer)
+        generator = BasicGenerator(model)
         generator.add_grammar_rules(get_en_us_write_grammar())
         generator.add_grammar_rules(get_write_grammar())
 

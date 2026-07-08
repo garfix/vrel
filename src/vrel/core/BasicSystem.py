@@ -108,8 +108,7 @@ class BasicSystem(SomeSystem):
         return ProcessResult(products, "")
 
     def log_error(self, result: ProcessResult, solver: SomeSolver):
-        solver.write_atom(Atom("output_type", result.error_type))
-        solver.write_atom(Atom("output_" + result.error_type, *result.error_args))
+        solver.solve([Atom("out", result.error_type, *result.error_args)])
         return result
 
     def read_output(self):

@@ -114,13 +114,7 @@ class SIRModule(SomeModule):
                 # produce output
                 context.solver.solve(
                     [
-                        Atom(
-                            "store",
-                            [
-                                Atom("output_type", "how_many"),
-                                Atom("output_how_many", part_type, whole_type.id),
-                            ],
-                        )
+                        Atom("out", "how_many", part_type, whole_type.id),
                     ]
                 )
 
@@ -155,13 +149,7 @@ class SIRModule(SomeModule):
             # produce output
             context.solver.solve(
                 [
-                    Atom(
-                        "store",
-                        [
-                            Atom("output_type", "dont_know_part_of"),
-                            Atom("output_dont_know_part_of", part_type, whole_type.id),
-                        ],
-                    )
+                    Atom("out", "dont_know_part_of", part_type, whole_type.id),
                 ]
             )
             return []

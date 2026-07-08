@@ -8,39 +8,39 @@ def get_write_grammar():
         # sentences
         {
             "syn": "s() -> 'OK'",
-            "if": [Atom("output_type", "ok")],
+            "if": [Atom("last_output", "ok")],
         },
         {
             "syn": "s() -> 'yes'",
-            "if": [Atom("output_type", "yes")],
+            "if": [Atom("last_output", "yes")],
         },
         {
             "syn": "s() -> 'no'",
-            "if": [Atom("output_type", "no")],
+            "if": [Atom("last_output", "no")],
         },
         {
             "syn": "s() -> literal(E1)",
-            "if": [Atom("output_type", "value"), Atom("output_value", E1)],
+            "if": [Atom("last_output", "value", E1)],
             "combine": lambda value: value,
         },
         {
             "syn": "s() -> literal(E1) literal(E2)",
-            "if": [Atom("output_type", "value_with_unit"), Atom("output_value_with_unit", E1, E2)],
+            "if": [Atom("last_output", "value_with_unit", E1, E2)],
         },
         {
             "syn": "s() -> format(E1)",
-            "if": [Atom("output_type", "list"), Atom("output_list", E1)],
+            "if": [Atom("last_output", "list", E1)],
             "format": lambda elements: format_list(elements),
         },
         {
             "syn": "s() -> format(E1, E2)",
-            "if": [Atom("output_type", "table"), Atom("output_table", E1, E2)],
+            "if": [Atom("last_output", "table", E1, E2)],
             "format": lambda results, units: format_table(results, units),
             "combine": lambda table: table,
         },
         {
             "syn": "s() -> 'Cheerio.'",
-            "if": [Atom("output_type", "close_conversation")],
+            "if": [Atom("last_output", "close_conversation")],
         },
     ]
 

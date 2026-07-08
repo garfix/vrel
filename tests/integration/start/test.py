@@ -9,7 +9,6 @@ from vrel.core.Model import Model
 from vrel.data_source.Sqlite3DataSource import Sqlite3DataSource
 from vrel.entity.SentenceRequest import SentenceRequest
 from vrel.grammar.en_us_write import get_en_us_write_grammar
-from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.DeductionModule import DeductionModule
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
@@ -57,13 +56,9 @@ class StartTest(unittest.TestCase):
         inferences = DeductionModule()
         inferences.import_rules(path / "intents.pl")
 
-        # define an output buffer
-
-        output_buffer = BasicOutputBuffer()
-
         # define the model
 
-        model = Model([facts, inferences, output_buffer])
+        model = Model([facts, inferences])
 
         # define the processors
 
@@ -75,7 +70,7 @@ class StartTest(unittest.TestCase):
 
         # the output generator
 
-        generator = BasicGenerator(model, output_buffer)
+        generator = BasicGenerator(model)
         generator.add_grammar_rules(get_en_us_write_grammar())
         generator.add_grammar_rules(get_write_grammar())
 

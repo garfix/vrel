@@ -1,26 +1,58 @@
-from vrel.data_source.SimpleDataSource import SimpleDataSource
-from vrel.entity.Atom import Atom
+from vrel.core.functions.unification import unification
+from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.Relation import Parameter, Relation
-from vrel.module.SqliteMemoryModule import SqliteMemoryModule
+from vrel.interface.SomeModule import SomeModule
 
 
-class BasicOutputBuffer(SqliteMemoryModule):
+class BasicOutputBuffer(SomeModule):
+
+    output: list
 
     def __init__(self) -> None:
         super().__init__()
 
-        self.add_relation(Relation("output_type", parameters=[Parameter("type", str)]))
-        self.add_relation(Relation("output_value", parameters=[Parameter("value", any)]))
+        self.output = []
+
         self.add_relation(
-            Relation("output_value_with_unit", parameters=[Parameter("value", any), Parameter("unit", str)])
+            Relation(
+                "out",
+                parameters=[Parameter("type", str), Parameter("value", any), Parameter("value", any)],
+                query_function=self.out,
+            )
         )
         self.add_relation(
-            Relation("output_table", parameters=[Parameter("results", list[any]), Parameter("units", list[str])])
+            Relation(
+                "last_output",
+                parameters=[Parameter("type", any), Parameter("value", any), Parameter("value", any)],
+                query_function=self.last_output,
+            )
         )
-        self.add_relation(Relation("output_list", parameters=[Parameter("elements", list[any])]))
-        self.add_relation(Relation("output_explanation", parameters=[Parameter("explanation", Atom)]))
-        self.add_relation(Relation("output_name_not_found", parameters=[Parameter("name", str)]))
-        self.add_relation(Relation("output_unknown_word", parameters=[Parameter("word", str)]))
+        self.add_relation(Relation("clear_output", parameters=[], query_function=self.clear_output))
+        self.add_relation(Relation("any_output", parameters=[], query_function=self.any_output))
+
+    def out(self, values: list, context: ExecutionContext) -> list[list]:
+        self.output.append(values)
+        return [values]
+
+    def last_output(self, values: list, context: ExecutionContext) -> list[list]:
+        if len(self.output) == 0:
+            return []
+        out = self.output[-1]
+        if len(out) != len(values):
+            return []
+        if unification(out, values, {}) is not None:
+            return [out]
+        return []
+
+    def clear_output(self, values: list, context: ExecutionContext) -> list[list]:
+        self.output = []
+        return [[]]
+
+    def any_output(self, values: list, context: ExecutionContext) -> list[list]:
+        if len(self.output) > 0:
+            return [[]]
+        else:
+            return []
 
     def clear(self):
-        self.data_source = SimpleDataSource()
+        self.output = []

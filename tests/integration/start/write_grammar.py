@@ -10,13 +10,13 @@ def get_write_grammar():
         # sentences
         {
             "syn": "s() -> np(E1)",
-            "if": [Atom("output_type", "list"), Atom("output_list", E1)],
+            "if": [Atom("last_output", "list", E1)],
             "list_element": E1,
             "list_combine": lambda nps: ", ".join(nps),
         },
         {
             "syn": "s() -> 'See you later!'",
-            "if": [Atom("output_type", "close_conversation")],
+            "if": [Atom("last_output", "close_conversation")],
         },
         # noun phrases
         {"syn": "np(E1) -> literal(Name)", "if": [Atom("name", E1, Name)]},

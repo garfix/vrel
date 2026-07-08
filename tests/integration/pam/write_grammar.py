@@ -11,11 +11,11 @@ def get_write_grammar():
         # sentences
         {
             "syn": "s() -> 'OK'",
-            "if": [Atom("output_type", "understood")],
+            "if": [Atom("last_output", "understood")],
         },
         {
             "syn": "s() -> 'Because' reason(Explanation)",
-            "if": [Atom("output_type", "explanation"), Atom("output_explanation", Explanation)],
+            "if": [Atom("last_output", "explanation", Explanation)],
         },
         {
             "syn": "reason(Explanation) -> goal(Goal)",

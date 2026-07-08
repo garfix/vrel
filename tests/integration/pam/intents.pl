@@ -4,7 +4,7 @@ intent_understand(Story) :-
     log('reified', Reified),
     induce_facts(Reified),
     analyze_plans(Reified),
-    store(output_type('understood')).
+    out('understood').
 
 
 intent_explanation(Question, C1) :-
@@ -12,5 +12,5 @@ intent_explanation(Question, C1) :-
     update_saliency(Question),
     explain(Question, C1, Explanation),
     # log('explanation', Explanation),
-    store(output_type('explanation'), output_explanation(Explanation)).
+    out('explanation', Explanation).
 

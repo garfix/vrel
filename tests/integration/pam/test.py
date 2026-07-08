@@ -6,11 +6,9 @@ from vrel.core.BasicSystem import BasicSystem
 from vrel.core.DialogTester import DialogTester
 from vrel.grammar.en_us_write import get_en_us_write_grammar
 from vrel.module.BasicDialogContext import BasicDialogContext
-from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.InductionModule import InductionModule
 from vrel.module.PronounModule import PronounModule
 from vrel.module.SameAsModule import SameAsModule
-from vrel.dsl.SimpleGrammarRulesParser import SimpleGrammarRulesParser
 from vrel.processor.semantic_composer.SemanticComposer import SemanticComposer
 from vrel.processor.semantic_executor.AtomExecutor import AtomExecutor
 from vrel.core.Model import Model
@@ -49,10 +47,6 @@ class TestPAM(unittest.TestCase):
         inferences.import_rules(path / "intents.pl")
         inferences.import_rules(path / "deductions.pl")
 
-        # a data source to store information for output
-
-        output_buffer = BasicOutputBuffer()
-
         # add the plan analyzer
 
         induction_model = Model([PAMModule(), inferences, same_as])
@@ -63,7 +57,7 @@ class TestPAM(unittest.TestCase):
 
         # define the model
 
-        model = Model([facts, inferences, inductions, output_buffer, same_as, pronouns, dialog])
+        model = Model([facts, inferences, inductions, same_as, pronouns, dialog])
 
         # define the system
 
@@ -73,7 +67,7 @@ class TestPAM(unittest.TestCase):
         composer = SemanticComposer()
         executor = AtomExecutor()
 
-        generator = BasicGenerator(model, output_buffer)
+        generator = BasicGenerator(model)
         generator.add_grammar_rules(get_en_us_write_grammar())
         generator.add_grammar_rules(get_write_grammar())
 

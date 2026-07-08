@@ -5,6 +5,7 @@ from vrel.interface.SomePronounHandler import SomePronounHandler
 from vrel.interface.SomeSameAsHandler import SomeSameAsHandler
 from vrel.interface.SomeStackOverflowHandler import SomeStackOverflowHandler
 from vrel.core.handlers.NoStackOverflowHandler import NoStackOverflowHandler
+from vrel.module.BasicOutputBuffer import BasicOutputBuffer
 from vrel.module.CoreModule import CoreModule
 from vrel.module.SameAsModule import DummySameAsHandler
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
@@ -26,9 +27,7 @@ class Model(SomeModel):
         modules: list[SomeModule],
         stack_overflow_handler: SomeStackOverflowHandler = None,
     ) -> None:
-        self.modules = [
-            CoreModule(),
-        ]
+        self.modules = [CoreModule(), BasicOutputBuffer()]
 
         self.same_as_handler = DummySameAsHandler()
         # self.pronoun_handler = DummyPronounHandler()

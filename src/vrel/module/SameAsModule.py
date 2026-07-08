@@ -62,7 +62,8 @@ class SameAsModule(SomeSameAsHandler, SqliteMemoryModule):
     def get_same_as_variants(self, bound_arguments: list, relation: Relation):
 
         group = []
-        for i, formal in enumerate(relation.parameters):
+        for i, formal in enumerate(bound_arguments):
+            # print(relation.predicate)
             if isinstance(bound_arguments[i], Id):
                 group.append(self.get_same_as(bound_arguments[i]))
             else:
