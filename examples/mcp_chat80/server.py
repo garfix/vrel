@@ -53,7 +53,7 @@ def ask_geography(question: str) -> str:
     """
     request = SentenceRequest(question)
     _system.enter(request)
-    output = _system.read_output()
+    output = _system.get_output()
     if output is None or output == "":
         return "(no answer — the question may not parse against Chat-80's grammar)"
     # Chat-80 sometimes returns non-string values (e.g. an int for count queries).

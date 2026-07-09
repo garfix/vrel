@@ -98,18 +98,15 @@ class BasicSystem(SomeSystem):
         products = []
         for semantic_sentence in semantic_sentences:
 
-            # update entity saliency
-            # self.model.get_pronoun_handler().update_saliency(semantic_sentence.semantics)
-
             # execute
             product = self.executor.process(semantic_sentence, solver, request, self.logger)
             products.append(product)
 
         return ProcessResult(products, "")
 
+    def get_output(self) -> str:
+        return self.output_generator.generate_output()
+
     def log_error(self, result: ProcessResult, solver: SomeSolver):
         solver.solve([Atom("out", result.error_type, *result.error_args)])
         return result
-
-    def read_output(self):
-        return self.output_generator.generate_output()

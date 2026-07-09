@@ -64,7 +64,7 @@ class DialogTester:
 
                 output = ""
                 if self.system.output_generator:
-                    output = self.system.read_output()
+                    output = self.system.get_output()
 
                 logger.add_value("Computer", output)
                 logger.add_comment(str(ceil((end_time - start_time) * 1000)) + " msecs")

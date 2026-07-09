@@ -87,7 +87,7 @@ class StartTest(unittest.TestCase):
         # ask the question
 
         system.enter(SentenceRequest("Who is the oldest employee?"))
-        output = generator.generate_output()
+        output = system.get_output()
 
         self.assertEqual(output, "Barbara")
 

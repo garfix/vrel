@@ -1,3 +1,11 @@
+## Overview
+
+This diagram shows the main parts of the system.
+
+![System overview](assets/system.drawio.png)
+
+These parts will now be explained.
+
 ## Data source
 
 A **data source** is a class that wraps any database via standardized methods:

@@ -1,5 +1,7 @@
 ## todo
 
+- document generation
+
 - not(last_output(T)) means: no output has been produced yet => elk aantal parameters?
 - maak van "if" een parsable string
 - the fact induction doesn't work

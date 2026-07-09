@@ -9,7 +9,7 @@ class SomeSystem(ABC):
         pass
 
     @abstractmethod
-    def read_output(self):
+    def get_output(self):
         pass
 
     def get_logger(self) -> SomeLogger:
