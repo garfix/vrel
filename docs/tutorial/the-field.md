@@ -79,3 +79,11 @@ The categories `aggregate`, `element` and `material` are not syntactic, like `no
 The current library allows you to create a semantic grammar, and there are some good use cases for it. But you must be aware that the grammar you build is very domain-specific and there's a low chance of being able to reuse it in other projects.
 
 Adding some semantic grammar elements to any grammar is normal, however.
+
+## Understanding
+
+By understanding we mean creating causal links between events by applying induction rules.
+
+## Reasoning
+
+By deductive reasoning we mean deriving facts (atoms) from other facts by using inference rules. The rules are written in Prolog-syntax.
