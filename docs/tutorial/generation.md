@@ -1,24 +1,38 @@
 ## The basics
 
-In **response generation** a response sentence is generated based on rewrite rules and data source data.
+In **response generation** a semantic expression is turned into a natural language sentence in order to be shown to the user. It is based on rewrite rules and data source data.
 
-The relation `output_type` that is filled by the intent handler provides the main input to generation. After that, any data may serve as condition for further rewrites.
+An application uses the relation `out` to store the information that should be output to the user, in the form of a tuple that starts with a output type. The generator uses the relation `last_output` to read the last output tuple available.
 
-Generation takes place based on rewrite rules that take a category as a head, and one or more categories as body. In the following example the head is `s` and the body `np` and `vp`.
+Here's an example of a semantic expression the application whats to output. It's a clariying expression that asks the user for information.
 
-Each sentence starts out with a `s` category. The generator looks for rules with `s` as its head and that match the `if` condition. The first rule (from top to bottom) that matches is used. The sentence that first look something like "s()" is now rewritten to something like "np() vp()", and the `np` and `vp` will be rewritten further.
+```python
+out('how_many', E1, E2)
+```
 
-Note that the variables `E1` and `E2` that are bound during the condition matching process, are used as arguments to the `np` and `vp` categories, and will be passed to the new rules as input.
+this expression can be handled by this rule
+
+```python
+{
+    "syn": "s() -> 'How many' thing(E1) 'per' thing(E2)+'?'",
+    "if": [Atom("last_output", "how_many", E1, E2)],
+},
+```
+
+Generation takes place based on rewrite rules that take a category as a head, and one or more categories as body. In the following example the head is `s` and the body categories `np` and `vp`.
+
+Each sentence starts out with a `s` category. The generator looks for rules with `s` as its head and also match the `if` condition. The first rule (from top to bottom) that matches is used. The others are skipped. The sentence that first looks something like "`s()`" is now rewritten to something like "`np()` `vp()`", and the `np` and `vp` will be rewritten further.
 
 ```python
 {
     "syn": "s() -> np(E2) vp(E1)",
     "if": [
-        Atom("output_type", "declarative"),
-        Atom("output_subject", E1, E2),
+        Atom("last_output", "declarative", E1, E2),
     ],
 },
 ```
+
+Note that the variables `E1` and `E2` that are bound during the condition matching process, are used as arguments to the `np` and `vp` categories, and will be passed to the new rules as input.
 
 `vp` may rewrite to `verb` and `verb` can have a rule like this
 
@@ -33,18 +47,6 @@ Note that the variables `E1` and `E2` that are bound during the condition matchi
 
 which produces the word `starts`.
 
-## Order of execution
-
-At some point you may want to know exactly what happens in what order. The generator processes a rule like this:
-
-- match the head along with its arguments
-- execute the `if` clause and keep the variable binding
-- if the rule contains a `list_element` variable, this variable is assumed to be a list, and the following steps are repeated for each element in the list. Together they will form a `list_result`. Otherwise, they are executed just once
-  - each of the consequent categories is processed in a recursive way, by this same process
-  - the result of these consequents are combined by the `combine` function, if available. Otherwise any `None` values are removed, they're converted to strings, and concatenated.
-  - the resulting string is postprocessed by a `post` function, if available
-- if the rule contains a `list_element` variable, and a `list_combine`, the `list_combine` takes the `list_result` as input and return the output.
-
 ## Literal
 
 A value that is to be displayed as-is, can be produced using the category `literal`.
@@ -52,13 +54,13 @@ A value that is to be displayed as-is, can be produced using the category `liter
 ```python
 {
     "syn": "s() -> 'The answer is' literal(E1)",
-    "if": [Atom("output_type", "count"), Atom("output_count", E1)],
+    "if": [Atom("last_output", "count", E1)],
 },
 ```
 
 ## Format
 
-You can use the category `format` to use a custom function to create a result.
+You can use the category `format` to use a custom function to create a result. This function is provided in the rule via the key "format".
 
 ```python
 {
@@ -74,12 +76,13 @@ When a variable contains a list of values, and each of the values needs to be re
 ```python
 {
     "syn": "s() -> np(E1)",
-    "if": [Atom("output_type", "list"), Atom("output_list", E1)],
+    "if": [Atom("last_output", "list", E1)],
     "list_element": E1,
     "list_combine": lambda nps: ", ".join(nps),
 },
-
 ```
+
+In this example the result is an enumeration of names, separated by commas.
 
 ## Combine
 
@@ -88,13 +91,13 @@ The `combine` function tells the generator how the results of the body nodes are
 ```python
 {
     "syn": "s() -> format(E1, E2)",
-    "if": [Atom("output_type", "table"), Atom("output_table", E1, E2)],
+    "if": [Atom("last_output", "table", E1, E2)],
     "format": lambda results, units: format_table(results, units),
     "combine": lambda table: table,
 },
 ```
 
-Here the consequents are not combined and turned into a string, but just passed on as an array.
+Here the consequents (the output of `format`) are not turned into a string, but just passed on as an array.
 
 ## Post
 
@@ -106,3 +109,15 @@ Here the consequents are not combined and turned into a string, but just passed 
     "post": lambda custom: custom.strip()
 },
 ```
+
+## Order of execution
+
+At some point you may want to know exactly what happens in what order. The generator processes a rule like this:
+
+- match the head along with its arguments
+- execute the `if` clause and keep the variable binding
+- if the rule contains a `list_element` variable, this variable is assumed to be a list, and the following steps are repeated for each element in the list. Together they will form a `list_result`. Otherwise, they are executed just once
+  - each of the consequent categories is processed in a recursive way, by this same process
+  - the result of these consequents are combined by the `combine` function, if available. Otherwise any `None` values are removed, they're converted to strings, and concatenated.
+  - the resulting string is postprocessed by a `post` function, if available
+- if the rule contains a `list_element` variable, and a `list_combine`, the `list_combine` takes the `list_result` as input and return the output.
