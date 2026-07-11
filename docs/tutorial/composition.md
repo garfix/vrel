@@ -2,6 +2,8 @@
 
 The meaning of a sentence or phrase can be composed of the meaning of its constituent phrases. Known as [Frege's principle](https://en.wikipedia.org/wiki/Principle_of_compositionality), this is the basis of deriving the meaning of a sentence.
 
+Semantic composition as laid out here uses **Entity Unification Grammar**, a formalism I developed to make semantic composition easy (easier than [Montague grammar](https://en.wikipedia.org/wiki/Montague_grammar) and [Feature Structure Unification](https://en.wikipedia.org/wiki/Feature_structure)).
+
 ## Semantic attachments
 
 A grammar rule can be extended with a **semantic attachment**, expressed by the "sem" key of a syntactic rule, which expresses the meaning of the phrase covered by the rule. In this library the attachments take the form of lists of atoms. The atom is implemented as a Python tuple.
@@ -33,7 +35,7 @@ The parameter names are not required to be the same as the syntactic categories,
 
 The returned value, an atom like `Atom('river', E1)]`, forms the real meaning of the rule. It uses the meanings of its child nodes that were made available through the parameters of the function.
 
-## Three composition operations
+## The composition operations
 
 Calculating the semantics of a phrase is done by three operations: **terminal**, **argument**, **modifier**, **determinater** and **inheritance**.
 
@@ -55,11 +57,17 @@ Calculating the semantics of a phrase is done by three operations: **terminal**,
 },
 ```
 
+Note that the children are always put in a **list** when applied as argument.
+
+Use this operation when one atom **requires** another atom to perform its function, and their order of execution would matter.
+
 **modifier** modifies one child node with another child node. Any amount of modification may be done by a single rule.
 
 ```python
-{"syn": "nbar(E1) -> adjp(E1) nbar(E1)", "sem": lambda adjp, nbar: nbar.mod(adjp)},
-
+{
+    "syn": "nbar(E1) -> adjp(E1) nbar(E1)",
+    "sem": lambda adjp, nbar: nbar.mod(adjp)
+},
 {
     "syn": "relative_clause(E1) -> np(E2) preposition(E2, E1) 'which' vp(E2)",
     "sem": lambda np, preposition, vp: vp.mod(np.mod(preposition)),

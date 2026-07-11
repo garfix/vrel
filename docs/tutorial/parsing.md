@@ -60,7 +60,6 @@ In stead of character strings, you can also use a regular expression like `/\w+/
 ```python
 {
     "syn": "proper_noun(E1) -> /\w+/",
-    "sem": lambda token: [('resolve_name', token, E1)]
 }
 ```
 
@@ -79,7 +78,6 @@ The `+` delimiter is essential in analysing morphemes. In this example the plura
 ```python
 {
     "syn": "common_noun(E1) -> common_noun(E1)+'s'",
-    "sem": lambda common_noun: common_noun
 }
 ```
 
@@ -87,7 +85,7 @@ If a space is optional but not required, use the tilde delimeter: `~`:
 
 ```python
 {
-    "syn": "s(E1) -> 'does' np(E1) vp_nosub_obj(E1)~'?'",
+    "syn": "s(E1) -> 'does' np(E1) vp(E1)~'?'",
 }
 ```
 
@@ -180,13 +178,9 @@ When you **just know** that one interpretation of a sentence should be preferred
 ```python
 {
     "syn": "s(E1) -> 'what' 'are' np(E1) '?'",
-    "sem": lambda np: apply(np, []),
-    "dialog": [("format", "list"), ("format_list", e1)],
 },
 {
     "syn": "s(E1, E2) -> 'what' 'are' 'the' noun(E1) 'of' np(E2) '?'",
-    "sem": lambda noun, np: noun + [('of', E1, E2)] + apply(np, []),
-    "dialog": [("format", "table"), ("format_table", [e2, e1], [None, None])],
     "boost": 1
 }
 ```

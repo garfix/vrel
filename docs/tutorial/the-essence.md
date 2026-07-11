@@ -1,12 +1,20 @@
+The library is being designed to be simple to use and support a wide range of language and cognitive skills.
+
 This page describes the basic principles of the library.
 
 ## A basic system, extended by modules
 
 The basic system just has a parser, a composer, and an executor. Everything else is done by (external) modules. This makes it lightweight, extendible, and easier to understand and test. Some modules are linked rather directly to the system, but the interaction is minimal, and uses interfaces.
 
+## A simple grammar formalism
+
+The library uses **Entity Unification Grammar**, a formalism I developed to make semantic composition easy. Easier, that is, than [Montague grammar](https://en.wikipedia.org/wiki/Montague_grammar) and [Feature Structure Unification](https://en.wikipedia.org/wiki/Feature_structure), in the sense that the cognitive load of developing a new rule is lower: the number of semantic operations is low, and picking the right operator is usually an obvious choice.
+
+It is explained [here](composition.md).
+
 ## Start simple, then transform
 
-Historically there are two ways to do syntactic analysis and semantic composition. The first analyses the sentence using a large amount of complicated code that has a strong learning curve. The other uses syntactic rewriting rules, but the semantic composition rules are hard to understand and apply.
+Historically there are two ways to do syntactic analysis and semantic composition. The first analyses the sentence using a large amount of code that has a strong learning curve. The other uses syntactic rewriting rules, but the semantic composition rules are hard to understand and apply.
 
 This library uses syntactic rewrite rules and has aimed to make the semantic composition as easy as possible. The developer attaches semantic forms to syntactic tree nodes that are just the most basic logical representation.
 
