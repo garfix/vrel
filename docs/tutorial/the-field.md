@@ -52,7 +52,7 @@ Some applications have no use at all for event instances. That's fine too. You a
 
 Just use `push(john, david)`.
 
-## Dialog
+## Dialogs
 
 The library is developed by replicating more and more historical natural language systems. These systems contain sample dialogs between a human and a computer. The dialogs are here implemented in the form of tests, so that they can be replayed automatically and ensure that no bugs are introduced that fail existing dialogs.
 
@@ -80,10 +80,36 @@ The current library allows you to create a semantic grammar, and there are some 
 
 Adding some semantic grammar elements to any grammar is normal, however.
 
-## Understanding
-
-By understanding we mean creating causal links between events by applying induction rules.
-
 ## Reasoning
 
-By deductive reasoning we mean deriving facts (atoms) from other facts by using inference rules. The rules are written in Prolog-syntax.
+Reasoning is using techniques from logic to derive new facts.
+
+By **deductive reasoning** we mean deriving facts (atoms) from other facts by using inference (deduction) rules. The rules are written in Prolog-syntax. Deductive reasoning always delivers valid results.
+
+By **inductive reasoning** we mean deriving goals (atoms) from events and other goals by using induction rules. Inductive reasoning only delivers likely results (use umbrella -> it rains).
+
+## Understanding
+
+**Understanding** is the process of figuring out the cause or the reason of an event. Once an event is understood, one can ask "why" questions about it.
+
+In understanding causal links are created between events by applying induction rules. These induction rules are hand-crafted.
+
+## Problem solving
+
+**Problem solving** is finding a way to change a problem state into a solution state. **Well-defined problems** have known solutions, whereas **ill-defined problems** don't. The problems can be of any arbitrary complexity.
+
+This library is able to find solutions of well-defined problems by applying goal -> sub-goal rules in Prolog-syntax.
+
+## Planning
+
+**Planning** is a kind of problem solving, but whereas the result of problem solving is typically executed immediately, the result of planning is a **plan**, a road map to be executed at a later time.
+
+## Long Term Memory
+
+Facts in **long term memory** are stored in a persistent store, typically a database.
+
+LTM information can be accessed through data sources.
+
+## Dialog Context
+
+The **dialog context** has no equivalent in the human mind (it's closest to **working memory**), but is needed to hold information about previous sentences in the same dialog (conversation with the user).
