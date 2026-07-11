@@ -74,6 +74,8 @@ Use this operation when one atom **requires** another atom to perform its functi
 },
 ```
 
+If you doubt whether to modify A by B or B by A, use [dependency relations](https://en.wikipedia.org/wiki/Dependency_grammar), and modify the **head** by the **dependent**, but the final choice depends on your application.
+
 **determiner** adds a determiner to an atom.
 
 ```python

@@ -26,13 +26,15 @@ To see this in action, consider this simple grammar.
 
 The variables `E1` and `V` that you see after each category within brackets, help to integrate the semantics of child nodes with their parent. You will see how they are important when we get to semantics.
 
-Something about the choice of the rewrite rules that form the grammar: these rules, like `vp -> verb np`, are not the only ones possible. Linguistic frameworks have many ways of decomposing a sentence. Read [Wikipedia on Grammar](https://en.wikipedia.org/wiki/Grammar) for more information. I have not yet found a grammar that fits all purposes, and I will be using slightly different grammar rules throughout this documentation. You may look at [X-bar theory](https://en.wikipedia.org/wiki/X-bar_theory) as matches my approach best. But other types of grammar may be used as well.
-
-An important characteristic of a grammar for a semantic parser is that there are many rewrite rules at the sentence level. The results that a sentence produces largely depend on the top-level construct of a sentence.
-
 This library uses [Earley's parser](https://en.wikipedia.org/wiki/Earley_parser), which is fast and efficient, and doesn't fall into infinite recursion with left-recursive rules (i.e. `a -> a b`). The algorithm is adapted to use spans of tokens (here: characters), rather than work with individual tokens.
 
 You may be missing a lexicon in this example. A **lexicon** is a collection of all the individual words of a language, together with their meanings. This library integrates the lexicon in the grammar to simplify the definition of idioms. An **idiom** is a group of words that does not form a phrase but contains a specific meaning. For example: "How many countries have population above 100 million?"
+
+## Grammar
+
+Something about the choice of the rewrite rules that form the grammar: these rules, like `vp -> verb np`, are not the only ones possible. Linguistic frameworks have many ways of decomposing a sentence. Read [Wikipedia on Grammar](https://en.wikipedia.org/wiki/Grammar) for more information. This library uses some [X-bar theory](https://en.wikipedia.org/wiki/X-bar_theory) constructs, and creates semantics-driven dependency structures not unlike [Dependency Grammar](https://en.wikipedia.org/wiki/Dependency_grammar). But the actual rules, especially the rules at the sentence level (`s`) are purely pragmatic in design. They are focused on extracting the essential information from a sentence as needed by the intent. Therefore a rewrite rule can even look like this: `s(E1, E3) -> 'what' 'is' aggregate(E1, E3) 'each' nbar(E3) + '?'`, a construction no mainstream grammar would approve of.
+
+## Parse tree
 
 When you run the script, you should see the following parse tree representation.
 
