@@ -142,10 +142,6 @@ Work out context in inference rules:
 
 I want to simplify the structure of quantifiers. Maybe I made them needlessly complicated to make sure they served as a scoping mechanism. But scoping can be done in a different way; a way that's simpler to comprehend. Look at different representation forms to see if they can simplify things.
 
-## Dependeny grammar
-
-The modifiers you distinguish, are they not related to dependency grammar? Might be useful to find out.
-
 ## Main rule
 
 Atoms must be serializable in any order. If that's not possible, turn the modifier into an argument.
