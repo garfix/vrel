@@ -4,7 +4,7 @@ Introduction
 
 - [The field](the-field.md) - natural language processing concepts
 - [The parts](the-parts.md) - the building blocks of the library
-- [The essence](the-essence.md) - the essential working of the system
+- [Core concepts](core-concepts.md) - the fundamental ideas behind this library
 
 Processors
 
@@ -26,3 +26,7 @@ Demos
 - [Cooper's system](demos/cooper.md)
 - [SIR](demos/sir.md)
 - [Wikidata](demos/wikidata.md)
+
+Topics
+
+- [Data sources](data-sources.md)

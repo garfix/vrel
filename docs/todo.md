@@ -1,26 +1,28 @@
 ## todo
 
+- PAM next test
+- document all influences on the library
+- start on SHRDLU
+
 - not(last_output(T)) means: no output has been produced yet => elk aantal parameters?
 - maak van "if" een parsable string
 - the fact induction doesn't work
-
-- pronouns: update saliency when
-  - reading an utterance: subject, object iobj
-  - writing an utterance
-  - updating saliency should only done for entities in verbs
-  - also: use the syntactive subject, not the semantic subject
-
-- check alle DataSources: hydration / dehydration
-  - wikidata demo gebruikt nog tabellen en geen ids
 - research: denk na over onderscheid tabel / Relation / columns; note: borders (id1, id2) en (id2, id1)
 - make sure the reified constructs are stored in a dialog-specific store (how? is an open question)
-- constructs with dialog variables should not be stored (and even be storable) in a permanent store (db) but only in a dialog store (how?)
-
 - inject solver in BasicGenerator
 - with_context
 
 - neem in de Relation op welke parameter de unieke id bevat
   - check op deze parameter in extract_determiner_arguments (`arguments[0]`)
+
+## Pronouns
+
+update saliency when
+
+- reading an utterance: subject, object iobj
+- writing an utterance
+- updating saliency should only done for entities in verbs
+- also: use the syntactive subject, not the semantic subject
 
 ## PAM
 

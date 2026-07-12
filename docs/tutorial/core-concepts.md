@@ -1,6 +1,6 @@
 The library is being designed to be simple to use and support a wide range of language and cognitive skills.
 
-This page describes the basic principles of the library.
+This page describes the core concepts of the library.
 
 ## A basic system, extended by modules
 
@@ -22,7 +22,7 @@ One of the ways to keep the composition simple is to leave quantification out of
 
 ## A complex query is just a composition of simple queries
 
-Where most systems try to create a single SQL statement to execute a sentence, this system breaks the query down to a series of select statements and executes these. The result is not `SELECT COUNT(*) FROM .. JOIN .. JOIN .. GROUP BY ...`; rather all database queries are like this `SELECT a, b, c FROM t WHERE a = 1 anc c = 2`.
+Where most systems try to create a single SQL statement to execute a sentence, this system breaks the query down to a series of select statements and executes these. The result is not `SELECT COUNT(*) FROM .. JOIN .. JOIN .. GROUP BY ...`; rather all database queries involve only a single table, a few simple selects and some simple where clauses: `SELECT a, b, c FROM t WHERE a = 1 anc c = 2`.
 
 Advantages
 
