@@ -171,7 +171,7 @@ class PlanAnalyzer:
 
             parent_event_id = self.get_parent_event_id(event_id)
 
-        print("cause", cause)
+        # print("cause", cause)
         return cause
 
     def predicted(

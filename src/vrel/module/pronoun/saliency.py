@@ -50,7 +50,6 @@ def decay_saliency(entities: list[EntityData]):
 def update_features(entities: list[EntityData], solver: SomeSolver):
     for entity in entities:
         bindings = solver.solve([Atom(FEATURE, entity.id, Variable("Name"), Variable("Value"))])
-        print(entity.id, bindings)
         for binding in bindings:
             entity.features[binding["Name"]] = binding["Value"]
 

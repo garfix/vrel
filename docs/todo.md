@@ -3,6 +3,7 @@
 - PAM next test
 - document all influences on the library
 - start on SHRDLU
+- study Preform / Inform https://ganelson.github.io/inform/words-module/4-ap.html
 
 - not(last_output(T)) means: no output has been produced yet => elk aantal parameters?
 - maak van "if" een parsable string
@@ -31,11 +32,7 @@ update saliency when
 
 ## Same as
 
-- same-as handler wordt een zelfstandige module met een eigen data source
 - matching van geneste structuren zal nog niet werken omdat same_as niet aan nesting doet
-- same_as is stored in BasicDialogContext and this is not available from the model in explain.
-- the same_as handler currently only works with parameters called 'id'
-- fix the same_as tuples produced by PlanAnalyzer
 
 ## API
 
@@ -113,7 +110,7 @@ When we `store` a structure, is that in dialog or LTM? Should that be decidable 
 
 - de deducties van PAM moeten een mate van onzekerheid hebben; het zijn geen zekerheden; hoe streep je hypothesen af?
 
-- Is de modulecule structuur van zinnen nuttig (essentieel) voor PAM? Probeer hier achter te komen.
+- Is de molecule structuur van zinnen nuttig (essentieel) voor PAM? Probeer hier achter te komen.
 
 ## AMR and other structures
 
@@ -140,18 +137,6 @@ Work out context in inference rules:
 - syntax: `name{ rule. rule. }`
 - application: the rules must only be applied when context name is active
 
-## Syntax
-
-I want to simplify the structure of quantifiers. Maybe I made them needlessly complicated to make sure they served as a scoping mechanism. But scoping can be done in a different way; a way that's simpler to comprehend. Look at different representation forms to see if they can simplify things.
-
-## Main rule
-
-Atoms must be serializable in any order. If that's not possible, turn the modifier into an argument.
-
-## Second order sentences
-
-Nested sentences should not just be stored relationally, because the hierarchy matters. In relational form, the dependent form is stored as a fact, and this is wrong.
-
 ## scoped
 
 `scoped` used to result in no new variables. This has changed. Now it does. And the tests still pass. And this has advantages, but maybe also disadvantages. Create a new predicate that explicitly exposes variables? Change the name of `scoped` to `execute`?
@@ -163,17 +148,6 @@ Nested sentences should not just be stored relationally, because the hierarchy m
 ## inference to deduction
 
 Everything called inference should be called deduction, to contrast it with induction.
-
-## ResultIterator
-
-The `ResultIterator` was an about that contained `n` results as an iterator, to avoid returning a super large amount of results. Do I need a replacement for it?
-
-## output
-
-- create a separate predicate for producing output (like `output(type)`)
-- or there may be different predicates `output_print()` that prints directly
-- this predicate should then **wait** until the message is received by the user / client, before continuing
-- this predicate can be implemented by the application in any way it sees fit
 
 ## database
 

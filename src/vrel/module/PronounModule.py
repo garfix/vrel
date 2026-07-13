@@ -51,8 +51,6 @@ class PronounModule(SomeModule, SomePronounHandler):
 
         ok = check_pronoun(id, features, self.entities)
 
-        print(id, features, ok)
-
         if ok:
             return [[None, None]]
         else:

@@ -1,3 +1,11 @@
+## 2026-07-13
+
+in "he asked him where he was" i say that 'he' and 'him' are np's, but so far i say that "where he was" is a relative clause. but i want to say that all are either np's or relative clauses. what is the common category that spans both?
+
+Claude:
+
+The common category is "noun clause" (also called a nominal clause or content clause), which is itself a subtype of the broader category "nominal." A noun clause is a clause that does the job an NP would normally do — subject, object, complement, etc.
+
 ## 2026-07-07
 
 For the sake of the start module, that shows the simplicity of the module, I'm redesigning the output function.
