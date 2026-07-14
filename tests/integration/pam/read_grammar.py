@@ -38,24 +38,24 @@ def get_read_grammar():
             "sem": lambda np, vp: Atom("intent_understand", [vp.mod(np)]),
         },
         {
-            "syn": "decl_clause(C1) -> np(E1) vp(C1, E1)",
+            "syn": "decl_clause(C1) -> nominal(E1) vp(C1, E1)",
             "sem": lambda np, vp: vp.mod(np),
         },
         # verb phrase
+        #  modifiers
         {"syn": "vp(C1, E1) -> vp(C1, E1) pp(C1)", "sem": lambda vp, pp: vp.mod(pp)},
         {"syn": "vp(C1, E1) -> copula() adjp(E1)", "sem": lambda copula, adjp: adjp},
-        #
-        {"syn": "vp(C1, E1) -> vp(C1, E1, E2) np(E2)", "sem": lambda vp, np: vp.mod(np)},
-        # {"syn": "vp(C1, E1, E2) -> vp(C1, E1, E2, E3) np(E3)", "sem": lambda vp, np: vp.mod(np)},
-        #
+        #  variants
+        {"syn": "vp(C1, E1) -> vp(C1, E1, E2) nominal(E2)", "sem": lambda vp, np: vp.mod(np)},
+        {
+            "syn": "vp(C1, E1) -> vp(C1, E1, E2, E3) nominal(E2) nominal(E3)",
+            "sem": lambda vp, np1, np2: vp.mod(np1).mod(np2),
+        },
+        #  implementations
         {"syn": "vp(C1, E1) -> verb(C1, E1)", "sem": lambda verb: verb},
         {"syn": "vp(C1, E1, E2) -> verb(C1, E1, E2)", "sem": lambda verb: verb},
         {"syn": "vp(C1, E1, E2, E3) -> verb(C1, E1, E2, E3)", "sem": lambda verb: verb},
-        #
-        # {
-        #     "syn": "vp(C1, E1, E2) -> vp(C1, E1, E2, E3) relative_clause(E3)",
-        #     "sem": lambda vp, relative_clause: vp.mod(relative_clause),
-        # },
+        #  continuous
         {
             "syn": "vp_continuous(C1, E1) -> verb_continuous(C1, E1) pp(C1)",
             "sem": lambda verb_continuous, pp: verb_continuous.mod(pp),
@@ -75,6 +75,9 @@ def get_read_grammar():
         {"syn": "adj(E1) -> 'lost'", "sem": lambda: Atom("lost", E1)},
         # copula
         {"syn": "copula() -> 'was'", "sem": lambda: None},
+        # nominal
+        {"syn": "nominal(E1) -> np(E1)", "sem": lambda np: np},
+        {"syn": "nominal(E1) -> noun_clause(E1)", "sem": lambda noun_clause: noun_clause},
         # noun phrase
         {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
         {"syn": "np(E1) -> np(E1) pp(E1)", "sem": lambda np, pp: np.mod(pp)},
@@ -95,8 +98,9 @@ def get_read_grammar():
         {"syn": "nbar(E1) -> noun(E1)", "sem": lambda noun: noun},
         # relative clause
         {"syn": "relative_clause(E1) -> vp_continuous(C1, E1)", "sem": lambda vp_continuous: vp_continuous},
+        # noun clause
         {
-            "syn": "relative_clause(E1) -> 'where' decl_clause(C1)",
+            "syn": "noun_clause(E1) -> 'where' decl_clause(C1)",
             "sem": lambda decl_clause: Atom("where", E1, C1).mod(decl_clause),
         },
         # determiner
