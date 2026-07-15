@@ -86,6 +86,14 @@ class Atom:
     def get_modifier_atoms(self):
         return list(map(lambda mod: mod.atom, self.modifiers))
 
+    def get_modifier_by_variable(self, variable: Variable) -> Modifier | None:
+        from vrel.core.functions.terms import get_variables
+
+        for modifier in self.modifiers:
+            if variable.name in get_variables(modifier.atom):
+                return modifier
+        return None
+
     def __eq__(self, value):
         return (
             isinstance(value, Atom)

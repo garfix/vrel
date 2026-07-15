@@ -3,11 +3,12 @@ from vrel.entity.Variable import Variable
 
 RED = "\033[31m"
 GREEN = "\033[32m"
-BOLD = "\033[1m"
 YELLOW = "\033[33m"
 BLUE = "\033[34m"
 MAGENTA = "\033[35m"
 CYAN = "\033[36m"
+
+BOLD = "\033[1m"
 
 RESET = "\033[0m"
 
@@ -25,7 +26,7 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
         start = f"{index}."
     elif pre == "M":
         color = MAGENTA
-        start = f"{index}."
+        start = "  "
     elif pre == "D":
         color = CYAN
         start = "DT"
@@ -50,10 +51,19 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
         text = "\n" + space + f"{prefix}({YELLOW}{term.predicate}{RESET}"
         if term.determiner is not None:
             text += format_term(term.determiner, indent + 1, None, "D")
+
+        remaining_modifiers = term.modifiers
         for i, arg in enumerate(term.arguments):
             text += format_term(arg, indent + 1, i + 1, "A")
-        for i, mod in enumerate(term.modifiers):
-            text += format_term(mod, indent + 1, i + 1, "M")
+            if isinstance(arg, Variable):
+                if mod := term.get_modifier_by_variable(arg):
+                    text += format_term(mod, indent + 1, None, "M")
+                    remaining_modifiers.remove(mod)
+        if len(remaining_modifiers) > 0:
+            text += "\n" + space + "    " + f"{RED}non-bound modifiers{RESET}"
+            for mod in remaining_modifiers:
+                text += format_term(mod, indent + 1, None, "M")
+
         if len(term.exec) > 0:
             text += format_term(term.exec, indent + 1, None, "E")
         text += ")"
