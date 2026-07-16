@@ -1,4 +1,5 @@
 from vrel.entity.Atom import Atom, Modifier
+from vrel.entity.Id import Id
 from vrel.entity.Variable import Variable
 
 RED = "\033[31m"
@@ -55,10 +56,9 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
         remaining_modifiers = term.modifiers
         for i, arg in enumerate(term.arguments):
             text += format_term(arg, indent + 1, i + 1, "A")
-            if isinstance(arg, Variable):
-                if mod := term.get_modifier_by_variable(arg):
-                    text += format_term(mod, indent + 1, None, "M")
-                    remaining_modifiers.remove(mod)
+            for mod in term.get_modifiers_by_term(arg):
+                text += format_term(mod, indent + 1, None, "M")
+                remaining_modifiers.remove(mod)
         if len(remaining_modifiers) > 0:
             text += "\n" + space + "    " + f"{RED}non-bound modifiers{RESET}"
             for mod in remaining_modifiers:
@@ -111,6 +111,25 @@ def get_variables(term: any) -> list[str]:
                 variables.add(v)
 
     return list(variables)
+
+
+def contains(term: any, needle: any) -> bool:
+    if isinstance(term, Variable):
+        return term == needle
+    elif isinstance(term, Id):
+        return term == needle
+    elif isinstance(term, list):
+        for arg in term:
+            if contains(arg, needle):
+                return True
+    elif isinstance(term, tuple):
+        for arg in term:
+            if contains(arg, needle):
+                return True
+    elif isinstance(term, Atom):
+        return contains(term.arguments, needle)
+
+    return False
 
 
 def bind_variables(term: any, binding: dict) -> any:
