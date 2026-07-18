@@ -27,6 +27,14 @@ Claude says that this is the Davidsonian representation of "the hungry boy"
 
 This is semantically right, but practically verbose. It adds an atom to every adjective. And I think there's the actual problem here. In "the hungry woman", the woman is just hungry. In all worlds. In "the woman was hungry", or "Willa was hungry", the state needs to be temporary, because the goal of the story is for Willa to cease to be hungry.
 
+===
+
+I'm going for
+
+    hungry(S, E1) name(E1, 'willa')
+
+`hungry` will be an event/state relation, and it is bound directly to its subject
+
 ## 2026-07-16
 
 which is better:

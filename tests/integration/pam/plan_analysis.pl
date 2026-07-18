@@ -2,7 +2,7 @@
 
 # [['is', ['actor', '?x'], ['state', ['hunger', ['val', '?n']]]], ['pos-val', '?n']],
 # [['goal', ['planner', '?x'], ['objective', ['is', ['actor', '?x'], ['state', ['hunger', ['val', [0]]]]]]]]
-goal(not(hungry(E1))) => hungry(E1).
+goal(not(hungry(E1))) => hungry(C1, E1).
 
 # [['goal', ['planner', '?x'], ['objective', ['is', ['actor', '?x'], ['state', ['hunger', ['val', [0]]]]]]]],
 # [['do-$restaurant-plan', ['planner', '?x'], ['restaurant', '?y']]]

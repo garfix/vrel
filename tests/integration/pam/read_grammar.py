@@ -44,7 +44,7 @@ def get_read_grammar():
         # verb phrase
         #  modifiers
         {"syn": "vp(C1, E1) -> vp(C1, E1) pp(C1)", "sem": lambda vp, pp: vp.mod(pp)},
-        {"syn": "vp(C1, E1) -> copula() adjp(E1)", "sem": lambda copula, adjp: adjp},
+        {"syn": "vp(C1, E1) -> copula() adjp(C1, E1)", "sem": lambda copula, adjp: adjp},
         #  variants
         {"syn": "vp(C1, E1) -> vp(C1, E1, E2) nominal(E2)", "sem": lambda vp, np: vp.mod(np)},
         {
@@ -70,9 +70,9 @@ def get_read_grammar():
         # verb continuous
         {"syn": "verb_continuous(C1, E1) -> 'standing'", "sem": lambda: Atom("stand", C1, E1)},
         # adjective phrase
-        {"syn": "adjp(E1) -> adj(E1)", "sem": lambda adj: adj},
-        {"syn": "adj(E1) -> 'hungry'", "sem": lambda: Atom("hungry", E1)},
-        {"syn": "adj(E1) -> 'lost'", "sem": lambda: Atom("lost", E1)},
+        {"syn": "adjp(C1, E1) -> adj(C1, E1)", "sem": lambda adj: adj},
+        {"syn": "adj(C1, E1) -> 'hungry'", "sem": lambda: Atom("hungry", C1, E1)},
+        {"syn": "adj(C1, E1) -> 'lost'", "sem": lambda: Atom("lost", C1, E1)},
         # copula
         {"syn": "copula() -> 'was'", "sem": lambda: None},
         # nominal
