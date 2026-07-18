@@ -41,6 +41,27 @@ class PAMModule(PlainReadWriteModule):
         )
         self.add_relation(
             Relation(
+                "pull_over",
+                parameters=[Parameter("id", "event"), Parameter("subject", "person")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "ask",
+                parameters=[
+                    Parameter("id", "event"),
+                    Parameter("subject", "person"),
+                    Parameter("object", "person"),
+                    Parameter("question", "event"),
+                ],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
                 "hungry",
                 parameters=[Parameter("id", "event"), Parameter("subject", "person")],
                 query_function=self.common_query,
