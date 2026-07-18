@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from vrel.core.Logger import Logger
-from vrel.core.functions.terms import format_term
 from vrel.entity.Atom import Atom
 
 

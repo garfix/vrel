@@ -74,7 +74,7 @@ class Solver(SomeSolver):
         if len(relations) == 0:
             raise Exception("No relation called '" + predicate + "' available in the model")
 
-        deduplicated_bindings = {}
+        results = []
 
         for relation in relations:
             # create variants of bound arguments with same (same_as) id's
@@ -83,9 +83,10 @@ class Solver(SomeSolver):
 
                 # deduplicate results
                 for out_binding in out_bindings:
-                    deduplicated_bindings[str(out_binding)] = out_binding
+                    if out_binding not in results:
+                        results.append(out_binding)
 
-        return list(deduplicated_bindings.values())
+        return results
 
     def find_relation_values(self, relation: Relation, bound_arguments: list, binding: dict) -> list[dict]:
 

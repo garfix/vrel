@@ -106,6 +106,9 @@ class Atom:
         )
 
     def __repr__(self):
+        """
+        This is the debug representation of the atom
+        """
         from vrel.core.functions.terms import format_term
 
         return format_term(self)
