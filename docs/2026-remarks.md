@@ -1,3 +1,43 @@
+## 2026-07-18
+
+Is the nested semantic structure that MicroPAM uses essential or not? We know that MicroPAM added some extra clauses to overcome limitations, as in
+
+```
+            [
+                [['goal', ['planner', '?x'],
+                          ['objective', ['know', ['actor', '?x'],
+                                                 ['fact', ['is', ['actor', 'restaurant'], ['prox', '?z']]]]]]],
+                [['read-plan', ['planner', '?x'], ['object', '?w']], ['isa', 'restaurant-guide', '?w']]
+            ],
+```
+
+Here `['isa', 'restaurant-guide', '?w']` is an extra condition, and apparently couldn't be included in the main part.
+
+===
+
+I want to introduce an event variable in `hungry(E1)`, like `hungry(C1, E1)`, but that would mean that there as 2 kinds of adjp, right? "the hungry boy" and "the boy is hungry" would be different semantically.
+
+Adding be would solve it, but make the rules in PAM more verbose. Also, introducing `be` for a copula feels wrong.
+
+===
+
+Claude says that this is the Davidsonian representation of "the hungry boy"
+
+    λx [boy(x) ∧ ∃s [hungry(s) ∧ Holder(s, x)]]
+
+This is semantically right, but practically verbose. It adds an atom to every adjective. And I think there's the actual problem here. In "the hungry woman", the woman is just hungry. In all worlds. In "the woman was hungry", or "Willa was hungry", the state needs to be temporary, because the goal of the story is for Willa to cease to be hungry.
+
+## 2026-07-16
+
+which is better:
+
+- be(S, E1, E2) hungry(E2) name(E1, 'willa')
+- hungry(S, E1) name(E1, 'willa')
+- be(S1, E1, hungry(E2))
+- hungry(S) holder(S, E1) name(E1, 'willa')
+
+the second would give us 2 groups of adjp's, so no
+
 ## 2026-07-13
 
 in "he asked him where he was" i say that 'he' and 'him' are np's, but so far i say that "where he was" is a relative clause. but i want to say that all are either np's or relative clauses. what is the common category that spans both?
