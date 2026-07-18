@@ -62,6 +62,7 @@ def get_read_grammar():
         },
         # verb
         {"syn": "verb(C1, E1) -> 'pulled' 'over'", "sem": lambda: Atom("pull_over", C1, E1)},
+        {"syn": "verb(C1, E1) -> 'pull' 'over'", "sem": lambda: Atom("pull_over", C1, E1)},
         {"syn": "verb(C1, E1) -> 'was'", "sem": lambda: Atom("be", C1, E1)},
         {"syn": "verb(C1, E1, E2) -> 'picked' 'up'", "sem": lambda: Atom("pick_up", C1, E1, E2)},
         {"syn": "verb(C1, E1, E2) -> 'pick' 'up'", "sem": lambda: Atom("pick_up", C1, E1, E2)},

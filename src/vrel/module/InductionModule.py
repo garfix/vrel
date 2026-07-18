@@ -119,4 +119,7 @@ class InductionModule(SomeModule):
 
         explanation = self.plan_analyzer.explain(question, self.plan_analyzer_rules, self.deduction_rules, context)
 
+        if not explanation:
+            return []
+
         return [[None, None, explanation]]

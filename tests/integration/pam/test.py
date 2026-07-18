@@ -24,8 +24,7 @@ class TestPAM(unittest.TestCase):
     A basic application that creates a test and shows how to interact with the system.
     """
 
-    def test_pam(self):
-
+    def create_system(self):
         path = pathlib.Path(__file__).parent
 
         # define the database
@@ -79,6 +78,10 @@ class TestPAM(unittest.TestCase):
             output_generator=generator,
         )
 
+        return system
+
+    def test_pam(self):
+
         # test the system
         tests = [
             [
@@ -98,7 +101,7 @@ class TestPAM(unittest.TestCase):
                     "John was lost. He pulled over to a farmer standing by the side of the road. He asked him where he was.",
                     "OK",
                 ],
-                # ["Why did John pull over to a farmer?", "Because he wanted to know where he was."],
+                ["Why did John pull over to a farmer?", "Because he wanted to know where he was."],
                 # ["Why did John ask a farmer to tell him where he was?", "Because he wanted to get someplace."],
                 # ["What were the consequences of John's pulling over to a farmer?", "This enabled him to ask him where John was."],
                 # ["What happened when John pulled over to a farmer?", "He asked him to tell him where he was."],
@@ -177,7 +180,7 @@ class TestPAM(unittest.TestCase):
             #     # Objects (1.2 PAM (2) and 11.2.2 Computer example)
             #     ["Willa was hungry. She picked up the Michelin guide and got into her car.", "OK"],
             #     ["Why did Willa pick up the Michelin Guide?" , "Because Willa wanted to know where a restaurant was."],
-            #     ["Why did Wi lla get into her car?", "Because Willa wanted to get to a restaurant."],
+            #     ["Why did Willa get into her car?", "Because Willa wanted to get to a restaurant."],
             #     ["What we re the consequences of Willa picking up the Michelin Guide?", "This enabled Willa to read the Michelin Guide."],
             #     ["What were the consequences of Willa getting into her automobile?", "This enabled Willa to drive somewhere."],
             #     ["How did Willa get into her car?", "Wila walked to her automobile."],
@@ -186,6 +189,8 @@ class TestPAM(unittest.TestCase):
         ]
 
         for session in tests:
+
+            system = self.create_system()
 
             tester = DialogTester(self, session, system)
             tester.run()

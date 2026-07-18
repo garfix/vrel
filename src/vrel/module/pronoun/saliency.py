@@ -11,7 +11,7 @@ DECAY = 0.5
 THRESHOLD = 0.125
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=False)
 class EntityData:
     id: Id
     saliency: int
