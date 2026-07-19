@@ -36,3 +36,13 @@ Disadvantages
 The advantages may not seem to weigh up against the disadvantages. But consider this. Many natural language sentences can't be solved by a single database query, and require multiple interactions between data access and data processing. That's where this approach shines.
 
 The disadvantage of accessing the database in an inefficient way is tackled by optimizer functions (`OptimizerModule`).
+
+## You might not need agreement
+
+I continue with the lesser insights.
+
+Many historical systems model agreement in syntax rules: person, number and gender agreement. The subject and the verb must have the same value for each of these features. But if we take into account that most people won't enter sentences like "How many blocks is on the table", and at the same time admit that the meaning of such a sentence is still the same as the grammatical one, you understand that we can do without.
+
+Agreement is very important to decide between grammatical and ungrammatical sentences, and hence for what we call _generation_ or _production_, but it is much less important for sentence _analysis_.
+
+The demos shown here have all been implemented without regard for agreement.
