@@ -1,3 +1,66 @@
+## 2026-07-19
+
+Story: John was lost. He pulled over to a farmer standing by the side of the road. He asked him where he was.
+Q: Why did John pull over to a farmer?
+
+Before looking at clues in Wilensky's doctoral thesis, let me try to model the causal chains myself.
+
+- pull_over(C2, E1) to(C2, E2) => plan(be_near(E1, E2)).
+
+Remarks:
+
+- right hand side must be a single plan or goal
+- when exactly is something a goal or a plan?
+  - plans are verbs; goals are states
+- start with rewriting actions to plans/goals (bottom-up); the plan is just a little more abstract
+  - John was lost. : No plan
+  - He pulled over to a farmer standing by the side of the road. : pull_over_to => goal(be_near)
+  - He asked him where he was. : ask location => goal(know(location))
+- continue by rewriting actions to goals
+  - goal(not(lost)) => lost
+- fill in the steps between these nodes
+  - goal(know(location)) => goal(not(lost))
+  - goal(be_near) => plan(ask(location))
+  - plan(ask(location)) => plan(know(location))
+- the last sentence "He asked him where he was." is not superfluous: usually when someone drives there care over to you, they want to know the route to some destination
+
+The chain
+
+- lost(C1, E1)
+- goal(not(lost(C1, E1)))
+- goal(know(C1, E1, location(C2, E1, L1)))
+- plan(ask(C1, E1, E2, location(C2, E1, L1)))
+  - # alternative: ask the route
+  - plan(ask(C1, E1, E2, route(C2, E1, G1)))
+- goal(be_near(C1, E1, E2))
+- pull_over(C1, E1) to(C1, E2)
+
+Now for the questions
+
+                ["Why did John pull over to a farmer?", "Because he wanted to know where he was."],
+                ["Why did John ask a farmer to tell him where he was?", "Because he wanted to get someplace."],
+                ["What were the consequences of John's pulling over to a farmer?", "This enabled him to ask him where John was."],
+                ["What happened when John pulled over to a farmer?", "He asked him to tell him where he was."],
+                ["What happened when John asked a farmer to tell him where he was?", "I don't know."],
+                ["How did John go over to a farmer?", "He drove over to him."]
+
+can we answer them?
+
+Okay, he's not just lost. Being lost is just a state within the plan to get somewhere. Adapting ... The goal of not being lost we can skip.
+
+- lost(C1, E1)
+- not(lost(C1, E1)) -> lost(C1, E1)
+- plan(travel_to(C3, E1, L1)) => goal(be_at(C1, E1, L2))
+- goal(know(C1, E1, location(C2, E1, L1))) => not(lost(C1, E1))
+- goal(know(C1, E1, location(C2, E1, L1))) => plan(travel_to(C3, E1, L2))
+- plan(ask(C1, E1, E2, F1)) => goal(know(C1, E1, F1))
+- goal(be_near(C1, E1, E2)) => plan(ask(C1, E1, E2, location(C2, E1, L1)))
+- goal(be_near(C1, E1, E2)) => plan(ask(C1, E1, E2, route(C2, E1, G1)))
+- plan(go_to(C1, E1, E2)) => goal(be_near(C1, E1, E2))
+- pull_over(C1, E1) to(C1, E2) => plan(go_to(C1, E1, E2))
+
+Something like this?
+
 ## 2026-07-18
 
 Is the nested semantic structure that MicroPAM uses essential or not? We know that MicroPAM added some extra clauses to overcome limitations, as in
