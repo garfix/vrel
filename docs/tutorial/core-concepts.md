@@ -37,6 +37,18 @@ The advantages may not seem to weigh up against the disadvantages. But consider 
 
 The disadvantage of accessing the database in an inefficient way is tackled by optimizer functions (`OptimizerModule`).
 
+## Questions, commands, and statements are very different
+
+The meaning of questions, commands and statements are fundamentally different.
+
+Questions require quantifier functions that execute during the answering process. They also need to be optimized for speed or they easily may become slow quickly. They may create clarification questions, but other than that they return immediately.
+
+Commands have a different means of quantification. They often don't return immediately, because the command needs to be executed, and this takes real time. The response to the question is given before the command is executed in full. Also, the command may require planning before execution.
+
+Statements have yet another implementation of quantification. A statement may be stored as a fact or as a rule. The rule may have exceptions. The fact may conflict with known facts.
+
+This system creates an intermediate semantic form that is then transformed into a form suitable to each of these sentence types.
+
 ## You might not need agreement
 
 I continue with the lesser insights.
