@@ -49,6 +49,14 @@ class PAMModule(PlainReadWriteModule):
         )
         self.add_relation(
             Relation(
+                "to",
+                parameters=[Parameter("id", "event"), Parameter("object", "thing")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
                 "ask",
                 parameters=[
                     Parameter("id", "event"),

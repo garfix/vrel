@@ -12,6 +12,14 @@ Based on the reasoning below this is seems to be a working set of rules to answe
 - plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2))
 - pull_over(C1, E1) to(C1, E2) => plan(use_vehicle(C2, E1, E2))
 
+===
+
+The plan analyzer matcher couldn't handle variables in atoms, as it needed to store them temporarily in a data store. Therefore I will now generate constants for induced facts. That seems to be an okay thing to do.
+
+Update: I will not generate constants, because that would decrease the chance of matching. (Does it, because matching in this module may include same as bindings ...) In stead, I will change PlainReadWriteModule to allow storing variables. That seems to be an okay thing to do.
+
+PAM's rules don't seem to introduce many variables, as it can do without mostly, but it _does occur_.
+
 ## 2026-07-21
 
 About the unknown plan, let's try to find out how the match to the position between the goals caan be made

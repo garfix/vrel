@@ -60,3 +60,7 @@ plan(walk(S1, E1, E2)) => goal(prox(E1, E2)).
 # [['walk-plan', ['planner', '?x'], ['location', '?y']]],
 # [['ptrans', ['actor', '?x'], ['object', '?x'], ['to', '?y']]]
 get_into(S1, E1, E2), car(E2) => plan(walk(S1, E1, 'car')).
+
+# He pulled over to a farmer standing by the side of the road.
+
+pull_over(C1, E1), to(C1, E2) => plan(use_vehicle(C2, E1, E2)).

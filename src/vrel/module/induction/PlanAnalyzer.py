@@ -1,6 +1,6 @@
 from vrel.core.functions.helper import hash_it
 from vrel.core.functions.terms import bind_variables
-from vrel.core.functions.variables import variablize
+from vrel.core.functions.variables import generate_constants, variablize
 from vrel.entity.Atom import Atom
 from vrel.entity.Id import Id
 from vrel.entity.InferenceRule import InferenceRule
@@ -13,6 +13,7 @@ from vrel.module.induction.Link import Link
 from vrel.module.induction.explain import explain
 from vrel.module.induction.match import match
 from vrel.module.transform.query import make_query
+from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
 
 # Based on MicroPAM (see https://github.com/garfix/micropam)
@@ -29,6 +30,8 @@ class PlanAnalyzer:
 
     try_check: dict
 
+    variable_generator: VariableGenerator
+
     def __init__(self, induction_model: SomeModel):
         self.induction_model = induction_model
         self.known_themes = []
@@ -38,6 +41,8 @@ class PlanAnalyzer:
 
         self.known_events = []
         self.known_links = []
+
+        self.variable_generator = VariableGenerator("PA")
 
     def get_event_id(self, atom: Atom):
         for index, a in enumerate(self.known_events):
@@ -125,14 +130,16 @@ class PlanAnalyzer:
             log.append("No inference chain found - adding")
             self.update_db(sentence, context, log)
 
-        # for line in log:
-        #     print(line)
+        context.logger.add_value("LOG", "")
 
-        # for i, a in enumerate(self.known_events):
-        #     print(i, a)
+        for line in log:
+            context.logger.add_comment(line)
 
-        # for i, a in enumerate(self.known_links):
-        #     print(i, a)
+        for i, a in enumerate(self.known_events):
+            context.logger.add_value(i, a)
+
+        for i, a in enumerate(self.known_links):
+            context.logger.add_value(i, a)
 
     def explain(
         self,
@@ -407,6 +414,9 @@ class PlanAnalyzer:
             # print(cs)
             # print(binding)
             # print(c)
+
+            # variable_map = {}
+            # c = generate_constants(c, self.variable_generator, variable_map)
 
             return c
 

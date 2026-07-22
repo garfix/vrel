@@ -1,5 +1,8 @@
 ## todo
 
+- should be able to introduce a new variable in the RHS
+
+- change license
 - PAM next test
 - document all influences on the library
 - start on SHRDLU
