@@ -1,3 +1,81 @@
+## 2026-07-22
+
+Based on the reasoning below this is seems to be a working set of rules to answer the questions.
+
+- plan(travel_to(C3, E1, L2)) => goal(be_at(C1, E1, L2))
+- lost(C1, E1)
+- not(lost(C1, E1)) -> lost(C1, E1)
+- goal(know(C1, E1, location(C2, E1, L1))) => not(lost(C3, E1))
+- goal(know(C1, E1, location(C2, E1, L1))) => plan(travel_to(C3, E1, L2))
+- plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1))
+- goal(be_near(C1, E1, E2)) => plan(ask(C2, E1, E2, location(C3, E1, L1)))
+- plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2))
+- pull_over(C1, E1) to(C1, E2) => plan(use_vehicle(C2, E1, E2))
+
+## 2026-07-21
+
+About the unknown plan, let's try to find out how the match to the position between the goals caan be made
+
+the goals:
+
+    NAMED-PLAN USE-PERSON RELATES
+    GOAL:
+    (*DPROX*
+        PLANNER HUMO
+        OBJECT HUMO
+        LOCATION (*PROX* PART HUM1))
+
+                                                                            <---------------- this rule creates a REQUEST
+    TO
+    GOAL:
+    (*DKNOW*
+        PLANNER HUMO
+        RECIPIENT HUMO
+        FACT (
+              (ACTOR HUMO IS (*PROX* PART (*UNSPEC* CLASS (*LOCATION*) )))  <------- link A
+              TIME (TIMK2)))
+
+the new fact:
+
+    ((ACTOR HUM3 <=> (*MTRANS*)
+        MOBJECT
+        ((CON
+            ((ACTOR HUM4 <=> (*MTRANS*)
+                MOBJECT
+                ((ACTOR HUM5 IS (*PROX* PART (*UNSPEC* CLASS (*LOCATION*))))
+                    TIME (FORM43))
+                TO (*CP* PART HUM3)
+                TIME (FORM44))
+            LEADTO
+                ((ACTOR HUM3 TOWARD (*JOY* VAL (NIL)))
+                    INC (2.) TIME (FORM45))))
+        TO (*CP* PART HUM4))
+        TIME (FORM46))
+
+the rule:
+
+    EXPLANATION IS
+    PLAN:
+
+    (*PB-ASK*
+        PLANNER HUMO
+        PERSUADEE HUM1
+        REQUEST                                                             <---------------- REQUEST
+            ((ACTOR
+                    HUM1
+                    <=> (*MTRANS*) MOBJECT
+                                    ((ACTOR HUMO                            <------- link A
+                                            IS (*PROX*
+                                                PART (*UNSPEC*
+                                                        CLASS (*LOCATION*))))
+                                            TIME (TIMK7))
+                    TO (*CP* PART HUMO))
+        TIME (TIMK6)))
+
+"link A" in the ask planbox matches the "link A" in the rule. The planbox has a `REQUEST` attribute. Somehow a link can be made between those.
+
+But I will try to solve the story without this extra complication first.
+
 ## 2026-07-19
 
 Story: John was lost. He pulled over to a farmer standing by the side of the road. He asked him where he was.
@@ -60,6 +138,24 @@ Okay, he's not just lost. Being lost is just a state within the plan to get some
 - pull_over(C1, E1) to(C1, E2) => plan(go_to(C1, E1, E2))
 
 Something like this?
+
+===
+
+Checking chapter 14 of the thesis, and paraphrasing, yields
+
+- lost(C1, E1)
+- goal(know(C1, E1, location(C2, E1, L1))) => lost(C1, E1) (FIND-OUT-REQ, p 293)
+- goal(know(C1, E1, location(C2, E1, L1))) => plan(travel_to(C3, E1, L2)) (UNK-DPROX-REQ, p 297)
+- plan(travel_to(C3, E1, L2)) => goal(be_at(C1, E1, L2)) (LOC-SUBGOAL-REQ, p 297)
+
+- plan(P1) => goal(know(C1, E1, F1)) (USE-PERSON, p. 300)
+- goal(be_near(C1, E1, E2)) => plan(P1) (USE-PERSON, p. 300)
+- plan(use_vehicle(C1, E1, E2)) => goal(be_near(C1, E1, E2)) (USE-VEHICLE-GOAL-EPISODE-REQ, p. 300)
+- pull_over(C1, E1) to(C1, E2) => plan(use_vehicle(C2, E1, E2)) (USE-VEHICLE-REQ, p. 299)
+
+- ask(C1, E1, E2) => plan(P1) (ASK-REQ, p. 302)
+
+PAM posits an unknown plan that connects the goals `goal(be_near(C1, E1, E2))` with `goal(know(C1, E1, F1))`. The third sentence then connects the `ask` action to this unknown plan. This looks very complicated and is not part of MicroPAM. I will first try if I can get the desired result without this technique.
 
 ## 2026-07-18
 
