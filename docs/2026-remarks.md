@@ -1,3 +1,110 @@
+## 2026-07-24
+
+Trying to understand how a plan is inserted between two goals.
+
+```
+HUNGER-RULE
+
+ Action:
+    [BUILD '((GOAL (*S-HUNGER* PLANNER (NIL))
+              SOURCE (*THEME* VAL (*HUNGER-DRIVE*))
+              PLAN (NIL) ))]
+```
+
+This action part of a rule indicates that PAM tries to build causal structures by creating loose clusters of nodes, then combining them. This is different from MicroPAM which just links two adjacent nodes.
+
+This build structure is not enough reason to abandon the current X => Y induction rules that I have.
+
+A "missing" plan is called a "gap", and there must be a rule that describes which plans can fill the gap. These rules are called "suggestions". Here's an example suggestion:
+
+```
+Suggestions: [( (PLAN) !INPUT! SUITABLE-PLAN-RULE)]
+```
+
+This says: the gap must be filled by a plan that is a suitable-plan-rule.
+
+```
+SUITABLE-PLAN-RULE
+
+ Condition:    SUITABLE-PLAN-PREDICATE
+
+ Action:       !FOCUS!
+```
+
+The rule simply suggests a predicate.
+
+"This condition, SUITABLE-PLAN-PREDICATE, examines a list of plans associated with a goal to determine if the input is a plan for that goal. Since _DO-$RESTAURANT-PLAN_ is contained in the list of plans for the goal _S-HUNGER_, the predicate returns true." (p 272-273)
+
+This is a big find. As all plans and goals have names, the suggestion simply names the allowed plans for the gap.
+
+The question comes to mind: is it necessary to name all plans, and create a list of allowed plans, if we already know the relations between plans and goals through the induction rules.
+
+- goal(be_near(C1, E1, E2)) => plan(P1) => goal(know(C2, E1, F1))
+
+Every plan that is the antecedent to a rule whose consequent matches the goal here can replace plan here, right?
+
+- plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1))
+
+So if the input is `ask(C1, E1, E2, F1)`, this leads to `plan(ask(C1, E1, E2, F1))` and since there are gaps left, this plan is matched against existing rules to see if they lead to the goal following the plan gap.
+
+## 2026-07-23
+
+I think it's better to introduce constants, because storing variables in the database should be avoided if possible.
+
+===
+
+Regarding
+
+extra
+
+- plan(travel_to(C3, E1, L2)) => goal(be_at(C1, E1, L2)).
+
+problems
+
+- lost(C1, E1).
+
+travel planning
+
+- not(lost(C1, E1)) -> lost(C1, E1).
+- goal(know(C1, E1, location(C2, E1, L1))) => not(lost(C3, E1)).
+- goal(know(C1, E1, location(C2, E1, L1))) => plan(travel_to(C3, E1, L2)).
+
+general problem solving
+
+- plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)).
+- plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2))
+
+- goal(be_near(C1, E1, E2)) => plan(ask(C2, E1, E2, location(C3, E1, L1))).
+
+actions
+
+- pull_over(C1, E1) to(C1, E2) => plan(use_vehicle(C2, E1, E2)).
+- ask(C1, E1, E2, F1) => plan(ask(C1, E1, E2, F1)).
+
+===
+
+this one seems to too story-specific
+
+- goal(be_near(C1, E1, E2)) => plan(ask(C2, E1, E2, location(C3, E1, L1))).
+
+what about this
+
+- goal(be_near(C1, E1, E2)) => plan(tell(C2, E1, E2, F1)).
+- plan(ask(C2, E1, E2, F1)) => plan(tell(C2, E1, E2, F1))
+- ask(C1, E1, E2, F1) => plan(ask(C1, E1, E2, F1)).
+
+but if i do that, the `ask` node will not placed just between the two goals. This seems to be the problem Wilensky solved by introducing the complicated technique.
+
+my aim is to fill the argument F1 with new information
+
+===
+
+PAM's rule `USE-PERSON` is supposed to be quite abstract, but it basically says: A wanted to be near B in order to know A's location. That is actually quite specific. The range of possible plans connecting the two must be quite small. In fact the plan found later seems to be one of few possibilities. Why then this special construction?
+
+Because even though it is a likely plan, we can't just guess it. Once the chain of plans/goals leads to an explanation, it is stored in memory as facts. The farmer might also have given John a piece of paper with his location, as part of a quiz.
+
+But how does this inserting of plan nodes in a causal chain work exactly?
+
 ## 2026-07-22
 
 Based on the reasoning below this is seems to be a working set of rules to answer the questions.

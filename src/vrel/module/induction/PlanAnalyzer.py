@@ -415,8 +415,8 @@ class PlanAnalyzer:
             # print(binding)
             # print(c)
 
-            # variable_map = {}
-            # c = generate_constants(c, self.variable_generator, variable_map)
+            variable_map = {}
+            c = generate_constants(c, self.variable_generator, variable_map)
 
             return c
 

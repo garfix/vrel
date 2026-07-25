@@ -32,8 +32,8 @@ class PlainReadWriteModule(SomeModule):
 
         self.atoms.append(atom)
 
-        # if has_variables(atom.arguments):
-        #     raise Exception(f"Atom should be bound: {atom.arguments}")
+        if has_variables(atom.arguments):
+            raise Exception(f"Atom should be bound: {atom.arguments}")
 
     def query(self, relation: Relation, arguments: list) -> list[list]:
 
