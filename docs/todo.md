@@ -1,5 +1,7 @@
 ## todo
 
+- Maak een Node klasse voor plans/goals/themes
+
 - should be able to introduce a new variable in the RHS
 
 - change license

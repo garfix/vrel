@@ -1,3 +1,59 @@
+## 2026-07-26
+
+Waarom blijven de inducties van "John was lost" bestaan? Ze vormen geen explanation.
+
+"The only requests around at the beginning of a story are looking for goal episodes and static information (e. g., “John lived in New York” )"
+
+"Now when the episode built by LOC-SUBGOAL-REQ is placed in IN, the
+condition of INIT-REQ is met. INIT-REQ is a request activated at the
+beginning of PAM, and which looks for a goal episode whose source is a
+theme, or an unknown plan. Since the latter case holds for the goal
+structure above, INIT-REQ fires."
+
+PAM, contrary to MicroPAM has declarative/procedural rules that build nodes. I'm not sure yet if I need these, and if they should be in Python or in an DSL structure. Story-independent rules can be implemented in Python.
+
+Let's try to recreate this INIT-REQ. It can't be implemented as a simple induction rule, but it can be implemented in the algorithm.
+
+I think I need to create an extra node to turn what's basically a single list, the explaining plans and goals in MicroPAM, into a dag. This is necessary for more complicated stories, and they quickly get complicated, wherein the pieces of information don't immediately string together anymore.
+
+Node (GoalNode, PlanNode, ThemeNode)
+
+shared attributes, in order to create a dag
+
+- parent
+- children
+
+PAM has the `*goal-episode*` node with `source` (parent) and `attempts` (children), and the `plan` node with `source` (parent) and `subepisodes` (children).
+
+## 2026-07-25
+
+New plan for the story. I'm reexamining the example in chapter 14. This changes things.
+
+- A. John was lost.
+- B. He pulled over to a farmer standing by the side of the road.
+- C. He asked him where he was.
+
+extra
+
+- [A] plan(travel_to(C3, E1, L2)) => goal(be_at(C1, E1, L2)).
+
+travel planning
+
+- [A] goal(know(C1, E1, location(C2, E1, L1))) => plan(travel_to(C3, E1, L2)).
+- [A] lost(C1, E1) -> goal(know(C2, E1, location(C2, E1, L1))).
+
+general problem solving
+
+- [B] goal(be_near(C1, E1, E2)) => plan(P1) => goal(know(C2, E1, location(C2, E1, L1))).
+- [B] plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2))
+
+- [C] plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)).
+
+actions
+
+- [B] pull_over(C1, E1) to(C1, E2) => plan(use_vehicle(C2, E1, E2)).
+- [C] ask(C1, E1, E2, F1) => plan(ask(C1, E1, E2, F1)).
+
 ## 2026-07-24
 
 Trying to understand how a plan is inserted between two goals.
