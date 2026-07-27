@@ -89,6 +89,7 @@ class PlanAnalyzer:
         current_subject = sentence
 
         while True:
+            # if current_subject is a known fact, an explanation is found
             if self.predicted(
                 current_subject,
                 induction_rules,
@@ -97,6 +98,9 @@ class PlanAnalyzer:
                 log,
                 sentence,
             ):
+                break
+
+            if self.check_init_req():
                 break
 
             log.append("Does not confirm prediction")
@@ -140,6 +144,11 @@ class PlanAnalyzer:
 
         for i, a in enumerate(self.known_links):
             context.logger.add_value(i, a)
+
+    # looks for a goal episode whose source is a theme, or an unknown plan
+    def check_init_req(self):
+
+        pass
 
     def explain(
         self,
@@ -192,8 +201,6 @@ class PlanAnalyzer:
     ):
         # is cd part of the known plans, goals or themes?
         if self.isa("goal", current_subject):
-            # return self.relate(sentence, self.known_themes, self.init_rules, deduction_rules, context, log) \
-            #     or self.relate(sentence, self.known_plans, self.sub_for, deduction_rules, context, log)
             return self.relate(
                 current_subject,
                 self.known_themes,
@@ -212,7 +219,6 @@ class PlanAnalyzer:
                 sentence,
             )
         elif self.isa("plan", current_subject):
-            # return self.relate(sentence, self.known_goals, self.plans_for, deduction_rules, context, log)
             return self.relate(
                 current_subject,
                 self.known_goals,
@@ -223,7 +229,6 @@ class PlanAnalyzer:
                 sentence,
             )
         elif self.isa("action", current_subject):
-            # return self.relate(sentence, self.known_plans, self.instance_of, deduction_rules, context, log)
             return self.relate(
                 current_subject,
                 self.known_plans,
