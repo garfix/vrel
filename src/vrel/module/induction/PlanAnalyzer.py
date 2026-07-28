@@ -6,10 +6,13 @@ from vrel.entity.Id import Id
 from vrel.entity.InferenceRule import InferenceRule
 from vrel.entity.InductionRule import InductionRule
 from vrel.entity.ExecutionContext import ExecutionContext
-from vrel.entity.Variable import Variable
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeModule import SomeModule
+from vrel.module.induction.EventNode import EventNode
+from vrel.module.induction.ExplanationNode import ExplanationNode
+from vrel.module.induction.GoalNode import GoalNode
 from vrel.module.induction.Link import Link
+from vrel.module.induction.PlanNode import PlanNode
 from vrel.module.induction.explain import explain
 from vrel.module.induction.match import match
 from vrel.module.transform.query import make_query
@@ -25,7 +28,7 @@ class PlanAnalyzer:
     known_goals: list[Atom]
     known_plans: list[Atom]
 
-    known_events = list[Atom]
+    nodes = list[ExplanationNode]
     known_links = list
 
     try_check: dict
@@ -39,13 +42,13 @@ class PlanAnalyzer:
         self.known_plans = []
         self.try_check = {}
 
-        self.known_events = []
+        self.nodes: list[ExplanationNode] = []
         self.known_links = []
 
         self.variable_generator = VariableGenerator("PA")
 
     def get_event_id(self, atom: Atom):
-        for index, a in enumerate(self.known_events):
+        for index, a in enumerate(self.nodes):
             if a == atom:
                 return index
         return None
@@ -56,12 +59,20 @@ class PlanAnalyzer:
                 return link[1]
         return None
 
-    def add_known_event(self, atom: Atom):
-        for index, a in enumerate(self.known_events):
-            if a == atom:
+    def add_node(self, atom: Atom):
+        atom = atom[0]
+        for index, node in enumerate(self.nodes):
+            if node.get_atom() == atom:
                 return index
-        self.known_events.append(atom)
-        return len(self.known_events) - 1
+        if atom.predicate == "plan":
+            new_node = PlanNode(atom)
+        elif atom.predicate == "goal":
+            new_node = GoalNode(atom)
+        else:
+            new_node = EventNode(atom)
+
+        self.nodes.append(new_node)
+        return len(self.nodes) - 1
 
     def add_link(self, id1, id2):
         self.known_links.append([id1, id2])
@@ -125,8 +136,8 @@ class PlanAnalyzer:
             prev = current_subject
             for link in reversed(chain):
                 current = link.atoms
-                id1 = self.add_known_event(prev)
-                id2 = self.add_known_event(current)
+                id1 = self.add_node(prev)
+                id2 = self.add_node(current)
                 self.add_link(id2, id1)
                 prev = current
 
@@ -139,8 +150,8 @@ class PlanAnalyzer:
         for line in log:
             context.logger.add_comment(line)
 
-        for i, a in enumerate(self.known_events):
-            context.logger.add_value(i, a)
+        for i, a in enumerate(self.nodes):
+            context.logger.add_value(i, a.get_atom())
 
         for i, a in enumerate(self.known_links):
             context.logger.add_value(i, a)
@@ -162,7 +173,7 @@ class PlanAnalyzer:
             induction_rules,
             deduction_rules,
             context,
-            self.known_events,
+            self.nodes,
             self.known_links,
             self.induction_model,
         )
@@ -180,7 +191,7 @@ class PlanAnalyzer:
             if parent_event_id is None:
                 break
             event_id = parent_event_id
-            event = self.known_events[event_id][0]
+            event = self.nodes[event_id].get_atom()
 
             if event.predicate == "goal":
                 cause = event
@@ -296,8 +307,8 @@ class PlanAnalyzer:
                         # print(cs)
                         # print(item)
 
-                        id1 = self.add_known_event(current_subject)
-                        id2 = self.add_known_event(item)
+                        id1 = self.add_node(current_subject)
+                        id2 = self.add_node(item)
                         self.add_link(id1, id2)
 
                         log.append("Confirms prediction from")
