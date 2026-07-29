@@ -1,3 +1,9 @@
+## 2026-07-29
+
+Following the explanation of PAM in chapter 14 is like wandering through a maze. If you ever hope to find out how to make it work, you must set yourself short-term goals and try to fulfill them, partly using the knowledge given, but also being content with just reaching your own goals, knowing that you cut off some corners in the process. Is it really necessary to build all these structures? It looks hopelessly complicated.
+
+MicroPAM is declarative, and allows for an DSL, where PAM uses full Lisp structures for rules/requests and these are open ended. The full-lisp way is unmanageable and unlearnable for a novice. And since Wilensky wrote MicroPAM he is telling us that the declarative way is the way forward. Therefore we try this and hope (but not know!) that it leads to the solution. We can always "backtrack" but that won't be fun.
+
 ## 2026-07-26
 
 Waarom blijven de inducties van "John was lost" bestaan? Ze vormen geen explanation.
@@ -33,13 +39,9 @@ New plan for the story. I'm reexamining the example in chapter 14. This changes 
 - B. He pulled over to a farmer standing by the side of the road.
 - C. He asked him where he was.
 
-extra
-
-- [A] plan(travel_to(C3, E1, L2)) => goal(be_at(C1, E1, L2)).
-
 travel planning
 
-- [A] goal(know(C1, E1, location(C2, E1, L1))) => plan(travel_to(C3, E1, L2)).
+- [A] goal(know(C1, E1, location(C2, E1, L1))) => plan(P2) => goal(be_at(C1, E1, L2)). . . . . => this P2 will remain unresolved, but is essential to INIT_REQ
 - [A] lost(C1, E1) -> goal(know(C2, E1, location(C2, E1, L1))).
 
 general problem solving
@@ -47,7 +49,7 @@ general problem solving
 - [B] goal(be_near(C1, E1, E2)) => plan(P1) => goal(know(C2, E1, location(C2, E1, L1))).
 - [B] plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2))
 
-- [C] plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)).
+- [C] plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)) . . . . . . . => then the plan(ask) will replace plan(P1)
 
 actions
 

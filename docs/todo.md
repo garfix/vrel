@@ -1,8 +1,12 @@
 ## todo
 
-- Maak een Node klasse voor plans/goals/themes
+- OK (sort of) question: how does PAM create the dummy plan between two goals?
 
-- should be able to introduce a new variable in the RHS
+- OK should be able to introduce a new variable in the RHS
+- OK Maak een Node klasse voor plans/goals/themes
+- implement ... => plan(P1) => ...
+- implement check_init_req
+- check the nodes of the sentence John.
 
 - change license
 - PAM next test
