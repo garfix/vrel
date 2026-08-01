@@ -111,13 +111,21 @@ class SimpleInferenceRuleParser:
 
         return InferenceRule(antecedent, consequents), pos
 
-    # female(X), cow(X), young(X) :- heifer(X).
+    # female(X), cow(X), young(X) => heifer(X).
     def parse_induction_rule(self, tokens: list[str], pos: int):
 
         antecedents, new_pos = self.parse_atoms(tokens, pos)
         if not antecedents:
             return None, new_pos
         pos = new_pos
+
+        plan = False
+        implies, new_pos = self.parse_token(tokens, pos)
+        if implies == "=>":
+            plan_token, new_pos = self.parse_token(tokens, new_pos)
+            if plan_token == "Plan":
+                pos = new_pos
+                plan = True
 
         consequents = []
         implies, new_pos = self.parse_token(tokens, pos)
@@ -136,7 +144,7 @@ class SimpleInferenceRuleParser:
             return None, new_pos
         pos = new_pos
 
-        return InductionRule(antecedents, consequents), pos
+        return InductionRule(antecedents, consequents, plan), pos
 
     # ( parent(X, Y), parent(Y, Z) )
     # parent(X, Y), parent(Y, Z)

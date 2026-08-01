@@ -11,10 +11,16 @@ class PlanNode(ExplanationNode):
     plan: Atom
     subepisodes: list["GoalNode"]
 
-    def __init__(self, plan: Atom):
-        super().__init__()
+    def __init__(self, id: int, plan: Atom):
+        super().__init__(id)
         self.plan = plan
         self.subepisodes = []
 
     def get_atom(self) -> Atom:
         return self.plan
+
+    def add_child(self, child_id: int):
+        self.subepisodes.append(child_id)
+
+    def __repr__(self):
+        return f"Plan{self.plan}\n subepisodes: {self.subepisodes}\n"

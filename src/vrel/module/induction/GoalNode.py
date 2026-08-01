@@ -10,10 +10,16 @@ class GoalNode(ExplanationNode):
     goal: Atom
     attempts: list["PlanNode"]
 
-    def __init__(self, goal: Atom):
-        super().__init__()
+    def __init__(self, id: int, goal: Atom):
+        super().__init__(id)
         self.goal = goal
         self.attempts = []
 
     def get_atom(self) -> Atom:
         return self.goal
+
+    def add_child(self, child_id: int):
+        self.attempts.append(child_id)
+
+    def __repr__(self):
+        return f"Goal{self.goal}\n attempts: {self.attempts}\n"

@@ -7,17 +7,19 @@ from vrel.entity.Atom import Atom
 class InductionRule:
     antecedent: list[Atom]
     consequent: list[Atom]
+    plan: bool
 
     def __str__(self) -> str:
-        if len(self.antecedent) == 0:
-            return str(self.antecedent) + "."
+        s = str(self.antecedent)
+
+        if len(self.consequent) == 0:
+            s += "."
         else:
-            return (
-                str(self.antecedent)
-                + " => "
-                + ", ".join([(str(atom)) for atom in self.consequent])
-                + "."
-            )
+            if self.plan:
+                s += " => Plan"
+            s += " => " + ", ".join([(str(atom)) for atom in self.consequent]) + "."
+
+        return s
 
     def get_all_variables(self) -> list[str]:
         variables = []

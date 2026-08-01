@@ -1,3 +1,15 @@
+## 2026-07-30
+
+I can be good to give the goals and plans names:
+
+    use_vehicle: plan(use_vehicle(C1, E1))
+
+    use_vehicle => be_at_location
+
+This makes the rules easier to read and clearly shows how the plans and goals reoccur in other rules.
+
+On the other hand, the way the variables that connect them are linked is gone.
+
 ## 2026-07-29
 
 Following the explanation of PAM in chapter 14 is like wandering through a maze. If you ever hope to find out how to make it work, you must set yourself short-term goals and try to fulfill them, partly using the knowledge given, but also being content with just reaching your own goals, knowing that you cut off some corners in the process. Is it really necessary to build all these structures? It looks hopelessly complicated.

@@ -15,12 +15,7 @@ class TestInductionModule(unittest.TestCase):
         tests = [
             [
                 "orang_utan(E1) => ape(E1).",
-                [
-                    InductionRule(
-                        [Atom("orang_utan", Variable("E1"))],
-                        [Atom("ape", Variable("E1"))],
-                    )
-                ],
+                [InductionRule([Atom("orang_utan", Variable("E1"))], [Atom("ape", Variable("E1"))], False)],
             ],
             [
                 "female(E1), cow(E1), young(E1) => heifer(E1), bovine(E1).",
@@ -35,6 +30,7 @@ class TestInductionModule(unittest.TestCase):
                             Atom("heifer", Variable("E1")),
                             Atom("bovine", Variable("E1")),
                         ],
+                        False,
                     )
                 ],
             ],

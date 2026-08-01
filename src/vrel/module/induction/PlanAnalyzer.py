@@ -59,20 +59,22 @@ class PlanAnalyzer:
                 return link[1]
         return None
 
-    def add_node(self, atom: Atom):
+    def add_node(self, atom: Atom) -> ExplanationNode:
         atom = atom[0]
         for index, node in enumerate(self.nodes):
             if node.get_atom() == atom:
-                return index
+                return node
+
+        index = len(self.nodes)
         if atom.predicate == "plan":
-            new_node = PlanNode(atom)
+            new_node = PlanNode(index, atom)
         elif atom.predicate == "goal":
-            new_node = GoalNode(atom)
+            new_node = GoalNode(index, atom)
         else:
-            new_node = EventNode(atom)
+            new_node = EventNode(index, atom)
 
         self.nodes.append(new_node)
-        return len(self.nodes) - 1
+        return new_node
 
     def add_link(self, id1, id2):
         self.known_links.append([id1, id2])
@@ -122,6 +124,8 @@ class PlanAnalyzer:
             if not current_subject:
                 break
 
+        # todo: put this code in the body of the predicted-conditional
+        # it can't be reached from the try_inference
         if current_subject:
             log.append("Adding inference chain to data base")
             # print("---")
@@ -136,25 +140,25 @@ class PlanAnalyzer:
             prev = current_subject
             for link in reversed(chain):
                 current = link.atoms
-                id1 = self.add_node(prev)
-                id2 = self.add_node(current)
-                self.add_link(id2, id1)
+                node1 = self.add_node(prev)
+                node2 = self.add_node(current)
+                self.add_link(node2.id, node1.id)
                 prev = current
 
         else:
             log.append("No inference chain found - adding")
             self.update_db(sentence, context, log)
 
-        context.logger.add_value("LOG", "")
+        # context.logger.add_value("LOG", "")
 
         for line in log:
             context.logger.add_comment(line)
 
-        for i, a in enumerate(self.nodes):
-            context.logger.add_value(i, a.get_atom())
+        # for i, a in enumerate(self.nodes):
+        #     context.logger.add_value(i, a.get_atom())
 
-        for i, a in enumerate(self.known_links):
-            context.logger.add_value(i, a)
+        # for i, a in enumerate(self.known_links):
+        #     context.logger.add_value(i, a)
 
     # looks for a goal episode whose source is a theme, or an unknown plan
     def check_init_req(self):
@@ -307,9 +311,9 @@ class PlanAnalyzer:
                         # print(cs)
                         # print(item)
 
-                        id1 = self.add_node(current_subject)
-                        id2 = self.add_node(item)
-                        self.add_link(id1, id2)
+                        node1 = self.add_node(current_subject)
+                        node2 = self.add_node(item)
+                        self.add_link(node1.id, node2.id)
 
                         log.append("Confirms prediction from")
                         log.append(item)
@@ -433,6 +437,15 @@ class PlanAnalyzer:
 
             variable_map = {}
             c = generate_constants(c, self.variable_generator, variable_map)
+
+            antecedent_node = self.add_node(current_subject)
+            consequent_node = self.add_node(c)
+            if last_rule.plan:
+                plan_node = self.add_node([Atom("plan")])
+                consequent_node.add_child(plan_node.id)
+                plan_node.add_child(antecedent_node.id)
+            else:
+                consequent_node.add_child(antecedent_node.id)
 
             return c
 

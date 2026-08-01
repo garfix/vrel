@@ -36,6 +36,7 @@ class InductionModule(SomeModule):
         self.add_relation(
             Relation("analyze_plans", parameters=[Parameter("body", list[Atom])], query_function=self.analyze_plans)
         )
+        self.add_relation(Relation("log_nodes", parameters=[], query_function=self.log_nodes))
         self.add_relation(
             Relation(
                 "explain",
@@ -62,7 +63,7 @@ class InductionModule(SomeModule):
             content = rule_file.read()
             rules, pos = parser.parse_induction_rules(content)
             if pos is not None:
-                raise Exception("Unable to parse {} induction on token " + str(pos) + " in file " + path)
+                raise Exception("Unable to parse {} induction on token " + str(pos) + str(" in file " / path))
             for rule in rules:
                 self.fact_induction_rules.append(rule)
 
@@ -72,7 +73,7 @@ class InductionModule(SomeModule):
             content = rule_file.read()
             rules, pos = parser.parse_induction_rules(content)
             if pos is not None:
-                raise Exception("Unable to parse induction on token " + str(pos) + " in file " + path)
+                raise Exception("Unable to parse induction on token " + str(pos) + str(" in file " / path))
             for rule in rules:
                 self.plan_analyzer_rules.append(rule)
 
@@ -82,7 +83,7 @@ class InductionModule(SomeModule):
             content = rule_file.read()
             rules, pos = parser.parse_rules(content)
             if pos is not None:
-                raise Exception("Unable to parse induction on token " + str(pos) + " in file " + path)
+                raise Exception("Unable to parse induction on token " + str(pos) + str(" in file " / path))
             for rule in rules:
                 self.deduction_rules.append(rule)
 
@@ -113,6 +114,17 @@ class InductionModule(SomeModule):
         self.plan_analyzer.justify(atoms, self.plan_analyzer_rules, self.deduction_rules, context)
 
         return [[None]]
+
+    # ('log_nodes')
+    def log_nodes(self, arguments: list, context: ExecutionContext) -> list[list]:
+        string = ""
+
+        # for i, a in enumerate(self.plan_analyzer.nodes):
+        #     string += f"\n{i}. {a}"
+
+        context.logger.add_section("Causal nodes", string)
+
+        return [[]]
 
     def explain(self, arguments: list, context: ExecutionContext) -> list[list]:
         question, var, _ = arguments

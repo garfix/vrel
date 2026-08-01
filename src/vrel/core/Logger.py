@@ -39,7 +39,7 @@ class Logger(SomeLogger):
     def add_value(self, key: str, value: str):
         self.entries.append(Entry("value", key, value))
 
-    def add_section(self, head, section):
+    def add_section(self, head, section: any):
         self.entries.append(Entry("section", head, section))
 
     def add_comment(self, comment: str):

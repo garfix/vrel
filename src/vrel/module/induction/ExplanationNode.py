@@ -4,10 +4,15 @@ from vrel.entity.Atom import Atom
 
 
 class ExplanationNode:
+    id: int
     parent: ExplanationNode | None
 
-    def __init__(self):
+    def __init__(self, id: int):
+        self.id = id
         self.parent = None
 
     def get_atom(self) -> Atom:
+        pass
+
+    def add_child(self, child: ExplanationNode):
         pass

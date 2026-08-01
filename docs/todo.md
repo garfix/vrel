@@ -4,7 +4,11 @@
 
 - OK should be able to introduce a new variable in the RHS
 - OK Maak een Node klasse voor plans/goals/themes
-- implement ... => plan(P1) => ...
+- OK implement ... => Plan => ...
+- OK make the chain more transparent (add a command?)
+- OK add nodes in the try_rules function (but no link)
+- add links between nodes
+- Add the plan to the chain
 - implement check_init_req
 - check the nodes of the sentence John.
 
