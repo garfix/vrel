@@ -53,7 +53,7 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
         if term.determiner is not None:
             text += format_term(term.determiner, indent + 1, None, "D")
 
-        remaining_modifiers = term.modifiers
+        remaining_modifiers = term.modifiers[:]
         for i, arg in enumerate(term.arguments):
             text += format_term(arg, indent + 1, i + 1, "A")
             for mod in term.get_modifiers_by_term(arg):

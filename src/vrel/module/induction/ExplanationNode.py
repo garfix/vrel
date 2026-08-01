@@ -12,7 +12,7 @@ class ExplanationNode:
         self.parent = None
 
     def get_atom(self) -> Atom:
-        pass
+        raise Exception("Not implemented")
 
     def add_child(self, child: ExplanationNode):
-        pass
+        raise Exception("Not implemented")

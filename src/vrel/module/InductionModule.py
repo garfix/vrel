@@ -119,8 +119,8 @@ class InductionModule(SomeModule):
     def log_nodes(self, arguments: list, context: ExecutionContext) -> list[list]:
         string = ""
 
-        # for i, a in enumerate(self.plan_analyzer.nodes):
-        #     string += f"\n{i}. {a}"
+        for i, a in enumerate(self.plan_analyzer.nodes):
+            string += f"\n{i}. {a}"
 
         context.logger.add_section("Causal nodes", string)
 
