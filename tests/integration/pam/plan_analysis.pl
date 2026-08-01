@@ -75,5 +75,6 @@ lost(C1, E1) => goal(know(C2, E1, location(C2, E1, L1))).
 
 # He pulled over to a farmer standing by the side of the road.
 
+goal(be_near(C1, E1, E2)) => Plan => goal(know(C2, E1, location(C2, E1, L1))).
 plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2)).
 pull_over(C1, E1), to(C1, E2) => plan(use_vehicle(C2, E1, E2)).

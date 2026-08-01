@@ -33,6 +33,8 @@ class PlanAnalyzer:
 
     try_check: dict
 
+    generator: int
+
     variable_generator: VariableGenerator
 
     def __init__(self, induction_model: SomeModel):
@@ -44,6 +46,7 @@ class PlanAnalyzer:
 
         self.nodes: list[ExplanationNode] = []
         self.known_links = []
+        self.generator = 0
 
         self.variable_generator = VariableGenerator("PA")
 
@@ -113,7 +116,7 @@ class PlanAnalyzer:
             ):
                 break
 
-            if self.check_init_req():
+            if self.check_init_req(chain):
                 break
 
             log.append("Does not confirm prediction")
@@ -142,6 +145,9 @@ class PlanAnalyzer:
                 current = link.atoms
                 node1 = self.add_node(prev)
                 node2 = self.add_node(current)
+                # todo: add as child (2x)
+                if not isinstance(node1, EventNode):
+                    node1.add_child(node2.id)
                 self.add_link(node2.id, node1.id)
                 prev = current
 
@@ -151,8 +157,8 @@ class PlanAnalyzer:
 
         # context.logger.add_value("LOG", "")
 
-        for line in log:
-            context.logger.add_comment(line)
+        # for line in log:
+        #     context.logger.add_comment(line)
 
         # for i, a in enumerate(self.nodes):
         #     context.logger.add_value(i, a.get_atom())
@@ -161,9 +167,13 @@ class PlanAnalyzer:
         #     context.logger.add_value(i, a)
 
     # looks for a goal episode whose source is a theme, or an unknown plan
-    def check_init_req(self):
+    def check_init_req(self, chain: list[Link]):
 
-        pass
+        if len(chain) > 2:
+            # source is an unknown plan
+            a = chain[len(chain) - 1].atoms[0]
+            if a.predicate == "plan" and a.arguments[0] == "variable":
+                return True
 
     def explain(
         self,
@@ -424,8 +434,15 @@ class PlanAnalyzer:
 
         if binding is not None:
             # append the fact to the chain
+
             chain.append(Link(current_subject, rules))
             # print("push B", len(chain))
+
+            if last_rule.plan:
+                print("PLAN")
+                self.generator += 1
+                atoms = [Atom("plan", "variable", self.generator)]
+                chain.append(Link(atoms, rules))
 
             c = bind_variables(last_rule.consequent, binding)
             # print("===")
@@ -438,14 +455,15 @@ class PlanAnalyzer:
             variable_map = {}
             c = generate_constants(c, self.variable_generator, variable_map)
 
-            antecedent_node = self.add_node(current_subject)
-            consequent_node = self.add_node(c)
-            if last_rule.plan:
-                plan_node = self.add_node([Atom("plan")])
-                consequent_node.add_child(plan_node.id)
-                plan_node.add_child(antecedent_node.id)
-            else:
-                consequent_node.add_child(antecedent_node.id)
+            # antecedent_node = self.add_node(current_subject)
+            # consequent_node = self.add_node(c)
+            # if last_rule.plan:
+            #     self.generator += 1
+            #     plan_node = self.add_node([Atom("plan", self.generator)])
+            #     consequent_node.add_child(plan_node.id)
+            #     plan_node.add_child(antecedent_node.id)
+            # else:
+            #     consequent_node.add_child(antecedent_node.id)
 
             return c
 

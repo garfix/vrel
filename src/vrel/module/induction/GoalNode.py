@@ -22,4 +22,4 @@ class GoalNode(ExplanationNode):
         self.attempts.append(child_id)
 
     def __repr__(self):
-        return f"Goal{self.goal}\n attempts: {self.attempts}\n"
+        return f"Goal{self.goal}\n attempts: {self.attempts}"

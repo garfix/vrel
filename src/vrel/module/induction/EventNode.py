@@ -13,4 +13,4 @@ class EventNode(ExplanationNode):
         return self.event
 
     def __repr__(self):
-        return f"Event{self.event}\n"
+        return f"Event{self.event}"

@@ -1,3 +1,7 @@
+## 2026-08-01
+
+I first added the new nodes in `try_rules`, then remembered that that's what the `check_init_req` was for. So now I'm checking there for the unknown plan. So far so good.
+
 ## 2026-07-30
 
 I can be good to give the goals and plans names:
@@ -53,12 +57,12 @@ New plan for the story. I'm reexamining the example in chapter 14. This changes 
 
 travel planning
 
-- [A] goal(know(C1, E1, location(C2, E1, L1))) => plan(P2) => goal(be_at(C1, E1, L2)). . . . . => this P2 will remain unresolved, but is essential to INIT_REQ
+- [A] goal(know(C1, E1, location(C2, E1, L1))) => Plan => goal(be_at(C1, E1, L2)). . . . . => this P2 will remain unresolved, but is essential to INIT_REQ
 - [A] lost(C1, E1) -> goal(know(C2, E1, location(C2, E1, L1))).
 
 general problem solving
 
-- [B] goal(be_near(C1, E1, E2)) => plan(P1) => goal(know(C2, E1, location(C2, E1, L1))).
+- [B] goal(be_near(C1, E1, E2)) => Plan => goal(know(C2, E1, location(C2, E1, L1))).
 - [B] plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2))
 
 - [C] plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)) . . . . . . . => then the plan(ask) will replace plan(P1)
