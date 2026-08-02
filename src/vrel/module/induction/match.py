@@ -9,9 +9,6 @@ def match(
     pattern,
     current_subject,
     binding: dict,
-    deduction_rules: list[InferenceRule],
-    context: ExecutionContext,
-    sentence,
     induction_model: SomeModel,
 ):
     # todo should not be fixed

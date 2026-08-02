@@ -1,3 +1,37 @@
+## 2028-08-02
+
+The first 2 sentences have been turned into explanation nodes: "John was lost. He pulled over to a farmer standing by the side of the road.".
+
+Now I need to unify two goals.
+
+    [2] Goal
+    (goal
+        1. [
+            (know
+                1. `entity:PA1`
+                2. `person:John`
+                3. [
+                    (location
+                        1. `entity:PA2`)
+                ])
+        ])
+    attempts: [3]
+
+and
+
+    [5] Goal
+    (goal
+        1. [
+            (know
+                1. `entity:PA6`
+                2. `entity:DLG3`
+                3. [
+                    (location
+                        1. `entity:PA7`)
+                ])
+        ])
+    attempts: [6]
+
 ## 2026-08-01
 
 I first added the new nodes in `try_rules`, then remembered that that's what the `check_init_req` was for. So now I'm checking there for the unknown plan. So far so good.

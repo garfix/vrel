@@ -293,17 +293,13 @@ class PlanAnalyzer:
 
                 cs = make_query(current_subject)
 
-                subject_binding = match(
-                    rule.antecedent, cs, {}, deduction_rules, context, sentence, self.induction_model
-                )
+                subject_binding = match(rule.antecedent, cs, {}, self.induction_model)
                 if subject_binding is not None:
 
                     consequent1 = bind_variables(rule.consequent, subject_binding)
                     consequent2 = variablize(consequent1)
 
-                    item_binding = match(
-                        consequent2, item, {}, deduction_rules, context, current_subject, self.induction_model
-                    )
+                    item_binding = match(consequent2, item, {}, self.induction_model)
 
                     if item_binding is not None:
                         # the equality between dialog variables that connect two sentences can now be stored
@@ -405,7 +401,7 @@ class PlanAnalyzer:
             last_rule = rules.pop()
             # print("TRY RULES")
             cs = make_query(current_subject)
-            binding = match(last_rule.antecedent, cs, {}, deduction_rules, context, sentence, self.induction_model)
+            binding = match(last_rule.antecedent, cs, {}, self.induction_model)
 
             # log.append('')
             # log.append(f' XX antecedent: {last_rule.antecedent}')
