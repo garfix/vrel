@@ -7,12 +7,13 @@
 - OK implement ... => Plan => ...
 - OK make the chain more transparent (add a command?)
 - OK add nodes in the try_rules function (but no link)
-- should the nodes be added already? i didn't even implement check_init_req
+- OK should the nodes be added already? i didn't even implement check_init_req
+- OK add links between nodes
+- OK Add the plan to the chain
+- OK implement check_init_req
+- OK check the nodes of the sentence John.
+- relate is not presented goals because only plans lead to goals (but not here)
 - 'John is lost' is now a kind of "plan" with a goal (attempt)
-- add links between nodes
-- Add the plan to the chain
-- implement check_init_req
-- check the nodes of the sentence John.
 
 - change license
 - PAM next test

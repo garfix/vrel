@@ -42,6 +42,7 @@ class PlanAnalyzer:
         self.known_themes = []
         self.known_goals = []
         self.known_plans = []
+        self.known_facts = []
         self.try_check = {}
 
         self.nodes: list[ExplanationNode] = []
@@ -102,6 +103,9 @@ class PlanAnalyzer:
         current_subject = sentence
 
         while True:
+
+            # print("current_subject", current_subject)
+
             # if current_subject is a known fact, an explanation is found
             if self.predicted(
                 current_subject,
@@ -218,38 +222,43 @@ class PlanAnalyzer:
         log: list[str],
     ):
         # is cd part of the known plans, goals or themes?
-        if self.isa("goal", current_subject):
-            return self.relate(
-                current_subject,
-                self.known_themes,
-                induction_rules,
-                context,
-                log,
-            ) or self.relate(
-                current_subject,
-                self.known_plans,
-                induction_rules,
-                context,
-                log,
-            )
-        elif self.isa("plan", current_subject):
-            return self.relate(
-                current_subject,
-                self.known_goals,
-                induction_rules,
-                context,
-                log,
-            )
-        elif self.isa("action", current_subject):
-            return self.relate(
-                current_subject,
-                self.known_plans,
-                induction_rules,
-                context,
-                log,
-            )
-        else:
-            return None
+        # if self.isa("goal", current_subject):
+        #     return self.relate(
+        #         current_subject,
+        #         self.known_themes,
+        #         induction_rules,
+        #         context,
+        #         log,
+        #     ) or self.relate(
+        #         current_subject,
+        #         self.known_plans,
+        #         induction_rules,
+        #         context,
+        #         log,
+        #     )
+        # elif self.isa("plan", current_subject):
+        #     return self.relate(
+        #         current_subject,
+        #         self.known_goals,
+        #         induction_rules,
+        #         context,
+        #         log,
+        #     )
+        # elif self.isa("action", current_subject):
+        #     return self.relate(
+        #         current_subject,
+        #         self.known_plans,
+        #         induction_rules,
+        #         context,
+        #         log,
+        #     )
+        return self.relate(
+            current_subject,
+            self.known_facts,
+            induction_rules,
+            context,
+            log,
+        )
 
     def relate(
         self,
@@ -259,29 +268,51 @@ class PlanAnalyzer:
         context: ExecutionContext,
         log: list[str],
     ):
-        # item_list contains known themes, goals, or plans
-        # rule_list contains all rules that belong to the themes, goals or plans
-        # each rule has an antecedent (rhs) and a consequent (lhs)
-        # the function tries the match the current_subject (via the antecedent) with the known theme, goal, or plan (via the consequent)
+        # if Q is known, and there is a rule that induces P => Q, and the current subject is P,
+        # then P was predicted and may be added as a known fact
 
-        # The predict phase tries to link the current subject with a known item,
-        # by matching the current subject with the antedent and the item with the consequent of an induction rule
+        # print("current_subject", current_subject, len(item_list))
+        # if current_subject.predicate == "goal" and current_subject.arguments[0][0].predicate == "be_near":
+        # if current_subject[0].predicate == "goal":
+
+        # print("RELATE")
+        # print("----------------------------")
+        # print()
+        # print("current_subject", current_subject)
+        # print("antecedent", rule.antecedent)
+
+        # consider all known facts (item_list) and all rules (induction_rules)
         for item in item_list:
+
+            # if item[0].predicate == "goal" and item[0].arguments[0][0].predicate == "know":
+            # if current_subject[0].predicate == "goal" and current_subject[0].arguments[0][0].predicate == "be_near":
+
+            # print("RELATE")
+            # print("----------------------------")
+            # print()
+            # print("current_subject", current_subject)
+            # print("item", item)
+
             for rule in induction_rules:
-                # print("RELATE")
-                # print("----------------------------")
-                # print()
-                # print("current_subject", current_subject)
-                # print("antecedent", rule.antecedent)
 
-                cs = make_query(current_subject)
+                current_subject_query = make_query(current_subject)
 
-                subject_binding = match(rule.antecedent, cs, {}, self.induction_model)
+                # match the antecedent to the current subject
+                subject_binding = match(rule.antecedent, current_subject_query, {}, self.induction_model)
                 if subject_binding is not None:
 
                     bound_consequent = bind_variables(rule.consequent, subject_binding)
                     variablized_consequent = variablize(bound_consequent)
 
+                    # print("RELATE")
+                    # print("----------------------------")
+                    # print()
+                    # print("current_subject", current_subject)
+                    # print("antecedent", rule.antecedent)
+                    # print("variablized_consequent", variablized_consequent)
+                    # print("item", item)
+
+                    # match the consequent to the known item
                     item_binding = match(variablized_consequent, item, {}, self.induction_model)
 
                     if item_binding is not None:
@@ -290,14 +321,17 @@ class PlanAnalyzer:
                         # print(f" XX subject binding: {subject_binding}")
                         # print(f" XX rule antecedent: {rule.antecedent}")
                         # print(f" XX rule consequent: {rule.consequent}")
-                        # print(f" XX consequent1: {consequent1}")
-                        # print(f" XX consequent2: {consequent2}")
-                        # print(f" XX item: {item}")
+                        # print(f" XX consequent1: {bound_consequent}")
+                        # print(f" XX consequent2: {variablized_consequent}")
+                        print(f" XX current subject: {current_subject}")
+                        print(f" XX item: {item}")
 
                         self.store_identity(item_binding, context, log)
 
                         node1 = self.add_node(current_subject)
                         node2 = self.add_node(item)
+                        if not isinstance(node2, EventNode):
+                            node2.add_child(node1.id)
                         self.add_link(node1.id, node2.id)
 
                         log.append("Confirms prediction from")
@@ -410,6 +444,8 @@ class PlanAnalyzer:
 
         # add cd as a fact to the `database`
         context.solver.write_atoms(sentence)
+
+        self.known_facts.append(sentence)
 
         # add cd to the known themes, goals or plans
         # if self.isa("is", sentence):
