@@ -86,7 +86,6 @@ class PlanAnalyzer:
         self,
         sentence: list[Atom],
         induction_rules: list[InductionRule],
-        deduction_rules: list[InferenceRule],
         context: ExecutionContext,
     ):
 
@@ -98,8 +97,6 @@ class PlanAnalyzer:
         log.append("Trying to explain")
         log.append(sentence)
 
-        # print("#")
-
         chain: list[Link] = []
 
         current_subject = sentence
@@ -109,10 +106,8 @@ class PlanAnalyzer:
             if self.predicted(
                 current_subject,
                 induction_rules,
-                deduction_rules,
                 context,
                 log,
-                sentence,
             ):
                 break
 
@@ -123,7 +118,7 @@ class PlanAnalyzer:
             chain.append(Link(current_subject, induction_rules[:]))
             # print("push A", len(chain))
 
-            current_subject = self.try_inference(chain, deduction_rules, context, log, sentence)
+            current_subject = self.try_inference(chain, log)
             if not current_subject:
                 break
 
@@ -219,10 +214,8 @@ class PlanAnalyzer:
         self,
         current_subject: list,
         induction_rules: list[InductionRule],
-        deduction_rules: list[InferenceRule],
         context: ExecutionContext,
         log: list[str],
-        sentence,
     ):
         # is cd part of the known plans, goals or themes?
         if self.isa("goal", current_subject):
@@ -230,38 +223,30 @@ class PlanAnalyzer:
                 current_subject,
                 self.known_themes,
                 induction_rules,
-                deduction_rules,
                 context,
                 log,
-                sentence,
             ) or self.relate(
                 current_subject,
                 self.known_plans,
                 induction_rules,
-                deduction_rules,
                 context,
                 log,
-                sentence,
             )
         elif self.isa("plan", current_subject):
             return self.relate(
                 current_subject,
                 self.known_goals,
                 induction_rules,
-                deduction_rules,
                 context,
                 log,
-                sentence,
             )
         elif self.isa("action", current_subject):
             return self.relate(
                 current_subject,
                 self.known_plans,
                 induction_rules,
-                deduction_rules,
                 context,
                 log,
-                sentence,
             )
         else:
             return None
@@ -271,10 +256,8 @@ class PlanAnalyzer:
         current_subject: list,
         item_list: list,
         induction_rules: list[InductionRule],
-        deduction_rules: list[InferenceRule],
         context: ExecutionContext,
         log: list[str],
-        sentence,
     ):
         # item_list contains known themes, goals, or plans
         # rule_list contains all rules that belong to the themes, goals or plans
@@ -296,10 +279,10 @@ class PlanAnalyzer:
                 subject_binding = match(rule.antecedent, cs, {}, self.induction_model)
                 if subject_binding is not None:
 
-                    consequent1 = bind_variables(rule.consequent, subject_binding)
-                    consequent2 = variablize(consequent1)
+                    bound_consequent = bind_variables(rule.consequent, subject_binding)
+                    variablized_consequent = variablize(bound_consequent)
 
-                    item_binding = match(consequent2, item, {}, self.induction_model)
+                    item_binding = match(variablized_consequent, item, {}, self.induction_model)
 
                     if item_binding is not None:
                         # the equality between dialog variables that connect two sentences can now be stored
@@ -312,10 +295,6 @@ class PlanAnalyzer:
                         # print(f" XX item: {item}")
 
                         self.store_identity(item_binding, context, log)
-
-                        # print("---")
-                        # print(cs)
-                        # print(item)
 
                         node1 = self.add_node(current_subject)
                         node2 = self.add_node(item)
@@ -333,9 +312,6 @@ class PlanAnalyzer:
         context: ExecutionContext,
         log: list,
     ):
-        # print(item_binding)
-        # exit()
-
         for variable in item_binding:
             if isinstance(item_binding[variable], Id):
                 log.append(f"SAME AS {variable}, {item_binding[variable]}")
@@ -345,17 +321,13 @@ class PlanAnalyzer:
     def try_inference(
         self,
         chain: list[Link],
-        deduction_rules: list[InferenceRule],
-        context: ExecutionContext,
         log: list,
-        sentence,
     ):
         # chain is a list of [cd, all_inference_rules]
         # return the lhs of the first match, and extend the chain
         current_subject = None
         while len(chain) > 0:
             last_link = chain.pop()
-            # print("pop", len(chain))
             # try all inference rules in the cd
             # if the cd matches a rule, add it to the chain
             # and return the bound lhs of the rule
@@ -363,18 +335,12 @@ class PlanAnalyzer:
                 last_link.atoms,
                 last_link.rules[:],
                 chain,
-                deduction_rules,
-                context,
-                log,
-                sentence,
             )
             if current_subject is None:
                 log.append("No usable inferences from")
                 log.append(last_link.atoms)
             else:
                 break
-
-        # print("end")
 
         if current_subject:
             log.append("Possible explanation assuming")
@@ -388,10 +354,6 @@ class PlanAnalyzer:
         current_subject,
         rules: list[InductionRule],
         chain: list[Link],
-        deduction_rules: list[InferenceRule],
-        context: ExecutionContext,
-        log: list,
-        sentence,
     ):
         # match cd with the rhs of each of the rules
         # if a match occurs, return a binding with the lhs of the rule
@@ -411,31 +373,20 @@ class PlanAnalyzer:
 
             # if the combination of antecedent and binding has happened before, skip it
             hash = hash_it([last_rule.antecedent, binding])
-            # print(hash, last_rule.antecedent, sentence, binding)
             if hash in self.try_check:
                 continue
             else:
                 self.try_check[hash] = True
 
-            # print('binding', binding)
-
             if binding is not None:
-
-                # print("!!!")
-                # print(last_rule.consequent)
-
-                # c = bind_variables(last_rule.consequent, binding)
-
                 break
 
         if binding is not None:
             # append the fact to the chain
 
             chain.append(Link(current_subject, rules))
-            # print("push B", len(chain))
 
             if last_rule.plan:
-                print("PLAN")
                 self.generator += 1
                 atoms = [Atom("plan", "variable", self.generator)]
                 chain.append(Link(atoms, rules))
@@ -450,20 +401,7 @@ class PlanAnalyzer:
 
             variable_map = {}
             c = generate_constants(c, self.variable_generator, variable_map)
-
-            # antecedent_node = self.add_node(current_subject)
-            # consequent_node = self.add_node(c)
-            # if last_rule.plan:
-            #     self.generator += 1
-            #     plan_node = self.add_node([Atom("plan", self.generator)])
-            #     consequent_node.add_child(plan_node.id)
-            #     plan_node.add_child(antecedent_node.id)
-            # else:
-            #     consequent_node.add_child(antecedent_node.id)
-
             return c
-
-        # print("failed", current_subject)
 
         return None
 

@@ -111,7 +111,7 @@ class InductionModule(SomeModule):
         if has_variables(atoms):
             raise Exception(f"Cannot induce facts based on unbound atoms. Please reify {atoms}")
 
-        self.plan_analyzer.justify(atoms, self.plan_analyzer_rules, self.deduction_rules, context)
+        self.plan_analyzer.justify(atoms, self.plan_analyzer_rules, context)
 
         return [[None]]
 
