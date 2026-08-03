@@ -22,5 +22,8 @@ class PlanNode(ExplanationNode):
     def add_child(self, child_id: int):
         self.subepisodes.append(child_id)
 
+    def get_children(self) -> list[int]:
+        return self.subepisodes
+
     def __repr__(self):
         return f"Plan{self.plan}\n subepisodes: {self.subepisodes}"

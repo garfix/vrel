@@ -16,3 +16,6 @@ class ExplanationNode:
 
     def add_child(self, child_id: int):
         raise Exception("Not implemented")
+
+    def get_children(self) -> list[int]:
+        raise Exception("Not implemented")

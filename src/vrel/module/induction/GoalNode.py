@@ -21,5 +21,8 @@ class GoalNode(ExplanationNode):
     def add_child(self, child_id: int):
         self.attempts.append(child_id)
 
+    def get_children(self) -> list[int]:
+        return self.attempts
+
     def __repr__(self):
         return f"Goal{self.goal}\n attempts: {self.attempts}"

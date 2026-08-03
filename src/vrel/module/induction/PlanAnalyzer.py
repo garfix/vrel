@@ -325,20 +325,20 @@ class PlanAnalyzer:
                         self.store_identity(item_binding, context, log)
 
                         if rule.plan:
-                            self.generator += 1
-                            plan_node = self.add_node([Atom("plan", "variable", self.generator)])
+                            # this:         P => Plan1 => Q
+                            # exist:        A => Plan2 => Q
+                            # new link:     P => Plan2
                             node1 = self.add_node(current_subject)
                             node2 = self.add_node(item)
-                            if not isinstance(node2, EventNode):
-                                node2.add_child(plan_node.id)
-                            plan_node.add_child(node1.id)
-                            self.add_link(node1.id, node2.id)
+                            plan_node_id = node2.get_children()[0]
+                            plan_node: PlanNode = self.nodes[plan_node_id]
+                            plan_node.subepisodes.append(node1.id)
                         else:
                             node1 = self.add_node(current_subject)
                             node2 = self.add_node(item)
                             if not isinstance(node2, EventNode):
                                 node2.add_child(node1.id)
-                            self.add_link(node1.id, node2.id)
+                        self.add_link(node1.id, node2.id)
 
                         log.append("Confirms prediction from")
                         log.append(item)
