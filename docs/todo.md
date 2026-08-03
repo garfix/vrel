@@ -12,7 +12,10 @@
 - OK Add the plan to the chain
 - OK implement check_init_req
 - OK check the nodes of the sentence John.
-- relate is not presented goals because only plans lead to goals (but not here)
+- OK relate is not presented goals because only plans lead to goals (but not here)
+- be_near is linked directly to know_loc, while the plan above it should be linked
+- link the third sentence
+
 - 'John is lost' is now a kind of "plan" with a goal (attempt)
 
 - change license

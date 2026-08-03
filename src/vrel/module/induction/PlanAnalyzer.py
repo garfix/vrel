@@ -104,8 +104,6 @@ class PlanAnalyzer:
 
         while True:
 
-            # print("current_subject", current_subject)
-
             # if current_subject is a known fact, an explanation is found
             if self.predicted(
                 current_subject,
@@ -120,7 +118,6 @@ class PlanAnalyzer:
 
             log.append("Does not confirm prediction")
             chain.append(Link(current_subject, induction_rules[:]))
-            # print("push A", len(chain))
 
             current_subject = self.try_inference(chain, log)
             if not current_subject:
@@ -144,7 +141,6 @@ class PlanAnalyzer:
                 current = link.atoms
                 node1 = self.add_node(prev)
                 node2 = self.add_node(current)
-                # todo: add as child (2x)
                 if not isinstance(node1, EventNode):
                     node1.add_child(node2.id)
                 self.add_link(node2.id, node1.id)
@@ -323,16 +319,26 @@ class PlanAnalyzer:
                         # print(f" XX rule consequent: {rule.consequent}")
                         # print(f" XX consequent1: {bound_consequent}")
                         # print(f" XX consequent2: {variablized_consequent}")
-                        print(f" XX current subject: {current_subject}")
-                        print(f" XX item: {item}")
+                        # print(f" XX current subject: {current_subject}")
+                        # print(f" XX item: {item}")
 
                         self.store_identity(item_binding, context, log)
 
-                        node1 = self.add_node(current_subject)
-                        node2 = self.add_node(item)
-                        if not isinstance(node2, EventNode):
-                            node2.add_child(node1.id)
-                        self.add_link(node1.id, node2.id)
+                        if rule.plan:
+                            self.generator += 1
+                            plan_node = self.add_node([Atom("plan", "variable", self.generator)])
+                            node1 = self.add_node(current_subject)
+                            node2 = self.add_node(item)
+                            if not isinstance(node2, EventNode):
+                                node2.add_child(plan_node.id)
+                            plan_node.add_child(node1.id)
+                            self.add_link(node1.id, node2.id)
+                        else:
+                            node1 = self.add_node(current_subject)
+                            node2 = self.add_node(item)
+                            if not isinstance(node2, EventNode):
+                                node2.add_child(node1.id)
+                            self.add_link(node1.id, node2.id)
 
                         log.append("Confirms prediction from")
                         log.append(item)
