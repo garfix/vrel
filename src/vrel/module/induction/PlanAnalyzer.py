@@ -123,43 +123,30 @@ class PlanAnalyzer:
             if not current_subject:
                 break
 
-        # todo: put this code in the body of the predicted-conditional
-        # it can't be reached from the try_inference
         if current_subject:
-            log.append("Adding inference chain to data base")
-            # print("---")
-            for link in reversed(chain):
-                # print("---1")
-                # print(link.atoms)
-                self.update_db(link.atoms, context, log)
-            # print("--2")
-            # print(current_subject)
-            self.update_db(current_subject, context, log)
-
-            prev = current_subject
-            for link in reversed(chain):
-                current = link.atoms
-                node1 = self.add_node(prev)
-                node2 = self.add_node(current)
-                if not isinstance(node1, EventNode):
-                    node1.add_child(node2.id)
-                self.add_link(node2.id, node1.id)
-                prev = current
-
+            self.chain_to_nodes(current_subject, chain, context, log)
         else:
             log.append("No inference chain found - adding")
             self.update_db(sentence, context, log)
 
-        # context.logger.add_value("LOG", "")
+        for line in log:
+            context.logger.add_comment(line)
 
-        # for line in log:
-        #     context.logger.add_comment(line)
+    def chain_to_nodes(self, current_subject: list[Atom], chain: list[Link], context: ExecutionContext, log: list):
+        log.append("Adding inference chain to data base")
+        for link in reversed(chain):
+            self.update_db(link.atoms, context, log)
+        self.update_db(current_subject, context, log)
 
-        # for i, a in enumerate(self.nodes):
-        #     context.logger.add_value(i, a.get_atom())
-
-        # for i, a in enumerate(self.known_links):
-        #     context.logger.add_value(i, a)
+        prev = current_subject
+        for link in reversed(chain):
+            current = link.atoms
+            node1 = self.add_node(prev)
+            node2 = self.add_node(current)
+            if not isinstance(node1, EventNode):
+                node1.add_child(node2.id)
+            self.add_link(node2.id, node1.id)
+            prev = current
 
     # looks for a goal episode whose source is a theme, or an unknown plan
     def check_init_req(self, chain: list[Link]):
