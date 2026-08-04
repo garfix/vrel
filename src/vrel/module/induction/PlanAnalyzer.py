@@ -8,7 +8,7 @@ from vrel.entity.InductionRule import InductionRule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeModule import SomeModule
-from vrel.module.induction.EventNode import EventNode
+from vrel.module.induction.ActionNode import ActionNode
 from vrel.module.induction.ExplanationNode import ExplanationNode
 from vrel.module.induction.GoalNode import GoalNode
 from vrel.module.induction.Link import Link
@@ -75,7 +75,7 @@ class PlanAnalyzer:
         elif atom.predicate == "goal":
             new_node = GoalNode(index, atom)
         else:
-            new_node = EventNode(index, atom)
+            new_node = ActionNode(index, atom)
 
         self.nodes.append(new_node)
         return new_node
@@ -143,10 +143,19 @@ class PlanAnalyzer:
             current = link.atoms
             node1 = self.add_node(prev)
             node2 = self.add_node(current)
-            if not isinstance(node1, EventNode):
-                node1.add_child(node2.id)
+            self.link_nodes(node1, node2)
             self.add_link(node2.id, node1.id)
             prev = current
+
+    def link_nodes(self, parent: ExplanationNode, child: ExplanationNode):
+        if isinstance(parent, GoalNode):
+            if isinstance(child, PlanNode):
+                parent.add_attempt(child.id)
+        elif isinstance(parent, PlanNode):
+            if isinstance(child, GoalNode):
+                parent.add_subepisode(child.id)
+            elif isinstance(child, ActionNode):
+                parent.add_action(child.id)
 
     # looks for a goal episode whose source is a theme, or an unknown plan
     def check_init_req(self, chain: list[Link]):
@@ -323,8 +332,7 @@ class PlanAnalyzer:
                         else:
                             node1 = self.add_node(current_subject)
                             node2 = self.add_node(item)
-                            if not isinstance(node2, EventNode):
-                                node2.add_child(node1.id)
+                            self.link_nodes(node2, node1)
                         self.add_link(node1.id, node2.id)
 
                         log.append("Confirms prediction from")

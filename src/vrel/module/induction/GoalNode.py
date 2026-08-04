@@ -18,7 +18,7 @@ class GoalNode(ExplanationNode):
     def get_atom(self) -> Atom:
         return self.goal
 
-    def add_child(self, child_id: int):
+    def add_attempt(self, child_id: int):
         self.attempts.append(child_id)
 
     def get_children(self) -> list[int]:

@@ -13,7 +13,8 @@
 - OK implement check_init_req
 - OK check the nodes of the sentence John.
 - OK relate is not presented goals because only plans lead to goals (but not here)
-- be_near is linked directly to know_loc, while the plan above it should be linked
+- OK be_near is linked directly to know_loc, while the plan above it should be linked
+- OK story actions should be added as actions to plans, not as plans
 - link the third sentence
 
 - 'John is lost' is now a kind of "plan" with a goal (attempt)

@@ -5,25 +5,31 @@ from vrel.module.induction.GoalNode import GoalNode
 
 if TYPE_CHECKING:
     from vrel.module.induction.GoalNode import GoalNode
+    from vrel.module.induction.ActionNode import ActionNode
 
 
 class PlanNode(ExplanationNode):
     plan: Atom
     subepisodes: list["GoalNode"]
+    actions: list["ActionNode"]
 
     def __init__(self, id: int, plan: Atom):
         super().__init__(id)
         self.plan = plan
         self.subepisodes = []
+        self.actions = []
 
     def get_atom(self) -> Atom:
         return self.plan
 
-    def add_child(self, child_id: int):
+    def add_subepisode(self, child_id: int):
         self.subepisodes.append(child_id)
+
+    def add_action(self, child_id: int):
+        self.actions.append(child_id)
 
     def get_children(self) -> list[int]:
         return self.subepisodes
 
     def __repr__(self):
-        return f"Plan{self.plan}\n subepisodes: {self.subepisodes}"
+        return f"Plan{self.plan}\n subepisodes: {self.subepisodes}\n actions: {self.actions}"

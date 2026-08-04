@@ -2,15 +2,15 @@ from vrel.entity.Atom import Atom
 from vrel.module.induction.ExplanationNode import ExplanationNode
 
 
-class EventNode(ExplanationNode):
-    event: Atom
+class ActionNode(ExplanationNode):
+    action: Atom
 
     def __init__(self, id: int, event: Atom):
         super().__init__(id)
-        self.event = event
+        self.action = event
 
     def get_atom(self) -> Atom:
-        return self.event
+        return self.action
 
     def __repr__(self):
-        return f"Event{self.event}"
+        return f"Action{self.action}"

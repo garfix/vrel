@@ -14,8 +14,5 @@ class ExplanationNode:
     def get_atom(self) -> Atom:
         raise Exception("Not implemented")
 
-    def add_child(self, child_id: int):
-        raise Exception("Not implemented")
-
     def get_children(self) -> list[int]:
         raise Exception("Not implemented")
