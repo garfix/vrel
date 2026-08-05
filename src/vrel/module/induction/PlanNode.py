@@ -28,8 +28,14 @@ class PlanNode(ExplanationNode):
     def add_action(self, child_id: int):
         self.actions.append(child_id)
 
-    def get_children(self) -> list[int]:
+    def is_empty(self):
+        return self.plan.predicate == "plan" and self.plan.arguments[0] == "variable"
+
+    def get_subepisodes(self) -> list[int]:
         return self.subepisodes
+
+    def get_actions(self) -> list[int]:
+        return self.actions
 
     def __repr__(self):
         return f"Plan{self.plan}\n subepisodes: {self.subepisodes}\n actions: {self.actions}"

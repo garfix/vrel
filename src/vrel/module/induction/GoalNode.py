@@ -21,8 +21,14 @@ class GoalNode(ExplanationNode):
     def add_attempt(self, child_id: int):
         self.attempts.append(child_id)
 
-    def get_children(self) -> list[int]:
+    def get_subepisodes(self) -> list[int]:
         return self.attempts
+
+    def get_first_attempt(self):
+        if len(self.attempts) > 0:
+            return self.attempts[0]
+        else:
+            return None
 
     def __repr__(self):
         return f"Goal{self.goal}\n attempts: {self.attempts}"

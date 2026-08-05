@@ -42,7 +42,7 @@ class BasicParser(SomeParser):
             if len(sentence_trees) > 0:
                 products.append(BasicParserProduct(sentence_trees))
 
-                for tree in sentence_trees:
-                    logger.add_section("Syntax tree", tree)
+                # for tree in sentence_trees:
+                #     logger.add_section("Syntax tree", tree)
 
         return ProcessResult(products, result.error_type, result.error_args)

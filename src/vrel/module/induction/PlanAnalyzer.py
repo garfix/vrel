@@ -129,8 +129,8 @@ class PlanAnalyzer:
             log.append("No inference chain found - adding")
             self.update_db(sentence, context, log)
 
-        for line in log:
-            context.logger.add_comment(line)
+        # for line in log:
+        #     context.logger.add_comment(line)
 
     def chain_to_nodes(self, current_subject: list[Atom], chain: list[Link], context: ExecutionContext, log: list):
         log.append("Adding inference chain to data base")
@@ -143,7 +143,8 @@ class PlanAnalyzer:
             current = link.atoms
             node1 = self.add_node(prev)
             node2 = self.add_node(current)
-            self.link_nodes(node1, node2)
+            # print("link3", node1.id, node2.id)
+            # self.link_nodes(node1, node2)
             self.add_link(node2.id, node1.id)
             prev = current
 
@@ -163,6 +164,7 @@ class PlanAnalyzer:
         if len(chain) > 2:
             # source is an unknown plan
             a = chain[len(chain) - 1].atoms[0]
+            # empty check
             if a.predicate == "plan" and a.arguments[0] == "variable":
                 return True
 
@@ -213,37 +215,6 @@ class PlanAnalyzer:
         context: ExecutionContext,
         log: list[str],
     ):
-        # is cd part of the known plans, goals or themes?
-        # if self.isa("goal", current_subject):
-        #     return self.relate(
-        #         current_subject,
-        #         self.known_themes,
-        #         induction_rules,
-        #         context,
-        #         log,
-        #     ) or self.relate(
-        #         current_subject,
-        #         self.known_plans,
-        #         induction_rules,
-        #         context,
-        #         log,
-        #     )
-        # elif self.isa("plan", current_subject):
-        #     return self.relate(
-        #         current_subject,
-        #         self.known_goals,
-        #         induction_rules,
-        #         context,
-        #         log,
-        #     )
-        # elif self.isa("action", current_subject):
-        #     return self.relate(
-        #         current_subject,
-        #         self.known_plans,
-        #         induction_rules,
-        #         context,
-        #         log,
-        #     )
         return self.relate(
             current_subject,
             self.known_facts,
@@ -263,28 +234,8 @@ class PlanAnalyzer:
         # if Q is known, and there is a rule that induces P => Q, and the current subject is P,
         # then P was predicted and may be added as a known fact
 
-        # print("current_subject", current_subject, len(item_list))
-        # if current_subject.predicate == "goal" and current_subject.arguments[0][0].predicate == "be_near":
-        # if current_subject[0].predicate == "goal":
-
-        # print("RELATE")
-        # print("----------------------------")
-        # print()
-        # print("current_subject", current_subject)
-        # print("antecedent", rule.antecedent)
-
         # consider all known facts (item_list) and all rules (induction_rules)
         for item in item_list:
-
-            # if item[0].predicate == "goal" and item[0].arguments[0][0].predicate == "know":
-            # if current_subject[0].predicate == "goal" and current_subject[0].arguments[0][0].predicate == "be_near":
-
-            # print("RELATE")
-            # print("----------------------------")
-            # print()
-            # print("current_subject", current_subject)
-            # print("item", item)
-
             for rule in induction_rules:
 
                 current_subject_query = make_query(current_subject)
@@ -326,13 +277,48 @@ class PlanAnalyzer:
                             # new link:     P => Plan2
                             node1 = self.add_node(current_subject)
                             node2 = self.add_node(item)
-                            plan_node_id = node2.get_children()[0]
+                            # print(node2)
+                            plan_node_id = node2.get_first_attempt()
                             plan_node: PlanNode = self.nodes[plan_node_id]
                             plan_node.subepisodes.append(node1.id)
                         else:
+                            # node1 = self.add_node(current_subject)
+                            # node2 = self.add_node(item)
+
+                            found = False
+
+                            # todo: this creates a node that is of no use
                             node1 = self.add_node(current_subject)
                             node2 = self.add_node(item)
-                            self.link_nodes(node2, node1)
+                            if isinstance(node1, PlanNode) and isinstance(node2, GoalNode):
+
+                                plan_node_id = node2.get_first_attempt()
+                                if plan_node_id:
+                                    plan_node: PlanNode = self.nodes[plan_node_id]
+                                    if plan_node.is_empty():
+                                        pre_goal_ids = node1.get_subepisodes()
+                                        pre_action_ids = node1.get_actions()
+                                        print("node1", node1)
+                                        print("node2", node2)
+                                        print("plan node", plan_node)
+                                        # this:         Plan1 => Q
+                                        # exist:        pre-Q => empty Plan2 => Q
+                                        # new link:     pre-Q => empty Plan1:filled with Plan2
+                                        plan_node.plan = node1.plan
+                                        if len(pre_goal_ids) > 0:
+                                            plan_node.add_subepisode(pre_goal_ids[0])
+                                        elif len(pre_action_ids) > 0:
+                                            plan_node.add_action(pre_action_ids[0])
+                                        else:
+                                            raise Exception("Plan has neither subepisode nor action")
+
+                                        found = True
+
+                                        # exit()
+                            if not found:
+                                # print("link2", node1.id, node2.id)
+                                self.link_nodes(node2, node1)
+
                         self.add_link(node1.id, node2.id)
 
                         log.append("Confirms prediction from")
@@ -421,11 +407,6 @@ class PlanAnalyzer:
 
             chain.append(Link(current_subject, rules))
 
-            if last_rule.plan:
-                self.generator += 1
-                atoms = [Atom("plan", "variable", self.generator)]
-                chain.append(Link(atoms, rules))
-
             c = bind_variables(last_rule.consequent, binding)
             # print("===")
             # print(last_rule.antecedent)
@@ -436,6 +417,22 @@ class PlanAnalyzer:
 
             variable_map = {}
             c = generate_constants(c, self.variable_generator, variable_map)
+
+            node1 = self.add_node(current_subject)
+            node2 = self.add_node(c)
+
+            if last_rule.plan:
+                self.generator += 1
+                atoms = [Atom("plan", "variable", self.generator)]
+                plan_node = self.add_node(atoms)
+                chain.append(Link(atoms, rules))
+
+                self.link_nodes(node2, plan_node)
+                self.link_nodes(plan_node, node1)
+
+            else:
+                self.link_nodes(node2, node1)
+
             return c
 
         return None

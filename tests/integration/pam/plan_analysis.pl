@@ -78,3 +78,8 @@ lost(C1, E1) => Plan => goal(know(C2, E1, location(L1))).
 goal(be_near(C1, E1, E2)) => Plan => goal(know(C2, E1, location(L1))).
 plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2)).
 pull_over(C1, E1), to(C1, E2) => plan(use_vehicle(C2, E1, E2)).
+
+# He asked him where he was.
+
+plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)).
+ask(C1, E1, E2, F1) => plan(ask(C1, E1, E2, F1)).

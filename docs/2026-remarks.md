@@ -1,4 +1,12 @@
-## 2028-08-02
+## 2026-08-05
+
+I need to add links between nodes before they are "approved" and added to memory. I need to do this because I now need the goal of the plan of a goal.
+
+This makes more explicit the problem that has been accumulating, namely, that nodes are added to the set of nodes, some of which should be discarded, as leading to nowhere.
+
+I will need to create a temporary (within sentence) node set and a more permanent (within dialog) node set.
+
+## 2026-08-02
 
 The first 2 sentences have been turned into explanation nodes: "John was lost. He pulled over to a farmer standing by the side of the road.".
 

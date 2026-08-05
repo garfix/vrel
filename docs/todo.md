@@ -15,6 +15,10 @@
 - OK relate is not presented goals because only plans lead to goals (but not here)
 - OK be_near is linked directly to know_loc, while the plan above it should be linked
 - OK story actions should be added as actions to plans, not as plans
+- ask plan should have a link to ask-as-action, but these links are only created when justify is done
+- store both the plans and the plan-ids in the goal (etc), to make reasoning about them easier
+- I will need to create a temporary (within sentence) node set and a more permanent (within dialog) node set.
+  - or: add_node does not add to nodes list?
 - link the third sentence
 
 - 'John is lost' is now a kind of "plan" with a goal (attempt)
