@@ -1,3 +1,21 @@
+## 2026-08-07
+
+In order to pass substructures as part of an inference, do I need a new transformation?
+
+Would I still be able to query it? How is this used; wait until I know.
+
+## 2026-08-06
+
+node 2 has action 0 => this follows logically from the implementation. "lost" is not part of the objects in pages 304/305
+
+When "John was lost" is processed, PAM creates a goal for it, but apparently the relation between the fact "John was lost" and this goal of knowing where he is is not stored. Maybe I should add this to the rule, but for the moment the existence of the extra action doesn't hurt.
+
+A syntax could be:
+
+    lost(C1, E1) -> Plan => goal(know(C2, E1, location(L1))).
+
+Where `->` denotes that the one causes the other, but no relation should be stored (the fact is not an action of the plan)
+
 ## 2026-08-05
 
 I need to add links between nodes before they are "approved" and added to memory. I need to do this because I now need the goal of the plan of a goal.

@@ -15,13 +15,28 @@
 - OK relate is not presented goals because only plans lead to goals (but not here)
 - OK be_near is linked directly to know_loc, while the plan above it should be linked
 - OK story actions should be added as actions to plans, not as plans
-- ask plan should have a link to ask-as-action, but these links are only created when justify is done
+- OK ask plan should have a link to ask-as-action, but these links are only created when justify is done
+- OK can the `known_links` be removed?
+- OK link the third sentence
+- sommige identifiers voor locations zijn variabelen voor location atoms; dat werkt niet goed
+- have the pronouns been resolved completely?
 - store both the plans and the plan-ids in the goal (etc), to make reasoning about them easier
 - I will need to create a temporary (within sentence) node set and a more permanent (within dialog) node set.
   - or: add_node does not add to nodes list?
-- link the third sentence
 
+later
+
+- node 9 is not needed
+- node 4 doesn't say anything about using a vehicle, like in PAM's example
+- `DLG11` must be replaced by `where he was` (?) same for all variables: pass them over at inference
+- node 2 has action 0 => this follows logically from the implementation. "lost" is not part of the objects in pages 304/305
 - 'John is lost' is now a kind of "plan" with a goal (attempt)
+
+SAME AS C2, `entity:PA1`
+SAME AS DLG3, `person:John`
+SAME AS L1, `entity:PA2`
+SAME AS C2, `entity:PA1`
+SAME AS DLG9, `person:John`
 
 - change license
 - PAM next test

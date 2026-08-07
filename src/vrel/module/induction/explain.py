@@ -9,11 +9,7 @@ from vrel.module.transform.query import make_query
 
 def explain(
     question: list[Atom],
-    induction_rules: list[InductionRule],
-    deduction_rules: list[InferenceRule],
-    context: ExecutionContext,
     nodes: list[ExplanationNode],
-    known_links: list,
     induction_model,
 ):
     query = make_query(question)

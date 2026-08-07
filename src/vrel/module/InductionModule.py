@@ -127,7 +127,7 @@ class InductionModule(SomeModule):
     def explain(self, arguments: list, context: ExecutionContext) -> list[list]:
         question, var, _ = arguments
 
-        explanation = self.plan_analyzer.explain(question, self.plan_analyzer_rules, self.deduction_rules, context)
+        explanation = self.plan_analyzer.explain(question)
 
         if not explanation:
             return []

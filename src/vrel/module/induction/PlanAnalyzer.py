@@ -46,22 +46,22 @@ class PlanAnalyzer:
         self.try_check = {}
 
         self.nodes: list[ExplanationNode] = []
-        self.known_links = []
+        # self.known_links = []
         self.generator = 0
 
         self.variable_generator = VariableGenerator("PA")
 
-    def get_event_id(self, atom: Atom):
-        for index, a in enumerate(self.nodes):
-            if a == atom:
-                return index
-        return None
+    # def get_event_id(self, atom: Atom):
+    #     for index, a in enumerate(self.nodes):
+    #         if a == atom:
+    #             return index
+    #     return None
 
-    def get_parent_event_id(self, event_id: int):
-        for link in self.known_links:
-            if link[0] == event_id:
-                return link[1]
-        return None
+    # def get_parent_event_id(self, event_id: int):
+    #     for link in self.known_links:
+    #         if link[0] == event_id:
+    #             return link[1]
+    #     return None
 
     def add_node(self, atom: Atom) -> ExplanationNode:
         atom = atom[0]
@@ -80,8 +80,8 @@ class PlanAnalyzer:
         self.nodes.append(new_node)
         return new_node
 
-    def add_link(self, id1, id2):
-        self.known_links.append([id1, id2])
+    # def add_link(self, id1, id2):
+    #     self.known_links.append([id1, id2])
 
     def justify(
         self,
@@ -145,7 +145,7 @@ class PlanAnalyzer:
             node2 = self.add_node(current)
             # print("link3", node1.id, node2.id)
             # self.link_nodes(node1, node2)
-            self.add_link(node2.id, node1.id)
+            # self.add_link(node2.id, node1.id)
             prev = current
 
     def link_nodes(self, parent: ExplanationNode, child: ExplanationNode):
@@ -157,6 +157,8 @@ class PlanAnalyzer:
                 parent.add_subepisode(child.id)
             elif isinstance(child, ActionNode):
                 parent.add_action(child.id)
+
+        child.parent = parent
 
     # looks for a goal episode whose source is a theme, or an unknown plan
     def check_init_req(self, chain: list[Link]):
@@ -171,42 +173,47 @@ class PlanAnalyzer:
     def explain(
         self,
         question: list[Atom],
-        induction_rules: list[InductionRule],
-        deduction_rules: list[InferenceRule],
-        context: ExecutionContext,
     ):
         event = explain(
             question,
-            induction_rules,
-            deduction_rules,
-            context,
             self.nodes,
-            self.known_links,
             self.induction_model,
         )
 
-        if event is None:
-            return None
-
-        event_id = self.get_event_id(event)
-        if event_id is None:
-            raise Exception("Event not found")
-
-        parent_event_id = self.get_parent_event_id(event_id)
         cause = None
-        while True:
-            if parent_event_id is None:
-                break
-            event_id = parent_event_id
-            event = self.nodes[event_id].get_atom()
 
-            if event.predicate == "goal":
-                cause = event
+        while event is not None:
+            atom = event.get_atom()
+            if atom.predicate == "goal":
+                cause = atom
+            event = event.parent
 
-            parent_event_id = self.get_parent_event_id(event_id)
-
-        # print("cause", cause)
         return cause
+
+        # if event is None:
+        #     return None
+
+        # event_id = self.get_event_id(event)
+        # if event_id is None:
+        #     raise Exception("Event not found")
+
+        # parent_event_id = self.get_parent_event_id(event_id)
+        # cause = None
+        # while True:
+        #     if parent_event_id is None:
+        #         break
+        #     event_id = parent_event_id
+        #     event = self.nodes[event_id].get_atom()
+
+        #     if event.predicate == "goal":
+        #         cause = event
+
+        #     parent_event_id = self.get_parent_event_id(event_id)
+
+        #     # print(parent_event_id, event.get_parent())
+
+        # # print("cause", cause)
+        # return cause
 
     def predicted(
         self,
@@ -298,17 +305,22 @@ class PlanAnalyzer:
                                     if plan_node.is_empty():
                                         pre_goal_ids = node1.get_subepisodes()
                                         pre_action_ids = node1.get_actions()
-                                        print("node1", node1)
-                                        print("node2", node2)
-                                        print("plan node", plan_node)
+                                        # print("node1", node1)
+                                        # print("node2", node2)
+                                        # print("plan node", plan_node)
                                         # this:         Plan1 => Q
                                         # exist:        pre-Q => empty Plan2 => Q
                                         # new link:     pre-Q => empty Plan1:filled with Plan2
                                         plan_node.plan = node1.plan
                                         if len(pre_goal_ids) > 0:
-                                            plan_node.add_subepisode(pre_goal_ids[0])
+                                            # plan_node.add_subepisode(pre_goal_ids[0])
+                                            subepisode = self.nodes[pre_goal_ids[0]]
+                                            self.link_nodes(plan_node, subepisode)
                                         elif len(pre_action_ids) > 0:
-                                            plan_node.add_action(pre_action_ids[0])
+                                            # plan_node.add_action(pre_action_ids[0])
+                                            action = self.nodes[pre_action_ids[0]]
+                                            self.link_nodes(plan_node, action)
+
                                         else:
                                             raise Exception("Plan has neither subepisode nor action")
 
@@ -319,7 +331,7 @@ class PlanAnalyzer:
                                 # print("link2", node1.id, node2.id)
                                 self.link_nodes(node2, node1)
 
-                        self.add_link(node1.id, node2.id)
+                        # self.add_link(node1.id, node2.id)
 
                         log.append("Confirms prediction from")
                         log.append(item)
@@ -388,8 +400,6 @@ class PlanAnalyzer:
 
             # log.append('')
             # log.append(f' XX antecedent: {last_rule.antecedent}')
-            # log.append(f' XX current_subject: {current_subject}')
-            # log.append(f' XX binding: {binding}')
             # log.append('')
 
             # if the combination of antecedent and binding has happened before, skip it
@@ -404,6 +414,9 @@ class PlanAnalyzer:
 
         if binding is not None:
             # append the fact to the chain
+
+            # print(f" XX current_subject: {current_subject}")
+            # print(f" XX binding: {binding}")
 
             chain.append(Link(current_subject, rules))
 
@@ -429,6 +442,9 @@ class PlanAnalyzer:
 
                 self.link_nodes(node2, plan_node)
                 self.link_nodes(plan_node, node1)
+                # print("try rules")
+                # print(node2)
+                # print(node1)
 
             else:
                 self.link_nodes(node2, node1)
