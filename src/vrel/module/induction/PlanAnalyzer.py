@@ -61,6 +61,7 @@ class PlanAnalyzer:
                 break
 
         if current_subject:
+            pass
             self.chain_to_nodes(current_subject, chain, context)
         else:
             self.update_db(sentence, context)
@@ -69,35 +70,6 @@ class PlanAnalyzer:
         for link in reversed(chain):
             self.update_db(link.atoms, context)
         self.update_db(current_subject, context)
-
-    def add_node(self, atoms: list[Atom]) -> ExplanationNode:
-        atom = atoms[0]
-        for index, node in enumerate(self.nodes):
-            if node.get_atom() == atom:
-                return node
-
-        index = len(self.nodes)
-        if atom.predicate == "plan":
-            new_node = PlanNode(index, atom)
-        elif atom.predicate == "goal":
-            new_node = GoalNode(index, atom)
-        else:
-            new_node = ActionNode(index, atom)
-
-        self.nodes.append(new_node)
-        return new_node
-
-    def link_nodes(self, parent: ExplanationNode, child: ExplanationNode):
-        if isinstance(parent, GoalNode):
-            if isinstance(child, PlanNode):
-                parent.add_attempt(child.id)
-        elif isinstance(parent, PlanNode):
-            if isinstance(child, GoalNode):
-                parent.add_subepisode(child.id)
-            elif isinstance(child, ActionNode):
-                parent.add_action(child.id)
-
-        child.parent = parent
 
     # looks for a goal episode whose source is a theme, or an unknown plan
     def check_init_req(self, chain: list[Link]):
@@ -317,6 +289,35 @@ class PlanAnalyzer:
         context.solver.write_atoms(sentence)
 
         self.known_facts.append(sentence)
+
+    def add_node(self, atoms: list[Atom]) -> ExplanationNode:
+        atom = atoms[0]
+        for index, node in enumerate(self.nodes):
+            if node.get_atom() == atom:
+                return node
+
+        index = len(self.nodes)
+        if atom.predicate == "plan":
+            new_node = PlanNode(index, atom)
+        elif atom.predicate == "goal":
+            new_node = GoalNode(index, atom)
+        else:
+            new_node = ActionNode(index, atom)
+
+        self.nodes.append(new_node)
+        return new_node
+
+    def link_nodes(self, parent: ExplanationNode, child: ExplanationNode):
+        if isinstance(parent, GoalNode):
+            if isinstance(child, PlanNode):
+                parent.add_attempt(child.id)
+        elif isinstance(parent, PlanNode):
+            if isinstance(child, GoalNode):
+                parent.add_subepisode(child.id)
+            elif isinstance(child, ActionNode):
+                parent.add_action(child.id)
+
+        child.parent = parent
 
     def explain(
         self,
