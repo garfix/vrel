@@ -98,10 +98,8 @@ class TestPAM(unittest.TestCase):
             [
                 # 14 A detailed example
                 [
-                    # "John was lost.",
-                    # "John was lost. He pulled over to a farmer standing by the side of the road.",
                     "John was lost. He pulled over to a farmer standing by the side of the road. He asked him where he was.",
-                    "OK1",
+                    "OK",
                 ],
                 # ["Why did John pull over to a farmer?", "Because he wanted to know where he was."],
                 # ["Why did John ask a farmer to tell him where he was?", "Because he wanted to get someplace."],

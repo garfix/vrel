@@ -22,28 +22,56 @@ from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGe
 class PlanAnalyzer:
 
     induction_model: SomeModule
-
     nodes = list[ExplanationNode]
     known_links = list
-
     try_check: dict
-
     generator: int
-
     variable_generator: VariableGenerator
 
     def __init__(self, induction_model: SomeModel):
         self.induction_model = induction_model
         self.known_facts = []
         self.try_check = {}
-
         self.nodes: list[ExplanationNode] = []
         self.generator = 0
-
         self.variable_generator = VariableGenerator("PA")
 
-    def add_node(self, atom: Atom) -> ExplanationNode:
-        atom = atom[0]
+    def justify(
+        self,
+        sentence: list[Atom],
+        induction_rules: list[InductionRule],
+        context: ExecutionContext,
+    ):
+        chain: list[Link] = []
+        current_subject = sentence
+
+        while True:
+
+            # if current_subject is a known fact, an explanation is found
+            if self.predicted(current_subject, induction_rules, context):
+                break
+
+            if self.check_init_req(chain):
+                break
+
+            chain.append(Link(current_subject, induction_rules[:]))
+
+            current_subject = self.try_inference(chain)
+            if not current_subject:
+                break
+
+        if current_subject:
+            self.chain_to_nodes(current_subject, chain, context)
+        else:
+            self.update_db(sentence, context)
+
+    def chain_to_nodes(self, current_subject: list[Atom], chain: list[Link], context: ExecutionContext):
+        for link in reversed(chain):
+            self.update_db(link.atoms, context)
+        self.update_db(current_subject, context)
+
+    def add_node(self, atoms: list[Atom]) -> ExplanationNode:
+        atom = atoms[0]
         for index, node in enumerate(self.nodes):
             if node.get_atom() == atom:
                 return node
@@ -58,61 +86,6 @@ class PlanAnalyzer:
 
         self.nodes.append(new_node)
         return new_node
-
-    def justify(
-        self,
-        sentence: list[Atom],
-        induction_rules: list[InductionRule],
-        context: ExecutionContext,
-    ):
-
-        log = []
-
-        log.append("")
-        log.append("---")
-        log.append("")
-        log.append("Trying to explain")
-        log.append(sentence)
-
-        chain: list[Link] = []
-
-        current_subject = sentence
-
-        while True:
-
-            # if current_subject is a known fact, an explanation is found
-            if self.predicted(
-                current_subject,
-                induction_rules,
-                context,
-                log,
-            ):
-                break
-
-            if self.check_init_req(chain):
-                break
-
-            log.append("Does not confirm prediction")
-            chain.append(Link(current_subject, induction_rules[:]))
-
-            current_subject = self.try_inference(chain, log)
-            if not current_subject:
-                break
-
-        if current_subject:
-            self.chain_to_nodes(current_subject, chain, context, log)
-        else:
-            log.append("No inference chain found - adding")
-            self.update_db(sentence, context, log)
-
-        # for line in log:
-        #     context.logger.add_comment(line)
-
-    def chain_to_nodes(self, current_subject: list[Atom], chain: list[Link], context: ExecutionContext, log: list):
-        log.append("Adding inference chain to data base")
-        for link in reversed(chain):
-            self.update_db(link.atoms, context, log)
-        self.update_db(current_subject, context, log)
 
     def link_nodes(self, parent: ExplanationNode, child: ExplanationNode):
         if isinstance(parent, GoalNode):
@@ -136,32 +109,11 @@ class PlanAnalyzer:
             if a.predicate == "plan" and a.arguments[0] == "variable":
                 return True
 
-    def explain(
-        self,
-        question: list[Atom],
-    ):
-        event = explain(
-            question,
-            self.nodes,
-            self.induction_model,
-        )
-
-        cause = None
-
-        while event is not None:
-            atom = event.get_atom()
-            if atom.predicate == "goal":
-                cause = atom
-            event = event.parent
-
-        return cause
-
     def predicted(
         self,
         current_subject: list,
         induction_rules: list[InductionRule],
         context: ExecutionContext,
-        log: list[str],
     ):
         # if Q is known, and there is a rule that induces P => Q, and the current subject is P,
         # then P was predicted and may be added as a known fact
@@ -201,7 +153,7 @@ class PlanAnalyzer:
                         # print(f" XX current subject: {current_subject}")
                         # print(f" XX item: {item}")
 
-                        self.store_identity(item_binding, context, log)
+                        self.store_identity(item_binding, context)
 
                         if rule.plan:
                             # this:         P => Plan1 => Q
@@ -254,8 +206,6 @@ class PlanAnalyzer:
                                 # print("link2", node1.id, node2.id)
                                 self.link_nodes(node2, node1)
 
-                        log.append("Confirms prediction from")
-                        log.append(item)
                         return True
 
         return False
@@ -264,18 +214,15 @@ class PlanAnalyzer:
         self,
         item_binding: dict,
         context: ExecutionContext,
-        log: list,
     ):
         for variable in item_binding:
             if isinstance(item_binding[variable], Id):
-                log.append(f"SAME AS {variable}, {item_binding[variable]}")
                 print(f"SAME AS {variable}, {item_binding[variable]}")
                 context.solver.write_atom(Atom("same_as", Id(variable, "entity"), item_binding[variable]))
 
     def try_inference(
         self,
         chain: list[Link],
-        log: list,
     ):
         # chain is a list of [cd, all_inference_rules]
         # return the lhs of the first match, and extend the chain
@@ -290,15 +237,10 @@ class PlanAnalyzer:
                 last_link.rules[:],
                 chain,
             )
-            if current_subject is None:
-                log.append("No usable inferences from")
-                log.append(last_link.atoms)
-            else:
+            if current_subject is not None:
                 break
 
         if current_subject:
-            log.append("Possible explanation assuming")
-            log.append(current_subject)
             return current_subject
 
         return None
@@ -369,10 +311,29 @@ class PlanAnalyzer:
 
         return None
 
-    def update_db(self, sentence: list[Atom], context: ExecutionContext, log: list):
-        log.append(sentence)
+    def update_db(self, sentence: list[Atom], context: ExecutionContext):
 
         # add cd as a fact to the `database`
         context.solver.write_atoms(sentence)
 
         self.known_facts.append(sentence)
+
+    def explain(
+        self,
+        question: list[Atom],
+    ):
+        event = explain(
+            question,
+            self.nodes,
+            self.induction_model,
+        )
+
+        cause = None
+
+        while event is not None:
+            atom = event.get_atom()
+            if atom.predicate == "goal":
+                cause = atom
+            event = event.parent
+
+        return cause
