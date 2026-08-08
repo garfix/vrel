@@ -51,7 +51,6 @@ class TestPAM(unittest.TestCase):
         induction_model = Model([PAMModule(), inferences, same_as])
 
         inductions = InductionModule(induction_model)
-        inductions.import_fact_induction_rules(path / "fact_induction.pl")
         inductions.import_plan_analyzer_rules(path / "plan_analysis.pl")
 
         # define the model

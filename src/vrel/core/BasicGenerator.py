@@ -42,7 +42,8 @@ class BasicGenerator(SomeGenerator):
         if found:
 
             hash = rule.hash
-            used_rules.append(hash)
+            # a rule is needed twice in PAM
+            # used_rules.append(hash)
 
             if rule.list_element == None:
                 result = self.rewrite(rule, used_rules, binding)

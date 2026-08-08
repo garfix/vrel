@@ -4,3 +4,6 @@ restaurant_guide(E1) :- michelin_guide(E1).
 
 feature(`person:Willa`, 'gender', 'female').
 feature(`person:Willa`, 'type', 'person').
+
+feature(`person:John`, 'gender', 'male').
+feature(`person:John`, 'type', 'person').
