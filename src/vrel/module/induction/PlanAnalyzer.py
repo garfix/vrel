@@ -3,7 +3,6 @@ from vrel.core.functions.terms import bind_variables
 from vrel.core.functions.variables import generate_constants, variablize
 from vrel.entity.Atom import Atom
 from vrel.entity.Id import Id
-from vrel.entity.InferenceRule import InferenceRule
 from vrel.entity.InductionRule import InductionRule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.interface.SomeModel import SomeModel
@@ -24,10 +23,6 @@ class PlanAnalyzer:
 
     induction_model: SomeModule
 
-    known_themes: list[Atom]
-    known_goals: list[Atom]
-    known_plans: list[Atom]
-
     nodes = list[ExplanationNode]
     known_links = list
 
@@ -39,29 +34,13 @@ class PlanAnalyzer:
 
     def __init__(self, induction_model: SomeModel):
         self.induction_model = induction_model
-        self.known_themes = []
-        self.known_goals = []
-        self.known_plans = []
         self.known_facts = []
         self.try_check = {}
 
         self.nodes: list[ExplanationNode] = []
-        # self.known_links = []
         self.generator = 0
 
         self.variable_generator = VariableGenerator("PA")
-
-    # def get_event_id(self, atom: Atom):
-    #     for index, a in enumerate(self.nodes):
-    #         if a == atom:
-    #             return index
-    #     return None
-
-    # def get_parent_event_id(self, event_id: int):
-    #     for link in self.known_links:
-    #         if link[0] == event_id:
-    #             return link[1]
-    #     return None
 
     def add_node(self, atom: Atom) -> ExplanationNode:
         atom = atom[0]
@@ -79,9 +58,6 @@ class PlanAnalyzer:
 
         self.nodes.append(new_node)
         return new_node
-
-    # def add_link(self, id1, id2):
-    #     self.known_links.append([id1, id2])
 
     def justify(
         self,
@@ -138,16 +114,6 @@ class PlanAnalyzer:
             self.update_db(link.atoms, context, log)
         self.update_db(current_subject, context, log)
 
-        prev = current_subject
-        for link in reversed(chain):
-            current = link.atoms
-            node1 = self.add_node(prev)
-            node2 = self.add_node(current)
-            # print("link3", node1.id, node2.id)
-            # self.link_nodes(node1, node2)
-            # self.add_link(node2.id, node1.id)
-            prev = current
-
     def link_nodes(self, parent: ExplanationNode, child: ExplanationNode):
         if isinstance(parent, GoalNode):
             if isinstance(child, PlanNode):
@@ -190,50 +156,9 @@ class PlanAnalyzer:
 
         return cause
 
-        # if event is None:
-        #     return None
-
-        # event_id = self.get_event_id(event)
-        # if event_id is None:
-        #     raise Exception("Event not found")
-
-        # parent_event_id = self.get_parent_event_id(event_id)
-        # cause = None
-        # while True:
-        #     if parent_event_id is None:
-        #         break
-        #     event_id = parent_event_id
-        #     event = self.nodes[event_id].get_atom()
-
-        #     if event.predicate == "goal":
-        #         cause = event
-
-        #     parent_event_id = self.get_parent_event_id(event_id)
-
-        #     # print(parent_event_id, event.get_parent())
-
-        # # print("cause", cause)
-        # return cause
-
     def predicted(
         self,
         current_subject: list,
-        induction_rules: list[InductionRule],
-        context: ExecutionContext,
-        log: list[str],
-    ):
-        return self.relate(
-            current_subject,
-            self.known_facts,
-            induction_rules,
-            context,
-            log,
-        )
-
-    def relate(
-        self,
-        current_subject: list,
-        item_list: list,
         induction_rules: list[InductionRule],
         context: ExecutionContext,
         log: list[str],
@@ -242,7 +167,7 @@ class PlanAnalyzer:
         # then P was predicted and may be added as a known fact
 
         # consider all known facts (item_list) and all rules (induction_rules)
-        for item in item_list:
+        for item in self.known_facts:
             for rule in induction_rules:
 
                 current_subject_query = make_query(current_subject)
@@ -289,8 +214,6 @@ class PlanAnalyzer:
                             plan_node: PlanNode = self.nodes[plan_node_id]
                             plan_node.subepisodes.append(node1.id)
                         else:
-                            # node1 = self.add_node(current_subject)
-                            # node2 = self.add_node(item)
 
                             found = False
 
@@ -330,8 +253,6 @@ class PlanAnalyzer:
                             if not found:
                                 # print("link2", node1.id, node2.id)
                                 self.link_nodes(node2, node1)
-
-                        # self.add_link(node1.id, node2.id)
 
                         log.append("Confirms prediction from")
                         log.append(item)
@@ -394,13 +315,8 @@ class PlanAnalyzer:
         binding = None
         while len(rules) > 0:
             last_rule = rules.pop()
-            # print("TRY RULES")
             cs = make_query(current_subject)
             binding = match(last_rule.antecedent, cs, {}, self.induction_model)
-
-            # log.append('')
-            # log.append(f' XX antecedent: {last_rule.antecedent}')
-            # log.append('')
 
             # if the combination of antecedent and binding has happened before, skip it
             hash = hash_it([last_rule.antecedent, binding])
@@ -460,20 +376,3 @@ class PlanAnalyzer:
         context.solver.write_atoms(sentence)
 
         self.known_facts.append(sentence)
-
-        # add cd to the known themes, goals or plans
-        # if self.isa("is", sentence):
-        #     log.append("---theme")
-        #     self.known_themes.append(sentence)
-        if self.isa("goal", sentence):
-            self.known_goals.append(sentence)
-        elif self.isa("plan", sentence):
-            self.known_plans.append(sentence)
-        else:
-            log.append("---theme")
-            # note: in MicroPAM only sentences with "is" are stored as themes (i.e. only the first sentence)
-            self.known_themes.append(sentence)
-
-    def isa(self, type: str, current_subject: any):
-        predicate = current_subject[0].predicate
-        return predicate == type
