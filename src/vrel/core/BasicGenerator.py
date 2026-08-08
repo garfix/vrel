@@ -64,7 +64,9 @@ class BasicGenerator(SomeGenerator):
                     raise Exception(f"No output found, or no condition matches the output")
                 else:
                     raise Exception(
-                        f"No write grammar rule found to rewrite: {antecedent_cat}({"".join(antecedent_arguments)})"
+                        f"No write grammar rule found to rewrite: {antecedent_cat}({antecedent_arguments})".replace(
+                            "\n", ""
+                        )
                     )
 
     def rewrite(self, rule: GrammarRule, used_rules: list[int], binding: dict):

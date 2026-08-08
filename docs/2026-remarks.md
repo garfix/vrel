@@ -1,3 +1,44 @@
+## 2026-08-08
+
+Thinking about why-requests to answer the questions correctly. "INIT-REQ is a why request" (p 297)
+
+There are 2 why questions:
+
+    "Why did John pull over to a farmer?"
+    "Because he wanted to know where he was."
+
+I don't know why this node is the answer. It is not the node from the init-req.
+
+    "Why did John ask a farmer to tell him where he was?"
+    "Because he wanted to get someplace."
+
+I have several goals, from top to bottom:
+
+- A. be_at(C1, E1, L2)
+- B. know(C2, E1, location(L1))
+- C. be_near(C1, E1, E2)
+
+The answer is the top-most node for the second why-question, but the answer is the node above the first goal for the first question.
+
+Maybe the algorithm is as follows:
+
+- find the node that represents the question
+- going up, find the first goal
+- then go up until the next goal
+- that is the answer
+
+If the answer would be the first goal up, you would get:
+
+    "Why did John pull over to a farmer?"
+    "Because he wanted to be near a farmer."
+
+    "Why did John ask a farmer to tell him where he was?"
+    "Because he wanted to know where he was."
+
+Which, we can agree, is not very informative.
+
+Applying this to "Why did Willa pick up a Michelin guide?" this results in something like "Because she wanted to know the distance to a restaurant."
+
 ## 2026-08-07
 
 In order to pass substructures as part of an inference, do I need a new transformation?

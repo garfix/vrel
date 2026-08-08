@@ -110,6 +110,14 @@ class PAMModule(PlainReadWriteModule):
         )
         self.add_relation(
             Relation(
+                "farmer",
+                parameters=[Parameter("id", "farmer")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
                 "she",
                 parameters=[Parameter("id", "person")],
                 query_function=self.common_query,

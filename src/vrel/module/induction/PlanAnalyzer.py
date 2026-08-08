@@ -133,10 +133,10 @@ class PlanAnalyzer:
                             # new link:     P => Plan2
                             node1 = self.add_node(current_subject)
                             node2 = self.add_node(item)
-                            # print(node2)
                             plan_node_id = node2.get_first_attempt()
                             plan_node: PlanNode = self.nodes[plan_node_id]
-                            plan_node.subepisodes.append(node1.id)
+                            self.link_nodes(node2, plan_node)
+                            self.link_nodes(plan_node, node1)
                         else:
 
                             found = False
@@ -330,11 +330,15 @@ class PlanAnalyzer:
         )
 
         cause = None
+        goal_count = 0
 
+        # find the second goal above the event
+        # (the first goal in not very informative)
         while event is not None:
-            atom = event.get_atom()
-            if atom.predicate == "goal":
-                cause = atom
+            if isinstance(event, GoalNode):
+                goal_count += 1
+                if goal_count == 2:
+                    cause = event.get_atom()
             event = event.parent
 
         return cause

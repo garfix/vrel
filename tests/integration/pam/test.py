@@ -86,14 +86,9 @@ class TestPAM(unittest.TestCase):
         tests = [
             [
                 # Example from MicroPAM
-                [
-                    "Willa was hungry. She picked up the Michelin guide. She got into her car.",
-                    "OK",
-                ],
-                [
-                    "Why did Willa pick up a Michelin guide?",
-                    "Because she wanted to be not hungry.",
-                ],
+                ["Willa was hungry. She picked up the Michelin guide. She got into her car.", "OK"],
+                # ["Why did Willa pick up a Michelin guide?", "Because she wanted to be not hungry."],
+                ["Why did Willa pick up a Michelin guide?", "Because she wanted to know the distance to a restaurant."],
             ],
             [
                 # 14 A detailed example
@@ -101,7 +96,7 @@ class TestPAM(unittest.TestCase):
                     "John was lost. He pulled over to a farmer standing by the side of the road. He asked him where he was.",
                     "OK",
                 ],
-                # ["Why did John pull over to a farmer?", "Because he wanted to know where he was."],
+                ["Why did John pull over to a farmer?", "Because he wanted to know where he was."],
                 # ["Why did John ask a farmer to tell him where he was?", "Because he wanted to get someplace."],
                 # ["What were the consequences of John's pulling over to a farmer?", "This enabled him to ask him where John was."],
                 # ["What happened when John pulled over to a farmer?", "He asked him to tell him where he was."],

@@ -26,6 +26,27 @@ def get_write_grammar():
             "if": [Atom(UNIFICATION, Goal, [Atom("not", [Atom("hungry", E1)])])],
         },
         {
+            "syn": "goal(Goal) -> desc(E1) 'wanted' 'to' 'know' 'the' 'distance' 'to' 'a' 'restaurant'+'.'",
+            "if": [
+                Atom(
+                    UNIFICATION,
+                    Goal,
+                    [
+                        Atom(
+                            "know",
+                            E1,
+                            [
+                                Atom(
+                                    "fact",
+                                    [Atom("distance", "restaurant")],
+                                )
+                            ],
+                        )
+                    ],
+                )
+            ],
+        },
+        {
             "syn": "desc(E1) -> 'she'",
             "if": [
                 Atom(
