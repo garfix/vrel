@@ -1,3 +1,77 @@
+## 2026-08-12
+
+A modifier can be attached to multiple arguments (rare).
+
+    vp(C1, E1) -> vp(C1, E1, E2, E3) nominal(E2) nominal(E3, E2)
+
+Currently the check if a modifier is attached to a argument is done by checking the occurrence of the variable anywhere in the modifier. Maybe this should just be the first argument of the top-level atom.
+
+I made the change; the function is just used for printing the atom.
+
+===
+
+This
+
+```bash
+(ask
+            1. $19
+            2. `person:John`
+            3. $20
+               modifier
+                 (farmer
+                    1. $20)
+            4. $21
+               modifier
+                 (tell
+                    1. $21
+                    2. $20
+                    3. $22
+                       modifier
+                         (him
+                            1. $22)
+                    4. $23
+                       modifier
+                         (where
+                            1. $23
+                            2. $24
+                               modifier
+                                 (be
+                                    1. $24
+                                    2. $25
+                                       modifier
+                                         (he
+                                            1. $25)))))
+```
+
+should now match
+
+```bash
+(ask
+    1. `entity:DLG8`
+    2. `entity:DLG9`
+       modifier
+         (he
+            1. `entity:DLG9`)
+    3. `entity:DLG10`
+       modifier
+         (him
+            1. `entity:DLG10`)
+    4. `entity:DLG11`
+       modifier
+         (where
+            1. `entity:DLG11`
+            2. `entity:DLG12`
+               modifier
+                 (be
+                    1. `entity:DLG12`
+                    2. `entity:DLG13`
+                       modifier
+                         (he
+                            1. `entity:DLG13`))))
+```
+
+long way to go
+
 ## 2026-08-08
 
 Thinking about why-requests to answer the questions correctly. "INIT-REQ is a why request" (p 297)
@@ -1271,3 +1345,7 @@ Started new project `vrel` because I'm changing some really major things, and it
 - names will always be part of entities with types
 - create a global variable generator
 - dialog variables should look different from dialog constants
+
+```
+
+```

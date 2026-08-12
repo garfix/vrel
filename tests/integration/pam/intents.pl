@@ -7,7 +7,7 @@ intent_understand(Story) :-
 
 intent_explanation(Question, C1) :-
     update_saliency(Question),
-    # log_nodes(),
+    log_nodes(),
     explain(Question, C1, Explanation),
     out('explanation', Explanation).
 

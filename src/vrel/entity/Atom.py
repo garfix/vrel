@@ -91,7 +91,8 @@ class Atom:
 
         result = []
         for modifier in self.modifiers:
-            if contains(modifier.atom, term):
+            # if contains(modifier.atom, term):
+            if len(modifier.atom.arguments) > 0 and modifier.atom.arguments[0] == term:
                 result.append(modifier)
         return result
 

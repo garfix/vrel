@@ -49,7 +49,12 @@ def get_read_grammar():
         {"syn": "vp(C1, E1) -> vp(C1, E1, E2) nominal(E2)", "sem": lambda vp, np: vp.mod(np)},
         {
             "syn": "vp(C1, E1) -> vp(C1, E1, E2, E3) nominal(E2) nominal(E3)",
-            "sem": lambda vp, np1, np2: vp.mod(np1).mod(np2),
+            "sem": lambda vp, nominal1, nominal2: vp.mod(nominal1).mod(nominal2),
+        },
+        {
+            # asked [E2:a farmer] [[E2] to tell him ...]
+            "syn": "vp(C1, E1) -> vp(C1, E1, E2, E3) nominal(E2) nominal(E3, E2)",
+            "sem": lambda vp, nominal1, nominal2: vp.mod(nominal1).mod(nominal2),
         },
         #  implementations
         {"syn": "vp(C1, E1) -> verb(C1, E1)", "sem": lambda verb: verb},
@@ -67,7 +72,9 @@ def get_read_grammar():
         {"syn": "verb(C1, E1, E2) -> 'picked' 'up'", "sem": lambda: Atom("pick_up", C1, E1, E2)},
         {"syn": "verb(C1, E1, E2) -> 'pick' 'up'", "sem": lambda: Atom("pick_up", C1, E1, E2)},
         {"syn": "verb(C1, E1, E2) -> 'got' 'into'", "sem": lambda: Atom("get_into", C1, E1, E2)},
+        {"syn": "verb(C1, E1, E2, E3) -> 'ask'", "sem": lambda: Atom("ask", C1, E1, E2, E3)},
         {"syn": "verb(C1, E1, E2, E3) -> 'asked'", "sem": lambda: Atom("ask", C1, E1, E2, E3)},
+        {"syn": "verb(C1, E1, E2, E3) -> 'tell'", "sem": lambda: Atom("tell", C1, E1, E2, E3)},
         # verb continuous
         {"syn": "verb_continuous(C1, E1) -> 'standing'", "sem": lambda: Atom("stand", C1, E1)},
         # adjective phrase
@@ -79,6 +86,7 @@ def get_read_grammar():
         # nominal
         {"syn": "nominal(E1) -> np(E1)", "sem": lambda np: np},
         {"syn": "nominal(E1) -> noun_clause(E1)", "sem": lambda noun_clause: noun_clause},
+        {"syn": "nominal(E1, E2) -> noun_clause(E1, E2)", "sem": lambda noun_clause: noun_clause},
         # noun phrase
         {"syn": "np(E1) -> nbar(E1)", "sem": lambda nbar: nbar},
         {"syn": "np(E1) -> np(E1) pp(E1)", "sem": lambda np, pp: np.mod(pp)},
@@ -103,6 +111,10 @@ def get_read_grammar():
         {
             "syn": "noun_clause(E1) -> 'where' decl_clause(C1)",
             "sem": lambda decl_clause: Atom("where", E1, C1).mod(decl_clause),
+        },
+        {
+            "syn": "noun_clause(C1, E1) -> 'to' vp(C1, E1)",
+            "sem": lambda vp: vp,
         },
         # determiner
         {"syn": "det(E1) -> 'the'", "sem": lambda: None},

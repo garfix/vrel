@@ -58,7 +58,9 @@ def format_term(term: any, indent: int = 0, index=0, pre="") -> str:
             text += format_term(arg, indent + 1, i + 1, "A")
             for mod in term.get_modifiers_by_term(arg):
                 text += format_term(mod, indent + 1, None, "M")
-                remaining_modifiers.remove(mod)
+                # a modifier can be attached to multiple arguments (rare)
+                if mod in remaining_modifiers:
+                    remaining_modifiers.remove(mod)
         if len(remaining_modifiers) > 0:
             text += "\n" + space + "    " + f"{RED}non-bound modifiers{RESET}"
             for mod in remaining_modifiers:
