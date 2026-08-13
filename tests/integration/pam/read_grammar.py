@@ -45,6 +45,12 @@ def get_read_grammar():
         #  modifiers
         {"syn": "vp(C1, E1) -> vp(C1, E1) pp(C1)", "sem": lambda vp, pp: vp.mod(pp)},
         {"syn": "vp(C1, E1) -> copula() adjp(C1, E1)", "sem": lambda copula, adjp: adjp},
+        {
+            "syn": "vp(C1, E1) -> 'asked' np(E2) noun_clause(C2)",
+            "sem": lambda np, noun_clause: Atom("ask", C1, E1, E2, C3)
+            .mod(np)
+            .mod(Atom("tell", C3, E2, E1, C2).mod(noun_clause)),
+        },
         #  variants
         {"syn": "vp(C1, E1) -> vp(C1, E1, E2) nominal(E2)", "sem": lambda vp, np: vp.mod(np)},
         {
