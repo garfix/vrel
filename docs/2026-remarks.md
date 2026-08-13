@@ -10,67 +10,54 @@ I made the change; the function is just used for printing the atom.
 
 ===
 
-This
+These should now match
 
 ```bash
-(ask
-            1. $19
-            2. `person:John`
-            3. $20
-               modifier
-                 (farmer
-                    1. $20)
-            4. $21
-               modifier
-                 (tell
-                    1. $21
-                    2. $20
-                    3. $22
-                       modifier
-                         (him
-                            1. $22)
-                    4. $23
-                       modifier
-                         (where
-                            1. $23
-                            2. $24
-                               modifier
-                                 (be
-                                    1. $24
-                                    2. $25
-                                       modifier
-                                         (he
-                                            1. $25)))))
-```
-
-should now match
-
-```bash
-(ask
-    1. `entity:DLG8`
-    2. `entity:DLG9`
-       modifier
-         (he
-            1. `entity:DLG9`)
-    3. `entity:DLG10`
-       modifier
-         (him
-            1. `entity:DLG10`)
-    4. `entity:DLG11`
-       modifier
-         (where
-            1. `entity:DLG11`
-            2. `entity:DLG12`
-               modifier
-                 (be
-                    1. `entity:DLG12`
-                    2. `entity:DLG13`
-                       modifier
-                         (he
-                            1. `entity:DLG13`))))
+(ask                                               (ask
+    1. $19                                             1. `entity:DLG8`
+    2. `person:John`                                   2. `entity:DLG9`
+    3. $20                                                modifier
+        modifier                                             (he
+            (farmer                                               1. `entity:DLG9`)
+            1. $20)                                    3. `entity:DLG10`
+    4. $21                                                modifier
+        modifier                                             (him
+            (tell                                                 1. `entity:DLG10`)
+            1. $21                                     4. `entity:DLG11`
+            2. $20                                        modifier
+            3. $22                                          (where
+                modifier                                        1. `entity:DLG11`
+                    (him                                          2. `entity:DLG12`
+                    1. $22)                                       modifier
+            4. $23                                                  (be
+                modifier                                                1. `entity:DLG12`
+                    (where                                                2. `entity:DLG13`
+                    1. $23                                                modifier
+                    2. $24                                                  (he
+                        modifier                                                1. `entity:DLG13`))))
+                            (be
+                            1. $24
+                            2. $25
+                                modifier
+                                    (he
+                                    1. $25)))))
 ```
 
 long way to go
+
+problems to solve:
+
+- OK `$19` should match `entity:DLG8`
+- OK `person:John` should match `entity:DLG9` (identity already established)
+- DOABLE `$20` (farmer) should match `entity:DLG10` (him) => matches if `entity:DLG10` is farmer and male
+- PROBLEMATIC `$21` (tell ... where ...) should match `entity:DLG11` (where ...)
+- OK the structure below `where` is straightforward, because they are identical and one side is only variables
+
+I suppose the problem (PROBLEMATIC) would not occur when using CD since these structures would result in the same uniform semantics. However, this just moves the problem to the parser.
+
+idea: treat `A asked B where` as ellipsis when parsing, and construct semantics as `A asked B to tell A where`:
+
+- `He asked him where he was.` => `He asked him to tell him where he was.`
 
 ## 2026-08-08
 
