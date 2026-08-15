@@ -1,3 +1,30 @@
+## 2026-08-14
+
+I implemented the ellipsis in the parser, and that was easy, but I'm not very happy with that idea, because it seems pretty brittle. I prefer to have the power of the inferences when matching. That means rewriting the nested structure to a flat structure.
+
+Structure A is being solved (needle), while B is turned into a data source (haystack). Both structures will need to be flattened.
+
+A
+
+    ask($19, `person:John`, $20, $21)
+    tell($21, $20, $22, $23)
+    where($23, $24)
+    be($24, $25)
+    he($25)
+
+B
+
+    ask(`entity:DLG8`, `entity:DLG9`, `entity:DLG10`, `entity:DLG11`)
+    where(`entity:DLG11`, `entity:DLG12`)
+    be(`entity:DLG12`, `entity:DLG13`)
+    he(`entity:DLG13`, `entity:DLG14`)
+
+As is, this fails on `tell`, which is not present in B. How to solve this?
+
+    tell(X, B, C, D) :- ask(_, C, B, D) where(D, _)
+
+This means: we can deduce that B told C where he was (D), if C asked B where he was
+
 ## 2026-08-12
 
 A modifier can be attached to multiple arguments (rare).
@@ -13,6 +40,8 @@ I made the change; the function is just used for printing the atom.
 These should now match
 
 ```bash
+A.                                                 B.
+
 (ask                                               (ask
     1. $19                                             1. `entity:DLG8`
     2. `person:John`                                   2. `entity:DLG9`
