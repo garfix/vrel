@@ -23,6 +23,8 @@
 - store both the plans and the plan-ids in the goal (etc), to make reasoning about them easier
 - I will need to create a temporary (within sentence) node set and a more permanent (within dialog) node set.
   - or: add_node does not add to nodes list?
+- explain: bij het matchen: zowel vraag als explanation omzetten in platte query
+- he/him => male (semantics)
 
 later
 
@@ -63,6 +65,10 @@ update saliency when
 - writing an utterance
 - updating saliency should only done for entities in verbs
 - also: use the syntactive subject, not the semantic subject
+
+## Breaking out of toy worlds
+
+Create a system that combines multiple systems and proves that it can't just deal with a single toy world.
 
 ## PAM
 

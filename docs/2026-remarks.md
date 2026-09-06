@@ -1,3 +1,32 @@
+## 2026-09-06
+
+Thoughts about matching hierarchical atoms.
+
+- Maybe the solver should be able to handle hierarchical structures by treating each level as a separate query.
+- Maybe just looking at the top-level predicate is enough (ask); if the top-level predicate matches, the event matches.
+- Maybe when storing events in the analysis phase, they should be expanded as much as possible. "him" being replaced by "farmer", for example. This would solve "him" -> "farmer", but not "tell".
+- Match two nested atoms by flattening them and check how many predicates match; the event that has most matches wins; this is just a matter of picking the event that matches best, isn't it? MAX [predicates matched] / [total predicates]
+- The top-level predicate should match directly, no matter what. The other predicates may match with the dialog contents. This provides us with the values of the variables in the query, which may reduce ambiguity.
+- Don't match all atoms of the query at once, go through them one by one. Accumulate bindings. Make sure they're flattened in the right order. The first one should match the first one. Each of the others should match the sentence; if it doesn't, try the dialog; try inference (for "tell" for example). If all fail, skip it and continue. At the end, take the event that matches most (but only if this is still necessary; perhaps make this a system option).
+
+## 2026-09-05
+
+I am adding all flattened dialog sentences as haystack to the explain matcher. But this causes the match to take place too early.
+
+===
+
+Applications like PAM **require** that CD provides identical semantics for similar sentences. Making them identical is now my problem to solve (not using CD), and its hard. But I also **suspect** that it is **impossible** if not very hard to make similar sentences identfical qua semantics. For one, CD reduces the semantics by leaving out much of the fine detail. I also suspect that this is one of the things that people put off when using CD. The role of the parser, which was to be produced by one, or a few, experts, and most students would not be able to contribute to the rules of the parser because it was so hard. Not only created the parser semantics, it also did pronoun resolution and a whole lot of other things. Building applications on top of the parser was relatively easy, because **most of the work had been done already**, but the parser was a cluster of unexplainable heuristics. I want to emphasize that I'm not saying this to blame anyone. But this is important to understand; why CD worked so well, but on the other hand why it was used so little in later projects.
+
+## 2026-09-01
+
+I am matching `farmer()` to `him()` (farmer is the needle). This is impossible. Am I doing the matching the wrong way round?
+
+No this is the correct way. In order to match "farmer" to "him" I need more information that can be gathered from the event sentence. I have to add everything I know so far from the dialog.
+
+This sentence must be added to the searchable domain: "He pulled over to a farmer standing by the side of the road."
+
+For now that means storing it in the plan analyzer.
+
 ## 2026-08-14
 
 I implemented the ellipsis in the parser, and that was easy, but I'm not very happy with that idea, because it seems pretty brittle. I prefer to have the power of the inferences when matching. That means rewriting the nested structure to a flat structure.
@@ -7,7 +36,9 @@ Structure A is being solved (needle), while B is turned into a data source (hays
 A
 
     ask($19, `person:John`, $20, $21)
+    farmer($20)
     tell($21, $20, $22, $23)
+    him($22)
     where($23, $24)
     be($24, $25)
     he($25)
@@ -15,6 +46,7 @@ A
 B
 
     ask(`entity:DLG8`, `entity:DLG9`, `entity:DLG10`, `entity:DLG11`)
+    him(`entity:DLG10`)
     where(`entity:DLG11`, `entity:DLG12`)
     be(`entity:DLG12`, `entity:DLG13`)
     he(`entity:DLG13`, `entity:DLG14`)
@@ -47,23 +79,23 @@ A.                                                 B.
     2. `person:John`                                   2. `entity:DLG9`
     3. $20                                                modifier
         modifier                                             (he
-            (farmer                                               1. `entity:DLG9`)
+            (farmer                                             1. `entity:DLG9`)
             1. $20)                                    3. `entity:DLG10`
     4. $21                                                modifier
         modifier                                             (him
-            (tell                                                 1. `entity:DLG10`)
+            (tell                                               1. `entity:DLG10`)
             1. $21                                     4. `entity:DLG11`
             2. $20                                        modifier
             3. $22                                          (where
                 modifier                                        1. `entity:DLG11`
-                    (him                                          2. `entity:DLG12`
-                    1. $22)                                       modifier
-            4. $23                                                  (be
-                modifier                                                1. `entity:DLG12`
-                    (where                                                2. `entity:DLG13`
-                    1. $23                                                modifier
-                    2. $24                                                  (he
-                        modifier                                                1. `entity:DLG13`))))
+                    (him                                        2. `entity:DLG12`
+                    1. $22)                                     modifier
+            4. $23                                                (be
+                modifier                                              1. `entity:DLG12`
+                    (where                                            2. `entity:DLG13`
+                    1. $23                                            modifier
+                    2. $24                                              (he
+                        modifier                                            1. `entity:DLG13`))))
                             (be
                             1. $24
                             2. $25
