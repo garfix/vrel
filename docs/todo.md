@@ -1,5 +1,15 @@
 ## todo
 
+- Don't match all atoms of the query at once, go through them one by one.
+- Accumulate bindings.
+- Make sure they're flattened in the right order.
+- The first one should match the first one.
+- Each of the others should match the sentence; if it doesn't, try the dialog; try inference (for "tell" for example).
+- If all fail, skip it and continue.
+- At the end, take the event that matches most (but only if this is still necessary; perhaps make this a system option).
+
+===
+
 - OK (sort of) question: how does PAM create the dummy plan between two goals?
 
 - OK should be able to introduce a new variable in the RHS

@@ -1,5 +1,6 @@
 intent_understand(Story) :-
     reify(Story, Reified),
+    log("reified", Reified),
     induce_facts(Reified),
     analyze_plans(Reified),
     # log_nodes(),

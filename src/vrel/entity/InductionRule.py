@@ -7,7 +7,7 @@ from vrel.entity.Atom import Atom
 class InductionRule:
     antecedent: list[Atom]
     consequent: list[Atom]
-    plan: bool
+    plan: None | list[Atom]
 
     def __str__(self) -> str:
         s = str(self.antecedent)
@@ -16,7 +16,7 @@ class InductionRule:
             s += "."
         else:
             if self.plan:
-                s += " => Plan"
+                s += " => " + str(self.plan)
             s += " => " + ", ".join([(str(atom)) for atom in self.consequent]) + "."
 
         return s

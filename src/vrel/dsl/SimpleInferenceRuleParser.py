@@ -77,7 +77,12 @@ class SimpleInferenceRuleParser:
                 rules.append(rule)
                 pos = new_pos
             else:
-                break
+                rule, new_pos = self.parse_plan_induction_rule(tokens, pos)
+                if rule:
+                    rules.append(rule)
+                    pos = new_pos
+                else:
+                    break
 
         pos = self.eat_trailing_comments(tokens, pos)
 
@@ -119,13 +124,42 @@ class SimpleInferenceRuleParser:
             return None, new_pos
         pos = new_pos
 
-        plan = False
+        consequents = []
         implies, new_pos = self.parse_token(tokens, pos)
         if implies == "=>":
-            plan_token, new_pos = self.parse_token(tokens, new_pos)
-            if plan_token == "Plan":
-                pos = new_pos
-                plan = True
+            pos = new_pos
+            consequents, new_pos = self.parse_atoms(tokens, pos)
+            if not consequents:
+                return None, new_pos
+            pos = new_pos
+        else:
+            return None, new_pos
+
+        dot, new_pos = self.parse_token(tokens, pos)
+
+        if not dot == ".":
+            return None, new_pos
+        pos = new_pos
+
+        return InductionRule(antecedents, consequents, None), pos
+
+    # near(E1, E2) => ask(E1, E1, F1) => know(E1, F1).
+    def parse_plan_induction_rule(self, tokens: list[str], pos: int):
+
+        antecedents, new_pos = self.parse_atoms(tokens, pos)
+        if not antecedents:
+            return None, new_pos
+        pos = new_pos
+
+        plan = None
+        implies, new_pos = self.parse_token(tokens, pos)
+        if implies == "=>":
+            plan, new_pos = self.parse_atoms(tokens, new_pos)
+            if not plan:
+                return None, new_pos
+            pos = new_pos
+        else:
+            return None, new_pos
 
         consequents = []
         implies, new_pos = self.parse_token(tokens, pos)

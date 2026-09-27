@@ -9,6 +9,7 @@ from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.dsl.SimpleInferenceRuleParser import SimpleInferenceRuleParser
 from vrel.module.induction.PlanAnalyzer import PlanAnalyzer
+from vrel.module.transform.query import make_query
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
 
 
@@ -111,6 +112,9 @@ class InductionModule(SomeModule):
         if has_variables(atoms):
             raise Exception(f"Cannot induce facts based on unbound atoms. Please reify {atoms}")
 
+        query = make_query(atoms)
+        self.plan_analyzer.dialog.extend(query)
+
         self.plan_analyzer.justify(atoms, self.plan_analyzer_rules, context)
 
         return [[None]]
@@ -127,7 +131,7 @@ class InductionModule(SomeModule):
     def explain(self, arguments: list, context: ExecutionContext) -> list[list]:
         question, var, _ = arguments
 
-        explanation = self.plan_analyzer.explain(question)
+        explanation = self.plan_analyzer.explain(question, context)
 
         if not explanation:
             return []

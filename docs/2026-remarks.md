@@ -1,3 +1,45 @@
+## 2026-09-27
+
+Joining these two sentences would identify him() with farmer()
+
+    goal(be_near(C1, E1, E2)) => Plan => goal(know(C2, E1, location(L1))).
+    plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)).
+
+Here `Plan` would be filled in with `plan(ask(C1, E1, E2, F1))` and this would identify the `E2` in `ask` with the `E2` in `be_near`. The problem is just that these variables live in different scopes. To make the point:
+
+    goal(be_near(C1, E1, E2)) => Plan => goal(know(C2, E1, location(L1))).
+    plan(ask(C1, E1, E5, F1)) => goal(know(C2, E1, F1)).
+
+Would be the same semantically, but it shows that `E2` can't just be identified by `E5`.
+
+Solutions?
+
+- get rid of `P -> Plan -> Q`; it doesn't work and it's too difficult
+  - no, we need the anonymous plans to link actions to goals in a single rule
+  - do something like this:
+    `goal(be_near(C1, E1, E2)) => Plan(ask(C1, E1, E2, L1) | demand(C1, E1, E2, F1)) => goal(know(C2, E1, L1)).`
+    - that is, work out the alternative possiblities
+  - do something like this:
+    `goal(be_near(C1, E1, E2)) => plan(ask(C1, E1, E2, L1)) => goal(know(C2, E1, L1)).`
+    - that is, enforce that a plan has a fixed signature
+
+## 2026-09-26
+
+Working this out:
+
+- Don't match all atoms of the query at once, go through them one by one. Accumulate bindings. Make sure they're flattened in the right order. The first one should match the first one. Each of the others should match the sentence; if it doesn't, try the dialog; try inference (for "tell" for example). If all fail, skip it and continue. At the end, take the event that matches most (but only if this is still necessary; perhaps make this a system option).
+
+  ask($19, `person:John`, $20, $21)
+  ask(`entity:DLG8`, `entity:DLG9`, `entity:DLG10`, `entity:DLG11`)
+
+  $20 = `entity:DLG10`
+
+  farmer($20)
+  farmer(`entity:DLG4`)
+
+Problem: `entity:DLG10` doesn't equal `entity:DLG4` yet.
+But it should. When "He asked him where he was." was processed, this identity should have been established.
+
 ## 2026-09-06
 
 Thoughts about matching hierarchical atoms.
@@ -33,7 +75,7 @@ I implemented the ellipsis in the parser, and that was easy, but I'm not very ha
 
 Structure A is being solved (needle), while B is turned into a data source (haystack). Both structures will need to be flattened.
 
-A
+A / Why did John ask a farmer to tell him where he was?
 
     ask($19, `person:John`, $20, $21)
     farmer($20)
@@ -43,7 +85,7 @@ A
     be($24, $25)
     he($25)
 
-B
+B / He asked him where he was.
 
     ask(`entity:DLG8`, `entity:DLG9`, `entity:DLG10`, `entity:DLG11`)
     him(`entity:DLG10`)
