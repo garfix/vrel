@@ -100,30 +100,31 @@ class PlanAnalyzer:
             subject_binding = match(rule.antecedent, current_subject_query, {}, self.induction_model)
             if subject_binding is not None:
 
-                bound_consequent = bind_variables(rule.consequent, subject_binding)
-                variablized_consequent = variablize(bound_consequent)
-
                 for item in self.known_facts:
 
                     # match the consequent to the known item
-                    item_binding = match(variablized_consequent, item, {}, self.induction_model)
-
+                    item_binding = match(rule.consequent, item, {}, self.induction_model)
                     if item_binding is not None:
 
                         # the equality between dialog variables that connect two sentences can now be stored
-                        print("<>")
-                        print("item", item)
-                        print("variablized_consequent", variablized_consequent)
-                        print("binding", item_binding)
-
-                        self.store_identity(item_binding, context)
+                        self.store_identity(subject_binding, item_binding, context)
 
                         if rule.plan is not None:
-                            self.predicted_plan(current_subject, item)
+                            # self.predicted_plan(current_subject, item)
+                            pass
                         else:
-                            self.predicted_no_plan(current_subject, item)
-
-                        print("</>")
+                            # print("<>")
+                            # print("item", item)
+                            # print("variablized_consequent", variablized_consequent)
+                            # print("bound_consequent", bound_consequent)
+                            # print("bound_antecedent", bind_variables(rule.antecedent, subject_binding))
+                            # print("item_binding", item_binding)
+                            # print("subject_binding", subject_binding)
+                            # print("rule", rule)
+                            # print("current_subject", current_subject)
+                            # self.predicted_no_plan(current_subject, item)
+                            pass
+                            print("</>")
 
                         return True
 
@@ -153,6 +154,8 @@ class PlanAnalyzer:
             plan_node_id = node2.get_first_attempt()
             if plan_node_id:
                 plan_node: PlanNode = self.nodes[plan_node_id]
+                sub_plan_node_ids = plan_node.get_subepisodes()
+                print("sub_plan_node", self.nodes[sub_plan_node_ids[0]])
                 if plan_node.is_empty():
                     pre_goal_ids = node1.get_subepisodes()
                     pre_action_ids = node1.get_actions()
@@ -161,18 +164,12 @@ class PlanAnalyzer:
                     # new link:     pre-Q => empty Plan1:filled with Plan2
                     plan_node.plan = node1.plan
 
-                    # print("node1", node1)
-                    # print("current_subject", current_subject)
-
                     if len(pre_goal_ids) > 0:
                         subepisode = self.nodes[pre_goal_ids[0]]
-                        # print("subepisode", subepisode)
                         self.link_nodes(plan_node, subepisode)
                     elif len(pre_action_ids) > 0:
                         action = self.nodes[pre_action_ids[0]]
-                        # print("action", action)
                         self.link_nodes(plan_node, action)
-
                     else:
                         raise Exception("Plan has neither subepisode nor action")
 
@@ -183,14 +180,16 @@ class PlanAnalyzer:
 
     def store_identity(
         self,
+        subject_binding: dict,
         item_binding: dict,
         context: ExecutionContext,
     ):
         print("Store identity")
-        for variable in item_binding:
-            if isinstance(item_binding[variable], Id):
-                print(f"SAME AS {variable}, {item_binding[variable]}")
-                context.solver.write_atom(Atom("same_as", Id(variable, "entity"), item_binding[variable]))
+        for variable in subject_binding:
+            if variable in item_binding:
+                if isinstance(subject_binding[variable], Id) and isinstance(item_binding[variable], Id):
+                    print(f"SAME AS {subject_binding[variable]}, {item_binding[variable]}")
+                    context.solver.write_atom(Atom("same_as", subject_binding[variable], item_binding[variable]))
 
     def try_inference(self, chain: list[Link], context: ExecutionContext):
         # chain is a list of [cd, all_inference_rules]
@@ -243,7 +242,6 @@ class PlanAnalyzer:
             # print("binding", binding)
             # print("c1", c1)
             # print("c2", c2)
-            # self.store_identity(binding, context)
 
             node1 = self.add_node(current_subject)
             node2 = self.add_node(c2)

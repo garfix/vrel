@@ -1,5 +1,7 @@
 ## todo
 
+match
+
 - Don't match all atoms of the query at once, go through them one by one.
 - Accumulate bindings.
 - Make sure they're flattened in the right order.
@@ -7,6 +9,18 @@
 - Each of the others should match the sentence; if it doesn't, try the dialog; try inference (for "tell" for example).
 - If all fail, skip it and continue.
 - At the end, take the event that matches most (but only if this is still necessary; perhaps make this a system option).
+
+predicted
+
+`predicted` tries to match a `current_subject` to the known facts by applying rules
+
+Given a `current_subject` and a rule A => Plan => B, if `current_subject` matches A and `nodes` contains nodes that match Plan => B (let's call them Plan1 and B1), (note: Plan may be empty and only contain a potential predicate) then create a link between `current_subject` and Plan, and fill the unbound variables in Plan1 and B1.
+
+- find a rule R1 whose antecedent matches `current_subject` and produce binding B
+- find nodes Plan1 and B1 that match R1's plan and consequent, given binding B
+- link `current_subject` to Plan1 and fill in Plan1 and B1
+
+can i work with nodes directly instead of trying to find them everytime?
 
 ===
 

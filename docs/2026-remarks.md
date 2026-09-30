@@ -23,6 +23,23 @@ Solutions?
     `goal(be_near(C1, E1, E2)) => plan(ask(C1, E1, E2, L1)) => goal(know(C2, E1, L1)).`
     - that is, enforce that a plan has a fixed signature
 
+===
+
+    rule:
+        plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)).
+    current_subject
+        plan(ask(C1, E1, E2, F1))
+    item:
+        goal(know(C2, E1, F1))
+
+`store_identity` should get 2 bindings, with same keys, identify all values of these keys
+
+===
+
+I just want to do unification with these predicates. If I find `plan(ask(C1, E1, E2, F1))` and I have an existing one that is partially bound, just bind it more.
+
+Or I want to do reactive programming. Link variables. If one changes here, it should affect the others automatically.
+
 ## 2026-09-26
 
 Working this out:
