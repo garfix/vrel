@@ -11,12 +11,12 @@ plan(do_restaurant(E1, E2)) => goal(not(hungry(E1))).
 # [['do-$restaurant-plan', ['planner', '?x'], ['restaurant', '?y']]],
 # [['goal', ['planner', '?x'],
 #             ['objective', ['prox', ['actor', '?x'], ['location', '?y']]]], ['isa', 'restaurant', '?y']]
-goal(prox(E1, E2)), equals(E2, 'restaurant') => plan(do_restaurant(E1, E2)).
+goal(prox(S1, E1, 'restaurant')) => plan(do_restaurant(E1, E2)).
 
 # [['goal', ['planner', '?x'], ['objective', ['prox', ['actor', '?x'], ['location', '?y']]]]],
 # [['goal', ['planner', '?x'],
 #           ['objective', ['know', ['actor', '?x'], ['fact', ['is', ['actor', '?y'], ['prox', '?z']]]]]]]
-goal(know(E1, fact(distance(E2)))) => goal(prox(E1, E2)).
+goal(know(E1, fact(distance(E2)))) => goal(prox(S1, E1, E2)).
 
 # [['goal', ['planner', '?x'],
 #             ['objective', ['know', ['actor', '?x'],
@@ -46,16 +46,16 @@ grasp(S1, E1, E2) => plan(take(S1, E1, E2)).
 
 # [['goal', ['planner', '?x'], ['objective', ['prox', ['actor', '?x'], ['location', '?y']]]]],
 # [['use-vehicle-plan', ['planner', '?x']]]
-plan(use_vehicle(E1, 'car')) => goal(prox(E1, E2)).
+plan(use_vehicle(E1, 'car')) => goal(prox(S1, E1, E3)).
 
 # [['use-vehicle-plan', ['planner', '?x'], ['object', '?y']]],
 # [['goal', ['planner', '?x'],
 #             ['objective', ['prox', ['actor', '?x'], ['location', '?y']]]], ['isa', 'car', '?y']]
-goal(prox(E1, 'car')) => plan(use_vehicle(E1, 'car')).
+goal(prox(S1, E1, 'car')) => plan(use_vehicle(E1, 'car')).
 
 # [['goal', ['planner', '?x'], ['objective', ['prox', ['actor', '?x'], ['location', '?y']]]]],
 # [['walk-plan', ['planner', '?x'], ['location', '?y']]]
-plan(walk(S1, E1, E2)) => goal(prox(E1, E2)).
+plan(walk(S1, E1, E2)) => goal(prox(S2, E1, E2)).
 
 # [['walk-plan', ['planner', '?x'], ['location', '?y']]],
 # [['ptrans', ['actor', '?x'], ['object', '?x'], ['to', '?y']]]

@@ -102,11 +102,19 @@ class PlanAnalyzer:
 
                 for item in self.known_facts:
 
+                    # bind constants, but not id's, because their identity has not yet been established, so they will seem different,
+                    # even though they may be identical
+                    s = dict(filter(lambda kv: not isinstance(kv[1], Id), subject_binding.items()))
                     # match the consequent to the known item
-                    item_binding = match(rule.consequent, item, {}, self.induction_model)
+                    item_binding = match(rule.consequent, item, s, self.induction_model)
+
                     if item_binding is not None:
 
                         # the equality between dialog variables that connect two sentences can now be stored
+                        # print("rule", rule)
+                        # print("current_subject", current_subject)
+                        # print("item", item)
+                        # print("subject_binding", subject_binding)
                         self.store_identity(subject_binding, item_binding, context)
 
                         if rule.plan is not None:
