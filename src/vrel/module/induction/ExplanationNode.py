@@ -14,5 +14,8 @@ class ExplanationNode:
     def get_atom(self) -> Atom:
         raise Exception("Not implemented")
 
+    def set_atom(self, atom: Atom):
+        raise Exception("Not implemented")
+
     def get_subepisodes(self) -> list[int]:
         raise Exception("Not implemented")

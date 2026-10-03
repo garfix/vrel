@@ -5,6 +5,7 @@ from vrel.entity.Atom import Atom
 from vrel.entity.Id import Id
 from vrel.entity.InductionRule import InductionRule
 from vrel.entity.ExecutionContext import ExecutionContext
+from vrel.entity.Variable import Variable
 from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeModule import SomeModule
 from vrel.module.induction.ActionNode import ActionNode
@@ -100,27 +101,38 @@ class PlanAnalyzer:
             subject_binding = match(rule.antecedent, current_subject_query, {}, self.induction_model)
             if subject_binding is not None:
 
+                # bind constants, but not id's, because their identity has not yet been established, so they will seem different,
+                # even though they may be identical
+                sb = dict(filter(lambda kv: not isinstance(kv[1], Id), subject_binding.items()))
+
                 for item in self.known_facts:
 
-                    # bind constants, but not id's, because their identity has not yet been established, so they will seem different,
-                    # even though they may be identical
-                    s = dict(filter(lambda kv: not isinstance(kv[1], Id), subject_binding.items()))
                     # match the consequent to the known item
-                    item_binding = match(rule.consequent, item, s, self.induction_model)
+                    item_binding = match(rule.consequent, item, sb, self.induction_model)
 
                     if item_binding is not None:
 
+                        ib = dict(filter(lambda kv: not isinstance(kv[1], Id), item_binding.items()))
+
                         # the equality between dialog variables that connect two sentences can now be stored
+                        print("==========")
                         # print("rule", rule)
                         # print("current_subject", current_subject)
                         # print("item", item)
                         # print("subject_binding", subject_binding)
-                        self.store_identity(subject_binding, item_binding, context)
+                        # self.store_identity(subject_binding, item_binding, context)
 
                         if rule.plan is not None:
-                            # self.predicted_plan(current_subject, item)
-                            pass
+                            if self.predicted_plan(
+                                rule.plan, current_subject, subject_binding, item_binding, item, context
+                            ):
+                                return True
                         else:
+                            if self.predicted_no_plan(
+                                rule.plan, current_subject, subject_binding, item_binding, item, context
+                            ):
+                                return True
+
                             # print("<>")
                             # print("item", item)
                             # print("variablized_consequent", variablized_consequent)
@@ -131,60 +143,100 @@ class PlanAnalyzer:
                             # print("rule", rule)
                             # print("current_subject", current_subject)
                             # self.predicted_no_plan(current_subject, item)
-                            pass
-                            print("</>")
 
-                        return True
+                        # return True
 
         return False
 
-    def predicted_plan(self, current_subject, item):
-        # this:         P => Plan1 => Q
-        # exist:        A => Plan2 => Q
-        # new link:     P => Plan2
-        node1 = self.add_node(current_subject)
-        print("node1", node1)
-        # print("rule", rule)
-        node2 = self.add_node(item)
-        plan_node_id = node2.get_first_attempt()
-        plan_node: PlanNode = self.nodes[plan_node_id]
-        self.link_nodes(node2, plan_node)
-        self.link_nodes(plan_node, node1)
+    def predicted_no_plan(self, rule_plan, bottom, subject_binding, item_binding, top: list[Atom], context):
 
-    def predicted_no_plan(self, current_subject: list, item):
-        found = False
+        top_node = self.find_node(top)
+        bottom_node = self.find_node(bottom)
 
-        # todo: this creates a node that is of no use
-        node1 = self.add_node(current_subject)
-        node2 = self.add_node(item)
-        if isinstance(node1, PlanNode) and isinstance(node2, GoalNode):
+        print("subject_binding", subject_binding)
+        print("item_binding", item_binding)
+        print("bottom_node", bottom_node)
+        print("top_node", top_node)
 
-            plan_node_id = node2.get_first_attempt()
-            if plan_node_id:
-                plan_node: PlanNode = self.nodes[plan_node_id]
-                sub_plan_node_ids = plan_node.get_subepisodes()
-                print("sub_plan_node", self.nodes[sub_plan_node_ids[0]])
-                if plan_node.is_empty():
-                    pre_goal_ids = node1.get_subepisodes()
-                    pre_action_ids = node1.get_actions()
-                    # this:         Plan1 => Q
-                    # exist:        pre-Q => empty Plan2 => Q
-                    # new link:     pre-Q => empty Plan1:filled with Plan2
-                    plan_node.plan = node1.plan
+        self.store_identity(subject_binding, item_binding, context)
+        return True
 
-                    if len(pre_goal_ids) > 0:
-                        subepisode = self.nodes[pre_goal_ids[0]]
-                        self.link_nodes(plan_node, subepisode)
-                    elif len(pre_action_ids) > 0:
-                        action = self.nodes[pre_action_ids[0]]
-                        self.link_nodes(plan_node, action)
-                    else:
-                        raise Exception("Plan has neither subepisode nor action")
+    def predicted_plan(self, rule_plan, bottom, subject_binding, item_binding, top: list[Atom], context):
+        top_node = self.find_node(top)
+        bottom_node = self.find_node(bottom)
+        plan_node_index = top_node.get_first_attempt()
+        plan_node = self.nodes[plan_node_index]
+        plan = plan_node.get_atom()
 
-                    found = True
+        plan_binding = match(rule_plan, [plan], subject_binding, self.induction_model)
+        if plan_binding is None:
+            if plan.arguments[0] == "variable":
+                plan_binding = {}
+                plan_atom = bind_variables(bind_variables(rule_plan[0], subject_binding), item_binding)
+                plan_node.set_atom(plan_atom)
+            else:
+                return False
 
-        if not found:
-            self.link_nodes(node2, node1)
+        print("subject_binding", subject_binding)
+        print("plan_binding", plan_binding)
+        print("item_binding", item_binding)
+        print("bottom_node", bottom_node)
+        print("plan_node", plan_node)
+        print("top_node", top_node)
+
+        self.store_identity(subject_binding, plan_binding, context)
+        self.store_identity(plan_binding, item_binding, context)
+        self.store_identity(subject_binding, item_binding, context)
+
+        return True
+
+    # def predicted_plan(self, current_subject, item):
+    #     # this:         P => Plan1 => Q
+    #     # exist:        A => Plan2 => Q
+    #     # new link:     P => Plan2
+    #     node1 = self.add_node(current_subject)
+    #     print("node1", node1)
+    #     # print("rule", rule)
+    #     node2 = self.add_node(item)
+    #     plan_node_id = node2.get_first_attempt()
+    #     plan_node: PlanNode = self.nodes[plan_node_id]
+    #     self.link_nodes(node2, plan_node)
+    #     self.link_nodes(plan_node, node1)
+
+    # def predicted_no_plan(self, current_subject: list, item):
+    #     found = False
+
+    #     # todo: this creates a node that is of no use
+    #     node1 = self.add_node(current_subject)
+    #     node2 = self.add_node(item)
+    #     if isinstance(node1, PlanNode) and isinstance(node2, GoalNode):
+
+    #         plan_node_id = node2.get_first_attempt()
+    #         if plan_node_id:
+    #             plan_node: PlanNode = self.nodes[plan_node_id]
+    #             sub_plan_node_ids = plan_node.get_subepisodes()
+    #             print("sub_plan_node", self.nodes[sub_plan_node_ids[0]])
+    #             if plan_node.is_empty():
+    #                 pre_goal_ids = node1.get_subepisodes()
+    #                 pre_action_ids = node1.get_actions()
+    #                 # this:         Plan1 => Q
+    #                 # exist:        pre-Q => empty Plan2 => Q
+    #                 # new link:     pre-Q => empty Plan1:filled with Plan2
+    #                 plan_node.plan = node1.plan
+
+    #                 if len(pre_goal_ids) > 0:
+    #                     subepisode = self.nodes[pre_goal_ids[0]]
+    #                     self.link_nodes(plan_node, subepisode)
+    #                 elif len(pre_action_ids) > 0:
+    #                     action = self.nodes[pre_action_ids[0]]
+    #                     self.link_nodes(plan_node, action)
+    #                 else:
+    #                     raise Exception("Plan has neither subepisode nor action")
+
+    #                 found = True
+
+    #     if not found:
+    #         self.link_nodes(node2, node1)
 
     def store_identity(
         self,
@@ -225,6 +277,7 @@ class PlanAnalyzer:
         while len(rules) > 0:
             last_rule = rules.pop()
             cs = make_query(current_subject)
+            # print("m3")
             binding = match(last_rule.antecedent, cs, {}, self.induction_model)
 
             # if the combination of antecedent and binding has happened before, skip it
@@ -274,12 +327,19 @@ class PlanAnalyzer:
 
         self.known_facts.append(sentence)
 
-    def add_node(self, atoms: list[Atom]) -> ExplanationNode:
+    def find_node(self, atoms: list[Atom]) -> None | ExplanationNode:
         atom = atoms[0]
         for index, node in enumerate(self.nodes):
             if node.get_atom() == atom:
                 return node
+        return None
 
+    def add_node(self, atoms: list[Atom]) -> ExplanationNode:
+        node = self.find_node(atoms)
+        if node is not None:
+            return node
+
+        atom = atoms[0]
         index = len(self.nodes)
         if atom.predicate == "plan":
             new_node = PlanNode(index, atom)

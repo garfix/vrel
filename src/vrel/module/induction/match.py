@@ -1,13 +1,14 @@
 from vrel.core.Solver import Solver
 from vrel.core.functions.terms import bind_variables
+from vrel.entity.Atom import Atom
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.entity.InferenceRule import InferenceRule
 from vrel.interface.SomeModel import SomeModel
 
 
 def match(
-    pattern,
-    current_subject,
+    pattern: list[Atom],
+    current_subject: list[Atom],
     binding: dict,
     induction_model: SomeModel,
 ):

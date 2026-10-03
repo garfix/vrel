@@ -22,6 +22,9 @@ class PlanNode(ExplanationNode):
     def get_atom(self) -> Atom:
         return self.plan
 
+    def set_atom(self, atom: Atom):
+        self.plan = atom
+
     def add_subepisode(self, child_id: int):
         self.subepisodes.append(child_id)
 
