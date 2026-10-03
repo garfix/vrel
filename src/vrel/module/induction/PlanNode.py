@@ -6,18 +6,21 @@ from vrel.module.induction.GoalNode import GoalNode
 if TYPE_CHECKING:
     from vrel.module.induction.GoalNode import GoalNode
     from vrel.module.induction.ActionNode import ActionNode
+    from vrel.module.induction.PlanNode import PlanNode
 
 
 class PlanNode(ExplanationNode):
     plan: Atom
     subepisodes: list["GoalNode"]
     actions: list["ActionNode"]
+    potential_plans: list[Atom]
 
     def __init__(self, id: int, plan: Atom):
         super().__init__(id)
         self.plan = plan
         self.subepisodes = []
         self.actions = []
+        self.potential_plans = []
 
     def get_atom(self) -> Atom:
         return self.plan
@@ -31,6 +34,9 @@ class PlanNode(ExplanationNode):
     def add_action(self, child_id: int):
         self.actions.append(child_id)
 
+    def add_potential_plan(self, plan: Atom):
+        self.potential_plans.append(plan)
+
     def is_empty(self):
         return self.plan.predicate == "plan" and self.plan.arguments[0] == "variable"
 
@@ -40,5 +46,8 @@ class PlanNode(ExplanationNode):
     def get_actions(self) -> list[int]:
         return self.actions
 
+    def get_potential_plans(self) -> list[Atom]:
+        return self.potential_plans
+
     def __repr__(self):
-        return f"Plan{self.plan}\n subepisodes: {self.subepisodes}\n actions: {self.actions}"
+        return f"Plan{self.plan}\n subepisodes: {self.subepisodes}\n actions: {self.actions}\n potential plans: {self.potential_plans}"

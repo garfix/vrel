@@ -1,3 +1,13 @@
+## 2026-10-04
+
+When a rule such as this fires
+
+    lost(C1, E1)
+     => [ plan(ask(C2, E1, E2, location(L1))) ]
+     => goal(know(C2, E1, location(L1))).
+
+an empty plan is created for the plan node in the middle. The plan's atom is null, but the plan's "potential atoms" will be filled with current values. Some of these values are necessary to do identification later.
+
 ## 2026-09-27
 
 Joining these two sentences would identify him() with farmer()

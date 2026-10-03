@@ -61,23 +61,14 @@ plan(walk(S1, E1, E2)) => goal(prox(S2, E1, E2)).
 # [['ptrans', ['actor', '?x'], ['object', '?x'], ['to', '?y']]]
 get_into(S1, E1, E2), car(E2) => plan(walk(S1, E1, 'car')).
 
+
+
 # John was lost.
 
 goal(know(C1, E1, location(L1))) => plan() => goal(be_at(C1, E1, L2)).
 lost(C1, E1) => plan(ask(C2, E1, E2, location(L1))) => goal(know(C2, E1, location(L1))).
 
-
-# know_location: goal(know(C1, E1, location(C2, E1, L1)))
-# at_location: goal(be_at(C1, E1, L2))
-
-# know_location => Plan => at_location.
-# lost(C1, E1) => know_location.
-
 # He pulled over to a farmer standing by the side of the road.
-
-# todo: options; note: these are just potential plans, they are only actuated when the link is made
-
-# goal(be_near(C1, E1, E2)) => Plan[ ask(C2, E1, E2, F1) ] => goal(know(C3, E1, F1)).
 
 goal(be_near(C1, E1, E2)) => plan(ask(C2, E1, E2, F1)) => goal(know(C3, E1, F1)).
 plan(use_vehicle(C1, E1, E2)) => goal(be_near(C2, E1, E2)).
@@ -87,3 +78,16 @@ pull_over(C1, E1), to(C1, E2) => plan(use_vehicle(C2, E1, E2)).
 
 plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)).
 ask(C1, E1, E2, F1) => plan(ask(C1, E1, E2, F1)).
+
+
+
+# know_location: goal(know(C1, E1, location(C2, E1, L1)))
+# at_location: goal(be_at(C1, E1, L2))
+
+# know_location => Plan => at_location.
+# lost(C1, E1) => know_location.
+
+# todo: options; note: these are just potential plans, they are only actuated when the link is made
+
+# goal(be_near(C1, E1, E2)) => Plan[ ask(C2, E1, E2, F1) ] => goal(know(C3, E1, F1)).
+

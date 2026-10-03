@@ -153,6 +153,15 @@ class PlanAnalyzer:
         top_node = self.find_node(top)
         bottom_node = self.find_node(bottom)
 
+        # plan_node_index = top_node.get_first_attempt()
+        # plan_node = self.nodes[plan_node_index]
+        # plan = plan_node.get_atom()
+        # potential_plan = plan_node.get_potential_plans()[0] if len(plan_node.get_potential_plans()) > 0 else None
+
+        # # fill an empty plan
+        # if plan_node.is_empty():
+        #     plan_node.set_atom(potential_plan)
+
         print("subject_binding", subject_binding)
         print("item_binding", item_binding)
         print("bottom_node", bottom_node)
@@ -167,15 +176,22 @@ class PlanAnalyzer:
         plan_node_index = top_node.get_first_attempt()
         plan_node = self.nodes[plan_node_index]
         plan = plan_node.get_atom()
+        potential_plan = plan_node.get_potential_plans()[0] if len(plan_node.get_potential_plans()) > 0 else None
+        sb = dict(filter(lambda kv: not isinstance(kv[1], Id), subject_binding.items()))
 
-        plan_binding = match(rule_plan, [plan], subject_binding, self.induction_model)
-        if plan_binding is None:
-            if plan.arguments[0] == "variable":
-                plan_binding = {}
-                plan_atom = bind_variables(bind_variables(rule_plan[0], subject_binding), item_binding)
-                plan_node.set_atom(plan_atom)
-            else:
+        # print("potential_plan", potential_plan)
+        # print("rule_plan", rule_plan)
+
+        if plan_node.is_empty():
+            plan_binding = match(rule_plan, [potential_plan], sb, self.induction_model)
+            if plan_binding is None:
                 return False
+        else:
+            plan_binding = match(rule_plan, [plan], sb, self.induction_model)
+            if plan_binding is None:
+                return False
+
+        plan_node.add_subepisode(bottom_node.id)
 
         print("subject_binding", subject_binding)
         print("plan_binding", plan_binding)
@@ -189,54 +205,6 @@ class PlanAnalyzer:
         self.store_identity(subject_binding, item_binding, context)
 
         return True
-
-    # def predicted_plan(self, current_subject, item):
-    #     # this:         P => Plan1 => Q
-    #     # exist:        A => Plan2 => Q
-    #     # new link:     P => Plan2
-    #     node1 = self.add_node(current_subject)
-    #     print("node1", node1)
-    #     # print("rule", rule)
-    #     node2 = self.add_node(item)
-    #     plan_node_id = node2.get_first_attempt()
-    #     plan_node: PlanNode = self.nodes[plan_node_id]
-    #     self.link_nodes(node2, plan_node)
-    #     self.link_nodes(plan_node, node1)
-
-    # def predicted_no_plan(self, current_subject: list, item):
-    #     found = False
-
-    #     # todo: this creates a node that is of no use
-    #     node1 = self.add_node(current_subject)
-    #     node2 = self.add_node(item)
-    #     if isinstance(node1, PlanNode) and isinstance(node2, GoalNode):
-
-    #         plan_node_id = node2.get_first_attempt()
-    #         if plan_node_id:
-    #             plan_node: PlanNode = self.nodes[plan_node_id]
-    #             sub_plan_node_ids = plan_node.get_subepisodes()
-    #             print("sub_plan_node", self.nodes[sub_plan_node_ids[0]])
-    #             if plan_node.is_empty():
-    #                 pre_goal_ids = node1.get_subepisodes()
-    #                 pre_action_ids = node1.get_actions()
-    #                 # this:         Plan1 => Q
-    #                 # exist:        pre-Q => empty Plan2 => Q
-    #                 # new link:     pre-Q => empty Plan1:filled with Plan2
-    #                 plan_node.plan = node1.plan
-
-    #                 if len(pre_goal_ids) > 0:
-    #                     subepisode = self.nodes[pre_goal_ids[0]]
-    #                     self.link_nodes(plan_node, subepisode)
-    #                 elif len(pre_action_ids) > 0:
-    #                     action = self.nodes[pre_action_ids[0]]
-    #                     self.link_nodes(plan_node, action)
-    #                 else:
-    #                     raise Exception("Plan has neither subepisode nor action")
-
-    #                 found = True
-
-    #     if not found:
-    #         self.link_nodes(node2, node1)
 
     def store_identity(
         self,
@@ -311,6 +279,10 @@ class PlanAnalyzer:
                 self.generator += 1
                 atoms = [Atom("plan", "variable", self.generator)]
                 plan_node = self.add_node(atoms)
+                map = {}
+                genny = self.variable_generator
+                potential_plan = generate_constants(bind_variables(last_rule.plan[0], binding), genny, map)
+                plan_node.add_potential_plan(potential_plan)
                 chain.append(Link(atoms, rules))
 
                 self.link_nodes(node2, plan_node)

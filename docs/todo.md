@@ -1,5 +1,7 @@
 ## todo
 
+define how the rules are actually used. this is preferably very intuitive, must it must be defined (and implemented :)
+
 match
 
 - Don't match all atoms of the query at once, go through them one by one.

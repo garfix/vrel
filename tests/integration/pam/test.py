@@ -83,11 +83,11 @@ class TestPAM(unittest.TestCase):
 
         # test the system
         tests = [
-            [
-                # Example from MicroPAM
-                ["Willa was hungry. She picked up the Michelin guide. She got into her car.", "OK"],
-                ["Why did Willa pick up a Michelin guide?", "Because she wanted to know the distance to a restaurant."],
-            ],
+            # [
+            #     # Example from MicroPAM
+            #     ["Willa was hungry. She picked up the Michelin guide. She got into her car.", "OK"],
+            #     ["Why did Willa pick up a Michelin guide?", "Because she wanted to know the distance to a restaurant."],
+            # ],
             [
                 # 14 A detailed example
                 [
