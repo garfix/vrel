@@ -8,6 +8,25 @@ When a rule such as this fires
 
 an empty plan is created for the plan node in the middle. The plan's atom is null, but the plan's "potential atoms" will be filled with current values. Some of these values are necessary to do identification later.
 
+===
+
+Using the current rules of prediction, the last prediction must be made thus:
+
+- If `A => B` and `current_subject` matches `a`, and `a` is a plan, and `c -> b`, and `c` is an empty plan, and `z -> a`,
+  - an identity is established between `a`'s potential plan (the one that matches) and `c`'s plan
+  - `a`'s plan replaces `c`'s plan
+  - a link between `z` and `c` is established
+  - `a` may be removed
+
+but this is very complicated and prone to error.
+
+Alternatively, with the same rules
+
+    plan(ask(C1, E1, E2, F1)) => goal(know(C2, E1, F1)).
+    ask(C1, E1, E2, F1) => plan(ask(C1, E1, E2, F1)).
+
+When `plan(ask(C1, E1, E2, F1))` is induced, in stead of just adding the node, I could check the potential plans of the existing plan nodes to see if it matches. If so, then don't add a new node at all, but fix the potential plan (fill the (actual) plan with this new plan) and establish identities.
+
 ## 2026-09-27
 
 Joining these two sentences would identify him() with farmer()

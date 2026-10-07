@@ -1,6 +1,7 @@
 ## todo
 
-define how the rules are actually used. this is preferably very intuitive, must it must be defined (and implemented :)
+i just linked a node to a potential plan; identifying some ids
+still working through the sentences
 
 match
 

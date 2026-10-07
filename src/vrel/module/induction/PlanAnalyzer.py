@@ -1,3 +1,4 @@
+from vrel.core.functions.id_unification import id_unification
 from vrel.core.functions.helper import hash_it
 from vrel.core.functions.terms import bind_variables
 from vrel.core.functions.variables import generate_constants, variablize
@@ -162,10 +163,10 @@ class PlanAnalyzer:
         # if plan_node.is_empty():
         #     plan_node.set_atom(potential_plan)
 
-        print("subject_binding", subject_binding)
-        print("item_binding", item_binding)
-        print("bottom_node", bottom_node)
-        print("top_node", top_node)
+        # print("subject_binding", subject_binding)
+        # print("item_binding", item_binding)
+        # print("bottom_node", bottom_node)
+        # print("top_node", top_node)
 
         self.store_identity(subject_binding, item_binding, context)
         return True
@@ -272,13 +273,13 @@ class PlanAnalyzer:
             # print("c1", c1)
             # print("c2", c2)
 
-            node1 = self.add_node(current_subject)
-            node2 = self.add_node(c2)
+            node1 = self.add_node(current_subject, context)
+            node2 = self.add_node(c2, context)
 
             if last_rule.plan:
                 self.generator += 1
                 atoms = [Atom("plan", "variable", self.generator)]
-                plan_node = self.add_node(atoms)
+                plan_node = self.add_node(atoms, context)
                 map = {}
                 genny = self.variable_generator
                 potential_plan = generate_constants(bind_variables(last_rule.plan[0], binding), genny, map)
@@ -306,9 +307,39 @@ class PlanAnalyzer:
                 return node
         return None
 
-    def add_node(self, atoms: list[Atom]) -> ExplanationNode:
+    def find_potential_node(self, atoms: list[Atom], context):
+        for node in self.nodes:
+            if isinstance(node, PlanNode):
+                for potential_plan in node.get_potential_plans():
+                    print("pot", potential_plan)
+                    print("atoms", atoms)
+                    id_bindings = id_unification([potential_plan], atoms, [])
+                    if id_bindings is not None:
+                        print("MATCH")
+                        b1, b2 = self.process_id_unification_result(id_bindings)
+                        self.store_identity(b1, b2, context)
+                    return node
+        return None
+
+    def process_id_unification_result(self, result: list[list[Atom, Atom]]):
+        b1 = {}
+        b2 = {}
+
+        for duo in result:
+            variable = self.variable_generator.next()
+            b1[variable] = duo[0]
+            b2[variable] = duo[1]
+
+        return b1, b2
+
+    def add_node(self, atoms: list[Atom], context) -> ExplanationNode:
         node = self.find_node(atoms)
         if node is not None:
+            return node
+
+        node = self.find_potential_node(atoms, context)
+        if node is not None:
+            node.set_atom(atoms[0])
             return node
 
         atom = atoms[0]
