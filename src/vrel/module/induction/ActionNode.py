@@ -13,4 +13,4 @@ class ActionNode(ExplanationNode):
         return self.action
 
     def __repr__(self):
-        return f"Action{self.action}"
+        return f"Action {self.id} {self.action}"

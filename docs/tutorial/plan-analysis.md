@@ -27,12 +27,7 @@ Definitions
 When an atom is named `a` in the context of a rule `A => B`, this signifies that `a` matches `A`.
 
 - If `A => B` and `current_subject` matches `a`, and `b` was already established (in nodes), a link between `a` and `b` is created, and identities between `a` and `b` are created.
-- If `A => Plan(s) => B` and `current_subject` matches `a`, and `plan -> b` was already established (in nodes), a link between `a` and `plan` is created, and identities between `a` and `b` and `plan` are created. If `plan` was empty, it will **stay empt**, but the variables of potential plans will bound.
-- If `A => B` and `current_subject` matches `a`, and `a` is a plan, and `c -> b`, and `c` is an empty plan, and `z -> a`,
-  - an identity is established between `a`'s potential plan (the one that matches) and `c`'s plan
-  - `a`'s plan replaces `c`'s plan
-  - a link between `z` and `c` is established
-  - `a` may be removed
+- If `A => Plan(s) => B` and `current_subject` matches `a`, and `plan -> b` was already established (in nodes), a link between `a` and `plan` is created, and identities between `a` and `b` and `plan` are created. If `plan` was empty, it will **stay empty**, but the variables of potential plans will bound.
 
 ## Inference
 

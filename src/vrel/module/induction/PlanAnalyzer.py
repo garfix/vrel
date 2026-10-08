@@ -183,6 +183,10 @@ class PlanAnalyzer:
         # print("potential_plan", potential_plan)
         # print("rule_plan", rule_plan)
 
+        # print("top_node", top_node)
+        # print("plan_node", plan_node)
+        # print("bottom_node", bottom_node)
+
         if plan_node.is_empty():
             plan_binding = match(rule_plan, [potential_plan], sb, self.induction_model)
             if plan_binding is None:
@@ -275,6 +279,7 @@ class PlanAnalyzer:
 
             node1 = self.add_node(current_subject, context)
             node2 = self.add_node(c2, context)
+            plan_node = None
 
             if last_rule.plan:
                 self.generator += 1
@@ -291,6 +296,12 @@ class PlanAnalyzer:
 
             else:
                 self.link_nodes(node2, node1)
+
+            # print("...........")
+            # print("parent", node2, c2)
+            # if plan_node:
+            #     print("plan", plan_node)
+            # print("child", node1, current_subject)
 
             return c2
 
@@ -311,14 +322,14 @@ class PlanAnalyzer:
         for node in self.nodes:
             if isinstance(node, PlanNode):
                 for potential_plan in node.get_potential_plans():
-                    print("pot", potential_plan)
-                    print("atoms", atoms)
+                    # print("pot", potential_plan)
+                    # print("atoms", atoms)
                     id_bindings = id_unification([potential_plan], atoms, [])
                     if id_bindings is not None:
-                        print("MATCH")
+                        # print("MATCH", potential_plan, atoms)
                         b1, b2 = self.process_id_unification_result(id_bindings)
                         self.store_identity(b1, b2, context)
-                    return node
+                        return node
         return None
 
     def process_id_unification_result(self, result: list[list[Atom, Atom]]):

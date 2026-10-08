@@ -50,4 +50,4 @@ class PlanNode(ExplanationNode):
         return self.potential_plans
 
     def __repr__(self):
-        return f"Plan{self.plan}\n subepisodes: {self.subepisodes}\n actions: {self.actions}\n potential plans: {self.potential_plans}"
+        return f"Plan {self.id} {self.plan}\n subepisodes: {self.subepisodes}\n actions: {self.actions}\n potential plans: {self.potential_plans}"

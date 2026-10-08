@@ -31,4 +31,4 @@ class GoalNode(ExplanationNode):
             return None
 
     def __repr__(self):
-        return f"Goal{self.goal}\n attempts: {self.attempts}"
+        return f"Goal {self.id} {self.goal}\n attempts: {self.attempts}"
