@@ -17,21 +17,33 @@ For each new `current_subject` 2 ways are tried to create new connections: predi
 
 Note: prediction must be tried before inference, and when prediction succeeds, inference should not be tried. Prediction, when succeeding inferece, would always match, and it would think that the latest node was predicted, while in fact it would just have been created by the inference.
 
-## Prediction
-
 Definitions
 
 - `A => B`: the rule with antecedent `A` and consequent `B`
-- `a -> b`: `A` has parent `B`
+- `a -> b`: `a` has parent `b`
+
+## Prediction
 
 When an atom is named `a` in the context of a rule `A => B`, this signifies that `a` matches `A`.
 
-- If `A => B` and `current_subject` matches `a`, and `b` was already established (in nodes), a link between `a` and `b` is created, and identities between `a` and `b` are created.
-- If `A => Plan(s) => B` and `current_subject` matches `a`, and `plan -> b` was already established (in nodes), a link between `a` and `plan` is created, and identities between `a` and `b` and `plan` are created. If `plan` was empty, it will **stay empty**, but the variables of potential plans will bound.
+- If `A => B` and `current_subject` matches `a`, and `b` was already established (in nodes)
+  - a link between `a` and `b` is created, and identities between `a` and `b` are created.
+- If `A => Plan(s) => B` and `current_subject` matches `a`, and `plan -> b` was already established (in nodes)
+  - a link between `a` and `plan` is created
+  - identities between `a` and `b` and `plan` are created.
+  - If `plan` was empty, it will **stay empty**, but the variables of potential plans will bound.
 
 ## Inference
 
 In an inference step a `current_subject` is an atom being processed, and matched against an antecedent. When it matches, the consequent is instantiated and added to the nodes list.
 
-- If `A => B` and `current_subject` matches `A`, `B` is instantiated and added
-- If `A => Plan(s) => B` and `current_subject` matches `A`, `B` is instantiated and added, and _an empty plan_ is added as well, **containing partially instantiated potential atoms**.
+- If `A => B` and `current_subject` matches `a`, a node `b` is added
+- If `A => Plan(s) => B` and `current_subject` matches `a`
+  - `b` is added
+  - an empty plan `p` is added, which contains an instantiated potential atom
+
+## Adding nodes
+
+Nodes are only added in the inference phase.
+
+Whenever a node `n` is added, the system first checks if a node with the same atom already exists. If it does, the existing node is used. For plans, the extra match with each of the **potential plans** is attempted. In the latter case, ids don't need to match, and if a match is made, the ids are marked as **same**.

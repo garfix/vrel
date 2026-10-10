@@ -134,40 +134,9 @@ class PlanAnalyzer:
                             ):
                                 return True
 
-                            # print("<>")
-                            # print("item", item)
-                            # print("variablized_consequent", variablized_consequent)
-                            # print("bound_consequent", bound_consequent)
-                            # print("bound_antecedent", bind_variables(rule.antecedent, subject_binding))
-                            # print("item_binding", item_binding)
-                            # print("subject_binding", subject_binding)
-                            # print("rule", rule)
-                            # print("current_subject", current_subject)
-                            # self.predicted_no_plan(current_subject, item)
-
-                        # return True
-
         return False
 
     def predicted_no_plan(self, rule_plan, bottom, subject_binding, item_binding, top: list[Atom], context):
-
-        top_node = self.find_node(top)
-        bottom_node = self.find_node(bottom)
-
-        # plan_node_index = top_node.get_first_attempt()
-        # plan_node = self.nodes[plan_node_index]
-        # plan = plan_node.get_atom()
-        # potential_plan = plan_node.get_potential_plans()[0] if len(plan_node.get_potential_plans()) > 0 else None
-
-        # # fill an empty plan
-        # if plan_node.is_empty():
-        #     plan_node.set_atom(potential_plan)
-
-        # print("subject_binding", subject_binding)
-        # print("item_binding", item_binding)
-        # print("bottom_node", bottom_node)
-        # print("top_node", top_node)
-
         self.store_identity(subject_binding, item_binding, context)
         return True
 
@@ -175,10 +144,20 @@ class PlanAnalyzer:
         top_node = self.find_node(top)
         bottom_node = self.find_node(bottom)
         plan_node_index = top_node.get_first_attempt()
+
+        if plan_node_index is None:
+            return False
+
         plan_node = self.nodes[plan_node_index]
-        plan = plan_node.get_atom()
-        potential_plan = plan_node.get_potential_plans()[0] if len(plan_node.get_potential_plans()) > 0 else None
-        sb = dict(filter(lambda kv: not isinstance(kv[1], Id), subject_binding.items()))
+
+        # - If `A => Plan(s) => B` and `current_subject` matches `a`, and `plan -> b` was already established (in nodes)
+        #   - a link between `a` and `plan` is created
+        #   - identities between `a` and `b` and `plan` are created.
+        #   - If `plan` was empty, it will **stay empty**, but the variables of potential plans will bound.
+
+        # print("subject_binding", subject_binding)
+        # print("plan_binding", plan_binding)
+        # print("item_binding", item_binding)
 
         # print("potential_plan", potential_plan)
         # print("rule_plan", rule_plan)
@@ -187,29 +166,33 @@ class PlanAnalyzer:
         # print("plan_node", plan_node)
         # print("bottom_node", bottom_node)
 
-        if plan_node.is_empty():
-            plan_binding = match(rule_plan, [potential_plan], sb, self.induction_model)
-            if plan_binding is None:
-                return False
-        else:
-            plan_binding = match(rule_plan, [plan], sb, self.induction_model)
-            if plan_binding is None:
-                return False
+        plan_binding = self.plan_match(plan_node, rule_plan, subject_binding)
+        if plan_binding is None:
+            return False
 
         plan_node.add_subepisode(bottom_node.id)
-
-        print("subject_binding", subject_binding)
-        print("plan_binding", plan_binding)
-        print("item_binding", item_binding)
-        print("bottom_node", bottom_node)
-        print("plan_node", plan_node)
-        print("top_node", top_node)
 
         self.store_identity(subject_binding, plan_binding, context)
         self.store_identity(plan_binding, item_binding, context)
         self.store_identity(subject_binding, item_binding, context)
 
         return True
+
+    def plan_match(self, plan_node: PlanNode, rule_plan: list[Atom], subject_binding: dict):
+
+        if plan_node.is_empty():
+            potential_plan = plan_node.get_potential_plans()[0] if len(plan_node.get_potential_plans()) > 0 else None
+            sb = dict(filter(lambda kv: not isinstance(kv[1], Id), subject_binding.items()))
+            plan_binding = match(rule_plan, [potential_plan], sb, self.induction_model)
+            if plan_binding is None:
+                return False
+        else:
+            plan = plan_node.get_atom()
+            plan_binding = match(rule_plan, [plan], sb, self.induction_model)
+            if plan_binding is None:
+                return False
+
+        return plan_binding
 
     def store_identity(
         self,
@@ -250,7 +233,6 @@ class PlanAnalyzer:
         while len(rules) > 0:
             last_rule = rules.pop()
             cs = make_query(current_subject)
-            # print("m3")
             binding = match(last_rule.antecedent, cs, {}, self.induction_model)
 
             # if the combination of antecedent and binding has happened before, skip it
@@ -266,9 +248,9 @@ class PlanAnalyzer:
         if binding is not None:
             chain.append(Link(current_subject, rules))
 
-            c1 = bind_variables(last_rule.consequent, binding)
-
             variable_map = {}
+
+            c1 = bind_variables(last_rule.consequent, binding)
             c2 = generate_constants(c1, self.variable_generator, variable_map)
 
             # print("last_rule.antecedent", last_rule.antecedent)
@@ -285,9 +267,9 @@ class PlanAnalyzer:
                 self.generator += 1
                 atoms = [Atom("plan", "variable", self.generator)]
                 plan_node = self.add_node(atoms, context)
-                map = {}
-                genny = self.variable_generator
-                potential_plan = generate_constants(bind_variables(last_rule.plan[0], binding), genny, map)
+                potential_plan = generate_constants(
+                    bind_variables(last_rule.plan[0], binding), self.variable_generator, variable_map
+                )
                 plan_node.add_potential_plan(potential_plan)
                 chain.append(Link(atoms, rules))
 
