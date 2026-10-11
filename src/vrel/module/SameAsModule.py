@@ -1,5 +1,6 @@
 from itertools import product
 import json
+from typing import Set
 
 from vrel.core.Logger import Logger
 from vrel.core.constants import E1, E2, SAME_AS
@@ -100,19 +101,29 @@ class SameAsModule(SomeSameAsHandler, SqliteMemoryModule):
         context = ExecutionContext(relation, None, None, self.model, Logger())
         results = relation.query_function([E1, E2], context)
 
+        sets: list[Set] = []
         for result in results:
             id1, id2 = result
-            if not id1.type in self.id_variants:
-                self.id_variants[id1.type] = {}
-            if not id2.type in self.id_variants:
-                self.id_variants[id2.type] = {}
+            new_sets: list[Set] = []
+            combined_set = set([id1, id2])
+            for a_set in sets:
+                if id1 not in a_set and id2 not in a_set:
+                    new_sets.append(a_set)
+                else:
+                    combined_set.update(a_set)
+            new_sets.append(combined_set)
+            sets = new_sets
 
-            if str(id1.id) not in self.id_variants[id1.type]:
-                self.id_variants[id1.type][str(id1.id)] = [id1]
-            if str(id2.id) not in self.id_variants[id2.type]:
-                self.id_variants[id2.type][str(id2.id)] = [id2]
-            self.id_variants[id1.type][str(id1.id)].append(id2)
-            self.id_variants[id2.type][str(id2.id)].append(id1)
+        for a_set in sets:
+            for id1 in a_set:
+                if not id1.type in self.id_variants:
+                    self.id_variants[id1.type] = {}
+                if str(id1.id) not in self.id_variants[id1.type]:
+                    self.id_variants[id1.type][str(id1.id)] = [id1]
+                for id2 in a_set:
+                    if id2 == id1:
+                        continue
+                    self.id_variants[id1.type][str(id1.id)].append(id2)
 
     def clear(self):
         super().clear()

@@ -360,8 +360,6 @@ class PlanAnalyzer:
         cause = None
         goal_count = 0
 
-        # print("event id", event)
-
         # find the second goal above the event
         # (the first goal in not very informative)
         while event is not None:

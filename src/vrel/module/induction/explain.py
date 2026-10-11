@@ -60,8 +60,13 @@ def explain(
                 # if the event yields no results, try the dialog
                 if len(b) == 0:
                     # todo: this is just absurdly inefficient
+                    context.logger.add_value("atom", a)
+                    context.logger.add_value("dialog", dialog)
+                    context.logger.add_value("binding", binding)
+                    context.logger.add_value("same_as", induction_model.modules[4].id_variants)
                     populate(module, dialog)
                     b = solver.solve_single(a, binding)
+                    context.logger.add_value("results", b)
                 # accumulate bindings
                 new_bindings.extend(b)
 
@@ -83,9 +88,9 @@ def explain(
         #     context.logger.add_value("result", result)
 
         context.logger.add_value("end result", result)
-        context.logger.add_value("event", event)
 
         if len(result) > 0:
+            context.logger.add_value("event", event)
             return event
 
     return None

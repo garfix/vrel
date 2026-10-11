@@ -1,3 +1,7 @@
+## 2026-10-11
+
+The same-as cache only holds direct relations: DLG1 - DLG3, DLG3 - DLG5, but it doesn't cache indirect links (DLG1 - DLG5). This is the problem I'm currently fixing.
+
 ## 2026-10-04
 
 When a rule such as this fires
