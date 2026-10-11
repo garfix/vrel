@@ -37,6 +37,8 @@ def explain(
 
         solver = Solver(induction_model)
 
+        context.logger.add_value("event", event1)
+
         # query1 = query
         # result = solver.solve(query1)
         failed = False
@@ -47,24 +49,25 @@ def explain(
             for binding in bindings:
                 # todo: this is just absurdly inefficient
                 populate(module, event1)
+                context.logger.add_value("binding", binding)
+
                 b = solver.solve_single(a, binding)
+                context.logger.add_value("results", b)
                 # the top-level predicate should always succeed
                 if len(b) == 0 and i == 0:
                     failed = True
+                    break
                 # if the event yields no results, try the dialog
                 if len(b) == 0:
                     # todo: this is just absurdly inefficient
                     populate(module, dialog)
                     b = solver.solve_single(a, binding)
-                    # context.logger.add_value("dialog", dialog)
-                    # context.logger.add_value("binding", binding)
-                    # context.logger.add_value("a", a)
-                    # context.logger.add_value("b", b)
-                    #
-                    # farmer(`entity:DLG4`) would match farmer($20), but for the binding ($20 = `entity:DLG10`)
-                    #
                 # accumulate bindings
                 new_bindings.extend(b)
+
+            if failed:
+                break
+
             bindings = new_bindings
             # no matches? stop
             if len(bindings) == 0:
@@ -78,6 +81,9 @@ def explain(
         # if event1[0].predicate == query[0].predicate:
         #     context.logger.add_value("event", event1)
         #     context.logger.add_value("result", result)
+
+        context.logger.add_value("end result", result)
+        context.logger.add_value("event", event)
 
         if len(result) > 0:
             return event

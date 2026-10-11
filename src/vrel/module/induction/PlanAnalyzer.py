@@ -150,11 +150,6 @@ class PlanAnalyzer:
 
         plan_node = self.nodes[plan_node_index]
 
-        # - If `A => Plan(s) => B` and `current_subject` matches `a`, and `plan -> b` was already established (in nodes)
-        #   - a link between `a` and `plan` is created
-        #   - identities between `a` and `b` and `plan` are created.
-        #   - If `plan` was empty, it will **stay empty**, but the variables of potential plans will bound.
-
         # print("subject_binding", subject_binding)
         # print("plan_binding", plan_binding)
         # print("item_binding", item_binding)
@@ -170,7 +165,7 @@ class PlanAnalyzer:
         if plan_binding is None:
             return False
 
-        plan_node.add_subepisode(bottom_node.id)
+        self.link_nodes(plan_node, bottom_node)
 
         self.store_identity(subject_binding, plan_binding, context)
         self.store_identity(plan_binding, item_binding, context)
