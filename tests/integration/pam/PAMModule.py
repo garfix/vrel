@@ -70,6 +70,41 @@ class PAMModule(PlainReadWriteModule):
         )
         self.add_relation(
             Relation(
+                "tell",
+                parameters=[
+                    Parameter("id", "event"),
+                    Parameter("subject", "person"),
+                    Parameter("object", "person"),
+                    Parameter("fact", "event"),
+                ],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "where",
+                parameters=[
+                    Parameter("id", "event"),
+                    Parameter("fact", "event"),
+                ],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "be",
+                parameters=[
+                    Parameter("id", "event"),
+                    Parameter("subject", "person"),
+                ],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
                 "hungry",
                 parameters=[Parameter("id", "event"), Parameter("subject", "person")],
                 query_function=self.common_query,
@@ -127,6 +162,22 @@ class PAMModule(PlainReadWriteModule):
         self.add_relation(
             Relation(
                 "her",
+                parameters=[Parameter("id", "person")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "him",
+                parameters=[Parameter("id", "person")],
+                query_function=self.common_query,
+                write_function=self.common_write,
+            )
+        )
+        self.add_relation(
+            Relation(
+                "he",
                 parameters=[Parameter("id", "person")],
                 query_function=self.common_query,
                 write_function=self.common_write,

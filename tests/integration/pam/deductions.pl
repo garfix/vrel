@@ -7,3 +7,8 @@ feature(`person:Willa`, 'type', 'person').
 
 feature(`person:John`, 'gender', 'male').
 feature(`person:John`, 'type', 'person').
+
+# todo: add `where()`?
+tell(X, B, C, D) :- ask(Y, C, B, D).
+
+him(E1) :- feature(E1, 'gender', 'male').

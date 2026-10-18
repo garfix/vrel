@@ -47,6 +47,16 @@ def get_write_grammar():
             ],
         },
         {
+            "syn": "goal(Goal) -> desc(E1) 'wanted' 'to' 'get' 'someplace'+'.'",
+            "if": [
+                Atom(
+                    UNIFICATION,
+                    Goal,
+                    [Atom("be_at", Event, E1, E2)],
+                )
+            ],
+        },
+        {
             "syn": "desc(E1) -> 'she'",
             "if": [
                 Atom(
