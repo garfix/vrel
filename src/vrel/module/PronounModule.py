@@ -1,3 +1,4 @@
+from vrel.core.functions.terms import flatten
 from vrel.entity.Id import Id
 from vrel.entity.Atom import Atom
 from vrel.entity.Relation import Parameter, Relation
@@ -12,6 +13,7 @@ from vrel.module.pronoun.saliency import (
     update_features,
     update_saliency,
 )
+from vrel.module.transform.query import make_query
 
 
 class PronounModule(SomeModule, SomePronounHandler):
@@ -61,7 +63,9 @@ class PronounModule(SomeModule, SomePronounHandler):
 
         decay_saliency(self.entities)
 
-        process_atoms(arguments[0], self.entities)
+        query = make_query(arguments[0])
+
+        process_atoms(query, self.entities, context.model)
 
         update_features(self.entities, context.solver)
 

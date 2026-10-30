@@ -1,10 +1,11 @@
-from vrel.core.constants import E1, FEATURE
+from vrel.core.constants import E1, FEATURE, FUNCTION_INDIRECT_OBJECT, FUNCTION_OBJECT, FUNCTION_SUBJECT
 from vrel.entity.Atom import Atom
 from vrel.entity.Id import Id
 
 from dataclasses import dataclass
 
 from vrel.entity.Variable import Variable
+from vrel.interface.SomeModel import SomeModel
 from vrel.interface.SomeSolver import SomeSolver
 
 DECAY = 0.5
@@ -19,19 +20,23 @@ class EntityData:
 
 
 # 0 = subject, 1 = object, 2 = indirect object
-score = {0: 3, 1: 2, 2: 1}
+score = {FUNCTION_SUBJECT: 3, FUNCTION_OBJECT: 2, FUNCTION_INDIRECT_OBJECT: 1}
 
 
-def process_atoms(atoms: list[Atom], entities: list[EntityData]):
+def process_atoms(atoms: list[Atom], entities: list[EntityData], model: SomeModel):
+    print("process", atoms)
     for atom in atoms:
-        i = 0
-        for argument in atom.arguments:
-            if i == 0 and isinstance(argument, Id) and argument.type == "event":
-                i = i - 1
-            else:
-                if isinstance(argument, Id):
-                    update_saliency(argument, score[i], entities)
-            i += 1
+
+        relations = model.find_relations(atom.predicate)
+        for relation in relations:
+            for i, argument in enumerate(atom.arguments):
+                parameter = relation.parameters[i]
+                f = parameter.function
+                if f:
+                    if isinstance(argument, Id):
+                        update_saliency(argument, score[f], entities)
+                    else:
+                        print("what about", argument)
 
 
 def update_saliency(id: Id, saliency: int, entities: list[EntityData]):
@@ -82,9 +87,15 @@ def get_salient_entities(features: dict[str, str], entities: list[EntityData]) -
 
 def check_pronoun(id: Id, features: list[Atom], entities: list[EntityData]):
 
+    print("id", id)
+    print("features", features)
+    print("entities", entities)
+
     index = find_index(id, entities)
     if index == None:
         return False
+
+    print("1")
 
     data = entities[index]
 
@@ -93,14 +104,20 @@ def check_pronoun(id: Id, features: list[Atom], entities: list[EntityData]):
     if saliency < THRESHOLD:
         return False
 
+    print("2")
+
     salient_entities = get_salient_entities(features, entities)
 
     # entity does not match features: don't use its pronoun
     if id not in salient_entities:
         return False
 
+    print("3", salient_entities)
+
     # the pronoun would be ambiguous: don't use the pronoun
     if len(salient_entities) > 1:
         return False
+
+    print("4")
 
     return True

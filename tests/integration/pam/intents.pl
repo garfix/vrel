@@ -1,5 +1,7 @@
 intent_understand(Story) :-
     reify(Story, Reified),
+    create_records(Reified, Records),
+    store(Records),
     # log("reified", Reified),
     induce_facts(Reified),
     analyze_plans(Reified),
@@ -12,3 +14,9 @@ intent_explanation(Question, C1) :-
     explain(Question, C1, Explanation),
     out('explanation', Explanation).
 
+intent_consequences(Question, C1) :-
+    find_consequences(Question, C1, Consequence),
+    update_saliency(Consequence),
+    # log('C', Consequence),
+    # log_nodes(),
+    out('consequences', Consequence).

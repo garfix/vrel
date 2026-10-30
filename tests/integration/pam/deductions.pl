@@ -12,3 +12,8 @@ feature(`person:John`, 'type', 'person').
 tell(X, B, C, D) :- ask(Y, C, B, D).
 
 him(E1) :- feature(E1, 'gender', 'male').
+her(E1) :- feature(E1, 'gender', 'female').
+
+feature(E1, 'gender', 'male') :- equals(E1, `entity:DLG10`).
+feature(E1, 'type', 'person') :- equals(E1, `entity:DLG10`).
+

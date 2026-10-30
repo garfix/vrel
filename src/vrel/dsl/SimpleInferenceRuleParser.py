@@ -19,6 +19,7 @@ class SimpleInferenceRuleParser:
             "("
             + "|".join(
                 [
+                    "->",
                     "=>",
                     "=",
                     "\\.",
@@ -126,7 +127,7 @@ class SimpleInferenceRuleParser:
 
         consequents = []
         implies, new_pos = self.parse_token(tokens, pos)
-        if implies == "=>":
+        if implies == "=>" or implies == "->":
             pos = new_pos
             consequents, new_pos = self.parse_atoms(tokens, pos)
             if not consequents:
@@ -141,9 +142,10 @@ class SimpleInferenceRuleParser:
             return None, new_pos
         pos = new_pos
 
-        return InductionRule(antecedents, consequents, None), pos
+        return InductionRule(antecedents, consequents, None, implies == "=>"), pos
 
     # near(E1, E2) => ask(E1, E1, F1) => know(E1, F1).
+    # lost(C1, E1) -> plan(ask(C2, E1, E2, location(L1))) => goal(know(C2, E1, location(L1))).
     def parse_plan_induction_rule(self, tokens: list[str], pos: int):
 
         antecedents, new_pos = self.parse_atoms(tokens, pos)
@@ -152,8 +154,8 @@ class SimpleInferenceRuleParser:
         pos = new_pos
 
         plan = None
-        implies, new_pos = self.parse_token(tokens, pos)
-        if implies == "=>":
+        implies1, new_pos = self.parse_token(tokens, pos)
+        if implies1 == "=>" or implies1 == "->":
             plan, new_pos = self.parse_atoms(tokens, new_pos)
             if not plan:
                 return None, new_pos
@@ -162,8 +164,8 @@ class SimpleInferenceRuleParser:
             return None, new_pos
 
         consequents = []
-        implies, new_pos = self.parse_token(tokens, pos)
-        if implies == "=>":
+        implies2, new_pos = self.parse_token(tokens, pos)
+        if implies2 == "=>":
             pos = new_pos
             consequents, new_pos = self.parse_atoms(tokens, pos)
             if not consequents:
@@ -178,7 +180,7 @@ class SimpleInferenceRuleParser:
             return None, new_pos
         pos = new_pos
 
-        return InductionRule(antecedents, consequents, plan), pos
+        return InductionRule(antecedents, consequents, plan, implies1 == "=>"), pos
 
     # ( parent(X, Y), parent(Y, Z) )
     # parent(X, Y), parent(Y, Z)

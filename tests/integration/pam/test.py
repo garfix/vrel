@@ -96,7 +96,10 @@ class TestPAM(unittest.TestCase):
                 ],
                 ["Why did John pull over to a farmer?", "Because he wanted to know where he was."],
                 ["Why did John ask a farmer to tell him where he was?", "Because he wanted to get someplace."],
-                # ["What were the consequences of John's pulling over to a farmer?", "This enabled him to ask him where John was."],
+                [
+                    "What were the consequences of John's pulling over to a farmer?",
+                    "This enabled him to ask him where John was.",
+                ],
                 # ["What happened when John pulled over to a farmer?", "He asked him to tell him where he was."],
                 # ["What happened when John asked a farmer to tell him where he was?", "I don't know."],
                 # ["How did John go over to a farmer?", "He drove over to him."]
@@ -174,7 +177,7 @@ class TestPAM(unittest.TestCase):
             #     ["Willa was hungry. She picked up the Michelin guide and got into her car.", "OK"],
             #     ["Why did Willa pick up the Michelin Guide?" , "Because Willa wanted to know where a restaurant was."],
             #     ["Why did Willa get into her car?", "Because Willa wanted to get to a restaurant."],
-            #     ["What we re the consequences of Willa picking up the Michelin Guide?", "This enabled Willa to read the Michelin Guide."],
+            #     ["What were the consequences of Willa picking up the Michelin Guide?", "This enabled Willa to read the Michelin Guide."],
             #     ["What were the consequences of Willa getting into her automobile?", "This enabled Willa to drive somewhere."],
             #     ["How did Willa get into her car?", "Wila walked to her automobile."],
             #     ["The story from Willa's point of view", "I wanted to get something to eat, but I didn't know where a restaurant was. So I picked up the Michelin Guide and I got into my car."],

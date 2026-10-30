@@ -32,6 +32,20 @@ def get_read_grammar():
             "syn": "question() -> 'why' 'did' np(E1) vp(C1, E1)",
             "sem": lambda np, vp: Atom("intent_explanation", [vp.mod(np)], C1),
         },
+        {
+            "syn": "question() -> 'what' 'were' 'the' 'consequences' 'of' s_continuous(C1)",
+            "sem": lambda s_continuous: Atom("intent_consequences", [s_continuous], C1),
+        },
+        # continuous
+        {
+            # John's pulling over ...
+            "syn": 's_continuous(C1) -> np(E1)+"\'s" vp_continuous(C1, E1)',
+            "sem": lambda np, vp: vp.mod(np),
+        },
+        {
+            "syn": "s_continuous(C1) -> np(E1) vp_continuous(C1, E1)",
+            "sem": lambda np, vp: vp.mod(np),
+        },
         # declarative
         {
             "syn": "decl(C1) -> np(E1) vp(C1, E1)+'.'",
@@ -77,6 +91,7 @@ def get_read_grammar():
         {"syn": "verb(C1, E1, E2, E3) -> 'tell'", "sem": lambda: Atom("tell", C1, E1, E2, E3)},
         # verb continuous
         {"syn": "verb_continuous(C1, E1) -> 'standing'", "sem": lambda: Atom("stand", C1, E1)},
+        {"syn": "verb_continuous(C1, E1) -> 'pulling' 'over'", "sem": lambda: Atom("pull_over", C1, E1)},
         # adjective phrase
         {"syn": "adjp(C1, E1) -> adj(C1, E1)", "sem": lambda adj: adj},
         {"syn": "adj(C1, E1) -> 'hungry'", "sem": lambda: Atom("hungry", C1, E1)},

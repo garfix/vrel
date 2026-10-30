@@ -1,3 +1,83 @@
+## 2026-10-29
+
+On generating "the farmer" I find that this information is not even stored in the database yet. I also can't just store all story lines in the database as is, because they needn't necessarily be facts. However, that some dialog entity is a farmer, definitely can be stored. But isn't done yet.
+
+===
+
+As my ambiguity algorithm says that John and the farmer, since both being male, shouldn't both be represented as "he/him", my answer tends to go in this direction
+
+    This enabled John to ask the farmer where John was.
+
+This is clear, but contains "John" twice, and one would the latter be replaced by "he", as it refers to the first John.
+
+But actually it's not that bad. And it's important to give clear (unambiguous) answers. So I can keep going in that direction. But for now I need "the farmer".
+
+===
+
+Interesting: even in hypothetical questions, there are still factual statements. Take "If I catch the taxi on time, I will catch my flight", "I catch the taxi" is not to be taken as a fact, of course. But the fact that the object of "take" is a taxi, may be stored.
+
+Maybe I can create a function that extracts the factual parts of a sentence, so that they may be stored. Factual verbs may be stored, while conditional statements may not. The relations corresponding with the verbs may contain this conditionality.
+
+Conditional information _may_ be stored in the knowledge base, but just not as facts.
+
+Using `create_records` for this (adding a todo).
+
+## 2026-10-28
+
+The code in saliency determination depends on the functions of the relation (if it's a verb), namely subject, object. Currently most of the code still can't even see if a relation is a verb, or a modifier. It would be good to name these functions explicitly; I could use them now and I could use them later. At the moment the system deduces if a relation is a verb by testing if the first argument is an event. It's a sloppy test, and currently fails because the dialog variables don't assume the type yet in the create constants process.
+
+===
+
+About the answer
+
+    What were the consequences of John's pulling over to a farmer?
+    This enabled him to ask him where John was.
+
+The use of pronouns in the answer is questionable and doesn't fit the algorithm I have. Where the answer has to "him"s they are ambiguous according to the algorithm. What would be a natural answer? "This enabled him to ask the farmer where he was" / "This enabled him to ask him where he was". Especially the mention of "John" in the answer feels unnatural. The answer is not wrong, it's just hard to reproduce.
+
+===
+
+I can do 2 things: I can create separate algorithms for different applications, in order to make them give the exact answers, or I can focus on one very good algorithm and just accept that the answers don't fit the sample dialog (but are just as good, or even better).
+
+## 2026-10-25
+
+Let's talk about the elephant in the room. In "This enabled him to ask him where John was.", the second "him" refers to the farmer. But _we don't yet know whether the farmer was male or female_.
+
+## 2026-10-22
+
+I think I found a way to find the event that serves as the "consequence" of some event: going, up, the (first) action of the first event with actions.
+
+Then, answering the question. Some "consequence" questions are answered like "This enabled ... to ...", while others aren't. I don't know how or why this is the case yet.
+
+## 2026-10-21
+
+I looked up information about consequences and I found:
+
+- A consequence is something that happens to an object due to the role the object plays in a plan. Stored along with each plan in memory is a description of the consequences that the plan has upon the object it uses. (p. 237)
+- In PAM, consequences of using a plan are inferred by inference procedures attached to particular plans. For example, attached to the planbox EAT is a procedure that will alter the representation of the particular items of food used by the plan. When PAM determines that the plan has been carried out, it will run this procedure.
+- p. 242 has an example of consequences of the USE-VEHICLE plan
+
+## 2026-10-20
+
+I have induction rules, which create induction relations, but what do they tell me about cause and effect?
+
+## 2026-10-19
+
+Me asking Claude: "in simple words, if someone asks for the consequences of some act, in a functional sense, what is the answer be expected to be like?"
+
+Claude: If someone asks for the consequences of an act in a functional sense, they want to know what happens as a result of it: the practical effects, not the moral judgment or the intention behind it.
+
+- About results, not opinions.
+- Cause and effect.
+- Specific and practical.
+- Often split by time and by who is affected.
+- Neutral in tone.
+
+  "What were the consequences of John's pulling over to a farmer?",
+  "This enabled him to ask him where John was.",
+
+So, looking for an action as a result of ... pulling over ...; this must be ... ask ..., as there is only one other action. But how exactly? And what about "John was lost" which I have been representing as an action. Turns out it isn't one, so I must change that. Okay, well yes it's not an action. It's a state of course. But the representation in the rule is the same at the moment.
+
 ## 2026-10-11
 
 The same-as cache only holds direct relations: DLG1 - DLG3, DLG3 - DLG5, but it doesn't cache indirect links (DLG1 - DLG5). This is the problem I'm currently fixing.

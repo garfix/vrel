@@ -1,7 +1,13 @@
 ## todo
 
-i just linked a node to a potential plan; identifying some ids
-still working through the sentences
+- update saliency doesn't work for the farmer, because he doesn't have an id and the structure is not flattened, and it contains only variables
+- for the score, there is a check on the id's type (should be event, but isn't)
+
+- "John was lost" should not be represented as an action and shouldn't be connected to the other nodes.
+- hoe vind ik een consequence?
+- work through the rest of the questions
+
+- link an Atom to its Relation
 
 match
 

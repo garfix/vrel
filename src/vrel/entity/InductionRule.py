@@ -8,6 +8,7 @@ class InductionRule:
     antecedent: list[Atom]
     consequent: list[Atom]
     plan: None | list[Atom]
+    create_link: bool
 
     def __str__(self) -> str:
         s = str(self.antecedent)

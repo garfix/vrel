@@ -66,7 +66,7 @@ get_into(S1, E1, E2), car(E2) => plan(walk(S1, E1, 'car')).
 # John was lost.
 
 goal(know(C1, E1, location(L1))) => plan() => goal(be_at(C1, E1, L2)).
-lost(C1, E1) => plan(ask(C2, E1, E2, location(L1))) => goal(know(C2, E1, location(L1))).
+lost(C1, E1) -> plan(ask(C2, E1, E2, location(L1))) => goal(know(C2, E1, location(L1))).
 
 # He pulled over to a farmer standing by the side of the road.
 

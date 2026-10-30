@@ -15,6 +15,7 @@ from vrel.module.induction.GoalNode import GoalNode
 from vrel.module.induction.Link import Link
 from vrel.module.induction.PlanNode import PlanNode
 from vrel.module.induction.explain import explain
+from vrel.module.induction.find_consequences import find_consequences
 from vrel.module.induction.match import match
 from vrel.module.transform.query import make_query
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
@@ -263,13 +264,16 @@ class PlanAnalyzer:
                 atoms = [Atom("plan", "variable", self.generator)]
                 plan_node = self.add_node(atoms, context)
                 potential_plan = generate_constants(
-                    bind_variables(last_rule.plan[0], binding), self.variable_generator, variable_map
+                    bind_variables(last_rule.plan[0], binding),
+                    self.variable_generator,
+                    variable_map,
                 )
                 plan_node.add_potential_plan(potential_plan)
                 chain.append(Link(atoms, rules))
 
                 self.link_nodes(node2, plan_node)
-                self.link_nodes(plan_node, node1)
+                if last_rule.create_link:
+                    self.link_nodes(plan_node, node1)
 
             else:
                 self.link_nodes(node2, node1)
@@ -370,3 +374,18 @@ class PlanAnalyzer:
             event = event.parent
 
         return cause
+
+    def find_consequences(self, question: list[Atom], context: ExecutionContext):
+        event = find_consequences(question, self.nodes, self.induction_model, context, self.dialog)
+
+        consequent = None
+
+        # find the second goal above the event
+        # (the first goal in not very informative)
+        while event is not None:
+            if isinstance(event, PlanNode):
+                if len(event.get_actions()):
+                    consequent = self.nodes[event.get_actions()[0]].get_atom()
+            event = event.parent
+
+        return consequent

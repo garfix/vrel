@@ -55,3 +55,8 @@ CONSTANT = "$constant"
 AUTO = Sentinel("<auto-generate>")
 COMBINED = Sentinel("combined")
 SEPARATE = Sentinel("separate")
+
+# syntactic functions
+FUNCTION_SUBJECT = "subject"
+FUNCTION_OBJECT = "object"
+FUNCTION_INDIRECT_OBJECT = "indirect object"

@@ -49,6 +49,17 @@ class InductionModule(SomeModule):
                 query_function=self.explain,
             )
         )
+        self.add_relation(
+            Relation(
+                "find_consequences",
+                parameters=[
+                    Parameter("body", list[Atom]),
+                    Parameter("variable", None),
+                    Parameter("consequence", list[Atom]),
+                ],
+                query_function=self.find_consequences,
+            )
+        )
         self.rules = {}
         self.variable_generator = VariableGenerator("ID")
 
@@ -137,3 +148,13 @@ class InductionModule(SomeModule):
             return []
 
         return [[None, None, explanation]]
+
+    def find_consequences(self, arguments: list, context: ExecutionContext) -> list[list]:
+        question, var, _ = arguments
+
+        consequence = self.plan_analyzer.find_consequences(question, context)
+
+        if not consequence:
+            return []
+
+        return [[None, None, consequence]]

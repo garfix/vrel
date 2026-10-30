@@ -6,11 +6,13 @@ class Parameter:
     name: str
     argument_size: int | None
     type: any
+    function: None
 
-    def __init__(self, name: str, entity_type: any, argument_size: int = None):
+    def __init__(self, name: str, entity_type: any, argument_size: int = None, function=None):
         self.name = name
         self.argument_size = argument_size
         self.type = entity_type
+        self.function = function
 
 
 class Relation:

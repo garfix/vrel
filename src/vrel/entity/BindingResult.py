@@ -18,4 +18,7 @@ class BindingResult:
         if self.index > len(self.new_bindings):
             raise StopIteration
 
-        return self.new_bindings[self.index-1]
+        return self.new_bindings[self.index - 1]
+
+    def __repr__(self):
+        return f"BindingResult {self.new_bindings}"
