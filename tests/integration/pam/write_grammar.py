@@ -29,10 +29,7 @@ def get_write_grammar():
             "syn": "reason(Explanation) -> goal(Goal)",
             "if": [Atom(UNIFICATION, Explanation, Atom("goal", Goal))],
         },
-        # {
-        #     "syn": "goal(Goal) -> desc(E1) 'wanted' 'to' 'be' 'not' 'hungry'+'.'",
-        #     "if": [Atom(UNIFICATION, Goal, [Atom("not", [Atom("hungry", E1)])])],
-        # },
+        # goals
         {
             "syn": "goal(Goal) -> desc(E1) 'wanted' 'to' 'know' 'the' 'distance' 'to' 'a' 'restaurant'+'.'",
             "if": [
@@ -63,8 +60,9 @@ def get_write_grammar():
                 )
             ],
         },
+        # actions
         {
-            "syn": "action(Action) -> desc_object(E1) 'to' 'ask' desc_object(E2)",
+            "syn": "action(Action) -> desc_object(E1) 'to' 'ask' desc_object(E2) desc_indirect_object(E3)",
             "if": [
                 Atom(
                     UNIFICATION,
@@ -73,6 +71,7 @@ def get_write_grammar():
                 )
             ],
         },
+        # subjects
         {
             "syn": "desc(E1) -> 'she'",
             "if": [
@@ -126,5 +125,17 @@ def get_write_grammar():
         },
         {
             "syn": "desc_object(E1) -> 'them'",
+        },
+        # indirect objects
+        {
+            "syn": "desc_indirect_object(E1) -> 'where' event(Event)",
+            "if": [Atom("where", E1, Event)],
+        },
+        {
+            "syn": "desc_indirect_object(E1) -> 'something'",
+        },
+        {
+            "syn": "event(Event) -> desc(E1) 'was'",
+            "if": [Atom("be", Event, E1)],
         },
     ]

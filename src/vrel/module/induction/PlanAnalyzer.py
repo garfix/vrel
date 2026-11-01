@@ -388,4 +388,6 @@ class PlanAnalyzer:
                     consequent = self.nodes[event.get_actions()[0]].get_atom()
             event = event.parent
 
+        context.logger.add_value("consequent", consequent)
+
         return consequent

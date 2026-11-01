@@ -1,3 +1,100 @@
+## 2026-11-01
+
+Looking for information about how ELI (Riesbeck) does pronoun resolution. "Conceptual analysis" in "Conceptual information processing" (1975), which is PAM's reference for the parser/analyser, says nothing about it.
+
+Found "Comprehension by Computer: Expectation-based Analysis of Sentences in Context" by Riesbeck / Schank in "Studies in the perception of language". In web archive:
+
+https://archive.org/details/studiesinpercept0000unse/page/n5/mode/2up
+
+From this text:
+
+"pronominal reference in SAM is done by a program called MEMTOK that knows about the normal properties of people and objects, about names, about locations and so on"
+
+That's all it says about the subject.
+
+Using Google, found that MEMTOK is mentioned in "The Handbook of artificial intelligence, volume 1". Also from Web archive:
+
+https://archive.org/stream/handbookofartific01barr/handbookofartific01barr_djvu.txt
+
+"The parser does not make many inferences; thus, it does not realize
+that it refers to the hot dog in The hot dog was burned. It tasted awful.
+This task is left to MEMTOK. This module takes references to people,
+places, things, and so forth and fills in information about them. It
+recognizes that the it in the sentence above refers to the hot dog, and
+"instantiates" the it node in the CD representation of the second sen-
+tence with the "hot dog" node from the first sentence. Similarly, in a
+story about John, MEMTOK would replace he with John where appro-
+priate, and would continually update the John data structure as more
+information became available about him. "
+
+Asking Google Gemini: "which book or article best described the working of MEMTOK?"
+
+The definitive text that best describes the mechanics and inner workings of MEMTOK is the seminal 1977 book Scripts, Plans, Goals, and Understanding: An Inquiry Into Human Knowledge Structures by Roger C. Schank and Robert P. Abelson
+
+found: p 182 - 184
+
+It has a small section on what the module does, but that's it.
+
+Gemini also mentions "The structure of episodes in memory", by Cullingford (who wrote SAM, and apprarently also MEMTOK). This article can be found in https://www.amazon.com/Representation-Understanding-Studies-Cognitive-Language/dp/0121085503/
+
+But this is an article by Schank, so likely not technical. And the book is from 1975. If I need it later: check https://www.amazon.co.uk/Representation-Understanding-Studies-Cognitive-Language/dp/0121085503#detailBullets_feature_div
+
+---
+
+Okay, no information available on pronoun resolution. But I can reuse my knowledge that I gained when building NLI-GO. See `anaphora-resolution.md`
+
+===
+
+NB when doing anaphora res, it can be combined with plan analysis, which may find anaphors earlier and with more confidence. So do plan analysis just before anaphora resolution.
+
+## 2026-10-30
+
+I'm having trouble with "where he was", matching "he" to John. If there's no explicit way to do pronoun resolution, the link must be made automatically, either in the parsing phase or in the analysis phase.
+
+From PAM (p. 302)
+
+    PLAN: (*PB-ASK*
+        PLANNER HUMO
+        PERSUADE HUM1
+        REQUEST ((
+            ACTOR HUM1 (
+                <=> (*MTRANS*)
+                MOBJECT (
+                    ACTOR HUMO
+                    IS (*PROX* PART (*UNSPEC* CLASS (*LOCATION*))))
+                TIME (TIMK7))
+            TO (*CP* PART HUMO))
+            TIME (TIMK6)))
+
+Note that `TO (*CP* PART HUMO))` already contains `HUM0` (referencing John) rather than a new identifier. I'm not sure if I read this right, but there seems to be a plan for (asking where one is), rather than just (asking someone something).
+
+I can rule out the analysis phase. It doesn't do this _kind_ of resolution. So it must be done in the parsing phase (or a separate pronoun resolution phase).
+
+On page 302: "He asked him where he was"
+
+    CONCEPTUALIZATION IS:
+    ((ACTOR HUM3 <=> (*MTRANS*)
+        MOBJECT
+        ((CON
+        ((ACTOR HUM4 <=> (*MTRANS*)
+            MOBJECT
+            ((ACTOR HUM5 IS (*PROX*
+            PART (*UNSPEC* CLASS
+                (*LOCATION*)))))
+            TIME (FORM43))
+        TO (*CP* PART HUM3))
+        TIME (FORM44))
+        LEADTO
+        ((ACTOR HUM3 TOWARD
+            (*JOY* VAL (NIL)))
+        INC (2.) TIME (FORM45)))
+        TO (*CP* PART HUM4))
+    TIME (FORM46))
+
+`hum3` mentally transferred (asked) `hum4` to mentally transfer (tell) `hum5` (location) to `hum3` (which leads `hum3` to send an increased joy of 2 to `hum4`)
+
+Note that the referent of "him" is `hum3`, and this is the same as the subject of "asked" (John). So the pronoun resolution has been done in the parse phase already.
+
 ## 2026-10-29
 
 On generating "the farmer" I find that this information is not even stored in the database yet. I also can't just store all story lines in the database as is, because they needn't necessarily be facts. However, that some dialog entity is a farmer, definitely can be stored. But isn't done yet.
