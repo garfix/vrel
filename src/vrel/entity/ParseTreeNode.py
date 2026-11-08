@@ -1,10 +1,8 @@
 from __future__ import annotations
-from dataclasses import dataclass
 from vrel.core.constants import POS_TYPE_REG_EXP
 from vrel.entity.GrammarRule import GrammarRule
 
 
-@dataclass(frozen=True)
 class ParseTreeNode:
 
     category: str
@@ -15,9 +13,15 @@ class ParseTreeNode:
     # including it here is a speed measure
     reg_exp_count: int
 
+    def __init__(self, category: str, children: list[ParseTreeNode], form: str, rule: GrammarRule, reg_exp_count: int):
+        self.category = category
+        self.children = children
+        self.form = form
+        self.rule = rule
+        self.reg_exp_count = reg_exp_count
+
     def is_leaf_node(self) -> bool:
         return len(self.children) == 0
-
 
     def __str__(self, indent: str = ""):
         body = ""
@@ -32,7 +36,7 @@ class ParseTreeNode:
 
             body += indent + "+- " + child.category + "\n"
             newIndent = indent
-            if i < len(self.children)-1:
+            if i < len(self.children) - 1:
                 newIndent += "|  "
             else:
                 newIndent += "   "

@@ -1,3 +1,24 @@
+## 2026-11-03
+
+Pronoun resolution: starting from the parse tree (with pure variables) to dialog entities. How to find these?
+
+- currently dialog ids are created from a variable generator.
+
+Can I just turn the variables into ids again directly (variable names are dialog). Thus I am able to derive the id from the variable directly.
+Or I should store the mapping from variable to id somewhere.
+
+===
+
+When doing `reify` the link between the variables and the ids is lost.
+
+A solution could be to store the link to variables and dialog constants up front, and that `reify` uses this mapping, and when it can't find a mapping it fails. If so, I need to make this clear in the name. I could just create a function `get_reified`, returning the reified version of the sentence's semantics. But in this case I would not need the original variable-semantics any more. And I could pass the reified version to the intent.
+
+Or keep it simple and link the variable one-on-one to the constant.
+
+## 2026-11-02
+
+The thing with anaphora resolution is that it's best done on the parse tree, as it uses the syntactic subject and object, rather than the semantic subject and object.
+
 ## 2026-11-01
 
 Looking for information about how ELI (Riesbeck) does pronoun resolution. "Conceptual analysis" in "Conceptual information processing" (1975), which is PAM's reference for the parser/analyser, says nothing about it.

@@ -1,14 +1,12 @@
+from vrel.core.functions.terms import unify_variables
 from vrel.entity.Atom import Atom
-from vrel.entity.ReifiedVariable import ReifiedVariable
 from vrel.entity.ParseTreeNode import ParseTreeNode
 from vrel.entity.ProcessResult import ProcessResult
 from vrel.entity.Variable import Variable
 from vrel.interface.SomeComposer import SomeComposer
 from vrel.interface.SomeLogger import SomeLogger
 from vrel.processor.semantic_composer.SemanticSentence import SemanticSentence
-from vrel.processor.semantic_composer.SemanticComposerProduct import SemanticComposerProduct
 from vrel.processor.semantic_composer.helper.VariableGenerator import VariableGenerator
-from vrel.entity.SemanticFunction import SemanticFunction
 
 
 class SemanticComposer(SomeComposer):
@@ -28,9 +26,9 @@ class SemanticComposer(SomeComposer):
         self.check_for_sem(parse_tree)
 
         root_variables = [self.variable_generator.next() for _ in parse_tree.rule.antecedent.arguments]
-        semantics = self.compose(parse_tree, root_variables)
+        semantics, dialog_parse_tree = self.compose(parse_tree, root_variables)
 
-        semantic_sentence = SemanticSentence(semantics, root_variables)
+        semantic_sentence = SemanticSentence(dialog_parse_tree, semantics, root_variables)
 
         logger.add_section("Semantics", semantics)
         logger.add_section("Root variables", ", ".join(root_variables))
@@ -51,12 +49,14 @@ class SemanticComposer(SomeComposer):
 
         # collect the semantics of the child nodes
         child_semantics = []
+        child_nodes = []
 
         for child, consequent in zip(node.children, node.rule.consequents):
             if not child.is_leaf_node():
                 incoming_child_variables = [map[arg] for arg in consequent.arguments]
-                semantics = self.compose(child, incoming_child_variables)
-                child_semantics.append(semantics)
+                child_sem, child_node = self.compose(child, incoming_child_variables)
+                child_semantics.append(child_sem)
+                child_nodes.append(child_node)
             elif child.rule.sem:
                 child_semantics.append(child.rule.sem())
 
@@ -67,9 +67,13 @@ class SemanticComposer(SomeComposer):
         self.extend_map_with_semantics(map, semantics)
 
         # replace the formal parameters in the semantics with the unified variables
-        unified_semantics = self.unify_variables(semantics, map)
+        unified_semantics = unify_variables(semantics, map)
 
-        return unified_semantics
+        # replace the formal parameters in the node with the unified variables
+        unified_parse_node: ParseTreeNode = unify_variables(node, map)
+        unified_parse_node.children = child_nodes
+
+        return unified_semantics, unified_parse_node
 
     def create_map(self, node: ParseTreeNode, incoming_variables: list[str]):
         # start variable map by mapping antecedent variables to incoming variables
@@ -93,39 +97,11 @@ class SemanticComposer(SomeComposer):
         # only lists of atoms for now
         elif isinstance(term, list):
             for element in term:
-                # for atom in term:
-                # for arg in atom.arguments:
                 # since we're late in the game, don't replace variables that have already been replaced
                 self.extend_map_with_semantics(map, element)
-                # if (
-                #     isinstance(arg, Variable)
-                #     and arg.name not in map
-                #     and not self.variable_generator.isinstance(arg)
-                # ):
-                #     map[arg.name] = self.variable_generator.next()
         elif isinstance(term, Atom):
             for arg in term.arguments:
                 # since we're late in the game, don't replace variables that have already been replaced
                 self.extend_map_with_semantics(map, arg)
-                # if isinstance(arg, Variable) and arg.name not in map and not self.variable_generator.isinstance(arg):
-                #     map[arg.name] = self.variable_generator.next()
-
             for mod in term.modifiers:
                 self.extend_map_with_semantics(map, mod)
-
-    def unify_variables(self, term: any, map: dict[str, str]) -> any:
-        if isinstance(term, list):
-            return [self.unify_variables(atom, map) for atom in term]
-        elif isinstance(term, Atom):
-            return term.apply_to_each_atom(lambda arg: self.unify_variables(arg, map))
-        elif isinstance(term, tuple):
-            raise Exception(f"tuple found 9: {term}")
-            return tuple([self.unify_variables(term, map) for term in term])
-        elif isinstance(term, SemanticFunction):
-            return SemanticFunction(term.args, self.unify_variables(term.body, map))
-        elif isinstance(term, Variable) and term.name in map:
-            return Variable(map[term.name])
-        elif isinstance(term, ReifiedVariable) and term.name in map:
-            return map[term.name]
-        else:
-            return term

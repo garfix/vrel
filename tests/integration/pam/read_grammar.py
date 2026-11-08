@@ -1,5 +1,6 @@
 from vrel.core.constants import E1, E2, E3
 from vrel.entity.Atom import Atom
+from vrel.entity.Reference import Reference
 from vrel.entity.Variable import Variable
 
 C1 = Variable("C1")
@@ -143,10 +144,10 @@ def get_read_grammar():
         {"syn": "noun(E1) -> 'side'", "sem": lambda: Atom("side", E1)},
         {"syn": "noun(E1) -> 'road'", "sem": lambda: Atom("road", E1)},
         # pronoun
-        {"syn": "pronoun(E1) -> 'she'", "sem": lambda: Atom("she", E1)},
-        {"syn": "pronoun(E1) -> 'he'", "sem": lambda: Atom("he", E1)},
-        {"syn": "pronoun(E1) -> 'her'", "sem": lambda: Atom("her", E1)},
-        {"syn": "pronoun(E1) -> 'him'", "sem": lambda: Atom("him", E1)},
+        {"syn": "pronoun(E1) -> 'she'", "sem": lambda: Atom("she", E1), "ref": Reference(E1, {"gender": "female"})},
+        {"syn": "pronoun(E1) -> 'he'", "sem": lambda: Atom("he", E1), "ref": Reference(E1, {"gender": "male"})},
+        {"syn": "pronoun(E1) -> 'her'", "sem": lambda: Atom("her", E1), "ref": Reference(E1, {"gender": "female"})},
+        {"syn": "pronoun(E1) -> 'him'", "sem": lambda: Atom("him", E1), "ref": Reference(E1, {"gender": "male"})},
         # proper noun
         {"syn": "proper_noun(E1) -> /\\w+/", "sem": lambda token: Atom("name", E1, token)},
     ]

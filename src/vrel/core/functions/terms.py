@@ -1,5 +1,10 @@
+from vrel.entity.Sentinel import Sentinel
 from vrel.entity.Atom import Atom, Modifier
+from vrel.entity.GrammarRule import GrammarRule
 from vrel.entity.Id import Id
+from vrel.entity.ParseTreeNode import ParseTreeNode
+from vrel.entity.Reference import Reference
+from vrel.entity.RuleConstituent import RuleConstituent
 from vrel.entity.Variable import Variable
 
 RED = "\033[31m"
@@ -156,6 +161,41 @@ def bind_variables(term: any, binding: dict) -> any:
     else:
         # just the value
         return term
+
+
+def unify_variables(term: any, map: dict[str, str]) -> any:
+    if term is None:
+        return None
+    elif isinstance(term, list):
+        return [unify_variables(element, map) for element in term]
+    elif isinstance(term, str) or isinstance(term, int) or isinstance(term, float) or isinstance(term, Sentinel):
+        return term
+    elif isinstance(term, Atom):
+        return term.apply_to_each_atom(lambda arg: unify_variables(arg, map))
+    elif isinstance(term, Variable):
+        if term.name in map:
+            return Variable(map[term.name])
+        else:
+            return term
+    elif isinstance(term, ParseTreeNode):
+        # note: children are deliverately left out, so as no to do them twice
+        return ParseTreeNode(
+            term.category, term.children, term.form, unify_variables(term.rule, map), term.reg_exp_count
+        )
+    elif isinstance(term, Reference):
+        return Reference(unify_variables(term.variable, map), term.attributes)
+    elif isinstance(term, GrammarRule):
+        r = term.copy()
+        r.antecedent = unify_variables(r.antecedent, map)
+        r.consequents = unify_variables(r.consequents, map)
+        r.ref = unify_variables(r.ref, map)
+        return r
+    elif isinstance(term, RuleConstituent):
+        return RuleConstituent(
+            term.predicate, unify_variables(term.arguments, map), term.position_type, term.optional, term.separator
+        )
+    else:
+        raise Exception(f"Unknown type for unification: {type(term)}")
 
 
 def flatten(term: any):

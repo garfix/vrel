@@ -62,6 +62,10 @@ class SimpleGrammarRulesParser:
             if "sem" in simple_rule:
                 sem = simple_rule["sem"]
 
+        ref = None
+        if "ref" in simple_rule:
+            ref = simple_rule["ref"]
+
         list_element = None
         if write_rules:
             if "list_element" in simple_rule:
@@ -87,10 +91,6 @@ class SimpleGrammarRulesParser:
             if "combine" in simple_rule:
                 combine = simple_rule["combine"]
 
-        dialog = []
-        if "dialog" in simple_rule:
-            dialog = simple_rule["dialog"]
-
         boost = 0
         if "boost" in simple_rule:
             boost = simple_rule["boost"]
@@ -99,12 +99,12 @@ class SimpleGrammarRulesParser:
             antecedent,
             consequents,
             sem=sem,
+            ref=ref,
             format=format,
             post=post,
             combine=combine,
             list_element=list_element,
             list_combine=list_combine,
-            dialog=dialog,
             boost=boost,
         )
 

@@ -44,6 +44,25 @@ def generate_constants(term: any, variable_generator: VariableGenerator, variabl
         return term
 
 
+def reify(term: any):
+    # list
+    if isinstance(term, list):
+        return [reify(arg) for arg in term]
+    # atom
+    elif isinstance(term, Atom):
+        return term.apply_to_each_atom(lambda arg: reify(arg))
+    # variable
+    elif isinstance(term, Variable):
+        return reify_variable(term)
+    else:
+        # just the value
+        return term
+
+
+def reify_variable(variable: Variable):
+    return Id(variable.name, "entity")
+
+
 def variablize(term):
     # list
     if isinstance(term, list):

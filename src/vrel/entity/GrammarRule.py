@@ -1,6 +1,7 @@
 from typing import Callable
 from vrel.core.constants import POS_TYPE_RELATION, POS_TYPE_WORD_FORM
 from vrel.entity.Atom import Atom
+from vrel.entity.BasicReference import BasicReference
 from vrel.entity.RuleConstituent import RuleConstituent
 from vrel.entity.Variable import Variable
 
@@ -11,6 +12,8 @@ class GrammarRule:
     consequents: list[RuleConstituent]
     # sem: also used as "if" in generation
     sem: Callable
+    # reference
+    ref: BasicReference | None
     # combine consequent results using Python code
     combine: Callable
     # implement the format category of the rule using Python
@@ -22,7 +25,6 @@ class GrammarRule:
     # combination function for list elements
     list_combine: Callable | None
     # make this rule more important than similar rules
-    dialog: list[tuple] | Callable
     boost: int
 
     hash: int
@@ -32,10 +34,10 @@ class GrammarRule:
         antecedent: RuleConstituent,
         consequents: list[RuleConstituent],
         sem: Callable = None,
+        ref: BasicReference = None,
         format: Callable = None,
         combine: Callable = None,
         post: Callable = None,
-        dialog: list[Atom] | Callable = [],
         list_element: Variable | None = None,
         list_combine: Callable | None = None,
         boost: int = 0,
@@ -43,16 +45,30 @@ class GrammarRule:
         self.antecedent = antecedent
         self.consequents = consequents
         self.sem = sem
+        self.ref = ref
         self.format = format
         self.combine = combine
         self.post = post
-        self.dialog = dialog
         self.list_element = list_element
         self.list_combine = list_combine
         self.boost = boost
 
         h = [c.hash for c in self.consequents] + [self.antecedent.hash]
         self.hash = hash(tuple(h))
+
+    def copy(self):
+        r = GrammarRule(
+            antecedent=self.antecedent,
+            consequents=self.consequents,
+            sem=self.sem,
+            ref=self.ref,
+            format=self.format,
+            combine=self.combine,
+            post=self.post,
+            list_element=self.list_element,
+            list_combine=self.list_combine,
+        )
+        return r
 
     def equals(self, other_rule) -> bool:
 

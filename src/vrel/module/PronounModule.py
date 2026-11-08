@@ -5,6 +5,7 @@ from vrel.entity.Relation import Parameter, Relation
 from vrel.interface.SomeModule import SomeModule
 from vrel.entity.ExecutionContext import ExecutionContext
 from vrel.interface.SomePronounHandler import SomePronounHandler
+from vrel.module.pronoun.resolution import resolve_anaphora
 from vrel.module.pronoun.saliency import (
     EntityData,
     check_pronoun,
@@ -44,6 +45,14 @@ class PronounModule(SomeModule, SomePronounHandler):
             )
         )
 
+        self.add_relation(
+            Relation(
+                "resolve_anaphora",
+                parameters=[Parameter("atoms", list[Atom])],
+                query_function=self.resolve_anaphora,
+            )
+        )
+
     # ('unambiguous_pronoun', entity, features)
     def unambiguous_pronoun(self, arguments: list, context: ExecutionContext) -> list[list]:
 
@@ -69,4 +78,9 @@ class PronounModule(SomeModule, SomePronounHandler):
 
         update_features(self.entities, context.solver)
 
+        return [[None]]
+
+    def resolve_anaphora(self, arguments: list, context: ExecutionContext) -> list[list]:
+        context.logger.add_value("resolve_anaphora", context.request.semantic_sentence.dialog_parse_tree)
+        resolve_anaphora(context.request.semantic_sentence.dialog_parse_tree)
         return [[None]]

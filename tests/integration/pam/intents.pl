@@ -5,6 +5,7 @@ intent_understand(Story) :-
     # log("reified", Reified),
     induce_facts(Reified),
     analyze_plans(Reified),
+    resolve_anaphora(Reified),
     # log_nodes(),
     out('understood').
 

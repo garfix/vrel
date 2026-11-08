@@ -1,6 +1,6 @@
 from vrel.core.functions.terms import bind_variables
 from vrel.core.functions.unification import unification
-from vrel.core.functions.variables import generate_constants
+from vrel.core.functions.variables import reify
 from vrel.entity.Atom import Atom
 from vrel.entity.BindingResult import BindingResult
 from vrel.entity.Relation import Parameter, Relation
@@ -640,7 +640,7 @@ class CoreModule(SomeModule):
             raise Exception(f"'store' expects a list of atoms; given: {atoms}")
 
         variable_map = {}
-        reified_atoms = generate_constants(atoms, context.model.dialog_constant_generator, variable_map)
+        reified_atoms = reify(atoms)
 
         return [[None, reified_atoms]]
 
