@@ -1,6 +1,7 @@
 ## todo
 
 - add an anaphora resolver
+- format parse tree with colors
 
 - the "he" (which is John) in "where he was", is not linked to John yet (it's a separate and unlinked entity `DLG:13`)
 - ik heb location aangepast zodat die entiteit er weer in terug komt.

@@ -87,15 +87,15 @@ def get_salient_entities(features: dict[str, str], entities: list[EntityData]) -
 
 def check_pronoun(id: Id, features: list[Atom], entities: list[EntityData]):
 
-    print("id", id)
-    print("features", features)
-    print("entities", entities)
+    # print("id", id)
+    # print("features", features)
+    # print("entities", entities)
 
     index = find_index(id, entities)
     if index == None:
         return False
 
-    print("1")
+    # print("1")
 
     data = entities[index]
 
@@ -104,7 +104,7 @@ def check_pronoun(id: Id, features: list[Atom], entities: list[EntityData]):
     if saliency < THRESHOLD:
         return False
 
-    print("2")
+    # print("2")
 
     salient_entities = get_salient_entities(features, entities)
 
@@ -112,12 +112,12 @@ def check_pronoun(id: Id, features: list[Atom], entities: list[EntityData]):
     if id not in salient_entities:
         return False
 
-    print("3", salient_entities)
+    # print("3", salient_entities)
 
     # the pronoun would be ambiguous: don't use the pronoun
     if len(salient_entities) > 1:
         return False
 
-    print("4")
+    # print("4")
 
     return True

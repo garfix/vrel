@@ -163,37 +163,36 @@ def bind_variables(term: any, binding: dict) -> any:
         return term
 
 
-def unify_variables(term: any, map: dict[str, str]) -> any:
+def unify_variables(term: any, var_map: dict[str, str]) -> any:
     if term is None:
         return None
     elif isinstance(term, list):
-        return [unify_variables(element, map) for element in term]
+        return [unify_variables(element, var_map) for element in term]
     elif isinstance(term, str) or isinstance(term, int) or isinstance(term, float) or isinstance(term, Sentinel):
         return term
     elif isinstance(term, Atom):
-        return term.apply_to_each_atom(lambda arg: unify_variables(arg, map))
+        return term.apply_to_each_atom(lambda arg: unify_variables(arg, var_map))
     elif isinstance(term, Variable):
-        if term.name in map:
-            return Variable(map[term.name])
+        if term.name in var_map:
+            return Variable(var_map[term.name])
         else:
             return term
     elif isinstance(term, ParseTreeNode):
         # note: children are deliverately left out, so as no to do them twice
         return ParseTreeNode(
-            term.category, term.children, term.form, unify_variables(term.rule, map), term.reg_exp_count
+            term.category, term.children, term.form, unify_variables(term.rule, var_map), term.reg_exp_count
         )
     elif isinstance(term, Reference):
-        return Reference(unify_variables(term.variable, map), term.attributes)
+        return Reference(unify_variables(term.variable, var_map), term.attributes)
     elif isinstance(term, GrammarRule):
         r = term.copy()
-        r.antecedent = unify_variables(r.antecedent, map)
-        r.consequents = unify_variables(r.consequents, map)
-        r.ref = unify_variables(r.ref, map)
+        r.antecedent = unify_variables(r.antecedent, var_map)
+        r.consequents = unify_variables(r.consequents, var_map)
+        r.ref = unify_variables(r.ref, var_map)
         return r
     elif isinstance(term, RuleConstituent):
-        return RuleConstituent(
-            term.predicate, unify_variables(term.arguments, map), term.position_type, term.optional, term.separator
-        )
+        mapped_arguments = [var_map[arg] if arg in var_map else arg for arg in term.arguments]
+        return RuleConstituent(term.predicate, mapped_arguments, term.position_type, term.optional, term.separator)
     else:
         raise Exception(f"Unknown type for unification: {type(term)}")
 

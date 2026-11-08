@@ -30,6 +30,7 @@ class SemanticComposer(SomeComposer):
 
         semantic_sentence = SemanticSentence(dialog_parse_tree, semantics, root_variables)
 
+        logger.add_section("Unified parse tree", dialog_parse_tree)
         logger.add_section("Semantics", semantics)
         logger.add_section("Root variables", ", ".join(root_variables))
 
