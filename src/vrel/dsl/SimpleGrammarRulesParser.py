@@ -1,6 +1,6 @@
 import re
 
-from vrel.core.constants import POS_TYPE_REG_EXP, POS_TYPE_RELATION, POS_TYPE_WORD_FORM
+from vrel.core.constants import POS_TYPE_REG_EXP, POS_TYPE_RELATION, POS_TYPE_WORD_FORM, TERMINAL
 from vrel.entity.GrammarRule import GrammarRule
 from vrel.entity.Grammar import Grammar
 from vrel.entity.RuleConstituent import RuleConstituent
@@ -30,6 +30,7 @@ class SimpleGrammarRulesParser:
                     "\\w+",
                     "\\+",
                     "~",
+                    ":",
                 ]
             )
             + ")"
@@ -113,7 +114,7 @@ class SimpleGrammarRulesParser:
         tokens = re.findall(self.re_tokens, syntax)
 
         pos = 0
-        antecedent, new_pos = self.parse_atom(tokens, pos)
+        antecedent, new_pos = self.parse_constituent(tokens, pos)
         if not antecedent:
             raise Exception("Could not parse antecedent: " + syntax)
         pos = new_pos
@@ -126,7 +127,7 @@ class SimpleGrammarRulesParser:
         consequents = []
         while True:
 
-            atom, new_pos = self.parse_atom(tokens, pos)
+            atom, new_pos = self.parse_constituent(tokens, pos)
             if atom:
                 pos = new_pos
                 consequents.append(atom)
@@ -214,7 +215,16 @@ class SimpleGrammarRulesParser:
 
         return None, 0
 
-    def parse_atom(self, tokens: list[str], pos: int):
+    def parse_constituent(self, tokens: list[str], pos: int):
+        # optional function: `sub:`, `obj:`
+        function = None
+        identifier, new_pos = self.parse_identifier(tokens, pos)
+        if identifier:
+            colon, new_pos = self.parse_token(tokens, new_pos)
+            if colon == ":":
+                function = identifier
+                pos = new_pos
+
         predicate, new_pos = self.parse_identifier(tokens, pos)
         if not predicate:
             return None, 0
@@ -244,7 +254,7 @@ class SimpleGrammarRulesParser:
             return None, 0
         pos = new_pos
 
-        return RuleConstituent(predicate, terms, POS_TYPE_RELATION), pos
+        return RuleConstituent(predicate, terms, POS_TYPE_RELATION, function=function), pos
 
     def parse_identifier(self, tokens: list[str], pos: int):
         token, new_pos = self.parse_token(tokens, pos)

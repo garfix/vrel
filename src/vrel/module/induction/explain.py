@@ -37,22 +37,22 @@ def explain(
 
         solver = Solver(induction_model)
 
-        context.logger.add_value("event", event1)
+        # context.logger.add_value("event", event1)
 
         # query1 = query
         # result = solver.solve(query1)
         failed = False
         bindings = [{}]
         for i, a in enumerate(query):
-            context.logger.add_value(i, a)
+            # context.logger.add_value(i, a)
             new_bindings = []
             for binding in bindings:
                 # todo: this is just absurdly inefficient
                 populate(module, event1)
-                context.logger.add_value("binding", binding)
+                # context.logger.add_value("binding", binding)
 
                 b = solver.solve_single(a, binding)
-                context.logger.add_value("results", b)
+                # context.logger.add_value("results", b)
                 # the top-level predicate should always succeed
                 if len(b) == 0 and i == 0:
                     failed = True
@@ -60,13 +60,13 @@ def explain(
                 # if the event yields no results, try the dialog
                 if len(b) == 0:
                     # todo: this is just absurdly inefficient
-                    context.logger.add_value("atom", a)
-                    context.logger.add_value("dialog", dialog)
-                    context.logger.add_value("binding", binding)
-                    context.logger.add_value("same_as", induction_model.modules[4].id_variants)
+                    # context.logger.add_value("atom", a)
+                    # context.logger.add_value("dialog", dialog)
+                    # context.logger.add_value("binding", binding)
+                    # context.logger.add_value("same_as", induction_model.modules[4].id_variants)
                     populate(module, dialog)
                     b = solver.solve_single(a, binding)
-                    context.logger.add_value("results", b)
+                    # context.logger.add_value("results", b)
                 # accumulate bindings
                 new_bindings.extend(b)
 
@@ -87,10 +87,10 @@ def explain(
         #     context.logger.add_value("event", event1)
         #     context.logger.add_value("result", result)
 
-        context.logger.add_value("end result", result)
+        # context.logger.add_value("end result", result)
 
         if len(result) > 0:
-            context.logger.add_value("event", event)
+            # context.logger.add_value("event", event)
             return event
 
     return None

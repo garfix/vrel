@@ -1,4 +1,4 @@
-from vrel.core.constants import FUNCTION_INDIRECT_OBJECT, FUNCTION_OBJECT, FUNCTION_SUBJECT
+from vrel.core.constants import SEM_FUNCTION_INDIRECT_OBJECT, SEM_FUNCTION_OBJECT, SEM_FUNCTION_SUBJECT
 from vrel.entity.Id import Id
 from vrel.entity.Relation import Parameter, Relation
 from vrel.entity.Variable import Variable
@@ -35,8 +35,8 @@ class PAMModule(PlainReadWriteModule):
                 "get_into",
                 parameters=[
                     Parameter("id", "event"),
-                    Parameter("subject", "person", function=FUNCTION_SUBJECT),
-                    Parameter("object", "thing", function=FUNCTION_OBJECT),
+                    Parameter("subject", "person", function=SEM_FUNCTION_SUBJECT),
+                    Parameter("object", "thing", function=SEM_FUNCTION_OBJECT),
                 ],
                 query_function=self.common_query,
                 write_function=self.common_write,
@@ -47,8 +47,8 @@ class PAMModule(PlainReadWriteModule):
                 "pick_up",
                 parameters=[
                     Parameter("id", "event"),
-                    Parameter("subject", "person", function=FUNCTION_SUBJECT),
-                    Parameter("object", "thing", function=FUNCTION_OBJECT),
+                    Parameter("subject", "person", function=SEM_FUNCTION_SUBJECT),
+                    Parameter("object", "thing", function=SEM_FUNCTION_OBJECT),
                 ],
                 query_function=self.common_query,
                 write_function=self.common_write,
@@ -57,7 +57,7 @@ class PAMModule(PlainReadWriteModule):
         self.add_relation(
             Relation(
                 "pull_over",
-                parameters=[Parameter("id", "event"), Parameter("subject", "person", function=FUNCTION_SUBJECT)],
+                parameters=[Parameter("id", "event"), Parameter("subject", "person", function=SEM_FUNCTION_SUBJECT)],
                 query_function=self.common_query,
                 write_function=self.common_write,
             )
@@ -65,7 +65,7 @@ class PAMModule(PlainReadWriteModule):
         self.add_relation(
             Relation(
                 "to",
-                parameters=[Parameter("id", "event"), Parameter("object", "thing", function=FUNCTION_OBJECT)],
+                parameters=[Parameter("id", "event"), Parameter("object", "thing", function=SEM_FUNCTION_OBJECT)],
                 query_function=self.common_query,
                 write_function=self.common_write,
             )
@@ -75,9 +75,9 @@ class PAMModule(PlainReadWriteModule):
                 "ask",
                 parameters=[
                     Parameter("id", "event"),
-                    Parameter("subject", "person", function=FUNCTION_SUBJECT),
-                    Parameter("object", "person", function=FUNCTION_OBJECT),
-                    Parameter("question", "event", function=FUNCTION_INDIRECT_OBJECT),
+                    Parameter("subject", "person", function=SEM_FUNCTION_SUBJECT),
+                    Parameter("object", "person", function=SEM_FUNCTION_OBJECT),
+                    Parameter("question", "event", function=SEM_FUNCTION_INDIRECT_OBJECT),
                 ],
                 query_function=self.common_query,
                 write_function=self.common_write,
@@ -88,9 +88,9 @@ class PAMModule(PlainReadWriteModule):
                 "tell",
                 parameters=[
                     Parameter("id", "event"),
-                    Parameter("subject", "person", function=FUNCTION_SUBJECT),
-                    Parameter("object", "person", function=FUNCTION_OBJECT),
-                    Parameter("fact", "event", function=FUNCTION_INDIRECT_OBJECT),
+                    Parameter("subject", "person", function=SEM_FUNCTION_SUBJECT),
+                    Parameter("object", "person", function=SEM_FUNCTION_OBJECT),
+                    Parameter("fact", "event", function=SEM_FUNCTION_INDIRECT_OBJECT),
                 ],
                 query_function=self.common_query,
                 write_function=self.common_write,
@@ -101,7 +101,7 @@ class PAMModule(PlainReadWriteModule):
                 "stand",
                 parameters=[
                     Parameter("id", "event"),
-                    Parameter("subject", "person", function=FUNCTION_SUBJECT),
+                    Parameter("subject", "person", function=SEM_FUNCTION_SUBJECT),
                 ],
                 query_function=self.common_query,
                 write_function=self.common_write,
@@ -123,7 +123,7 @@ class PAMModule(PlainReadWriteModule):
                 "by",
                 parameters=[
                     Parameter("id", "event"),
-                    Parameter("object", "object", function=FUNCTION_OBJECT),
+                    Parameter("object", "object", function=SEM_FUNCTION_OBJECT),
                 ],
                 query_function=self.common_query,
                 write_function=self.common_write,
@@ -145,7 +145,7 @@ class PAMModule(PlainReadWriteModule):
                 "be",
                 parameters=[
                     Parameter("id", "event"),
-                    Parameter("subject", "person", function=FUNCTION_SUBJECT),
+                    Parameter("subject", "person", function=SEM_FUNCTION_SUBJECT),
                 ],
                 query_function=self.common_query,
                 write_function=self.common_write,
@@ -162,7 +162,7 @@ class PAMModule(PlainReadWriteModule):
         self.add_relation(
             Relation(
                 "lost",
-                parameters=[Parameter("id", "event"), Parameter("subject", "person", function=FUNCTION_SUBJECT)],
+                parameters=[Parameter("id", "event"), Parameter("subject", "person", function=SEM_FUNCTION_SUBJECT)],
                 query_function=self.common_query,
                 write_function=self.common_write,
             )
@@ -257,7 +257,7 @@ class PAMModule(PlainReadWriteModule):
         )
 
     def common_write(self, arguments: list, context: ExecutionContext) -> list[list]:
-        print("WRITE", arguments)
+        # print("WRITE", arguments)
         self.insert(context.relation, context.relation.get_parameter_names(), arguments)
 
     def common_query(self, arguments: list, context: ExecutionContext) -> list[list]:

@@ -12,6 +12,7 @@ from vrel.module.pronoun.saliency import (
     decay_saliency,
     process_atoms,
     update_features,
+    consolidate_entities,
     update_saliency,
 )
 from vrel.module.transform.query import make_query
@@ -70,6 +71,8 @@ class PronounModule(SomeModule, SomePronounHandler):
     # ('update_saliency', atoms)
     def update_saliency(self, arguments: list, context: ExecutionContext) -> list[list]:
 
+        self.entities = consolidate_entities(self.entities, context)
+
         decay_saliency(self.entities)
 
         query = make_query(arguments[0])
@@ -78,9 +81,10 @@ class PronounModule(SomeModule, SomePronounHandler):
 
         update_features(self.entities, context.solver)
 
+        # print("E", self.entities)
+
         return [[None]]
 
     def resolve_anaphora(self, arguments: list, context: ExecutionContext) -> list[list]:
-        context.logger.add_value("resolve_anaphora", context.request.semantic_sentence.dialog_parse_tree)
-        resolve_anaphora(context.request.semantic_sentence.dialog_parse_tree)
-        return [[None]]
+        resolve_anaphora(context.request.semantic_sentence.dialog_parse_tree, self.entities, context)
+        return [[]]

@@ -3,8 +3,11 @@ from vrel.entity.BasicReference import BasicReference
 
 class Reference(BasicReference):
 
-    attributes: dict[str, str]
+    features: dict[str, str]
 
-    def __init__(self, variable, attributes: dict[str, str]):
+    def __init__(self, variable, features: dict[str, str]):
         super().__init__(variable)
-        self.attributes = attributes
+        self.features = features
+
+    def __repr__(self):
+        return f"Reference {self.variable}"

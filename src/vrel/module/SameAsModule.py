@@ -82,6 +82,8 @@ class SameAsModule(SomeSameAsHandler, SqliteMemoryModule):
         if self.id_variants is None:
             self.build_cache()
 
+        # print("variants", self.id_variants)
+
         if id.type in self.id_variants and str(id.id) in self.id_variants[id.type]:
             return self.id_variants[id.type][str(id.id)]
         else:
@@ -101,6 +103,8 @@ class SameAsModule(SomeSameAsHandler, SqliteMemoryModule):
         context = ExecutionContext(relation, None, None, self.model, Logger())
         results = relation.query_function([E1, E2], context)
 
+        # print("** RESULTS", results)
+
         sets: list[Set] = []
         for result in results:
             id1, id2 = result
@@ -114,6 +118,8 @@ class SameAsModule(SomeSameAsHandler, SqliteMemoryModule):
             new_sets.append(combined_set)
             sets = new_sets
 
+        # print("** SETS", sets)
+
         for a_set in sets:
             for id1 in a_set:
                 if not id1.type in self.id_variants:
@@ -124,6 +130,8 @@ class SameAsModule(SomeSameAsHandler, SqliteMemoryModule):
                     if id2 == id1:
                         continue
                     self.id_variants[id1.type][str(id1.id)].append(id2)
+
+        # print("** VARIANTS", self.id_variants)
 
     def clear(self):
         super().clear()

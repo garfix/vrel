@@ -28,11 +28,11 @@ class SemanticComposer(SomeComposer):
         root_variables = [self.variable_generator.next() for _ in parse_tree.rule.antecedent.arguments]
         semantics, dialog_parse_tree = self.compose(parse_tree, root_variables)
 
-        semantic_sentence = SemanticSentence(dialog_parse_tree, semantics, root_variables)
-
         logger.add_section("Unified parse tree", dialog_parse_tree)
         logger.add_section("Semantics", semantics)
         logger.add_section("Root variables", ", ".join(root_variables))
+
+        semantic_sentence = SemanticSentence(dialog_parse_tree, semantics, root_variables)
 
         return semantic_sentence
 
@@ -58,8 +58,10 @@ class SemanticComposer(SomeComposer):
                 child_sem, child_node = self.compose(child, incoming_child_variables)
                 child_semantics.append(child_sem)
                 child_nodes.append(child_node)
-            elif child.rule.sem:
-                child_semantics.append(child.rule.sem())
+            else:
+                child_nodes.append(child)
+                if child.rule.sem:
+                    child_semantics.append(child.rule.sem())
 
         # create the semantics of this node by executing its function, passing the values of its children as arguments
         semantics = node.rule.sem(*child_semantics)
@@ -94,15 +96,11 @@ class SemanticComposer(SomeComposer):
         if isinstance(term, Variable):
             if term.name not in map and not self.variable_generator.isinstance(term):
                 map[term.name] = self.variable_generator.next()
-
-        # only lists of atoms for now
         elif isinstance(term, list):
             for element in term:
-                # since we're late in the game, don't replace variables that have already been replaced
                 self.extend_map_with_semantics(map, element)
         elif isinstance(term, Atom):
             for arg in term.arguments:
-                # since we're late in the game, don't replace variables that have already been replaced
                 self.extend_map_with_semantics(map, arg)
             for mod in term.modifiers:
                 self.extend_map_with_semantics(map, mod)

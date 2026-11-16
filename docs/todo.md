@@ -1,5 +1,24 @@
 ## todo
 
+- ed unified parse tree mist de terminals
+
+- de parse tree node voor " " wordt niet aan children toegevoegd
+
+- zijn niet gewoon alle nodes aanwezig; misschien zoek je het te moeilijk
+
+- sommige functions komen nog niet terug in de parse tree
+  - je hebt function toegevoegd aan de ParseTreeNode
+    - maar je kunt hem hier niet goed aan toevoegen want ze worden opgebouwd in tree_extract, maar die kent alleen de antecedents
+
+RESULTS [[`entity:$4`, `person:John`], [`entity:$5`, `entity:PA3`], [`person:John`, `person:John`], [`entity:$4`, `person:John`], [`entity:$4`, `person:John`], [`entity:PA1`, `entity:$9`], [`person:John`, `entity:$10`], [`entity:PA3`, `entity:$11`], [`entity:$10`, `person:John`], [`entity:$10`, `person:John`], [`entity:$11`, `person:John`], [`entity:$14`, `person:John`]]
+
+- onderscheid maken tussen syn subject en object, zodat je kunt kijken of the referent van de subject matched met die van de object
+
+waar komen die laatste 2 vandaan? John is the farmer !?
+
+- problem: the entities are considered ambiguous, because there are multiple ids in the result
+  - these ids are the same, but the algorithm doesn't know that
+
 - add an anaphora resolver
 - format parse tree with colors
 

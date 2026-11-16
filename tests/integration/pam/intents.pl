@@ -2,10 +2,11 @@ intent_understand(Story) :-
     reify(Story, Reified),
     create_records(Reified, Records),
     store(Records),
-    # log("reified", Reified),
+    update_saliency(Reified),
+    log("reified", Reified),
     induce_facts(Reified),
     analyze_plans(Reified),
-    resolve_anaphora(Reified),
+    resolve_anaphora(),
     # log_nodes(),
     out('understood').
 

@@ -49,11 +49,11 @@ def get_read_grammar():
         },
         # declarative
         {
-            "syn": "decl(C1) -> np(E1) vp(C1, E1)+'.'",
+            "syn": "decl(C1) -> sub:np(E1) pred:vp(C1, E1)+'.'",
             "sem": lambda np, vp: Atom("intent_understand", [vp.mod(np)]),
         },
         {
-            "syn": "decl_clause(C1) -> nominal(E1) vp(C1, E1)",
+            "syn": "decl_clause(C1) -> sub:nominal(E1) pred:vp(C1, E1)",
             "sem": lambda np, vp: vp.mod(np),
         },
         # verb phrase
@@ -61,14 +61,17 @@ def get_read_grammar():
         {"syn": "vp(C1, E1) -> vp(C1, E1) pp(C1)", "sem": lambda vp, pp: vp.mod(pp)},
         {"syn": "vp(C1, E1) -> copula() adjp(C1, E1)", "sem": lambda copula, adjp: adjp},
         #  variants
-        {"syn": "vp(C1, E1) -> vp(C1, E1, E2) nominal(E2)", "sem": lambda vp, np: vp.mod(np)},
         {
-            "syn": "vp(C1, E1) -> vp(C1, E1, E2, E3) nominal(E2) nominal(E3)",
+            "syn": "vp(C1, E1) -> vp(C1, E1, E2) obj:nominal(E2)",
+            "sem": lambda vp, np: vp.mod(np),
+        },
+        {
+            "syn": "vp(C1, E1) -> vp(C1, E1, E2, E3) obj:nominal(E2) iobj:nominal(E3)",
             "sem": lambda vp, nominal1, nominal2: vp.mod(nominal1).mod(nominal2),
         },
         {
             # asked [E2:a farmer] [[E2] to tell him ...]
-            "syn": "vp(C1, E1) -> vp(C1, E1, E2, E3) nominal(E2) nominal(E3, E2)",
+            "syn": "vp(C1, E1) -> vp(C1, E1, E2, E3) obj:nominal(E2) iobj:nominal(E3, E2)",
             "sem": lambda vp, nominal1, nominal2: vp.mod(nominal1).mod(nominal2),
         },
         #  implementations

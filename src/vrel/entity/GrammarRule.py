@@ -67,6 +67,7 @@ class GrammarRule:
             post=self.post,
             list_element=self.list_element,
             list_combine=self.list_combine,
+            boost=self.boost,
         )
         return r
 
@@ -98,7 +99,10 @@ class GrammarRule:
         sep = ""
         for i in range(len(self.consequents)):
             if self.consequents[i].position_type == POS_TYPE_RELATION:
-                s += sep + self.consequents[i].predicate + "("
+                func = ""
+                if self.consequents[i].function:
+                    func = self.consequents[i].function + ":"
+                s += sep + func + self.consequents[i].predicate + "("
                 sep2 = ""
                 for variable in self.consequents[i].arguments:
                     s += sep2 + variable

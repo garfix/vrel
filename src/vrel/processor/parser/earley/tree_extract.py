@@ -21,30 +21,26 @@ def create_trees_for_state(chart: Chart, state: ChartState):
     trees = []
 
     if state.is_terminal():
-        trees.append(ParseTreeNode(
-            state.rule.antecedent.predicate,
-            [],
-            state.rule.consequents[0].predicate,
-            state.rule,
-            1 if state.rule.antecedent.position_type == POS_TYPE_REG_EXP else 0
-        ))
+        trees.append(
+            ParseTreeNode(
+                state.rule.antecedent.predicate,
+                [],
+                state.rule.consequents[0].predicate,
+                state.rule,
+                1 if state.rule.antecedent.position_type == POS_TYPE_REG_EXP else 0,
+            )
+        )
     else:
         # the state has one or more child states. in fact, there can be multiple child state sequences
         for child_state_sequence in find_child_state_sequences(chart, state):
             # each child state can have multiple parse trees, built from its children; go through all permutations of these child state parse trees
-            for permutation_trees in create_trees_for_states(chart, child_state_sequence):
+            for children in create_trees_for_states(chart, child_state_sequence):
 
                 reg_exp_count = 0
-                for tree in permutation_trees:
+                for tree in children:
                     reg_exp_count += tree.reg_exp_count
 
-                trees.append(ParseTreeNode(
-                    state.rule.antecedent.predicate,
-                    permutation_trees,
-                    "",
-                    state.rule,
-                    reg_exp_count
-                ))
+                trees.append(ParseTreeNode(state.rule.antecedent.predicate, children, "", state.rule, reg_exp_count))
 
     return trees
 
@@ -53,7 +49,9 @@ def find_child_state_sequences(chart: Chart, parent_state: ChartState) -> list[l
     """
     each state may have multiple sequences of possible children, find them.
     """
-    return find_state_sequences(chart, parent_state, parent_state.end_char_index, len(parent_state.rule.consequents) - 1)
+    return find_state_sequences(
+        chart, parent_state, parent_state.end_char_index, len(parent_state.rule.consequents) - 1
+    )
 
 
 def find_state_sequences(chart: Chart, parent_state: ChartState, end_char_index: int, consequent_index: int):
@@ -72,7 +70,9 @@ def find_state_sequences(chart: Chart, parent_state: ChartState, end_char_index:
                     sequences.append([state])
             else:
                 # find one or more preceding sequences of this state
-                for previous_sequence in find_state_sequences(chart, parent_state, state.start_char_index, consequent_index-1):
+                for previous_sequence in find_state_sequences(
+                    chart, parent_state, state.start_char_index, consequent_index - 1
+                ):
                     sequences.append(previous_sequence + [state])
     return sequences
 
@@ -114,4 +114,3 @@ def create_permutations(things: list[list]) -> list[list]:
     See for example https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
     """
     return list(itertools.product(*things))
-

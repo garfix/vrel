@@ -56,7 +56,11 @@ AUTO = Sentinel("<auto-generate>")
 COMBINED = Sentinel("combined")
 SEPARATE = Sentinel("separate")
 
-# syntactic functions
-FUNCTION_SUBJECT = "subject"
-FUNCTION_OBJECT = "object"
-FUNCTION_INDIRECT_OBJECT = "indirect object"
+SYN_FUNCTION_SUBJECT = "sub"
+SYN_FUNCTION_OBJECT = "obj"
+SYN_FUNCTION_INDIRECT_OBJECT = "iobj"
+
+# semantic functions
+SEM_FUNCTION_SUBJECT = "subject"
+SEM_FUNCTION_OBJECT = "object"
+SEM_FUNCTION_INDIRECT_OBJECT = "indirect object"

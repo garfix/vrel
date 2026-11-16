@@ -1,3 +1,28 @@
+## 2026-11-14
+
+"He asked him where he was."
+
+He -> John
+
+Him now also refers to John, because He and Him are semantically the same. However, Him can't refer to John, because the word would have to be Himself. Since the word is not Himself, the referent may not be the subject.
+
+I need to make syntactic functions explicit and separate them from semantis functions.
+
+FUNCTION_SUBJECT and FUNCTION_OBJECT in this system are now in fact treated as syntactic, but they are in fact semantic.
+
+## 2026-11-12
+
+- id groups with separate id group identifiers
+- give EntityData an `ids` prop in stead of an `id` prop
+
+## 2026-11-09
+
+When matching features, does an entity match when it matches all features, or when none of its features doesn't match?
+
+When using the former, should we then not introduce entities with no features?
+
+Let's take the pronoun "she", does it match someone who is just a person? No. All features must match.
+
 ## 2026-11-03
 
 Pronoun resolution: starting from the parse tree (with pure variables) to dialog entities. How to find these?

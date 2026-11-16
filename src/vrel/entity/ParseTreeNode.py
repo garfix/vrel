@@ -26,15 +26,20 @@ class ParseTreeNode:
     def __str__(self, indent: str = ""):
         body = ""
 
+        func1 = self.rule.antecedent.function + ":" if self.rule.antecedent.function else ""
+
         if indent == "":
-            body = self.category + " (" + str(self.rule.antecedent.arguments) + ")\n"
+            body = func1 + self.category + " (" + str(self.rule.antecedent.arguments) + ")\n"
 
         for i, child in enumerate(self.children):
+
+            func = (self.rule.consequents[i].function + ":") if self.rule.consequents[i].function else ""
+
             if child.form != "":
-                body += indent + "+- " + child.category + " '" + child.form + "'\n"
+                body += indent + "+- " + func + child.category + " '" + child.form + "'\n"
                 continue
 
-            body += indent + "+- " + child.category + "(" + str(child.rule.antecedent.arguments) + ")\n"
+            body += indent + "+- " + func + child.category + "(" + str(child.rule.antecedent.arguments) + ")\n"
             newIndent = indent
             if i < len(self.children) - 1:
                 newIndent += "|  "

@@ -180,10 +180,14 @@ def unify_variables(term: any, var_map: dict[str, str]) -> any:
     elif isinstance(term, ParseTreeNode):
         # note: children are deliverately left out, so as no to do them twice
         return ParseTreeNode(
-            term.category, term.children, term.form, unify_variables(term.rule, var_map), term.reg_exp_count
+            term.category,
+            term.children,
+            term.form,
+            unify_variables(term.rule, var_map),
+            term.reg_exp_count,
         )
     elif isinstance(term, Reference):
-        return Reference(unify_variables(term.variable, var_map), term.attributes)
+        return Reference(unify_variables(term.variable, var_map), term.features)
     elif isinstance(term, GrammarRule):
         r = term.copy()
         r.antecedent = unify_variables(r.antecedent, var_map)
@@ -192,7 +196,14 @@ def unify_variables(term: any, var_map: dict[str, str]) -> any:
         return r
     elif isinstance(term, RuleConstituent):
         mapped_arguments = [var_map[arg] if arg in var_map else arg for arg in term.arguments]
-        return RuleConstituent(term.predicate, mapped_arguments, term.position_type, term.optional, term.separator)
+        return RuleConstituent(
+            term.predicate,
+            mapped_arguments,
+            term.position_type,
+            optional=term.optional,
+            separator=term.separator,
+            function=term.function,
+        )
     else:
         raise Exception(f"Unknown type for unification: {type(term)}")
 
